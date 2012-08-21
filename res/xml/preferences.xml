@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen
+        xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+            android:title="@string/app_preferences">
+            
+	    <CheckBoxPreference
+    	        android:key="screenlock"
+        	    android:defaultValue="false"
+            	android:title="@string/title_screenlock_preference"
+	            android:summary="@string/summary_screenlock_preference" />
+    
+	    <CheckBoxPreference
+    	        android:key="wifilock"
+        	    android:defaultValue="false"
+            	android:title="@string/title_wifilock_preference"
+	            android:summary="@string/summary_wifilock_preference" />
+    
+	    <CheckBoxPreference
+    	        android:key="wifionly"
+        	    android:defaultValue="true"
+            	android:title="@string/title_wifionly_preference"
+            	android:summary="@string/summary_wifionly_preference" />
+
+	    <ListPreference
+    	        android:key="language"
+        	    android:defaultValue="@string/summary_language_preferences"
+            	android:title="@string/title_language_preferences"
+            	android:summary="@string/summary_language_preferences"
+            	android:entries="@array/languages"
+            	android:entryValues="@array/languages"
+            	android:dialogTitle="@string/dialog_title_language_preference" />
+	    
+	    <PreferenceScreen
+                android:title="@string/title_reset_preference"
+                android:summary="@string/summary_reset_preference">
+
+            <intent android:action="android.intent.action.VIEW"
+                    android:data="http://www.android.com" />
+
+        </PreferenceScreen>
+	    
+    </PreferenceCategory>
+    
+    <PreferenceCategory
+            android:title="@string/startup_preferences">
+            
+	    <CheckBoxPreference
+    	        android:key="sshstartup"
+        	    android:defaultValue="true"
+            	android:title="@string/title_sshstartup_preferences"
+	            android:summary="@string/summary_sshstartup_preferences" />
+    
+	    <CheckBoxPreference
+    	        android:key="vncstartup"
+        	    android:defaultValue="false"
+            	android:title="@string/title_vncstartup_preferences"
+	            android:summary="@string/summary_vncstartup_preferences" />
+    
+	    <CheckBoxPreference
+    	        android:key="autostart"
+        	    android:defaultValue="false"
+            	android:title="@string/title_autostart_preferences"
+            	android:summary="@string/summary_autostart_preferences" />
+
+    </PreferenceCategory>
+    
+    <PreferenceCategory
+            android:title="@string/deploy_preferences">
+            
+	    <EditTextPreference
+    	        android:key="installdir"
+        	    android:defaultValue="@string/summary_installdir_preferences"
+            	android:title="@string/title_installdir_preferences"
+	            android:summary="@string/summary_installdir_preferences"
+	            android:dialogTitle="@string/dialog_title_installdir_preference" />
+    
+	    <EditTextPreference
+    	        android:key="diskimage"
+        	    android:defaultValue="@string/summary_diskimage_preferences"
+            	android:title="@string/title_diskimage_preferences"
+	            android:summary="@string/summary_diskimage_preferences"
+	            android:dialogTitle="@string/dialog_title_diskimage_preference" />
+
+	    <EditTextPreference
+    	        android:key="disksize"
+        	    android:defaultValue="1024"
+        	    android:inputType="numberDecimal"
+            	android:title="@string/title_disksize_preferences"
+            	android:summary="@string/summary_disksize_preferences"
+            	android:dialogTitle="@string/dialog_title_disksize_preference" />
+
+	    <ListPreference
+    	        android:key="architecture"
+        	    android:defaultValue="@string/summary_architecture_preferences"
+            	android:title="@string/title_architecture_preferences"
+            	android:summary="@string/summary_architecture_preferences"
+            	android:entries="@array/architectures"
+            	android:entryValues="@array/architectures"
+            	android:dialogTitle="@string/dialog_title_architecture_preference" />
+	    
+	    <ListPreference
+    	        android:key="suite"
+        	    android:defaultValue="@string/summary_suite_preferences"
+            	android:title="@string/title_suite_preferences"
+            	android:summary="@string/summary_suite_preferences"
+            	android:entries="@array/suites"
+            	android:entryValues="@array/suites"
+            	android:dialogTitle="@string/dialog_title_suite_preference" />
+	    
+	    <EditTextPreference
+    	        android:key="mirror"
+        	    android:defaultValue="@string/summary_mirror_preferences"
+            	android:title="@string/title_mirror_preferences"
+	            android:summary="@string/summary_mirror_preferences"
+	            android:dialogTitle="@string/dialog_title_mirror_preference" />
+	    
+	    <EditTextPreference
+    	        android:key="username"
+        	    android:defaultValue="@string/summary_username_preferences"
+            	android:title="@string/title_username_preferences"
+	            android:summary="@string/summary_username_preferences"
+	            android:dialogTitle="@string/dialog_title_username_preference" />
+	    
+	    <CheckBoxPreference
+    	        android:key="installgui"
+        	    android:defaultValue="false"
+            	android:title="@string/title_installgui_preferences"
+            	android:summary="@string/summary_installgui_preferences" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

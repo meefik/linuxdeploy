@@ -1,0 +1,6 @@
+#!/system/xbin/sh
+
+target=/data/local/linux
+PATH=$PATH:/usr/bin:/bin:/usr/sbin:/sbin
+chroot $target /bin/bash
+

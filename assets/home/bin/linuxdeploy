@@ -1,0 +1,306 @@
+#!./bin/sh
+#
+# Linux Deploy for Android
+# Author: Anton Sk. <meefik@gmail.com>
+# Last change: 20.08.2012
+#
+
+[ -z "$HOME_DIR" ] && HOME_DIR="."
+
+if [ -r "$HOME_DIR/etc/deploy.conf" ]; then
+	. $HOME_DIR/etc/deploy.conf
+else
+	echo "Configuration file not found!"
+	exit 1
+fi
+
+TERM=vt100
+PATH=$PATH:/usr/bin:/bin:/usr/sbin:/sbin
+export TERM PATH
+
+case "$1" in
+mount)
+	echo "Mounting partitions:"
+	echo "/ ... "
+	mnt=`mount | grep $MNT_TARGET`
+	if [ -z "$mnt" ]; then
+		[ ! -d "$MNT_TARGET" ] && mkdir -p $MNT_TARGET
+		mount -o rw,loop -t ext2 $IMG_TARGET $MNT_TARGET 1>/dev/null 2>&1
+		if [ $? -eq 0 ]; then
+			echo "DONE"
+		else
+			echo "FAIL"; exit 1
+		fi
+	else
+		echo "SKIP"
+	fi
+	echo "/proc ... "
+	tg=$MNT_TARGET/proc; mnt=`mount | grep $tg`
+	if [ -z "$mnt" -a -d "$tg" ]; then
+		mount -t proc proc $tg 1>/dev/null 2>&1
+		[ $? -eq 0 ] && echo "DONE" || echo "FAIL"
+	else
+		echo "SKIP"
+	fi
+	echo "/sys ... "
+	tg=$MNT_TARGET/sys; mnt=`mount | grep $tg`
+	if [ -z "$mnt" -a -d "$tg" ]; then
+		mount -t sysfs sys $tg 1>/dev/null 2>&1
+		[ $? -eq 0 ] && echo "DONE" || echo "FAIL"
+	else
+		echo "SKIP"
+	fi
+	echo "/dev ... "
+	tg=$MNT_TARGET/dev; mnt=`mount | grep $tg`
+	if [ -z "$mnt" -a -d "$tg" ]; then
+		mount -o bind /dev $tg 1>/dev/null 2>&1
+		[ $? -eq 0 ] && echo "DONE" || echo "FAIL"
+	else
+		echo "SKIP"
+	fi
+	echo "/dev/pts ... "
+	tg=$MNT_TARGET/dev/pts; mnt=`mount | grep $tg`
+	if [ -z "$mnt" -a -d "$tg" ]; then
+		mount -t devpts devpts $tg 1>/dev/null 2>&1
+		[ $? -eq 0 ] && echo "DONE" || echo "FAIL"
+	else
+		echo "SKIP"
+	fi
+	DISKS="$EXTERNAL_STORAGE $SECONDARY_STORAGE"
+	for disk in $DISKS
+	do
+		echo "$disk ... "
+		tg=$MNT_TARGET$disk
+		mtgt=`mount | grep $tg`
+		msrc=`mount | grep $disk`
+		if [ -z "$mtgt" -a -n "$msrc" ]; then
+			[ ! -d "$tg" ] && mkdir -p $tg
+			mount -o bind $disk $tg 1>/dev/null 2>&1
+			[ $? -eq 0 ] && echo "DONE" || echo "FAIL"
+		else
+			echo "SKIP"
+		fi
+	done
+;;
+umount)
+	echo "Release resources ... "
+	(set -e
+		pids=`lsof | grep $MNT_TARGET | awk '{print $2}' | uniq || true`
+		[ -n "$pids" ] && kill -9 "$pids"
+	exit 0) 1>/dev/null 2>&1
+	[ $? -eq 0 ] && echo "DONE" || echo "FAIL"
+	echo "Unmounting partitions: "
+	um=0
+	for i in '.*' '*'
+	do
+		parts=`mount | awk '{print $3}' | grep "^$MNT_TARGET/$i$" | sort -r`
+		for p in $parts
+		do
+			pp=`echo $p | sed "s|$MNT_TARGET/*|/|g"`
+			echo "$pp ... "
+			umount $p 1>/dev/null 2>&1
+			[ $? -eq 0 ] && echo "DONE" || echo "FAIL"
+			um=1
+		done
+	done
+	[ $um -eq 0 ] && echo "...not mounted anything"
+	echo "Disassociating loop device ... "
+	(set -e
+		loop=`losetup | grep $IMG_TARGET | awk -F: '{print $1}' || true`
+		[ -n "$loop" ] && losetup -d $loop
+	exit 0) 1>/dev/null 2>&1
+	[ $? -eq 0 ] && echo "DONE" || echo "FAIL"
+;;
+install)
+	if [ ! -f "$IMG_TARGET" ]; then
+		echo "Making new disk image ($IMG_SIZE MB) ... "
+		(set -e
+			dd if=/dev/zero of=$IMG_TARGET bs=1048576 count=$IMG_SIZE
+			loop=`losetup -f`
+			losetup $loop $IMG_TARGET		
+			mkfs.ext2 $loop
+			losetup -d $loop
+		exit 0) 1>/dev/null 2>&1
+		[ $? -eq 0 ] && echo "DONE" || echo "FAIL"
+	fi
+
+	$0 mount
+	if [ $? -ne 0 ]; then
+		echo "FAIL to deploy!"; exit 1
+	fi
+	
+	echo "Installing Linux base system: "
+	[ -z "$DEBOOTSTRAP_DIR" ] && DEBOOTSTRAP_DIR=$HOME_DIR/share/debootstrap
+	debootstrap --no-check-gpg --arch $ARCH --foreign --include=locales,openssh-server,sudo $SUITE $MNT_TARGET $MIRROR
+	if [ $? -ne 0 ]; then
+		echo "FAIL to deploy!"; exit 1
+	fi
+	
+	$0 mount
+	if [ $? -ne 0 ]; then
+		echo "FAIL to deploy!"; exit 1
+	fi
+	
+	echo "Preparing Linux system (second stage): "
+	chroot $MNT_TARGET /debootstrap/debootstrap --second-stage
+	if [ $? -ne 0 ]; then
+		echo "FAIL to deploy!"; exit 1
+	fi
+	
+	$0 config
+	if [ $? -ne 0 ]; then
+		echo "FAIL to deploy!"; exit 1
+	fi
+	
+	is_gui=`echo $INSTALL_GUI | grep -i "^y"`
+	if [ -n "$is_gui" ]; then
+		echo "Installing additional packages: "
+		(set -e
+			chroot $MNT_TARGET aptitude update -yq
+			chroot $MNT_TARGET aptitude install tightvncserver xfonts-base lxde gtk-chtheme gnome-themes gnome-menus --without-recommends -yq
+			chroot $MNT_TARGET aptitude clean
+		exit 0)
+		if [ $? -ne 0 ]; then
+			echo "FAIL to deploy!"; exit 1
+		fi
+	fi
+;;
+config)
+	echo "Check disk image ... "
+	mnt=`mount | grep $MNT_TARGET`
+	if [ -n "$mnt" ]; then
+		echo "DONE"
+	else
+		echo "FAIL"; exit 1
+	fi
+
+	echo "Configuring Linux system: "
+
+	echo "DNS ... "
+	(set -e
+		echo "nameserver 8.8.8.8" > $MNT_TARGET/etc/resolv.conf
+	exit 0) 1>/dev/null 2>&1
+	[ $? -eq 0 ] && echo "DONE" || echo "FAIL"
+
+	echo "APT ... "
+	(set -e
+		echo "deb $MIRROR $SUITE main contrib non-free" > $MNT_TARGET/etc/apt/sources.list
+		echo "deb-src $MIRROR $SUITE main contrib non-free" >> $MNT_TARGET/etc/apt/sources.list
+	exit 0) 1>/dev/null 2>&1
+	[ $? -eq 0 ] && echo "DONE" || echo "FAIL"
+
+	echo "mtab ... "
+	(set -e
+		#chroot $MNT_TARGET ln -sf /proc/mounts /etc/mtab
+		cat /proc/mounts | grep $MNT_TARGET | sed "s|$MNT_TARGET/*|/|g" > $MNT_TARGET/etc/mtab
+	exit 0) 1>/dev/null 2>&1
+	[ $? -eq 0 ] && echo "DONE" || echo "FAIL"
+
+	echo "sudo ... "
+	(set -e
+		SUDO_STR="$USER_NAME ALL=(ALL:ALL) NOPASSWD:ALL"
+		is_str=`cat $MNT_TARGET/etc/sudoers | grep "$SUDO_STR" || true`
+		[ -z "$is_str" ] && echo $SUDO_STR >> $MNT_TARGET/etc/sudoers
+	exit 0) 1>/dev/null 2>&1
+	[ $? -eq 0 ] && echo "DONE" || echo "FAIL"
+	
+	echo "locales ... "
+	(set -e
+		echo "en_US.UTF-8 UTF-8" > $MNT_TARGET/etc/locale.gen
+		echo "ru_RU.UTF-8 UTF-8" >> $MNT_TARGET/etc/locale.gen
+		echo "LANG=en_US.UTF-8" > $MNT_TARGET/etc/default/locale
+		chroot $MNT_TARGET locale-gen
+	exit 0) 1>/dev/null 2>&1
+	[ $? -eq 0 ] && echo "DONE" || echo "FAIL"
+
+	echo "users and groups ... "
+	(set -e
+		AIDS=`cat $HOME_DIR/etc/aids`
+		for AID in $AIDS
+		do
+			XNAME=`echo $AID | awk -F':' '{print $1}'`
+			XID=`echo $AID | awk -F':' '{print $2}'`
+			is_str=`cat $MNT_TARGET/etc/group | grep "^$XNAME:" || true`
+			[ -z "$is_str" ] && echo "$XNAME:x:$XID:$USER_NAME" >> $MNT_TARGET/etc/group
+			is_str=`cat $MNT_TARGET/etc/passwd | grep "^$XNAME:" || true`
+			[ -z "$is_str" ] && echo "$XNAME:x:$XID:$XID::/:/bin/false" >> $MNT_TARGET/etc/passwd	
+		done
+	exit 0) 1>/dev/null 2>&1
+	[ $? -eq 0 ] && echo "DONE" || echo "FAIL"
+	
+	echo "\"$USER_NAME\" profile ... "
+	(set -e
+		MOTD="Debian GNU/Linux [running on Android via Linux Deploy]"
+		USER_GROUP_ID=5000
+		echo $MOTD > $MNT_TARGET/var/run/motd
+		echo $MOTD > $MNT_TARGET/etc/motd.tail
+		chroot $MNT_TARGET useradd -m -s /bin/bash -U -u $USER_GROUP_ID $USER_NAME || true
+		chroot $MNT_TARGET sh -c "export $USER_NAME; echo \"changeme\nchangeme\" | (passwd $USER_NAME)"
+		USERHOME=`cat $MNT_TARGET/etc/passwd | grep "^$USER_NAME:" | awk -F: '{print $6}'`
+		PROFILE_STR='PATH=$PATH:/usr/local/sbin:/usr/sbin:/sbin'
+		is_str=`cat $MNT_TARGET$USERHOME/.profile | grep "$PROFILE_STR" || true`
+		[ -z "$is_str" ] && echo $PROFILE_STR >> $MNT_TARGET$USERHOME/.profile
+		mkdir $MNT_TARGET$USERHOME/.vnc || true
+		echo "MPTcXfgXGiY=" | base64 -d > $MNT_TARGET$USERHOME/.vnc/passwd
+		chmod 600 $MNT_TARGET$USERHOME/.vnc/passwd
+		echo "startlxde" > $MNT_TARGET$USERHOME/.vnc/xstartup
+		chmod 755 $MNT_TARGET$USERHOME/.vnc/xstartup
+		chown -R $USER_GROUP_ID:$USER_GROUP_ID $MNT_TARGET$USERHOME/.vnc
+	exit 0) 1>/dev/null 2>&1
+	[ $? -eq 0 ] && echo "DONE" || echo "FAIL"
+;;
+uninstall)
+	$0 umount
+	echo "Removing disk image ... "
+	(set -e
+		[ -f "$IMG_TARGET" ] && rm $IMG_TARGET
+		[ -d "$MNT_TARGET" ] && rmdir $MNT_TARGET
+	exit 0) 1>/dev/null 2>&1
+	[ $? -eq 0 ] && echo "DONE" || echo "FAIL"
+;;
+start)
+	$0 mount
+	echo "Starting services: "
+	is_ssh=`echo $START_SSH | grep -i "^y"`
+	if [ -n "$is_ssh" ]; then
+		echo "SSH ... "
+		(set -e
+			chroot $MNT_TARGET /etc/init.d/ssh start
+		exit 0) 1>/dev/null 2>&1
+		[ $? -eq 0 ] && echo "DONE" || echo "FAIL"
+	fi
+	is_vnc=`echo $START_VNC | grep -i "^y"`
+	if [ -n "$is_vnc" ]; then
+		echo "VNC ... "
+		(set -e
+			chroot $MNT_TARGET su - $USER_NAME -c "vncserver :$DISPLAY"
+		exit 0) 1>/dev/null 2>&1
+		[ $? -eq 0 ] && echo "DONE" || echo "FAIL"
+	fi
+;;
+stop)
+	echo "Stopping services: "
+	is_ssh=`echo $START_SSH | grep -i "^y"`
+	if [ -n "$is_ssh" ]; then
+		echo "SSH ... "
+		(set -e
+			chroot $MNT_TARGET /etc/init.d/ssh stop
+		exit 0) 1>/dev/null 2>&1
+		[ $? -eq 0 ] && echo "DONE" || echo "FAIL"
+	fi
+	is_vnc=`echo $START_VNC | grep -i "^y"`
+	if [ -n "$is_vnc" ]; then
+		echo "VNC ... "
+		(set -e
+			[ -f "$MNT_TARGET/tmp/.X$DISPLAY-lock" ] && rm $MNT_TARGET/tmp/.X$DISPLAY-lock
+			[ -f "$MNT_TARGET/tmp/.X11-unix/X$DISPLAY" ] && rm $MNT_TARGET/tmp/.X11-unix/X$DISPLAY
+			chroot $MNT_TARGET su - $USER_NAME -c "vncserver -kill :$DISPLAY"
+		exit 0) 1>/dev/null 2>&1
+		[ $? -eq 0 ] && echo "DONE" || echo "FAIL"
+	fi
+	$0 umount	
+;;
+*)
+	echo "Usage: $0 <mount|umount|install|config|uninstall|start|stop>"
+;;
+esac

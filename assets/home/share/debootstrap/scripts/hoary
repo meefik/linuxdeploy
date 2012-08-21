@@ -1,0 +1,178 @@
+default_mirror http://old-releases.ubuntu.com/ubuntu
+mirror_style release
+download_style apt
+
+case $ARCH in
+  ia64)       LIBC="libc6.1" ;;
+  *)          LIBC="libc6" ;;
+esac
+
+work_out_debs () {
+
+    required="base-files base-passwd bash bsdutils coreutils libacl1 libattr1 debconf debconf-i18n liblocale-gettext-perl libtext-iconv-perl libtext-wrapi18n-perl libtext-charwidth-perl debianutils diff dpkg dselect libblkid1 e2fsprogs e2fslibs libcomerr2 libss2 libuuid1 findutils grep gzip hostname libcap1 libdb1-compat libdb3 libncurses5 libnewt0.51 libpam-modules libpam-runtime libpam0g libpopt0 login makedev mawk mount ncurses-base ncurses-bin passwd perl-base procps python-minimal python2.4-minimal sed slang1a-utf8 lsb-base initscripts sysvinit sysv-rc tar util-linux zlib1g whiptail libgcc1 gcc-3.3-base libstdc++5"
+
+    base="adduser alsa-base alsa-utils apt apt-utils aptitude at base-config bind9-host bsdmainutils bzip2 console-common console-data console-tools cpio cramfsprogs cron dash dhcp3-client dhcp3-common discover1 discover1-data dmsetup dnsutils dosfstools ed eject ethtool evms evms-ncurses fdutils file ftp gettext-base gnupg grepmap groff-base hdparm hotplug ifrename ifupdown info initrd-tools iproute iptables iputils-arping iputils-ping iputils-tracepath jfsutils klogd less libasound2 libbz2-1.0 libconsole libdb4.2 libdevmapper1.00 libdiscover1 libdns16 libevms-2.5 libfribidi0 libgc1 libgcrypt11 libgdbm3 libgnutls11 libgpg-error0 libgpmg1 libidn11 libisc7 libiw27 libldap2 liblockfile1 liblwres1 liblzo1 libmagic1 libncursesw5 libopencdk8 libparted1.6-12 libpcap0.8 libreiserfs0.3-0 libsasl2 libsasl2-modules libsigc++-1.2-5c102 libssl0.9.7 libtasn1-2 libusb-0.1-4 libwrap0 locales logrotate lsb-release lshw lsof lvm-common lvm10 lvm2 mailx man-db manpages mdadm mii-diag mime-support module-init-tools mtr-tiny mutt nano net-tools netbase netcat netkit-inetd ntp ntpdate openssh-client parted pciutils popularity-contest postfix postfix-tls ppp pppconfig pppoeconf psmisc python python2.4 reiser4progs reiserfsprogs reportbug rsync strace sudo sysklogd tcpd tcpdump telnet time ubuntu-base ubuntu-keyring udev usbutils vim vim-common w3m wget wireless-tools xfsprogs"
+
+    without_package () {
+        echo "$2" | tr ' ' '\n' | grep -v "^$1$" | tr '\n' ' '
+    }
+    subst_package () {
+        echo "$3" | tr ' ' '\n' | sed "s/^$1$/$2/" | tr '\n' ' '
+    }
+
+    case $ARCH in
+        "i386")
+            required="$required libc6 libc6-i686"
+            base="$base dmidecode libelfg0 ltrace memtest86+ libreadline4"
+            ;;
+        "powerpc")
+            required="$required libc6 libreadline4"
+            base="$base hfsplus hfsutils libelfg0 libhfsp0 ltrace mac-fdisk pmac-fdisk powerpc-utils"
+            ;;
+        "amd64")
+            required="$required libc6"
+            base="$base dmidecode libelfg0 ltrace memtest86+ libreadline4"
+            ;;
+        "ia64")
+            required="$required libc6.1 libunwind7"
+            base="$base dmidecode libreadline4"
+            ;;
+        "sparc")
+            required="$required libc6"
+            base="$base lib64gcc1 libc6-sparc64 libreadline4"
+            ;;
+        *)
+            # who knows?
+            ;;
+    esac
+}
+
+install_debs () {
+    first_stage_install
+    second_stage_install
+}
+
+first_stage_install () {
+    extract $required
+
+    mkdir -p "$TARGET/var/lib/dpkg"
+    : >"$TARGET/var/lib/dpkg/status"
+    echo >"$TARGET/var/lib/dpkg/available"
+
+    setup_etc
+    if [ ! -e "$TARGET/etc/fstab" ]; then
+        echo '# UNCONFIGURED FSTAB FOR BASE SYSTEM' > "$TARGET/etc/fstab"
+        chown 0:0 "$TARGET/etc/fstab"; chmod 644 "$TARGET/etc/fstab"
+    fi
+
+    x_feign_install () {
+        local pkg="$1"
+        local deb="$(debfor $pkg)"
+        local ver="$(extract_deb_field "$TARGET/$deb" Version)"
+
+        mkdir -p "$TARGET/var/lib/dpkg/info"
+
+        echo \
+"Package: $pkg
+Version: $ver
+Status: install ok installed" >> "$TARGET/var/lib/dpkg/status"
+
+        touch "$TARGET/var/lib/dpkg/info/${pkg}.list"
+    }
+
+    x_feign_install dpkg
+}
+
+second_stage_install () {
+    x_core_install () {
+	smallyes '' | in_target dpkg --force-depends --install $(debfor "$@")
+    }
+    p () {
+	baseprog="$(($baseprog + ${1:-1}))"
+    }
+
+    DEBIAN_FRONTEND=noninteractive
+    DEBCONF_NONINTERACTIVE_SEEN=true
+    export DEBIAN_FRONTEND DEBCONF_NONINTERACTIVE_SEEN
+
+    baseprog=0
+    bases=7
+
+    setup_devices
+    setup_proc
+    umount_on_exit /.dev
+    umount_on_exit /dev
+    in_target /sbin/ldconfig
+
+    p; progress $baseprog $bases INSTCORE "Installing core packages" #1
+    info INSTCORE "Installing core packages..."
+
+    p; progress $baseprog $bases INSTCORE "Installing core packages" #2
+    ln -sf mawk "$TARGET/usr/bin/awk"
+    x_core_install base-files base-passwd
+    p; progress $baseprog $bases INSTCORE "Installing core packages" #3
+    x_core_install dpkg
+
+    if [ ! -e "$TARGET/etc/localtime" ]; then
+        ln -sf /usr/share/zoneinfo/UTC "$TARGET/etc/localtime"
+    fi
+
+    p; progress $baseprog $bases INSTCORE "Installing core packages" #4
+    x_core_install $LIBC
+
+    p; progress $baseprog $bases INSTCORE "Installing core packages" #5
+    x_core_install perl-base
+    p; progress $baseprog $bases INSTCORE "Installing core packages" #6
+    rm "$TARGET/usr/bin/awk"
+    x_core_install mawk
+    p; progress $baseprog $bases INSTCORE "Installing core packages" #7
+    x_core_install debconf
+
+    baseprog=0
+    bases="$(set -- $required; echo $#)"
+
+    info UNPACKREQ "Unpacking required packages..."
+
+    smallyes '' | (repeatn 5 in_target_failmsg UNPACK_REQ_FAIL_FIVE "Failure while unpacking required packages.  This will be attempted up to five times." "" dpkg --status-fd 8 --force-depends --unpack $(debfor $required) 8>&1 1>&7 | dpkg_progress $baseprog $bases UNPACKREQ "Unpacking required packages" UNPACKING) 7>&1
+
+    baseprog=0
+
+    info CONFREQ "Configuring required packages..."
+
+    mv "$TARGET/sbin/start-stop-daemon" "$TARGET/sbin/start-stop-daemon.REAL"
+    echo \
+"#!/bin/sh
+echo
+echo \"Warning: Fake start-stop-daemon called, doing nothing\"" > "$TARGET/sbin/start-stop-daemon"
+    chmod 755 "$TARGET/sbin/start-stop-daemon"
+
+    setup_dselect_method apt
+    #on_exit "(in_target_nofail umount /dev/pts) || true"
+
+    smallyes '' | (in_target_failmsg CONF_REQ_FAIL "Failure while configuring required packages." "" dpkg --status-fd 8 --configure --pending --force-configure-any --force-depends 8>&1 1>&7 | dpkg_progress $baseprog $bases CONFREQ "Configuring required packages" CONFIGURING) 7>&1
+
+    baseprog=0
+    bases="$(set -- $base; echo $#)"
+
+    info UNPACKBASE "Unpacking the base system..."
+
+    smallyes '' | (repeatn 5 in_target_failmsg INST_BASE_FAIL_FIVE "Failure while installing base packages.  This will be re-attempted up to five times." "" dpkg --status-fd 8 --force-auto-select --force-overwrite --force-confold --skip-same-version --unpack $(debfor $base) 8>&1 1>&7 | dpkg_progress $baseprog $bases UNPACKBASE "Unpacking base system" UNPACKING) 7>&1
+
+    baseprog=0
+
+    info CONFBASE "Configuring the base system..."
+
+    mv "$TARGET/usr/sbin/sendmail" "$TARGET/usr/sbin/sendmail.REAL"
+    ln -s /bin/true "$TARGET/usr/sbin/sendmail"
+
+    smallyes '' | (repeatn 5 in_target_failmsg CONF_BASE_FAIL_FIVE "Failure while configuring base packages.  This will be attempted 5 times." "" dpkg --status-fd 8 --force-confold --skip-same-version  --configure -a 8>&1 1>&7 | dpkg_progress $baseprog $bases CONFBASE "Configuring base system" CONFIGURING) 7>&1
+
+    rm -f "$TARGET/usr/sbin/sendmail"
+    mv "$TARGET/usr/sbin/sendmail.REAL" "$TARGET/usr/sbin/sendmail"
+
+    mv "$TARGET/sbin/start-stop-daemon.REAL" "$TARGET/sbin/start-stop-daemon"
+
+    progress $bases $bases CONFBASE "Configuring base system"
+    info BASESUCCESS "Base system installed successfully."
+}
+

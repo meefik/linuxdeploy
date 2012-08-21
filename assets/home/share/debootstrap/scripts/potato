@@ -1,0 +1,103 @@
+mirror_style release
+download_style apt var-state
+force_md5
+
+LIBC=libc6
+if [ "$ARCH" = alpha ]; then
+  LIBC="libc6.1"
+fi
+
+work_out_debs () {
+    required="base-files base-passwd bash bsdutils debconf-tiny debianutils diff dpkg e2fsprogs fileutils findutils grep gzip hostname ldso libc6 libdb2 libgdbmg1 libncurses5 libnewt0 libpam-modules libpam-runtime libpam0g libpopt0 libreadline4 libstdc++2.10 login makedev mawk modutils mount ncurses-base ncurses-bin passwd perl-5.005-base perl-base procps sed shellutils slang1 sysklogd sysvinit tar textutils update util-linux whiptail"
+
+    base="adduser ae apt base-config elvis-tiny fbset fdutils gettext-base console-data console-tools console-tools-libs libdb2 libwrap0 locales modconf netbase ftp ppp pppconfig pump tasksel tcpd textutils telnet xviddetect"
+
+    without_package () {
+        echo "$2" | tr ' ' '\n' | grep -v "^$1$" | tr '\n' ' '
+    }
+
+    case $ARCH in
+      "alpha")
+        required="$(without_package "libc6" "$required") libc6.1"
+        ;;
+      "i386")
+        base="$base fdflush isapnptools lilo mbr pciutils pcmcia-cs psmisc setserial syslinux"
+        ;;
+       *)
+        # other arches may have special needs not yet represented here
+        # oh well, Potato is old
+    esac
+}
+
+first_stage_install () {
+    extract $required
+
+    :> "$TARGET/var/lib/dpkg/status"
+    echo > "$TARGET/var/lib/dpkg/available"
+
+    setup_etc
+    echo '# UNCONFIGURED FSTAB FOR BASE SYSTEM' > "$TARGET/etc/fstab"
+    chown 0:0 "$TARGET/etc/fstab"; chmod 644 "$TARGET/etc/fstab"
+
+    x_feign_install () {
+        local pkg=$1
+        local deb="$(debfor $pkg)"
+        local ver="$(extract_deb_field "$TARGET/$deb" Version)"
+
+        mkdir -p "$TARGET/var/lib/dpkg/info"
+
+echo \
+"Package: $pkg
+Version: $ver
+Status: install ok installed" >> "$TARGET/var/lib/dpkg/status"
+
+        touch "$TARGET/var/lib/dpkg/info/${pkg}.list"
+    }
+
+    x_feign_install dpkg
+
+    if [ -e "$TARGET/usr/bin/perl-5.005.dist" ]; then
+        mv "$TARGET/usr/bin/perl-5.005.dist" "$TARGET/usr/bin/perl-5.005"
+    fi
+    if [ ! -e "$TARGET/usr/bin/perl" ]; then
+        ln -sf perl-5.005 "$TARGET/usr/bin/perl"
+    fi
+}
+
+second_stage_install () {
+    x_core_install () {
+        in_target dpkg --force-depends --install $(debfor "$@")
+    }
+
+    export DEBIAN_FRONTEND=Noninteractive
+
+    setup_devices
+    setup_proc
+    ln "$TARGET/sbin/ldconfig.new" "$TARGET/sbin/ldconfig"
+    in_target /sbin/ldconfig
+
+    x_core_install base-files base-passwd ldso
+    x_core_install dpkg
+
+    ln -sf /usr/share/zoneinfo/UTC "$TARGET/etc/localtime"
+    x_core_install $LIBC
+
+    smallyes '' | x_core_install perl-5.005-base
+    x_core_install mawk
+    x_core_install debconf-tiny
+
+    in_target dpkg-preconfigure $(debfor $required $base)
+
+    repeatn 5 in_target dpkg --force-depends --unpack $(debfor $required)
+
+    mv "$TARGET/sbin/start-stop-daemon" "$TARGET/sbin/start-stop-daemon.REAL"
+    cp "$TARGET/bin/true" "$TARGET/sbin/start-stop-daemon"
+
+    setup_dselect_method apt
+
+    in_target dpkg --configure --pending --force-configure-any --force-depends
+
+    smallyes '' | repeatn 5 in_target dpkg --force-auto-select --force-overwrite --skip-same-version --install $(debfor $base)
+
+    mv "$TARGET/sbin/start-stop-daemon.REAL" "$TARGET/sbin/start-stop-daemon"
+}

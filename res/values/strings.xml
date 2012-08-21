@@ -1,0 +1,79 @@
+<resources>
+
+    <string name="app_name">Linux Deploy</string>
+    <string name="menu_settings">Settings</string>
+    <string name="menu_about">About</string>
+    <string name="title_activity_main">Linux Deploy</string>
+    <string name="title_activity_about">About</string>
+    <string name="title_activity_preferences">Settings</string>
+    
+    <string name="app_preferences">Application</string>
+    
+    <string name="title_screenlock_preference">Lock screen</string>
+    <string name="summary_screenlock_preference">Allow to keep screen active while the application is running</string>
+
+    <string name="title_wifilock_preference">Lock WiFi</string>
+    <string name="summary_wifilock_preference">Keep WiFi active while the application is running</string>
+
+    <string name="title_wifionly_preference">Require WiFi</string>
+    <string name="summary_wifionly_preference">Require an active WiFi connection</string>
+
+    <string name="title_language_preferences">Language</string>
+    <string name="summary_language_preferences">English</string>
+    <string name="dialog_title_language_preference">Choose language</string>
+
+    <string name="title_reset_preference">Reset settings</string>
+    <string name="summary_reset_preference">Restore default settings</string>
+    
+    <string name="startup_preferences">Startup</string>
+
+    <string name="title_sshstartup_preferences">SSH</string>
+    <string name="summary_sshstartup_preferences">Enable SSH server startup</string>
+
+    <string name="title_vncstartup_preferences">VNC</string>
+    <string name="summary_vncstartup_preferences">Enable VNC server startup</string>
+    
+    <string name="title_autostart_preferences">Autostart</string>
+    <string name="summary_autostart_preferences">Enable automatically start the services</string>
+    
+    <string name="deploy_preferences">Deploy</string>
+    
+    <string name="title_installdir_preferences">Installation directory</string>
+    <string name="summary_installdir_preferences">/data/local/linux</string>
+    <string name="dialog_title_installdir_preference">Installation directory</string>
+        
+    <string name="title_diskimage_preferences">Disk image file</string>
+    <string name="summary_diskimage_preferences">/mnt/sdcard/linux.img</string>
+    <string name="dialog_title_diskimage_preference">Disk image file</string>
+    
+    <string name="title_disksize_preferences">Image size (MB)</string>
+    <string name="summary_disksize_preferences">1024</string>
+    <string name="dialog_title_disksize_preference">Disk image size (MB)</string>
+    
+    <string name="title_architecture_preferences">Architecture</string>
+    <string name="summary_architecture_preferences">armhf</string>
+    <string name="dialog_title_architecture_preference">Architecture</string>
+    
+    <string name="title_suite_preferences">Distribution suite</string>
+    <string name="summary_suite_preferences">wheezy</string>
+    <string name="dialog_title_suite_preference">Distribution suite</string>
+    
+    <string name="title_mirror_preferences">Mirror URL</string>
+    <string name="summary_mirror_preferences">http://mirror.yandex.ru/debian</string>
+    <string name="dialog_title_mirror_preference">Mirror URL</string>
+    
+    <string name="title_username_preferences">User name</string>
+    <string name="summary_username_preferences">admin</string>
+    <string name="dialog_title_username_preference">User name</string>
+    
+    <string name="title_installgui_preferences">Install GUI</string>
+    <string name="summary_installgui_preferences">Include installation desktop environment and VNC server</string>
+    
+    
+    <string name="about_text"><font size="32"><b>Linux Deploy</b></font>\n\nLicense: GPL v3\n\nSource: <a href="https://github.com/meefik/linunxdeploy">github.com</a>\n\nThis program comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions.\n\n(C) 2012 Anton Skshidlevsky</string>
+    <string name="installbtn_hint">Установить</string>
+    <string name="startbtn_hint">Запустить</string>
+    <string name="stopbtn_hint">Остановить</string>
+    <string name="resetbtn_hint">Сбросить</string>
+
+</resources>
