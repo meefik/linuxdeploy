@@ -17,54 +17,40 @@
         	    android:defaultValue="false"
             	android:title="@string/title_wifilock_preference"
 	            android:summary="@string/summary_wifilock_preference" />
-    
+<!-- 
 	    <CheckBoxPreference
     	        android:key="wifionly"
         	    android:defaultValue="true"
             	android:title="@string/title_wifionly_preference"
             	android:summary="@string/summary_wifionly_preference" />
-
+ -->
 	    <ListPreference
     	        android:key="language"
-        	    android:defaultValue="@string/summary_language_preferences"
+        	    android:defaultValue="en"
             	android:title="@string/title_language_preferences"
             	android:summary="@string/summary_language_preferences"
-            	android:entries="@array/languages"
-            	android:entryValues="@array/languages"
+            	android:entries="@array/languages_entries"
+            	android:entryValues="@array/languages_values"
             	android:dialogTitle="@string/dialog_title_language_preference" />
 	    
+	    <EditTextPreference
+    	        android:key="fontsize"
+        	    android:defaultValue="@string/summary_fontsize_preferences"
+        	    android:inputType="numberDecimal"
+            	android:title="@string/title_fontsize_preferences"
+            	android:summary="@string/summary_fontsize_preferences"
+            	android:dialogTitle="@string/dialog_title_fontsize_preference" />
+
 	    <PreferenceScreen
+	        	android:key="installenv"
+                android:title="@string/title_installenv_preference"
+                android:summary="@string/summary_installenv_preference"/>
+        
+	    <PreferenceScreen
+	        	android:key="reset"
                 android:title="@string/title_reset_preference"
-                android:summary="@string/summary_reset_preference">
-
-            <intent android:action="android.intent.action.VIEW"
-                    android:data="http://www.android.com" />
-
-        </PreferenceScreen>
+                android:summary="@string/summary_reset_preference" />
 	    
-    </PreferenceCategory>
-    
-    <PreferenceCategory
-            android:title="@string/startup_preferences">
-            
-	    <CheckBoxPreference
-    	        android:key="sshstartup"
-        	    android:defaultValue="true"
-            	android:title="@string/title_sshstartup_preferences"
-	            android:summary="@string/summary_sshstartup_preferences" />
-    
-	    <CheckBoxPreference
-    	        android:key="vncstartup"
-        	    android:defaultValue="false"
-            	android:title="@string/title_vncstartup_preferences"
-	            android:summary="@string/summary_vncstartup_preferences" />
-    
-	    <CheckBoxPreference
-    	        android:key="autostart"
-        	    android:defaultValue="false"
-            	android:title="@string/title_autostart_preferences"
-            	android:summary="@string/summary_autostart_preferences" />
-
     </PreferenceCategory>
     
     <PreferenceCategory
@@ -86,7 +72,7 @@
 
 	    <EditTextPreference
     	        android:key="disksize"
-        	    android:defaultValue="1024"
+        	    android:defaultValue="@string/summary_disksize_preferences"
         	    android:inputType="numberDecimal"
             	android:title="@string/title_disksize_preferences"
             	android:summary="@string/summary_disksize_preferences"
@@ -129,6 +115,100 @@
         	    android:defaultValue="false"
             	android:title="@string/title_installgui_preferences"
             	android:summary="@string/summary_installgui_preferences" />
+	    
+	    <PreferenceScreen
+	        	android:key="reconfigure"
+                android:title="@string/title_reconfigure_preference"
+                android:summary="@string/summary_reconfigure_preference" />
+
+    </PreferenceCategory>
+    
+    <PreferenceCategory
+            android:title="@string/startup_preferences">
+
+       	<CheckBoxPreference
+  	        	android:key="sshstartup"
+       	    	android:defaultValue="true"
+           		android:title="@string/title_sshstartup_preferences"
+            	android:summary="@string/summary_sshstartup_preferences" />
+       	
+   		<CheckBoxPreference
+   	        	android:key="vncstartup"
+       	    	android:defaultValue="false"
+           		android:title="@string/title_vncstartup_preferences"
+            	android:summary="@string/summary_vncstartup_preferences" />
+	        	
+       	<EditTextPreference
+   	        	android:key="customstartup"
+       	    	android:defaultValue=""
+           		android:title="@string/title_customstartup_preferences"
+            	android:summary="@string/summary_customstartup_preferences"
+				android:dialogTitle="@string/dialog_title_customstartup_preference" />
+       	
+<!-- 
+	    <CheckBoxPreference
+    	        android:key="autostart"
+        	    android:defaultValue="false"
+            	android:title="@string/title_autostart_preferences"
+            	android:summary="@string/summary_autostart_preferences" />
+ -->
+
+	</PreferenceCategory>
+	
+    <PreferenceCategory
+        	android:title="@string/ssh_preferences">
+
+   		<EditTextPreference
+    		    android:dependency="sshstartup"
+   	        	android:key="sshport"
+       	    	android:defaultValue="@string/summary_sshport_preferences"
+       	    	android:inputType="numberDecimal"
+           		android:title="@string/title_sshport_preferences"
+           		android:summary="@string/summary_sshport_preferences"
+           		android:dialogTitle="@string/dialog_title_sshport_preference" />
+
+   	</PreferenceCategory>
+	
+    <PreferenceCategory
+        	android:title="@string/vnc_preferences">
+        	
+   		<EditTextPreference
+    		    android:dependency="vncstartup"
+   	        	android:key="vncdisplay"
+       	    	android:defaultValue="@string/summary_vncdisplay_preferences"
+       	    	android:inputType="numberDecimal"
+           		android:title="@string/title_vncdisplay_preferences"
+           		android:summary="@string/summary_vncdisplay_preferences"
+           		android:dialogTitle="@string/dialog_title_vncdisplay_preference" />
+	    		
+   		<ListPreference
+    		    android:dependency="vncstartup"
+   	        	android:key="vncdepth"
+       	    	android:defaultValue="@string/summary_vncdepth_preferences"
+       	    	android:inputType="numberDecimal"
+           		android:title="@string/title_vncdepth_preferences"
+           		android:summary="@string/summary_vncdepth_preferences"
+           		android:entries="@array/vncdepths"
+           		android:entryValues="@array/vncdepths"
+           		android:dialogTitle="@string/dialog_title_vncdepth_preference" />
+	    		
+   		<EditTextPreference
+    		    android:dependency="vncstartup"
+   	        	android:key="vncwidth"
+       	    	android:defaultValue="@string/summary_vncwidth_preferences"
+       	    	android:inputType="numberDecimal"
+           		android:title="@string/title_vncwidth_preferences"
+           		android:summary="@string/summary_vncwidth_preferences"
+           		android:dialogTitle="@string/dialog_title_vncwidth_preference" />
+	    		
+   		<EditTextPreference
+    		    android:dependency="vncstartup"
+   	        	android:key="vncheight"
+       	    	android:defaultValue="@string/summary_vncheight_preferences"
+       	    	android:inputType="numberDecimal"
+           		android:title="@string/title_vncheight_preferences"
+           		android:summary="@string/summary_vncheight_preferences"
+           		android:dialogTitle="@string/dialog_title_vncheight_preference" />
 
     </PreferenceCategory>
 

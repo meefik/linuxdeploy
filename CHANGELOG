@@ -1,0 +1,41 @@
+Changelog (English)
+===================
+
+1.0.4
+Fixed incomplete removal
+Interface improvements
+
+1.0.3
+Fixed a problem with permissions via SFTP from Linux
+Added function to reconfigure the system
+Improved backlight control
+
+1.0.2
+Fix SysInfo check SSH is running
+
+1.0.1
+Added information about ports on the title bar
+Fixed a disk image creation
+Updated list packages of base system installation
+
+
+История изменений (Русский)
+===========================
+
+1.0.4
+Исправлена ошибка неполного удаления
+Доработки интерфейса
+
+1.0.3
+Устранена проблема с правами доступа через SFTP из Linux
+Добавлена функция переконфигурации системы
+Доработано управление подсветкой экрана
+
+1.0.2
+Исправлена функция проверки статуса SSH сервера
+
+1.0.1
+Добавлена информация о портах в строке заголовка
+Исправлена ошибка при создании образа диска
+Обновлен список пакетов базовой установки
+

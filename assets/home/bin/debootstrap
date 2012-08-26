@@ -13,7 +13,7 @@ if [ -z "$DEBOOTSTRAP_DIR" ]; then
 	if [ -x /debootstrap/debootstrap ]; then
 		DEBOOTSTRAP_DIR=/debootstrap
 	else
-		DEBOOTSTRAP_DIR=./share/debootstrap
+		DEBOOTSTRAP_DIR=/usr/share/debootstrap
 	fi
 fi
 
@@ -658,7 +658,7 @@ if am_doing_phase second_stage; then
 		setup_apt_sources "$DEF_MIRROR"
 		mv_invalid_to "$DEF_MIRROR"
 	fi
-	
+
 	if [ -e "$TARGET/debootstrap/debootstrap.log" ]; then
 		if [ "$KEEP_DEBOOTSTRAP_DIR" = true ]; then
 			cp "$TARGET/debootstrap/debootstrap.log" "$TARGET/var/log/bootstrap.log"
