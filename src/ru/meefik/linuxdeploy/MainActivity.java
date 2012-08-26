@@ -1,113 +1,178 @@
 package ru.meefik.linuxdeploy;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.Enumeration;
 
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
-import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.res.AssetManager;
+import android.content.res.Configuration;
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
+import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements OnClickListener {
 
-	final static String ROOT_ASSETS = "home";
-	static String HOME_DIR = "/data/local/linux";
-	
 	private static TextView logView;
 	private static ScrollView logScroll;
 	private static Boolean logFlag = false;
 	static Handler handler;
+	private PowerManager.WakeLock wl;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        AppPrefs.updateLocale(getBaseContext());
+        
         setContentView(R.layout.activity_main);
         
         logView = (TextView)findViewById(R.id.LogView);
         logScroll = (ScrollView)findViewById(R.id.LogScrollView);
         handler = new Handler();
         
-        //prepareEnv();
-        
-/*
-        // Screen keep on
-        PowerManager pm = (PowerManager)getSystemService(Context.POWER_SERVICE);
-        PowerManager.WakeLock wl = pm.newWakeLock(
-            PowerManager.SCREEN_DIM_WAKE_LOCK
-            | PowerManager.ON_AFTER_RELEASE,
-            "Linux Deploy");
-		wl.acquire();
-		// ...
-		//wl.release();
-		
-		// WiFi keep on
-		Settings.System.putInt(getContentResolver(),
-				  Settings.System.WIFI_SLEEP_POLICY, 
-				  Settings.System.WIFI_SLEEP_POLICY_NEVER);
-*/
+        ImageButton installButton = (ImageButton)findViewById(R.id.InstallBtn);
+        installButton.setOnClickListener(this);
 
-        final ImageButton button1 = (ImageButton)findViewById(R.id.InstallBtn);
-        button1.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-            	deployCMD("install");
-            }
-        });
+        ImageButton startButton = (ImageButton)findViewById(R.id.StartBtn);
+        startButton.setOnClickListener(this);
+
+        ImageButton stopButton = (ImageButton)findViewById(R.id.StopBtn);
+        stopButton.setOnClickListener(this);
         
-        final ImageButton button2 = (ImageButton)findViewById(R.id.StartBtn);
-        button2.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-            	deployCMD("start");
-            }
-        });
+        ImageButton uninstallButton = (ImageButton)findViewById(R.id.UninstallBtn);
+        uninstallButton.setOnClickListener(this);
         
-        final ImageButton button3 = (ImageButton)findViewById(R.id.StopBtn);
-        button3.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-            	deployCMD("stop");
-            }
-        });
+        // Screen lock
+        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "linuxdeploy");
         
-        final ImageButton button4 = (ImageButton)findViewById(R.id.ResetBtn);
-        button4.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-            	//deployCMD("uninstall");
-            	SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-            	 
-            	String strUserName = SP.getString("default_edittext", "NA");
-            	boolean bAppUpdates = SP.getBoolean("default_checkbox",false);
-            	//String downloadType = SP.getString("downloadType","1");
-            	
-            	logView.append(strUserName);
-            }
-        });
+		// ok we back, load the saved text
+        if ( savedInstanceState != null ) {
+            String savedText = savedInstanceState.getString( "LOG" );
+            logView.setText( savedText );
+        }
+
     }
-
+    
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+    	AppPrefs.updateLocale(getBaseContext());
         getMenuInflater().inflate(R.menu.activity_main, menu);
         return true;
     }
-    
+
+    public void onSaveInstanceState( Bundle savedInstanceState ) {
+    	// now, save the text if something overlaps this Activity
+        savedInstanceState.putString( "LOG", logView.getText().toString() );
+    }
+
+	@Override
+	public void onClick(View v) {
+        switch (v.getId())
+        {
+            case R.id.InstallBtn:
+            {
+    			new AlertDialog.Builder(this)
+    			.setTitle(R.string.confirm_install_title)
+    			.setMessage(R.string.confirm_install_message)
+    			.setIcon(android.R.drawable.ic_dialog_alert)
+    			.setCancelable(false)
+    			.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+    				public void onClick(DialogInterface dialog, int id) {
+    	            	new ShellEnv(getBaseContext()).DeployCmd("install");
+    			    }
+    			})
+    			.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+    			    public void onClick(DialogInterface dialog, int id) {
+    			    	dialog.cancel();
+    			    }
+    			}).show();
+                break;
+            }
+
+            case R.id.StartBtn:
+            {
+    			new AlertDialog.Builder(this)
+    			.setTitle(R.string.confirm_start_title)
+    			.setMessage(R.string.confirm_start_message)
+    			.setIcon(android.R.drawable.ic_dialog_alert)
+    			.setCancelable(false)
+    			.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+    				public void onClick(DialogInterface dialog, int id) {
+    	            	new ShellEnv(getBaseContext()).DeployCmd("start");
+    			    }
+    			})
+    			.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+    			    public void onClick(DialogInterface dialog, int id) {
+    			    	dialog.cancel();
+    			    }
+    			}).show();
+            	break;
+            }
+
+            case R.id.StopBtn:
+            {
+    			new AlertDialog.Builder(this)
+    			.setTitle(R.string.confirm_stop_title)
+    			.setMessage(R.string.confirm_stop_message)
+    			.setIcon(android.R.drawable.ic_dialog_alert)
+    			.setCancelable(false)
+    			.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+    				public void onClick(DialogInterface dialog, int id) {
+    	            	new ShellEnv(getBaseContext()).DeployCmd("stop");
+    			    }
+    			})
+    			.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+    			    public void onClick(DialogInterface dialog, int id) {
+    			    	dialog.cancel();
+    			    }
+    			}).show();
+                break;
+            }
+            
+            case R.id.UninstallBtn:
+            {
+    			new AlertDialog.Builder(this)
+    			.setTitle(R.string.confirm_uninstall_title)
+    			.setMessage(R.string.confirm_uninstall_message)
+    			.setIcon(android.R.drawable.ic_dialog_alert)
+    			.setCancelable(false)
+    			.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+    				public void onClick(DialogInterface dialog, int id) {
+    	            	new ShellEnv(getBaseContext()).DeployCmd("uninstall");
+    			    }
+    			})
+    			.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+    			    public void onClick(DialogInterface dialog, int id) {
+    			    	dialog.cancel();
+    			    }
+    			}).show();
+                break;
+            }
+            
+            default:
+                break;
+        }
+	}
+	
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
     	switch (item.getItemId()) 
     	{
@@ -119,159 +184,138 @@ public class MainActivity extends Activity {
     	        Intent intent_about = new Intent(this,AboutActivity.class);
     			startActivity(intent_about);
     	    break;
+    		case R.id.menu_status:
+    			new Thread(new Runnable(){
+    				public void run() {
+    					new ShellEnv(getBaseContext()).sysInfo();
+    				}
+    			}).start();
+    		break;
+    		case R.id.menu_clear:
+    			logView.setText("");
+    	    break;
+    		case R.id.menu_exit:
+    			finish();
+    	    break;
     	    default:
 
     	    break;
     	}
     	return false;
-    	}
-    
-    public static void addLogMsg(String msg) {
-    	if (logFlag) {
-    		logFlag = false;
-    	} else {
-    		String currentTimeString = new SimpleDateFormat("HH:mm:ss").format(new Date());
-    		msg = "[" + currentTimeString + "] " + msg;
-    	}
-    	if (msg.matches("^.* \\.\\.\\. $")) {
-    		logFlag = true;
-    	} else {
-       		msg = msg + "\n";
-    	}
-      	logView.append(msg);
-      	logScroll.fullScroll(ScrollView.FOCUS_DOWN);
     }
 
-    private void copyFileOrDir(String path) {
-        AssetManager assetManager = this.getAssets();
-        String assets[] = null;
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Screen unlock
+        if (wl.isHeld()) wl.release();
+        // WiFi unlock
+        Settings.System.putInt(getContentResolver(),
+        		Settings.System.WIFI_SLEEP_POLICY, 
+        		Settings.System.WIFI_SLEEP_POLICY_DEFAULT);
+    }
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		
+		AppPrefs.get(getBaseContext());
+		
+		String myIP = getLocalIpAddress();
+		String titleMsg = " IP:  "+myIP;
+		
+		int ot = getResources().getConfiguration().orientation;
+		if (ot == Configuration.ORIENTATION_LANDSCAPE) { 
+			String ssh = "";
+			String vnc = "";
+			if (AppPrefs.SSH_START == "y") ssh = "     SSH:  " + AppPrefs.SSH_PORT;
+			if (AppPrefs.VNC_START == "y") vnc = "     VNC:  " + String.valueOf(5900+Integer.parseInt(AppPrefs.VNC_DISPLAY));
+			titleMsg = " IP:  "+myIP +ssh+vnc;
+		}
+		
+		if (myIP != null) this.setTitle(titleMsg);
+		else this.setTitle(R.string.app_name);
+		
+		// Restore text
+		logView.setTextSize(TypedValue.COMPLEX_UNIT_SP,AppPrefs.FONT_SIZE);
+    	
+		// Screen lock
+		if (AppPrefs.SCREEN_LOCK) wl.acquire();
+
+		// WiFi lock
+		if (AppPrefs.WIFI_LOCK) {
+			Settings.System.putInt(getContentResolver(),
+					Settings.System.WIFI_SLEEP_POLICY, 
+					Settings.System.WIFI_SLEEP_POLICY_NEVER);
+		}
+	}
+	
+    public String getLocalIpAddress() {
         try {
-            assets = assetManager.list(path);
-            if (assets.length == 0) {
-                copyFile(this, path);
-            	//System.out.println("copy file: "+path);
-            } else {
-                String fullPath = HOME_DIR + "/" + path.replaceFirst(ROOT_ASSETS, ""); //path for storing internally to data/data
-                //String fullPath = getFilesDir().getAbsolutePath()+File.separator+path;
-            	File dir = new File(fullPath);
-                if (!dir.exists()){
-                    dir.mkdir();
-                    //System.out.println("Created directory: "+fullPath);
-                }
-
-                for (int i = 0; i < assets.length; ++i) {
-                    copyFileOrDir(path + "/" + assets[i]);
+            for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) {
+                NetworkInterface intf = en.nextElement();
+                for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements();) {
+                    InetAddress inetAddress = enumIpAddr.nextElement();
+                    if (!inetAddress.isLoopbackAddress()&&!inetAddress.isLinkLocalAddress()) {
+                        return inetAddress.getHostAddress().toString();
+                    }
                 }
             }
-        } catch (IOException e) {
-        	e.printStackTrace();
+        } catch (SocketException e) {
+            Log.e("linuxdeploy", e.toString());
         }
+        return null;
     }
-
-    public static void copyFile(Activity c, String filename) 
-    {
-        AssetManager assetManager = c.getAssets();
-        InputStream in = null;
-        OutputStream out = null;
-        try 
-        {
-            in = assetManager.open(filename);
-            String newFileName = HOME_DIR + "/" + filename.replaceFirst(ROOT_ASSETS, "");
-            out = new FileOutputStream(newFileName);
-
-            byte[] buffer = new byte[1024];
-            int read;
-            while ((read = in.read(buffer)) != -1) 
-            {
-                out.write(buffer, 0, read);
-            }
-            in.close();
-            in = null;
-            out.flush();
-            out.close();
-            out = null;
-        } catch (IOException e) {
-        	e.printStackTrace();
-        }finally{
-            if(in!=null){
-                try {
-                    in.close();
-                } catch (IOException e) {
-                	e.printStackTrace();
-                }
-            }
-            if(out!=null){
-                try {
-                    out.close();
-                } catch (IOException e) {
-                	e.printStackTrace();
-                }
-            }
-        }
-    }
-    
-    public Thread execCMD(List<String> params) {
-    	ExecCmd ex = new ExecCmd(params);
-    	Thread thread = new Thread(ex, "ExecCmd");
-    	thread.start();
-    	return thread;
-    }
-    
-    public void prepareEnv() {
-    	logView.setText("");
-    	//File dir = new File(HOME_DIR);
-        //if (dir.exists()) return;
-        (new Thread() {
-        	public void run() {
-            	handler.post(new Runnable() {
-            		@Override
-            		public void run() {
-            			addLogMsg("Preparing environment ... ");
-            		}
-            	});
-            	
-        		List<String> params = new ArrayList<String>();
-        		params.add("su");
-       			params.add("rm -rf "+HOME_DIR+"/bin "+HOME_DIR+"/etc "+HOME_DIR+"/share 2>/dev/null");
-        		params.add("[ ! -d '"+HOME_DIR+"' ] && mkdir "+HOME_DIR);
-        		params.add("chmod 777 "+HOME_DIR);
-        		params.add("exit");
-				new ExecCmd(params).run();
-          
-               	copyFileOrDir(ROOT_ASSETS);
-
-               	params.clear();
-                params.add("su");
-                params.add("chmod 755 "+HOME_DIR);
-                params.add("chmod -R 755 "+HOME_DIR+"/bin");
-                params.add(HOME_DIR+"/bin/busybox --install "+HOME_DIR+"/bin");
-                params.add("PATH="+HOME_DIR+"/bin:$PATH; export PATH");
-                params.add("chmod 755 "+HOME_DIR+"/share/debootstrap/pkgdetails");
-                params.add("chmod -R a+rX "+HOME_DIR+"/etc "+HOME_DIR+"/share");
-                params.add("chown -R root:root "+HOME_DIR+"/bin "+HOME_DIR+"/etc "+HOME_DIR+"/share");
-                params.add("exit");
-                new ExecCmd(params).run();
-
-            	handler.post(new Runnable() {
-            		@Override
-            		public void run() {
-            			addLogMsg("DONE");
-            		}
-            	});
-        	}
-        }).start();
-    }
-    
-    public void deployCMD(String cmd) {
-    	List<String> params = new ArrayList<String>();
-    	params.add("su");
-    	params.add("echo '>>> begin: "+cmd+"'");
-    	params.add("PATH="+HOME_DIR+"/bin:$PATH; export PATH");
-    	params.add("cd "+HOME_DIR);
-    	params.add("linuxdeploy "+cmd);
-    	params.add("echo '<<< end: "+cmd+"'");
-    	params.add("exit");
-    	execCMD(params);    	
+   
+    public static void printLogMsg(String msg) {
+    	String printMsg = "";
+    	Log.d("linuxdeploy", msg);
+    	if (msg.matches("^\\[PRINT_ALL\\].*$")) {
+       		msg = msg.replaceFirst("\\[PRINT_ALL\\] ", "") ;
+    		logFlag = true;
+    	}
+    	if (msg.matches("^\\[PRINT_LN\\].*$")) {
+    		String currentTimeString = new SimpleDateFormat("HH:mm:ss").format(new Date());
+       		printMsg = "[" + currentTimeString + "] " + msg.replaceFirst("\\[PRINT_LN\\] ", "") + "\n";
+       		logFlag = false;
+    	}
+    	if (msg.matches("^\\[PRINT_NOTIME\\].*$")) {
+       		printMsg = msg.replaceFirst("\\[PRINT_NOTIME\\] ", "") + "\n";
+       		logFlag = false;
+    	}
+    	if (msg.matches("^\\[PRINT_WAIT\\].*$")) {
+    		String currentTimeString = new SimpleDateFormat("HH:mm:ss").format(new Date());
+       		printMsg = "[" + currentTimeString + "] " + msg.replaceFirst("\\[PRINT_WAIT\\] ", "");
+       		logFlag = false;
+    	}
+    	if (msg.matches("\\[RESULT_DONE\\]")) {
+       		printMsg = "DONE\n";
+       		logFlag = false;
+    	}
+    	if (msg.matches("\\[RESULT_SKIP\\]")) {
+       		printMsg = "SKIP\n";
+       		logFlag = false;
+    	}
+    	if (msg.matches("\\[RESULT_FAIL\\]")) {
+       		printMsg = "FAIL\n";
+       		logFlag = false;
+    	}
+    	if (msg.matches("\\[RESULT_YES\\]")) {
+       		printMsg = "YES\n";
+       		logFlag = false;
+    	}
+    	if (msg.matches("\\[RESULT_NO\\]")) {
+       		printMsg = "NO\n";
+       		logFlag = false;
+    	}
+    	if (logFlag) {
+    		String currentTimeString = new SimpleDateFormat("HH:mm:ss").format(new Date());
+       		printMsg = "[" + currentTimeString + "] " + msg + "\n";
+    	}
+    	if (printMsg.length() > 0) {
+        	logView.append(printMsg);
+        	logScroll.fullScroll(ScrollView.FOCUS_DOWN);
+    	}
     }
 
 }

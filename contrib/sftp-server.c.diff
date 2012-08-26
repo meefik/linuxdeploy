@@ -1,0 +1,23 @@
+--- sftp-server.c.orig	2011-06-20 08:42:52.000000000 +0400
++++ sftp-server.c	2012-08-26 10:09:43.680633278 +0400
+@@ -474,7 +474,7 @@
+ }
+ 
+ static void
+-send_attrib(u_int32_t id, const Attrib *a)
++send_attrib(u_int32_t id, Attrib *a)
+ {
+ 	Buffer msg;
+ 
+@@ -482,6 +482,11 @@
+ 	buffer_init(&msg);
+ 	buffer_put_char(&msg, SSH2_FXP_ATTRS);
+ 	buffer_put_int(&msg, id);
++	debug("request %u: permissins %d", id, a->perm);
++	u_int32_t b = a->perm >> 12;
++	u_int32_t c = a->perm >> 9 << 9;
++	if (b == 4) a->perm = c + 493; // 755
++	else a->perm = c + 420; // 644
+ 	encode_attrib(&msg, a);
+ 	send_msg(&msg);
+ 	buffer_free(&msg);

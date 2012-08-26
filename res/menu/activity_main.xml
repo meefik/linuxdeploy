@@ -2,7 +2,26 @@
     <item android:id="@+id/menu_settings"
         android:title="@string/menu_settings"
         android:orderInCategory="100"
-        android:showAsAction="never">
+        android:showAsAction="never" >
     </item>
-    <item android:id="@+id/menu_about" android:title="@string/menu_about" android:orderInCategory="100" android:showAsAction="never"></item>
+    <item android:id="@+id/menu_status"
+        android:title="@string/menu_status"
+        android:orderInCategory="100"
+        android:showAsAction="never" >
+    </item>
+    <item android:id="@+id/menu_clear"
+        android:title="@string/menu_clear"
+        android:orderInCategory="100"
+        android:showAsAction="never" >
+    </item>
+    <item android:id="@+id/menu_about"
+        android:title="@string/menu_about"
+        android:orderInCategory="100"
+        android:showAsAction="never" >
+    </item>
+    <item android:id="@+id/menu_exit"
+        android:title="@string/menu_exit"
+        android:orderInCategory="100"
+        android:showAsAction="never" >
+    </item>
 </menu>

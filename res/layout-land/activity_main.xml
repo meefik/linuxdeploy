@@ -7,7 +7,7 @@
         android:id="@+id/LogScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/linearLayout1"
+        android:layout_toRightOf="@+id/linearLayout1"
         android:fillViewport="true" >
 
         <LinearLayout
@@ -29,8 +29,9 @@
         android:id="@+id/linearLayout1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" >
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:orientation="vertical" >
 
         <ImageButton
             android:id="@+id/InstallBtn"

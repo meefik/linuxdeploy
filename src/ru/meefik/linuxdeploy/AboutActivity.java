@@ -10,6 +10,9 @@ public class AboutActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        AppPrefs.updateLocale(getBaseContext());
+        
         setContentView(R.layout.activity_about);
         
         TextView tv = (TextView) findViewById(R.id.AboutTextView);

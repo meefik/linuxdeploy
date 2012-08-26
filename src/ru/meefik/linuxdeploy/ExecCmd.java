@@ -8,15 +8,18 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.List;
 
+
 public class ExecCmd implements Runnable {
 	
 	private List<String> params;
+	public boolean status;
 
     public ExecCmd(List<String> params) {
     	this.params = params;
+    	status = true;
     }
     
-    public static void sendLogs(InputStream stdstream) {
+    private void sendLogs(InputStream stdstream) {
     	try {
     		BufferedReader reader = new BufferedReader(new InputStreamReader(stdstream));
     		while (true) {
@@ -26,12 +29,13 @@ public class ExecCmd implements Runnable {
             	MainActivity.handler.post(new Runnable() {
             		@Override
             		public void run() {
-            			MainActivity.addLogMsg(logLine);
+            			MainActivity.printLogMsg(logLine);
             		}
             	});
             }
     		reader.close();
         } catch (IOException e) {
+        	status = false;
             e.printStackTrace();
         }
     }
@@ -49,15 +53,16 @@ public class ExecCmd implements Runnable {
             }
             os.flush();
             os.close();
-            
+
         	final InputStream stdout = process.getInputStream();
+        	final InputStream stderr = process.getErrorStream();
+        	
             (new Thread() {
             	public void run() {
             		sendLogs(stdout);
             	}
             }).start();
 
-        	final InputStream stderr = process.getErrorStream();
             (new Thread() {
             	public void run() {
             		sendLogs(stderr);
@@ -70,6 +75,7 @@ public class ExecCmd implements Runnable {
             stderr.close();
         }
         catch (Exception e) {
+        	status = false;
         	e.printStackTrace();
 		}
 	}
