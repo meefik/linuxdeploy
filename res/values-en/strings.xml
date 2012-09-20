@@ -46,10 +46,49 @@
     <string name="summary_reset_preference">Restore default settings</string>
     <string name="message_reset_confirm_dialog">Restore settings by default?</string>
     
+    <string name="title_debug_preference">Debug mode</string>
+    <string name="summary_debug_preference">Enable display of debugging information</string>
+
+    <string name="deploy_preferences">Deploy</string>
+    
+    <string name="title_installdir_preferences">Installation directory</string>
+    <string name="summary_installdir_preferences">/data/local/linux</string>
+    <string name="dialog_title_installdir_preference">Installation directory</string>
+        
+    <string name="title_diskimage_preferences">Disk (image) path</string>
+    <string name="summary_diskimage_preferences">/mnt/sdcard/linux.img</string>
+    <string name="dialog_title_diskimage_preference">Device or file path</string>
+<!--     
+    <string name="title_loopdev_preferences">Disk image</string>
+    <string name="summary_loopdev_preferences">Use a disk image file</string>   
+ -->
+    <string name="title_disksize_preferences">Image size (MB)</string>
+    <string name="summary_disksize_preferences">1024</string>
+    <string name="dialog_title_disksize_preference">Disk image size (MB)</string>
+    
+    <string name="title_architecture_preferences">Architecture</string>
+    <string name="summary_architecture_preferences">armhf</string>
+    <string name="dialog_title_architecture_preference">Architecture</string>
+    
+    <string name="title_suite_preferences">Distribution suite</string>
+    <string name="summary_suite_preferences">wheezy</string>
+    <string name="dialog_title_suite_preference">Distribution suite</string>
+    
+    <string name="title_mirror_preferences">Mirror URL</string>
+    <string name="summary_mirror_preferences">http://mirror.yandex.ru/debian</string>
+    <string name="dialog_title_mirror_preference">Mirror URL</string>
+    
+    <string name="title_username_preferences">User name</string>
+    <string name="summary_username_preferences">admin</string>
+    <string name="dialog_title_username_preference">User name</string>
+    
+    <string name="title_installgui_preferences">Install GUI</string>
+    <string name="summary_installgui_preferences">Include installation desktop environment and VNC server</string>
+    
     <string name="title_reconfigure_preference">Reconfigure</string>
     <string name="summary_reconfigure_preference">Run the system reconfiguration</string>
     <string name="message_reconfigure_confirm_dialog">Perform reconfiguration of the system?</string>
-    
+
     <string name="startup_preferences">Startup</string>
 
     <string name="title_sshstartup_preferences">SSH</string>
@@ -88,41 +127,7 @@
     <string name="title_vncheight_preferences">Height</string>
     <string name="summary_vncheight_preferences">400</string>
     <string name="dialog_title_vncheight_preference">VNC: screen height</string>
-    
-    <string name="deploy_preferences">Deploy</string>
-    
-    <string name="title_installdir_preferences">Installation directory</string>
-    <string name="summary_installdir_preferences">/data/local/linux</string>
-    <string name="dialog_title_installdir_preference">Installation directory</string>
         
-    <string name="title_diskimage_preferences">Disk image file</string>
-    <string name="summary_diskimage_preferences">/mnt/sdcard/linux.img</string>
-    <string name="dialog_title_diskimage_preference">Disk image file</string>
-    
-    <string name="title_disksize_preferences">Image size (MB)</string>
-    <string name="summary_disksize_preferences">1024</string>
-    <string name="dialog_title_disksize_preference">Disk image size (MB)</string>
-    
-    <string name="title_architecture_preferences">Architecture</string>
-    <string name="summary_architecture_preferences">armhf</string>
-    <string name="dialog_title_architecture_preference">Architecture</string>
-    
-    <string name="title_suite_preferences">Distribution suite</string>
-    <string name="summary_suite_preferences">wheezy</string>
-    <string name="dialog_title_suite_preference">Distribution suite</string>
-    
-    <string name="title_mirror_preferences">Mirror URL</string>
-    <string name="summary_mirror_preferences">http://mirror.yandex.ru/debian</string>
-    <string name="dialog_title_mirror_preference">Mirror URL</string>
-    
-    <string name="title_username_preferences">User name</string>
-    <string name="summary_username_preferences">admin</string>
-    <string name="dialog_title_username_preference">User name</string>
-    
-    <string name="title_installgui_preferences">Install GUI</string>
-    <string name="summary_installgui_preferences">Include installation desktop environment and VNC server</string>
-    
-    
     <string name="about_text"><font size="32"><b>Linux Deploy</b></font>\n\nLicense: GPL v3\n\nSource: <a href="https://github.com/meefik/linuxdeploy">github.com</a>\n\nThis program comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions.\n\n&#169; 2012 Anton Skshidlevsky</string>
 
 </resources>

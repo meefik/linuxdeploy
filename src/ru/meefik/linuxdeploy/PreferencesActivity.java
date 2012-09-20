@@ -1,10 +1,7 @@
 package ru.meefik.linuxdeploy;
 
 import android.app.AlertDialog;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
@@ -13,8 +10,6 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
-import android.view.Window;
-import android.widget.TextView;
 
 
 public class PreferencesActivity extends PreferenceActivity implements Preference.OnPreferenceChangeListener,Preference.OnPreferenceClickListener {
@@ -181,6 +176,7 @@ public class PreferencesActivity extends PreferenceActivity implements Preferenc
 		        (new Thread() {
 		        	public void run() {
 		        		new ShellEnv(getBaseContext()).updateEnv();
+		        		new ShellEnv(getBaseContext()).updateConfig();
 		        	}
 		        }).start();
 				finish();

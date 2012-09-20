@@ -10,7 +10,6 @@ import java.util.List;
 
 import android.content.Context;
 import android.content.res.AssetManager;
-import android.util.Log;
 
 
 public class ShellEnv {
@@ -174,7 +173,7 @@ public class ShellEnv {
         params.add("PATH="+AppPrefs.HOME_DIR+"/bin:$PATH; export PATH");
         params.add("chmod -R a+rX "+AppPrefs.HOME_DIR+"/etc "+AppPrefs.HOME_DIR+"/deploy");
         params.add("chmod 755 "+AppPrefs.HOME_DIR+"/deploy/debootstrap/pkgdetails");
-        params.add("chmod 755 "+AppPrefs.HOME_DIR+"/deploy/openssh/sftp-server");
+        params.add("chmod -R 755 "+AppPrefs.HOME_DIR+"/deploy/openssh");
         params.add("chown -R root:root "+AppPrefs.HOME_DIR+"/bin "+AppPrefs.HOME_DIR+"/etc "+AppPrefs.HOME_DIR+"/deploy");
         params.add("exit");
    		ex = new ExecCmd(params);
@@ -205,6 +204,7 @@ public class ShellEnv {
     	params.add("sed -i 's|^MIRROR=.*|MIRROR="+AppPrefs.MIRROR+"|g' "+AppPrefs.HOME_DIR+"/etc/deploy.conf");
     	params.add("sed -i 's|^USER_NAME=.*|USER_NAME="+AppPrefs.USER_NAME+"|g' "+AppPrefs.HOME_DIR+"/etc/deploy.conf");
     	params.add("sed -i 's|^INSTALL_GUI=.*|INSTALL_GUI="+AppPrefs.INSTALL_GUI+"|g' "+AppPrefs.HOME_DIR+"/etc/deploy.conf");
+    	params.add("sed -i 's|^LANGUAGE=.*|LANGUAGE="+AppPrefs.LANGUAGE+"|g' "+AppPrefs.HOME_DIR+"/etc/deploy.conf");
     	params.add("sed -i 's|^CUSTOM_STARTUP=.*|CUSTOM_STARTUP="+AppPrefs.CUSTOM_STARTUP+"|g' "+AppPrefs.HOME_DIR+"/etc/deploy.conf");
     	params.add("sed -i 's|^SSH_START=.*|SSH_START="+AppPrefs.SSH_START+"|g' "+AppPrefs.HOME_DIR+"/etc/deploy.conf");
     	params.add("sed -i 's|^SSH_PORT=.*|SSH_PORT="+AppPrefs.SSH_PORT+"|g' "+AppPrefs.HOME_DIR+"/etc/deploy.conf");
@@ -212,6 +212,7 @@ public class ShellEnv {
     	params.add("sed -i 's|^VNC_DISPLAY=.*|VNC_DISPLAY="+AppPrefs.VNC_DISPLAY+"|g' "+AppPrefs.HOME_DIR+"/etc/deploy.conf");
     	params.add("sed -i 's|^VNC_DEPTH=.*|VNC_DEPTH="+AppPrefs.VNC_DEPTH+"|g' "+AppPrefs.HOME_DIR+"/etc/deploy.conf");
     	params.add("sed -i 's|^VNC_GEOMETRY=.*|VNC_GEOMETRY="+AppPrefs.VNC_GEOMETRY+"|g' "+AppPrefs.HOME_DIR+"/etc/deploy.conf");
+    	params.add("sed -i 's|^HOME_DIR=.*|HOME_DIR="+AppPrefs.HOME_DIR+"|g' "+AppPrefs.HOME_DIR+"/bin/linuxchroot");
     	params.add("[ $? -eq 0 ] && echo '[RESULT_DONE]' || echo '[RESULT_FAIL]'");
     	params.add("exit");
     	
@@ -222,22 +223,37 @@ public class ShellEnv {
    		List<String> params = new ArrayList<String>();
    		params.add("sh");
    		params.add("PATH="+AppPrefs.HOME_DIR+"/bin:$PATH; export PATH");
+   		params.add("MNT_TARGET="+AppPrefs.HOME_DIR+"/mnt");
    		params.add("echo '[PRINT_LN] =================='");
    		params.add("echo '[PRINT_LN] SYSTEM INFORMATION'");
    		params.add("echo '[PRINT_LN] =================='");
    		params.add("echo '[PRINT_LN] Device: '$(getprop ro.product.brand) $(getprop ro.product.device)");
    		params.add("echo '[PRINT_LN] CPU: '$(cat /proc/cpuinfo | grep ^Processor | awk -F': ' '{print $2}')");
+   		params.add("echo '[PRINT_LN] Android version: '$(getprop ro.build.version.release)");
    		params.add("echo '[PRINT_LN] '$(cat /proc/meminfo | grep ^MemTotal)");
    		params.add("echo '[PRINT_LN] '$(cat /proc/meminfo | grep ^SwapTotal)");
-   		params.add("echo '[PRINT_LN] Android version: '$(getprop ro.build.version.release)");
-   	   	params.add("echo '[PRINT_LN] SU version: '$(su -v)");
-   	   	params.add("echo '[PRINT_LN] SU location: '$(which su)");
-   		params.add("echo '[PRINT_LN] BusyBox version: '$(busybox | grep ^BusyBox | awk '{print $2}')");
-   		params.add("echo '[PRINT_LN] BusyBox location: '$(which busybox)");
-   		params.add("echo '[PRINT_WAIT] SSH server is running: '");
+   		params.add("echo '[PRINT_LN] Storages available:'");
+   		params.add("for disk in $EXTERNAL_STORAGE $SECONDARY_STORAGE; do echo \"[PRINT_WAIT] $disk: \"; " +
+   				"stat -f $disk | grep ^Block | xargs | awk -F' ' '{avail=sprintf(\"%.1f\",$10*$3/1024/1024/1024);" +
+   				"total=sprintf(\"%.1f\",$6*$3/1024/1024/1024);print \"[PRINT_NOTIME] \"avail\"/\"total\" GB\"}'; done");
+   		params.add("echo '[PRINT_LN] SU: '");
+   	   	params.add("echo '[PRINT_LN] Version: '$(su -v)");
+   	   	params.add("echo '[PRINT_LN] Location: '$(which su)");
+   	    params.add("echo '[PRINT_LN] BusyBox: '");
+   		params.add("echo '[PRINT_LN] Version: '$(busybox | grep ^BusyBox | awk '{print $2}')");
+   		params.add("echo '[PRINT_LN] Location: '$(which busybox)");
+   		params.add("echo '[PRINT_LN] Supported file systems: '");
+   		params.add("for fs in ext2 ext4; do echo \"[PRINT_WAIT] $fs: \"; " +
+   				"fs_support=`cat /proc/filesystems | grep $fs`; [ -n \"$fs_support\" ] && echo '[RESULT_YES]' || echo '[RESULT_NO]'; done");
+   		params.add("echo '[PRINT_LN] Mounted parts: '");
+   		params.add("for i in `cat /proc/mounts | grep $MNT_TARGET | awk '{print $2}' | sed \"s|$MNT_TARGET/*|/|g\"`; "+
+   				"do echo \"[PRINT_LN] $i\"; is_mounted=1; done");
+   		params.add("[ -z \"$is_mounted\" ] && echo '[PRINT_LN] ...not mounted anything'");
+   		params.add("echo '[PRINT_LN] Is running: '");
+   		params.add("echo '[PRINT_WAIT] SSH server: '");
    		params.add("is_ssh=`ps | grep '/usr/sbin/sshd' | grep -v grep`");
    		params.add("[ -n \"$is_ssh\" ] && echo '[RESULT_YES]' || echo '[RESULT_NO]'");
-   		params.add("echo '[PRINT_WAIT] VNC server is running: '");
+   		params.add("echo '[PRINT_WAIT] VNC server: '");
    		params.add("is_ssh=`ps | grep 'Xtightvnc' | grep -v grep`");
    		params.add("[ -n \"$is_ssh\" ] && echo '[RESULT_YES]' || echo '[RESULT_NO]'");
    		params.add("exit");

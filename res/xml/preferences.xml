@@ -51,6 +51,12 @@
                 android:title="@string/title_reset_preference"
                 android:summary="@string/summary_reset_preference" />
 	    
+	    <CheckBoxPreference
+    	        android:key="debug"
+        	    android:defaultValue="false"
+            	android:title="@string/title_debug_preference"
+            	android:summary="@string/summary_debug_preference" />
+	    
     </PreferenceCategory>
     
     <PreferenceCategory
@@ -69,7 +75,13 @@
             	android:title="@string/title_diskimage_preferences"
 	            android:summary="@string/summary_diskimage_preferences"
 	            android:dialogTitle="@string/dialog_title_diskimage_preference" />
-
+<!-- 
+       	<CheckBoxPreference
+  	        	android:key="loopdev"
+       	    	android:defaultValue="true"
+           		android:title="@string/title_loopdev_preferences"
+            	android:summary="@string/summary_loopdev_preferences" />
+ -->
 	    <EditTextPreference
     	        android:key="disksize"
         	    android:defaultValue="@string/summary_disksize_preferences"
