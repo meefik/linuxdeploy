@@ -13,14 +13,26 @@ The program interface supports English and Russian. Through the interface you ca
 
 Installing a new operating system takes about 30 minutes. The recommended minimum size of a disk image 1024 MB, without a GUI - 512 MB. After the initial setup a default password for SSH and VNC - changeme. The password can be changed standard tools OS.
 
-DESCRIPTION:
+#### Features: ####
 * Supported OS: Debian GNU / Linux
 * Version: stable, testing, unstable (squeeze, wheezy, sid)
 * Architecture: armel, armhf
+* Installation type: loop device, SD card
+* Supported file systems: ext2, ext4
 * Control Interface: SSH, VNC
 * Supported languages: English, Russian
 
-Source: <https://github.com/meefik/linuxdeploy>. This source code are written with use Android SDK/NDK and Eclipse ADT plugin. You can install the app from Google play: <https://play.google.com/store/apps/details?id=ru.meefik.linuxdeploy>.
+#### Install ####
+You can install the app from Google play: <https://play.google.com/store/apps/details?id=ru.meefik.linuxdeploy>.
+
+#### Update ####
+To perform after update: Settings -> Update ENV.
+
+#### Source code ####
+Source code: <https://github.com/meefik/linuxdeploy>. This source code are written with use Android SDK/NDK and Eclipse ADT plugin.
+
+#### Donate ####
+Donations: <http://meefik.github.com/linuxdeploy>
 
 
 Linux Deploy (Русский)
@@ -38,12 +50,28 @@ Copyright (C) 2012  Антон Скшидлевский
 
 Установка новой ОС занимает около 30 минут. Рекомендованный минимальный размер образа диска без графического интерфейса - 512 МБ, а с графическим интерфейсом - 1024 МБ. После начальной установки пароль для доступа по SSH и VNC назначается как "changeme", который можно сменить стандартными средствами ОС.
 
-КРАТКОЕ ОПИСАНИЕ:
+#### Характеристики: ####
 * Поддерживаемая ОС: Debian GNU/Linux
 * Версии дистрибутива: stable, testing, unstable (squeeze, wheezy, sid)
 * Сборка под архитектуру: armel, armhf
+* Тип установки: loop-файл, SD карта
+* Поддерживаемые файловые системы: ext2, ext4
 * Интерфейс управления: SSH, VNC
 * Поддерживаемые языки: русский, английский
 
-Исходный код: <https://github.com/meefik/linuxdeploy>. Этот исходный код написан с использованием Android SDK/NDK и Eclipse ADT plugin. Вы можете установить это приложени из Google play: <https://play.google.com/store/apps/details?id=ru.meefik.linuxdeploy>.
+#### Установка ####
+
+Вы можете установить это приложение из Google play: <https://play.google.com/store/apps/details?id=ru.meefik.linuxdeploy>.
+
+#### Обновление ####
+
+После обновления необходимо выполнить: Настройки -> Обновить окружение.
+
+#### Исходный код ####
+
+Исходный код доступен по адресу: <https://github.com/meefik/linuxdeploy>. Этот исходный код написан с использованием Android SDK/NDK и Eclipse ADT plugin.
+
+#### Помощь проекту ####
+
+Помочь проекту можно здесь: <http://meefik.github.com/linuxdeploy>.
 

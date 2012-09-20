@@ -38,28 +38,28 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:scaleType="center"
-            android:src="@drawable/ic_installbtn" />
+            android:src="@raw/installbtn" />
 
         <ImageButton
             android:id="@+id/StartBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:scaleType="center"
-            android:src="@drawable/ic_startbtn" />
+            android:src="@raw/startbtn" />
 
         <ImageButton
             android:id="@+id/StopBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:scaleType="center"
-            android:src="@drawable/ic_stopbtn" />
+            android:src="@raw/stopbtn" />
 
         <ImageButton
             android:id="@+id/UninstallBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:scaleType="center"
-            android:src="@drawable/ic_resetbtn" />
+            android:src="@raw/uninstallbtn" />
     </LinearLayout>
 
 </RelativeLayout>

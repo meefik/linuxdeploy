@@ -262,55 +262,59 @@ public class MainActivity extends Activity implements OnClickListener {
                 }
             }
         } catch (SocketException e) {
-            Log.e("linuxdeploy", e.toString());
+        	e.printStackTrace();
         }
         return null;
     }
    
     public static void printLogMsg(String msg) {
     	String printMsg = "";
-    	Log.d("linuxdeploy", msg);
-    	if (msg.matches("^\\[PRINT_ALL\\].*$")) {
-       		msg = msg.replaceFirst("\\[PRINT_ALL\\] ", "") ;
-    		logFlag = true;
-    	}
-    	if (msg.matches("^\\[PRINT_LN\\].*$")) {
-    		String currentTimeString = new SimpleDateFormat("HH:mm:ss").format(new Date());
-       		printMsg = "[" + currentTimeString + "] " + msg.replaceFirst("\\[PRINT_LN\\] ", "") + "\n";
-       		logFlag = false;
-    	}
-    	if (msg.matches("^\\[PRINT_NOTIME\\].*$")) {
-       		printMsg = msg.replaceFirst("\\[PRINT_NOTIME\\] ", "") + "\n";
-       		logFlag = false;
-    	}
-    	if (msg.matches("^\\[PRINT_WAIT\\].*$")) {
-    		String currentTimeString = new SimpleDateFormat("HH:mm:ss").format(new Date());
-       		printMsg = "[" + currentTimeString + "] " + msg.replaceFirst("\\[PRINT_WAIT\\] ", "");
-       		logFlag = false;
-    	}
-    	if (msg.matches("\\[RESULT_DONE\\]")) {
-       		printMsg = "DONE\n";
-       		logFlag = false;
-    	}
-    	if (msg.matches("\\[RESULT_SKIP\\]")) {
-       		printMsg = "SKIP\n";
-       		logFlag = false;
-    	}
-    	if (msg.matches("\\[RESULT_FAIL\\]")) {
-       		printMsg = "FAIL\n";
-       		logFlag = false;
-    	}
-    	if (msg.matches("\\[RESULT_YES\\]")) {
-       		printMsg = "YES\n";
-       		logFlag = false;
-    	}
-    	if (msg.matches("\\[RESULT_NO\\]")) {
-       		printMsg = "NO\n";
-       		logFlag = false;
-    	}
-    	if (logFlag) {
-    		String currentTimeString = new SimpleDateFormat("HH:mm:ss").format(new Date());
-       		printMsg = "[" + currentTimeString + "] " + msg + "\n";
+    	if (AppPrefs.DEBUG_MODE) {
+    		Log.d("linuxdeploy", msg);
+    		printMsg = msg + "\n";
+    	} else {
+        	if (msg.matches("^\\[PRINT_ALL\\].*$")) {
+           		msg = msg.replaceFirst("\\[PRINT_ALL\\] ", "") ;
+        		logFlag = true;
+        	}
+        	if (msg.matches("^\\[PRINT_LN\\].*$")) {
+        		String currentTimeString = new SimpleDateFormat("HH:mm:ss").format(new Date());
+           		printMsg = "[" + currentTimeString + "] " + msg.replaceFirst("\\[PRINT_LN\\] ", "") + "\n";
+           		logFlag = false;
+        	}
+        	if (msg.matches("^\\[PRINT_NOTIME\\].*$")) {
+           		printMsg = msg.replaceFirst("\\[PRINT_NOTIME\\] ", "") + "\n";
+           		logFlag = false;
+        	}
+        	if (msg.matches("^\\[PRINT_WAIT\\].*$")) {
+        		String currentTimeString = new SimpleDateFormat("HH:mm:ss").format(new Date());
+           		printMsg = "[" + currentTimeString + "] " + msg.replaceFirst("\\[PRINT_WAIT\\] ", "");
+           		logFlag = false;
+        	}
+        	if (msg.matches("\\[RESULT_DONE\\]")) {
+           		printMsg = "DONE\n";
+           		logFlag = false;
+        	}
+        	if (msg.matches("\\[RESULT_SKIP\\]")) {
+           		printMsg = "SKIP\n";
+           		logFlag = false;
+        	}
+        	if (msg.matches("\\[RESULT_FAIL\\]")) {
+           		printMsg = "FAIL\n";
+           		logFlag = false;
+        	}
+        	if (msg.matches("\\[RESULT_YES\\]")) {
+           		printMsg = "YES\n";
+           		logFlag = false;
+        	}
+        	if (msg.matches("\\[RESULT_NO\\]")) {
+           		printMsg = "NO\n";
+           		logFlag = false;
+        	}
+        	if (logFlag) {
+        		String currentTimeString = new SimpleDateFormat("HH:mm:ss").format(new Date());
+           		printMsg = "[" + currentTimeString + "] " + msg + "\n";
+        	}
     	}
     	if (printMsg.length() > 0) {
         	logView.append(printMsg);

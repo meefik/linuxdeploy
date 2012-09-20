@@ -13,6 +13,7 @@ public class AppPrefs {
 	public static String HOME_DIR;
 	public static String MNT_TARGET;
 	public static String IMG_TARGET;
+	public static String LOOP_DEV;
 	public static String IMG_SIZE;
 	public static String ARCH;
 	public static String SUITE;
@@ -32,6 +33,7 @@ public class AppPrefs {
 	public static Boolean WIFI_LOCK;
 	public static String LANGUAGE;
 	public static Integer FONT_SIZE;
+	public static Boolean DEBUG_MODE;
 	
 	public static final String ROOT_ASSETS = "home";
 	
@@ -56,11 +58,12 @@ public class AppPrefs {
 		VNC_DISPLAY = sp.getString("vncdisplay", "0");
 		VNC_DEPTH = sp.getString("vncdepth", "16");
 		VNC_GEOMETRY = sp.getString("vncwidth", "800")+"x"+sp.getString("vncheight", "400");
-		
+
 		SCREEN_LOCK = sp.getBoolean("screenlock", false);
 		WIFI_LOCK = sp.getBoolean("wifilock", false);
-		LANGUAGE = sp.getString("language", "en");
 		FONT_SIZE = Integer.parseInt(sp.getString("fontsize", "10"));
+		LANGUAGE = sp.getString("language", "en");
+		DEBUG_MODE = sp.getBoolean("debug", false);
 
 	}
 	

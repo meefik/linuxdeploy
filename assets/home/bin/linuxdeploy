@@ -24,7 +24,10 @@ mount)
 	mnt=`mount | grep $MNT_TARGET`
 	if [ -z "$mnt" ]; then
 		[ ! -d "$MNT_TARGET" ] && mkdir -p $MNT_TARGET
-		mount -o rw,loop -t ext2 $IMG_TARGET $MNT_TARGET
+		ext4_support=`cat /proc/filesystems | grep ext4`
+		FS_TYPE="ext2"
+		[ -n "$ext4_support" ] && FS_TYPE="ext4"
+		mount -o rw,relatime -t $FS_TYPE $IMG_TARGET $MNT_TARGET
 		if [ $? -eq 0 ]; then
 			echo "[RESULT_DONE]"
 		else
@@ -118,23 +121,29 @@ umount)
 	[ $? -eq 0 ] && echo "[RESULT_DONE]" || echo "[RESULT_FAIL]"
 ;;
 install)
-	if [ ! -f "$IMG_TARGET" ]; then
+	if [ ! -e "$IMG_TARGET" ]; then
 		echo "[PRINT_WAIT] Making new disk image ($IMG_SIZE MB) ... "
 		(set -e
-			dd if=/dev/zero of=$IMG_TARGET bs=1048576 count=$IMG_SIZE > /dev/null
-			loop=`losetup -f`
-			losetup $loop $IMG_TARGET		
-			mkfs.ext2 $loop
-			losetup -d $loop
+			dd if=/dev/zero of=$IMG_TARGET bs=1048576 count=$IMG_SIZE
 		exit 0)
 		[ $? -eq 0 ] && echo "[RESULT_DONE]" || echo "[RESULT_FAIL]"
 	fi
+	echo "[PRINT_WAIT] Making file system ... "
+	(set -e
+		ext4_support=`cat /proc/filesystems | grep ext4`
+		FS_TYPE="ext2"
+		[ -n "$ext4_support" ] && FS_TYPE="ext4"
+		is_loop=`losetup | grep $IMG_TARGET || true`
+		is_raw=`cat /proc/mounts | grep $IMG_TARGET || true`
+		[ -z "$is_loop" -a -z "$is_raw" ] && mke2fs -qF -t $FS_TYPE -O ^has_journal $IMG_TARGET
+	exit 0)
+	[ $? -eq 0 ] && echo "[RESULT_DONE]" || echo "[RESULT_FAIL]"
 
 	$0 mount
 	if [ $? -ne 0 ]; then
 		echo "[PRINT_LN] FAIL to deploy!"; exit 1
 	fi
-	
+
 	echo "[PRINT_ALL] Installing Linux base system: "
 	[ -z "$DEBOOTSTRAP_DIR" ] && DEBOOTSTRAP_DIR=$HOME_DIR/deploy/debootstrap
 	export DEBOOTSTRAP_DIR
@@ -209,7 +218,7 @@ config)
 	
 	echo "[PRINT_WAIT] sftp-server ... "
 	(set -e
-		cp $HOME_DIR/deploy/openssh/sftp-server $MNT_TARGET/usr/lib/openssh/sftp-server-fix
+		cp $HOME_DIR/deploy/openssh/$ARCH/sftp-server $MNT_TARGET/usr/lib/openssh/sftp-server-fix
 		sed -i "s|^Subsystem sftp .*|Subsystem sftp /usr/lib/openssh/sftp-server-fix|g" $MNT_TARGET/etc/ssh/sshd_config
 	exit 0)
 	[ $? -eq 0 ] && echo "[RESULT_DONE]" || echo "[RESULT_FAIL]"
@@ -218,7 +227,11 @@ config)
 	(set -e
 		echo "en_US.UTF-8 UTF-8" > $MNT_TARGET/etc/locale.gen
 		echo "ru_RU.UTF-8 UTF-8" >> $MNT_TARGET/etc/locale.gen
-		echo "LANG=en_US.UTF-8" > $MNT_TARGET/etc/default/locale
+		if [ "$LANGUAGE" == "ru" ]; then
+			echo "LANG=ru_RU.UTF-8" > $MNT_TARGET/etc/default/locale
+		else
+			echo "LANG=en_US.UTF-8" > $MNT_TARGET/etc/default/locale
+		fi
 		chroot $MNT_TARGET locale-gen
 	exit 0)
 	[ $? -eq 0 ] && echo "[RESULT_DONE]" || echo "[RESULT_FAIL]"
@@ -249,21 +262,22 @@ config)
 	echo "[PRINT_WAIT] \"$USER_NAME\" profile ... "
 	(set -e
 		MOTD="Debian GNU/Linux [running on Android via Linux Deploy]"
-		USER_GROUP_ID=5000
-		echo $MOTD > $MNT_TARGET/var/run/motd
-		echo $MOTD > $MNT_TARGET/etc/motd.tail
-		chroot $MNT_TARGET useradd -m -s /bin/bash -U -u $USER_GROUP_ID $USER_NAME || true
+		USER_ID=5000
+		GROUP_ID=5000
+		chroot $MNT_TARGET useradd -m -s /bin/bash -U -u $USER_ID $USER_NAME || true
 		chroot $MNT_TARGET sh -c "export $USER_NAME; echo \"changeme\nchangeme\" | (passwd $USER_NAME)"
-		USERHOME=`cat $MNT_TARGET/etc/passwd | grep "^$USER_NAME:" | awk -F: '{print $6}'`
+		USER_HOME=`cat $MNT_TARGET/etc/passwd | grep "^$USER_NAME:" | awk -F: '{print $6}'`
 		PROFILE_STR='PATH=$PATH:/usr/local/sbin:/usr/sbin:/sbin'
-		is_str=`cat $MNT_TARGET$USERHOME/.profile | grep "$PROFILE_STR" || true`
-		[ -z "$is_str" ] && echo $PROFILE_STR >> $MNT_TARGET$USERHOME/.profile
-		mkdir $MNT_TARGET$USERHOME/.vnc || true
-		echo "MPTcXfgXGiY=" | base64 -d > $MNT_TARGET$USERHOME/.vnc/passwd
-		chmod 600 $MNT_TARGET$USERHOME/.vnc/passwd
-		echo "startlxde" > $MNT_TARGET$USERHOME/.vnc/xstartup
-		chmod 755 $MNT_TARGET$USERHOME/.vnc/xstartup
-		chown -R $USER_GROUP_ID:$USER_GROUP_ID $MNT_TARGET$USERHOME/.vnc
+		is_str=`cat $MNT_TARGET$USER_HOME/.profile | grep "$PROFILE_STR" || true`
+		[ -z "$is_str" ] && echo $PROFILE_STR >> $MNT_TARGET$USER_HOME/.profile
+		mkdir $MNT_TARGET$USER_HOME/.vnc || true
+		echo "MPTcXfgXGiY=" | base64 -d > $MNT_TARGET$USER_HOME/.vnc/passwd
+		chmod 600 $MNT_TARGET$USER_HOME/.vnc/passwd
+		echo "startlxde" > $MNT_TARGET$USER_HOME/.vnc/xstartup
+		chmod 755 $MNT_TARGET$USER_HOME/.vnc/xstartup
+		chown -R $USER_ID:$GROUP_ID $MNT_TARGET$USER_HOME/.vnc
+		rm -f $MNT_TARGET/etc/motd || true
+		echo $MOTD > $MNT_TARGET/etc/motd
 	exit 0)
 	[ $? -eq 0 ] && echo "[RESULT_DONE]" || echo "[RESULT_FAIL]"
 ;;

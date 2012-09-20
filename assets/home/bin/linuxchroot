@@ -1,10 +1,10 @@
-#!./bin/sh
+#!/system/bin/sh
 #
 # Linux Deploy for Android
 # (C) 2012 Anton Skshidlevsky <meefik@gmail.com>
 #
 
-[ -z "$HOME_DIR" ] && HOME_DIR="."
+HOME_DIR="."
 
 if [ -r "$HOME_DIR/etc/deploy.conf" ]; then
 	. $HOME_DIR/etc/deploy.conf
@@ -17,4 +17,7 @@ TERM=vt100
 PATH=$HOME_DIR/bin:$PATH:/usr/bin:/bin:/usr/sbin:/sbin
 export TERM PATH
 
+cd $HOME_DIR
+$HOME_DIR/bin/linuxdeploy mount > /dev/null
 chroot $MNT_TARGET /bin/bash
+$HOME_DIR/bin/linuxdeploy umount > /dev/null

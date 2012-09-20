@@ -1,6 +1,32 @@
 Changelog (English)
 ===================
 
+1.1.2
+Added support for ext4 file system
+
+1.1.1
+Bugfix: error making new user during the installation of Debian Squeeze (it also error starting VNC server)
+
+1.1.0
+Added ability to install OS on SD card (without loop device)
+Added debug mode
+
+1.0.9
+Language of OS matched the language of interface
+
+1.0.8
+Bugfix: make a disk image larger than 1 GB
+
+1.0.7
+Added script <INSTALL_DIR>/bin/linuxchroot
+Added information of mounted parts in SysInfo
+
+1.0.6
+Added information of storages in SysInfo
+
+1.0.5
+ARMEL/ARMHF support for SFTP (sftp-server)
+
 1.0.4
 Fixed incomplete removal
 Interface improvements
@@ -11,7 +37,7 @@ Added function to reconfigure the system
 Improved backlight control
 
 1.0.2
-Fix SysInfo check SSH is running
+Fixed SysInfo check SSH is running
 
 1.0.1
 Added information about ports on the title bar
@@ -21,6 +47,32 @@ Updated list packages of base system installation
 
 История изменений (Русский)
 ===========================
+
+1.1.2
+Добавлена поддержка файловой системы ext4
+
+1.1.1
+Исправлена ошибка создания нового пользователя при установке версии Debian Squeeze (она же ошибка запуска VNC)
+
+1.1.0
+Добавлена возможность установки ОС на SD карту (без использования образа диска)
+Добавлен режим отладки
+
+1.0.9
+Язык устанавливаемой системы теперь соответствует языку интерфейса программы
+
+1.0.8
+Исправлена ошибка создания образа диска больше 1 ГБ
+
+1.0.7
+Добавлен скрипт <INSTALL_DIR>/bin/linuxchroot
+Обновлена информация о системе, добавлен статус смонтированных разделов
+
+1.0.6
+Добавлена информация о доступных внешних накопителях
+
+1.0.5
+Поддержка обоих архитектур ARMEL/ARMHF для SFTP (sftp-server)
 
 1.0.4
 Исправлена ошибка неполного удаления
