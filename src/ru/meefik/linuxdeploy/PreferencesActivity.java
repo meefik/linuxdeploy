@@ -28,8 +28,11 @@ public class PreferencesActivity extends PreferenceActivity implements Preferenc
         EditTextPreference fontsize = (EditTextPreference)this.findPreference("fontsize");
         fontsize.setOnPreferenceChangeListener(this);
         
-        EditTextPreference customstartup = (EditTextPreference)this.findPreference("customstartup");
-        customstartup.setOnPreferenceChangeListener(this);
+        EditTextPreference customscript = (EditTextPreference)this.findPreference("customscript");
+        customscript.setOnPreferenceChangeListener(this);
+        
+        EditTextPreference mountpath = (EditTextPreference)this.findPreference("mountpath");
+        mountpath.setOnPreferenceChangeListener(this);
         
         EditTextPreference installdir = (EditTextPreference)this.findPreference("installdir");
         installdir.setOnPreferenceChangeListener(this);
@@ -66,6 +69,9 @@ public class PreferencesActivity extends PreferenceActivity implements Preferenc
         
         EditTextPreference vncheight = (EditTextPreference)this.findPreference("vncheight");
         vncheight.setOnPreferenceChangeListener(this);
+        
+        EditTextPreference logfile = (EditTextPreference)this.findPreference("logfile");
+        logfile.setOnPreferenceChangeListener(this);
         
 
         PreferenceScreen installenv = (PreferenceScreen)this.findPreference("installenv");
@@ -115,11 +121,11 @@ public class PreferencesActivity extends PreferenceActivity implements Preferenc
         EditTextPreference fontsize = (EditTextPreference)this.findPreference("fontsize");
         fontsize.setSummary(fontsize.getText());
         
-        EditTextPreference customstartup = (EditTextPreference)this.findPreference("customstartup");
-        if (customstartup.getText().length() > 0)
-        	customstartup.setSummary(customstartup.getText());
-        else
-        	customstartup.setSummary(R.string.summary_customstartup_preferences);
+        EditTextPreference customscript = (EditTextPreference)this.findPreference("customscript");
+        customscript.setSummary(customscript.getText());
+        
+        EditTextPreference mountpath = (EditTextPreference)this.findPreference("mountpath");
+        mountpath.setSummary(mountpath.getText());
         
         EditTextPreference installdir = (EditTextPreference)this.findPreference("installdir");
         installdir.setSummary(installdir.getText());
@@ -156,6 +162,9 @@ public class PreferencesActivity extends PreferenceActivity implements Preferenc
         
         EditTextPreference vncheight = (EditTextPreference)this.findPreference("vncheight");
         vncheight.setSummary(vncheight.getText());
+        
+        EditTextPreference logfile = (EditTextPreference)this.findPreference("logfile");
+        logfile.setSummary(logfile.getText());
         
 	}
 	

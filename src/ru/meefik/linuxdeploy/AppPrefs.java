@@ -21,6 +21,7 @@ public class AppPrefs {
 	public static String USER_NAME;
 	public static String INSTALL_GUI;
 	public static String CUSTOM_STARTUP;
+	public static String CUSTOM_MOUNT;
 	public static String SSH_START;
 	public static String SSH_PORT;
 	public static String VNC_START;
@@ -33,7 +34,12 @@ public class AppPrefs {
 	public static Boolean WIFI_LOCK;
 	public static String LANGUAGE;
 	public static Integer FONT_SIZE;
+	
+	// to debug
 	public static Boolean DEBUG_MODE;
+	public static String TRACE_MODE;
+	public static Boolean LOGGING;
+	public static String LOG_FILE;
 	
 	public static final String ROOT_ASSETS = "home";
 	
@@ -51,7 +57,8 @@ public class AppPrefs {
 		MIRROR = sp.getString("mirror", "http://mirror.yandex.ru/debian");
 		USER_NAME = sp.getString("username", "admin");
 		INSTALL_GUI = sp.getBoolean("installgui", false) ? "y" : "n";
-		CUSTOM_STARTUP = sp.getString("customstartup", "");
+		CUSTOM_STARTUP = sp.getBoolean("startupcustom", false) ? sp.getString("customscript", "/etc/init.d/myscript") : "";
+		CUSTOM_MOUNT = sp.getBoolean("mountcustom", false) ? sp.getString("mountpath", "/mnt/usbdisk:/system") : "";
 		SSH_START = sp.getBoolean("sshstartup", false) ? "y" : "n";
 		SSH_PORT = sp.getString("sshport", "22");
 		VNC_START = sp.getBoolean("vncstartup", false) ? "y" : "n";
@@ -63,8 +70,11 @@ public class AppPrefs {
 		WIFI_LOCK = sp.getBoolean("wifilock", false);
 		FONT_SIZE = Integer.parseInt(sp.getString("fontsize", "10"));
 		LANGUAGE = sp.getString("language", "en");
-		DEBUG_MODE = sp.getBoolean("debug", false);
 
+		DEBUG_MODE = sp.getBoolean("debug", false);
+		TRACE_MODE = DEBUG_MODE && sp.getBoolean("trace", false) ? "y" : "n";
+		LOGGING = sp.getBoolean("logs", false);
+		LOG_FILE = sp.getString("logfile", "/mnt/sdcard/linuxdeploy.log");
 	}
 	
     // multilanguage support

@@ -1,5 +1,6 @@
 package ru.meefik.linuxdeploy;
 
+import java.io.FileOutputStream;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -7,17 +8,18 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
 
+import android.net.wifi.WifiManager;
+import android.net.wifi.WifiManager.WifiLock;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
-import android.provider.Settings;
+import android.os.PowerManager.WakeLock;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,7 +35,8 @@ public class MainActivity extends Activity implements OnClickListener {
 	private static ScrollView logScroll;
 	private static Boolean logFlag = false;
 	static Handler handler;
-	private PowerManager.WakeLock wl;
+	private WakeLock wake_lock;
+	private WifiLock wifi_lock;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,7 +64,11 @@ public class MainActivity extends Activity implements OnClickListener {
         
         // Screen lock
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "linuxdeploy");
+        wake_lock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "linuxdeploy_wake_lock");
+        
+        // WiFi lock
+        WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+        wifi_lock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL, "linuxdeploy_wifi_lock");
         
 		// ok we back, load the saved text
         if ( savedInstanceState != null ) {
@@ -208,11 +215,9 @@ public class MainActivity extends Activity implements OnClickListener {
     protected void onPause() {
         super.onPause();
         // Screen unlock
-        if (wl.isHeld()) wl.release();
+        if (wake_lock.isHeld()) wake_lock.release();
         // WiFi unlock
-        Settings.System.putInt(getContentResolver(),
-        		Settings.System.WIFI_SLEEP_POLICY, 
-        		Settings.System.WIFI_SLEEP_POLICY_DEFAULT);
+        if (wifi_lock.isHeld()) wifi_lock.release();
     }
 
 	@Override
@@ -240,14 +245,10 @@ public class MainActivity extends Activity implements OnClickListener {
 		logView.setTextSize(TypedValue.COMPLEX_UNIT_SP,AppPrefs.FONT_SIZE);
     	
 		// Screen lock
-		if (AppPrefs.SCREEN_LOCK) wl.acquire();
-
+		if (AppPrefs.SCREEN_LOCK) wake_lock.acquire();
+		
 		// WiFi lock
-		if (AppPrefs.WIFI_LOCK) {
-			Settings.System.putInt(getContentResolver(),
-					Settings.System.WIFI_SLEEP_POLICY, 
-					Settings.System.WIFI_SLEEP_POLICY_NEVER);
-		}
+		if (AppPrefs.WIFI_LOCK) wifi_lock.acquire();
 	}
 	
     public String getLocalIpAddress() {
@@ -269,56 +270,50 @@ public class MainActivity extends Activity implements OnClickListener {
    
     public static void printLogMsg(String msg) {
     	String printMsg = "";
+    	String currentTimeString = "[" + new SimpleDateFormat("HH:mm:ss").format(new Date()) + "] ";
     	if (AppPrefs.DEBUG_MODE) {
-    		Log.d("linuxdeploy", msg);
-    		printMsg = msg + "\n";
+    		printMsg = currentTimeString + msg + "\n";
     	} else {
-        	if (msg.matches("^\\[PRINT_ALL\\].*$")) {
-           		msg = msg.replaceFirst("\\[PRINT_ALL\\] ", "") ;
-        		logFlag = true;
+        	if (logFlag) {
+        		printMsg = currentTimeString + msg + "\n";
+        	}
+        	if (msg.matches("^\\[RESULT\\].*$")) {
+        		printMsg = msg.replaceFirst("\\[RESULT\\] ", "");
+        	}
+        	if (msg.matches("^\\[RESULT_LN\\].*$")) {
+        		printMsg = msg.replaceFirst("\\[RESULT_LN\\] ", "") + "\n";
+        	}
+        	if (msg.matches("^\\[PRINT\\].*$")) {
+        		printMsg = currentTimeString + msg.replaceFirst("\\[PRINT\\] ", "");
+        		logFlag = false;
         	}
         	if (msg.matches("^\\[PRINT_LN\\].*$")) {
-        		String currentTimeString = new SimpleDateFormat("HH:mm:ss").format(new Date());
-           		printMsg = "[" + currentTimeString + "] " + msg.replaceFirst("\\[PRINT_LN\\] ", "") + "\n";
-           		logFlag = false;
+        		printMsg = currentTimeString + msg.replaceFirst("\\[PRINT_LN\\] ", "") + "\n";
+        		logFlag = false;
         	}
-        	if (msg.matches("^\\[PRINT_NOTIME\\].*$")) {
-           		printMsg = msg.replaceFirst("\\[PRINT_NOTIME\\] ", "") + "\n";
-           		logFlag = false;
-        	}
-        	if (msg.matches("^\\[PRINT_WAIT\\].*$")) {
-        		String currentTimeString = new SimpleDateFormat("HH:mm:ss").format(new Date());
-           		printMsg = "[" + currentTimeString + "] " + msg.replaceFirst("\\[PRINT_WAIT\\] ", "");
-           		logFlag = false;
-        	}
-        	if (msg.matches("\\[RESULT_DONE\\]")) {
-           		printMsg = "DONE\n";
-           		logFlag = false;
-        	}
-        	if (msg.matches("\\[RESULT_SKIP\\]")) {
-           		printMsg = "SKIP\n";
-           		logFlag = false;
-        	}
-        	if (msg.matches("\\[RESULT_FAIL\\]")) {
-           		printMsg = "FAIL\n";
-           		logFlag = false;
-        	}
-        	if (msg.matches("\\[RESULT_YES\\]")) {
-           		printMsg = "YES\n";
-           		logFlag = false;
-        	}
-        	if (msg.matches("\\[RESULT_NO\\]")) {
-           		printMsg = "NO\n";
-           		logFlag = false;
-        	}
-        	if (logFlag) {
-        		String currentTimeString = new SimpleDateFormat("HH:mm:ss").format(new Date());
-           		printMsg = "[" + currentTimeString + "] " + msg + "\n";
+        	if (msg.matches("^\\[PRINT_ALL\\].*$")) {
+        		printMsg = currentTimeString + msg.replaceFirst("\\[PRINT_ALL\\] ", "") + "\n";
+        		logFlag = true;
         	}
     	}
     	if (printMsg.length() > 0) {
         	logView.append(printMsg);
         	logScroll.fullScroll(ScrollView.FOCUS_DOWN);
+        	if (AppPrefs.LOGGING) {
+        		saveLogs(printMsg);
+        	}
+    	}
+    }
+    
+    public static void saveLogs(String msg) {
+    	byte[] data = msg.getBytes();
+    	try {
+    		FileOutputStream fos = new FileOutputStream(AppPrefs.LOG_FILE, true);
+    	    fos.write(data);
+    	    fos.flush();
+    	    fos.close();
+    	} catch (Exception e) {
+    		e.printStackTrace();
     	}
     }
 

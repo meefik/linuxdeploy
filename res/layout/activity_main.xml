@@ -27,12 +27,14 @@
 
     <LinearLayout
         android:id="@+id/linearLayout1"
-        android:layout_width="wrap_content"
+        android:padding="2dp"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" >
 
         <ImageButton
+            android:layout_weight="0.25"
             android:id="@+id/InstallBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -40,6 +42,7 @@
             android:src="@raw/installbtn" />
 
         <ImageButton
+            android:layout_weight="0.25"
             android:id="@+id/StartBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -47,6 +50,7 @@
             android:src="@raw/startbtn" />
 
         <ImageButton
+            android:layout_weight="0.25"
             android:id="@+id/StopBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -54,6 +58,7 @@
             android:src="@raw/stopbtn" />
 
         <ImageButton
+            android:layout_weight="0.25"
             android:id="@+id/UninstallBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

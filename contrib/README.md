@@ -1,7 +1,7 @@
 Sources
 =======
 
-BusyBox: https://github.com/tias/android-busybox-ndk
+BusyBox: http://www.busybox.net/source.html
 
 e2fsprogs: http://packages.debian.org/squeeze/e2fsprogs
 

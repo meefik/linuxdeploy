@@ -50,13 +50,7 @@
 	        	android:key="reset"
                 android:title="@string/title_reset_preference"
                 android:summary="@string/summary_reset_preference" />
-	    
-	    <CheckBoxPreference
-    	        android:key="debug"
-        	    android:defaultValue="false"
-            	android:title="@string/title_debug_preference"
-            	android:summary="@string/summary_debug_preference" />
-	    
+
     </PreferenceCategory>
     
     <PreferenceCategory
@@ -149,22 +143,35 @@
        	    	android:defaultValue="false"
            		android:title="@string/title_vncstartup_preferences"
             	android:summary="@string/summary_vncstartup_preferences" />
-	        	
-       	<EditTextPreference
-   	        	android:key="customstartup"
-       	    	android:defaultValue=""
-           		android:title="@string/title_customstartup_preferences"
-            	android:summary="@string/summary_customstartup_preferences"
-				android:dialogTitle="@string/dialog_title_customstartup_preference" />
-       	
-<!-- 
-	    <CheckBoxPreference
-    	        android:key="autostart"
-        	    android:defaultValue="false"
-            	android:title="@string/title_autostart_preferences"
-            	android:summary="@string/summary_autostart_preferences" />
- -->
 
+	    <CheckBoxPreference
+    	        android:key="startupcustom"
+        	    android:defaultValue="false"
+            	android:title="@string/title_startupcustom_preferences"
+            	android:summary="@string/summary_startupcustom_preferences" />
+
+       	<EditTextPreference
+       	    	android:dependency="startupcustom"
+   	        	android:key="customscript"
+       	    	android:defaultValue="@string/summary_customscript_preferences"
+           		android:title="@string/title_customscript_preferences"
+            	android:summary="@string/summary_customscript_preferences"
+				android:dialogTitle="@string/dialog_title_customscript_preference" />
+       	
+	    <CheckBoxPreference
+    	        android:key="mountcustom"
+        	    android:defaultValue="false"
+            	android:title="@string/title_mountcustom_preferences"
+            	android:summary="@string/summary_mountcustom_preferences" />
+
+       	<EditTextPreference
+       	    	android:dependency="mountcustom"
+   	        	android:key="mountpath"
+       	    	android:defaultValue="@string/summary_mountpath_preferences"
+           		android:title="@string/title_mountpath_preferences"
+            	android:summary="@string/summary_mountpath_preferences"
+				android:dialogTitle="@string/dialog_title_mountpath_preference" />
+       	
 	</PreferenceCategory>
 	
     <PreferenceCategory
@@ -223,5 +230,36 @@
            		android:dialogTitle="@string/dialog_title_vncheight_preference" />
 
     </PreferenceCategory>
-
+    
+    <PreferenceCategory
+            android:title="@string/debug_preferences">
+	    
+	    <CheckBoxPreference
+    	        android:key="debug"
+        	    android:defaultValue="false"
+            	android:title="@string/title_debug_preference"
+            	android:summary="@string/summary_debug_preference" />
+	    
+	    <CheckBoxPreference
+	        	android:dependency="debug"
+    	        android:key="trace"
+        	    android:defaultValue="false"
+            	android:title="@string/title_trace_preference"
+            	android:summary="@string/summary_trace_preference" />
+	    
+	    <CheckBoxPreference
+    	        android:key="logs"
+        	    android:defaultValue="false"
+            	android:title="@string/title_logs_preference"
+            	android:summary="@string/summary_logs_preference" />
+	    
+   		<EditTextPreference
+    		    android:dependency="logs"
+   	        	android:key="logfile"
+       	    	android:defaultValue="@string/summary_logfile_preferences"
+           		android:title="@string/title_logfile_preferences"
+           		android:summary="@string/summary_logfile_preferences"
+           		android:dialogTitle="@string/dialog_title_logfile_preference" />
+	    
+    </PreferenceCategory>
 </PreferenceScreen>
