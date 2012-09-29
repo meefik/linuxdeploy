@@ -45,9 +45,6 @@
     <string name="summary_reset_preference">Восстановить исходные параметры приложения</string>
     <string name="message_reset_confirm_dialog">Восстановить исходные параметры приложения?</string>
 
-    <string name="title_debug_preference">Режим отладки</string>
-    <string name="summary_debug_preference">Включить отображение отладочной информации</string>
-
     <string name="deploy_preferences">Развертывание</string>
 
     <string name="title_installdir_preferences">Директория установки</string>
@@ -95,13 +92,21 @@
 
     <string name="title_vncstartup_preferences">VNC</string>
     <string name="summary_vncstartup_preferences">Разрешить запуск VNC сервера</string>
-
-    <string name="title_customstartup_preferences">Файл сценария</string>
-    <string name="summary_customstartup_preferences">Пустое значение отключает запуск сценария</string>
-    <string name="dialog_title_customstartup_preference">Файл сценария</string>
-
-    <string name="title_autostart_preferences">Автозапуск</string>
-    <string name="summary_autostart_preferences">Включить автоматический запуск сервисов при загрузке</string>
+    
+    <string name="title_startupcustom_preferences">Cценарий</string>
+    <string name="summary_startupcustom_preferences">Разрешить запуск сценария</string>
+    
+    <string name="title_customscript_preferences">Файл сценария</string>
+    <string name="summary_customscript_preferences">/etc/init.d/myscript</string>
+    <string name="dialog_title_customscript_preference">Файл сценария</string>
+    
+    <string name="title_mountcustom_preferences">Монтирование</string>
+    <string name="summary_mountcustom_preferences">Включить выборочное монтирование</string>
+    
+    <string name="title_mountpath_preferences">Путь монтирования</string>
+    <string name="summary_mountpath_preferences">/mnt/usbdisk:/system</string>
+    <string name="dialog_title_mountpath_preference">Путь монтирования</string>
+    
     <string name="ssh_preferences">SSH</string>
     
     <string name="title_sshport_preferences">Порт</string>
@@ -125,6 +130,21 @@
     <string name="title_vncheight_preferences">Высота экрана</string>
     <string name="summary_vncheight_preferences">400</string>
     <string name="dialog_title_vncheight_preference">VNC: высота экрана</string>
+    
+    <string name="debug_preferences">Отладка</string>
+    
+    <string name="title_debug_preference">Режим отладки</string>
+    <string name="summary_debug_preference">Включить отображение отладочной информации</string>
+    
+    <string name="title_trace_preference">Режим трассировки</string>
+    <string name="summary_trace_preference">Перейти в режим трассировки</string>
+    
+    <string name="title_logs_preference">Журналирование</string>
+    <string name="summary_logs_preference">Сохранять отчеты в файл</string>
+    
+    <string name="title_logfile_preferences">Файл журнала</string>
+    <string name="summary_logfile_preferences">/mnt/sdcard/linuxdeploy.log</string>
+    <string name="dialog_title_logfile_preference">Файл журнала</string>
 
     <string name="about_text"><font size="32"><b>Linux Deploy</b></font>\n\nЛицензия: GPL v3\n\nИсходный код: <a href="https://github.com/meefik/linuxdeploy">github.com</a>\n\nЭта программа поставляется БЕЗ ВСЯКИХ ГАРАНТИЙ, а автор не несет ответственности за любые возможные последствия ее использования. Это свободное программное обеспечение, и вы можете распространять его при определенных условиях.\n\n&#169; 2012 Антон Скшидлевский</string>
 

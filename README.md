@@ -11,7 +11,7 @@ The application creates a disk image on the flash card, mount it and install the
 
 The program interface supports English and Russian. Through the interface you can manage the process of installing the OS, and after installation, you can start and stop services of the new system (there is support for running your scripts). The installation process is displayed as text reports in the main application window. During the installation, the program will adjust the work environment, which includes the base system, SSH server, VNC server and desktop environment LXDE. Also through the program interface to manage server settings SSH and VNC.
 
-Installing a new operating system takes about 30 minutes. The recommended minimum size of a disk image 1024 MB, without a GUI - 512 MB. After the initial setup a default password for SSH and VNC - changeme. The password can be changed standard tools OS.
+Installing a new operating system takes about 30 minutes. The recommended minimum size of a disk image 1024 MB, without a GUI - 512 MB. When you install Linux in disk image on the flash card with the FAT32 file system, image size should not exceed 4095 MB! After the initial setup a default password for SSH and VNC - changeme. The password can be changed standard tools OS.
 
 #### Features: ####
 * Supported OS: Debian GNU / Linux
@@ -26,7 +26,7 @@ Installing a new operating system takes about 30 minutes. The recommended minimu
 You can install the app from Google play: <https://play.google.com/store/apps/details?id=ru.meefik.linuxdeploy>.
 
 #### Update ####
-To perform after update: Settings -> Update ENV.
+After updating the program you must perform: Settings -> Update ENV.
 
 #### Source code ####
 Source code: <https://github.com/meefik/linuxdeploy>. This source code are written with use Android SDK/NDK and Eclipse ADT plugin.
@@ -48,7 +48,7 @@ Copyright (C) 2012  Антон Скшидлевский
 
 Интерфейс программы поддерживает английский и русский языки. Через интерфейс программы можно управлять процессом установки ОС, а после установки можно запускать и останавливать службы новой системы (есть поддержка запуска своих сценариев). Процесс установки отображается в виде текстовых отчетов в главном окне приложения. Во время установки программа сама настраивает рабочее окружение, которое включает в себя базовую систему, сервер SSH, сервер VNC и графическую среду LXDE. Также через интерфейс программы можно управлять параметрами сервера SSH и VNC.
 
-Установка новой ОС занимает около 30 минут. Рекомендованный минимальный размер образа диска без графического интерфейса - 512 МБ, а с графическим интерфейсом - 1024 МБ. После начальной установки пароль для доступа по SSH и VNC назначается как "changeme", который можно сменить стандартными средствами ОС.
+Установка новой ОС занимает около 30 минут. Рекомендованный минимальный размер образа диска без графического интерфейса - 512 МБ, а с графическим интерфейсом - 1024 МБ. При установке ОС в образ на карту памяти с файловой системой FAT32 размер образа не должен превышать 4095 МБ! После начальной установки пароль для доступа по SSH и VNC назначается как "changeme", который можно сменить стандартными средствами ОС.
 
 #### Характеристики: ####
 * Поддерживаемая ОС: Debian GNU/Linux

@@ -22,7 +22,7 @@
     <string name="app_preferences">Application</string>
     
     <string name="title_screenlock_preference">Lock screen</string>
-    <string name="summary_screenlock_preference">Allow to keep screen active while the application is running</string>
+    <string name="summary_screenlock_preference">Keep screen active while the application is running</string>
 
     <string name="title_wifilock_preference">Lock WiFi</string>
     <string name="summary_wifilock_preference">Keep WiFi active while the application is running</string>
@@ -39,16 +39,13 @@
     <string name="dialog_title_fontsize_preference">Font size</string>
 
     <string name="title_installenv_preference">Update ENV</string>
-    <string name="summary_installenv_preference">Install or update the environment</string>
-    <string name="message_installenv_confirm_dialog">Run update the environment?</string>
+    <string name="summary_installenv_preference">Update the operating environment</string>
+    <string name="message_installenv_confirm_dialog">Update the operating environment?</string>
 
     <string name="title_reset_preference">Reset settings</string>
     <string name="summary_reset_preference">Restore default settings</string>
     <string name="message_reset_confirm_dialog">Restore settings by default?</string>
     
-    <string name="title_debug_preference">Debug mode</string>
-    <string name="summary_debug_preference">Enable display of debugging information</string>
-
     <string name="deploy_preferences">Deploy</string>
     
     <string name="title_installdir_preferences">Installation directory</string>
@@ -97,13 +94,20 @@
     <string name="title_vncstartup_preferences">VNC</string>
     <string name="summary_vncstartup_preferences">Enable VNC server startup</string>
     
-    <string name="title_customstartup_preferences">Custom script</string>
-    <string name="summary_customstartup_preferences">If not set to disable, default not set</string>
-    <string name="dialog_title_customstartup_preference">Custom script</string>
-
-    <string name="title_autostart_preferences">Autostart</string>
-    <string name="summary_autostart_preferences">Enable automatically start the services</string>
+    <string name="title_startupcustom_preferences">Custom startup</string>
+    <string name="summary_startupcustom_preferences">Allow a custom script</string>
     
+    <string name="title_customscript_preferences">Script file</string>
+    <string name="summary_customscript_preferences">/etc/init.d/myscript</string>
+    <string name="dialog_title_customscript_preference">Script file</string>
+    
+    <string name="title_mountcustom_preferences">Custom mount</string>
+    <string name="summary_mountcustom_preferences">Allow to mount custom partitions</string>
+    
+    <string name="title_mountpath_preferences">Mount path</string>
+    <string name="summary_mountpath_preferences">/mnt/usbdisk:/system</string>
+    <string name="dialog_title_mountpath_preference">Mount path</string>
+
     <string name="ssh_preferences">SSH</string>
     
     <string name="title_sshport_preferences">Port</string>
@@ -127,7 +131,22 @@
     <string name="title_vncheight_preferences">Height</string>
     <string name="summary_vncheight_preferences">400</string>
     <string name="dialog_title_vncheight_preference">VNC: screen height</string>
-        
+    
+    <string name="debug_preferences">Debug</string>
+
+    <string name="title_debug_preference">Debug mode</string>
+    <string name="summary_debug_preference">Show debugging information</string>
+    
+    <string name="title_trace_preference">Trace mode</string>
+    <string name="summary_trace_preference">Enable tracing mode</string>
+    
+    <string name="title_logs_preference">Logging</string>
+    <string name="summary_logs_preference">Save logs to file</string>
+    
+    <string name="title_logfile_preferences">Log file</string>
+    <string name="summary_logfile_preferences">/mnt/sdcard/linuxdeploy.log</string>
+    <string name="dialog_title_logfile_preference">Log file</string>
+    
     <string name="about_text"><font size="32"><b>Linux Deploy</b></font>\n\nLicense: GPL v3\n\nSource: <a href="https://github.com/meefik/linuxdeploy">github.com</a>\n\nThis program comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions.\n\n&#169; 2012 Anton Skshidlevsky</string>
 
 </resources>

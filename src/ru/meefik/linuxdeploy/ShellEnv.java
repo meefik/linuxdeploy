@@ -31,6 +31,7 @@ public class ShellEnv {
 		
 			List<String> params = new ArrayList<String>();
 			params.add("su");
+			if (AppPrefs.TRACE_MODE.equals("y")) params.add("set -x");
 			params.add("PATH="+AppPrefs.HOME_DIR+"/bin:$PATH; export PATH");
 			params.add("echo '[PRINT_LN] >>> begin: "+cmd+"'");
 			params.add("cd "+AppPrefs.HOME_DIR);
@@ -139,38 +140,44 @@ public class ShellEnv {
     }
     
     public void updateEnv() {
-   		sendLogs("[PRINT_WAIT] Updating environment ... ");
+   		sendLogs("[PRINT] Updating environment ... ");
    	    
    		if (AppPrefs.HOME_DIR.length() == 0) {
-       		sendLogs("[RESULT_FAIL]");
+       		sendLogs("[RESULT_LN] fail");
        		return;
    		}
 
    		List<String> params = new ArrayList<String>();
    		params.add("su");
+   		if (AppPrefs.TRACE_MODE.equals("y")) params.add("set -x");
    		params.add("mkdir "+AppPrefs.HOME_DIR);
-   		params.add("rm -rf "+AppPrefs.HOME_DIR+"/bin "+AppPrefs.HOME_DIR+"/etc "+AppPrefs.HOME_DIR+"/deploy");
+   		params.add("rm -R "+AppPrefs.HOME_DIR+"/bin");
+   		params.add("rm -R "+AppPrefs.HOME_DIR+"/etc");
+   		params.add("rm -R "+AppPrefs.HOME_DIR+"/deploy");
    		params.add("chmod 777 "+AppPrefs.HOME_DIR);
    		params.add("exit");
    		ExecCmd ex = new ExecCmd(params);
    		ex.run();
    		if (!ex.status) {
-   			sendLogs("[RESULT_FAIL]");
+   			sendLogs("[RESULT_LN] fail");
    			return;
    		}
 
        	boolean copyResult = copyFileOrDir(AppPrefs.HOME_DIR,AppPrefs.ROOT_ASSETS);
    		if (!copyResult) {
-   			sendLogs("[RESULT_FAIL]");
+   			sendLogs("[RESULT_LN] fail");
    			return;
    		}
 
        	params.clear();
        	params.add("su");
+       	if (AppPrefs.TRACE_MODE.equals("y")) params.add("set -x");
        	params.add("chmod 755 "+AppPrefs.HOME_DIR);
-        params.add("chmod -R 755 "+AppPrefs.HOME_DIR+"/bin");
+       	params.add("chmod 755 "+AppPrefs.HOME_DIR+"/bin");
+        params.add("chmod 755 "+AppPrefs.HOME_DIR+"/bin/busybox");
         params.add(AppPrefs.HOME_DIR+"/bin/busybox --install "+AppPrefs.HOME_DIR+"/bin");
         params.add("PATH="+AppPrefs.HOME_DIR+"/bin:$PATH; export PATH");
+        params.add("chmod -R 755 "+AppPrefs.HOME_DIR+"/bin");
         params.add("chmod -R a+rX "+AppPrefs.HOME_DIR+"/etc "+AppPrefs.HOME_DIR+"/deploy");
         params.add("chmod 755 "+AppPrefs.HOME_DIR+"/deploy/debootstrap/pkgdetails");
         params.add("chmod -R 755 "+AppPrefs.HOME_DIR+"/deploy/openssh");
@@ -179,10 +186,10 @@ public class ShellEnv {
    		ex = new ExecCmd(params);
    		ex.run();
    		if (!ex.status) {
-   			sendLogs("[RESULT_FAIL]");
+   			sendLogs("[RESULT_LN] fail");
    			return;
    		}
-   		sendLogs("[RESULT_DONE]");
+   		sendLogs("[RESULT_LN] done");
     }
 
     public void updateConfig() {
@@ -192,8 +199,9 @@ public class ShellEnv {
     	
     	List<String> params = new ArrayList<String>();
     	params.add("su");
+    	if (AppPrefs.TRACE_MODE.equals("y")) params.add("set -x");
     	params.add("PATH="+AppPrefs.HOME_DIR+"/bin:$PATH; export PATH");
-    	params.add("echo '[PRINT_WAIT] Updating configuration file ... '");
+    	params.add("echo '[PRINT] Updating configuration file ... '");
     	params.add("cd "+AppPrefs.HOME_DIR);
     	params.add("sed -i 's|^HOME_DIR=.*|HOME_DIR="+AppPrefs.HOME_DIR+"|g' "+AppPrefs.HOME_DIR+"/etc/deploy.conf");
     	params.add("sed -i 's|^MNT_TARGET=.*|MNT_TARGET="+AppPrefs.MNT_TARGET+"|g' "+AppPrefs.HOME_DIR+"/etc/deploy.conf");
@@ -205,7 +213,9 @@ public class ShellEnv {
     	params.add("sed -i 's|^USER_NAME=.*|USER_NAME="+AppPrefs.USER_NAME+"|g' "+AppPrefs.HOME_DIR+"/etc/deploy.conf");
     	params.add("sed -i 's|^INSTALL_GUI=.*|INSTALL_GUI="+AppPrefs.INSTALL_GUI+"|g' "+AppPrefs.HOME_DIR+"/etc/deploy.conf");
     	params.add("sed -i 's|^LANGUAGE=.*|LANGUAGE="+AppPrefs.LANGUAGE+"|g' "+AppPrefs.HOME_DIR+"/etc/deploy.conf");
+    	params.add("sed -i 's|^TRACE_MODE=.*|TRACE_MODE="+AppPrefs.TRACE_MODE+"|g' "+AppPrefs.HOME_DIR+"/etc/deploy.conf");
     	params.add("sed -i 's|^CUSTOM_STARTUP=.*|CUSTOM_STARTUP="+AppPrefs.CUSTOM_STARTUP+"|g' "+AppPrefs.HOME_DIR+"/etc/deploy.conf");
+    	params.add("sed -i 's|^CUSTOM_MOUNT=.*|CUSTOM_MOUNT="+AppPrefs.CUSTOM_MOUNT+"|g' "+AppPrefs.HOME_DIR+"/etc/deploy.conf");
     	params.add("sed -i 's|^SSH_START=.*|SSH_START="+AppPrefs.SSH_START+"|g' "+AppPrefs.HOME_DIR+"/etc/deploy.conf");
     	params.add("sed -i 's|^SSH_PORT=.*|SSH_PORT="+AppPrefs.SSH_PORT+"|g' "+AppPrefs.HOME_DIR+"/etc/deploy.conf");
     	params.add("sed -i 's|^VNC_START=.*|VNC_START="+AppPrefs.VNC_START+"|g' "+AppPrefs.HOME_DIR+"/etc/deploy.conf");
@@ -213,7 +223,7 @@ public class ShellEnv {
     	params.add("sed -i 's|^VNC_DEPTH=.*|VNC_DEPTH="+AppPrefs.VNC_DEPTH+"|g' "+AppPrefs.HOME_DIR+"/etc/deploy.conf");
     	params.add("sed -i 's|^VNC_GEOMETRY=.*|VNC_GEOMETRY="+AppPrefs.VNC_GEOMETRY+"|g' "+AppPrefs.HOME_DIR+"/etc/deploy.conf");
     	params.add("sed -i 's|^HOME_DIR=.*|HOME_DIR="+AppPrefs.HOME_DIR+"|g' "+AppPrefs.HOME_DIR+"/bin/linuxchroot");
-    	params.add("[ $? -eq 0 ] && echo '[RESULT_DONE]' || echo '[RESULT_FAIL]'");
+    	params.add("[ $? -eq 0 ] && echo '[RESULT_LN] done' || echo '[RESULT_LN] fail'");
     	params.add("exit");
     	
     	new ExecCmd(params).run();
@@ -222,6 +232,7 @@ public class ShellEnv {
     public void sysInfo() {
    		List<String> params = new ArrayList<String>();
    		params.add("sh");
+   		if (AppPrefs.TRACE_MODE.equals("y")) params.add("set -x");
    		params.add("PATH="+AppPrefs.HOME_DIR+"/bin:$PATH; export PATH");
    		params.add("MNT_TARGET="+AppPrefs.HOME_DIR+"/mnt");
    		params.add("echo '[PRINT_LN] =================='");
@@ -233,29 +244,32 @@ public class ShellEnv {
    		params.add("echo '[PRINT_LN] '$(cat /proc/meminfo | grep ^MemTotal)");
    		params.add("echo '[PRINT_LN] '$(cat /proc/meminfo | grep ^SwapTotal)");
    		params.add("echo '[PRINT_LN] Storages available:'");
-   		params.add("for disk in $EXTERNAL_STORAGE $SECONDARY_STORAGE; do echo \"[PRINT_WAIT] $disk: \"; " +
-   				"stat -f $disk | grep ^Block | xargs | awk -F' ' '{avail=sprintf(\"%.1f\",$10*$3/1024/1024/1024);" +
-   				"total=sprintf(\"%.1f\",$6*$3/1024/1024/1024);print \"[PRINT_NOTIME] \"avail\"/\"total\" GB\"}'; done");
+   		params.add("for disk in $EXTERNAL_STORAGE $SECONDARY_STORAGE; do echo \"[PRINT] $disk: \"; " +
+   				"stat -f $disk | grep ^Block | tr -d '\n' | awk '{avail=sprintf(\"%.1f\",$10*$3/1024/1024/1024);" +
+   				"total=sprintf(\"%.1f\",$6*$3/1024/1024/1024);print \"[RESULT_LN] \"avail\"/\"total\" GB\"}'; done");
    		params.add("echo '[PRINT_LN] SU: '");
    	   	params.add("echo '[PRINT_LN] Version: '$(su -v)");
    	   	params.add("echo '[PRINT_LN] Location: '$(which su)");
    	    params.add("echo '[PRINT_LN] BusyBox: '");
-   		params.add("echo '[PRINT_LN] Version: '$(busybox | grep ^BusyBox | awk '{print $2}')");
+   		params.add("echo '[PRINT_LN] Version: '$(busybox | grep '^BusyBox v' | awk '{print $2}')");
    		params.add("echo '[PRINT_LN] Location: '$(which busybox)");
-   		params.add("echo '[PRINT_LN] Supported file systems: '");
-   		params.add("for fs in ext2 ext4; do echo \"[PRINT_WAIT] $fs: \"; " +
-   				"fs_support=`cat /proc/filesystems | grep $fs`; [ -n \"$fs_support\" ] && echo '[RESULT_YES]' || echo '[RESULT_NO]'; done");
+   		params.add("echo '[PRINT] Support loop device: '");
+   		params.add("is_loop=`ls /dev/block/loop0`; [ -n \"$is_loop\" ] && echo '[RESULT_LN] yes' || echo '[RESULT_LN] no'");
+   		params.add("echo '[PRINT] Supported file systems: '");
+   		params.add("for fs in ext2 ext4; do " +
+   				"fs_support=`cat /proc/filesystems | grep $fs`; [ -n \"$fs_support\" ] && echo \"[RESULT] $fs \"; done");
+   		params.add("echo '[RESULT_LN] '");
    		params.add("echo '[PRINT_LN] Mounted parts: '");
    		params.add("for i in `cat /proc/mounts | grep $MNT_TARGET | awk '{print $2}' | sed \"s|$MNT_TARGET/*|/|g\"`; "+
-   				"do echo \"[PRINT_LN] $i\"; is_mounted=1; done");
+   				"do echo \"[PRINT_LN] * $i\"; is_mounted=1; done");
    		params.add("[ -z \"$is_mounted\" ] && echo '[PRINT_LN] ...not mounted anything'");
-   		params.add("echo '[PRINT_LN] Is running: '");
-   		params.add("echo '[PRINT_WAIT] SSH server: '");
+   		params.add("echo '[PRINT_LN] Running services: '");
+   		params.add("echo '[PRINT] SSH server: '");
    		params.add("is_ssh=`ps | grep '/usr/sbin/sshd' | grep -v grep`");
-   		params.add("[ -n \"$is_ssh\" ] && echo '[RESULT_YES]' || echo '[RESULT_NO]'");
-   		params.add("echo '[PRINT_WAIT] VNC server: '");
+   		params.add("[ -n \"$is_ssh\" ] && echo '[RESULT_LN] yes' || echo '[RESULT_LN] no'");
+   		params.add("echo '[PRINT] VNC server: '");
    		params.add("is_ssh=`ps | grep 'Xtightvnc' | grep -v grep`");
-   		params.add("[ -n \"$is_ssh\" ] && echo '[RESULT_YES]' || echo '[RESULT_NO]'");
+   		params.add("[ -n \"$is_ssh\" ] && echo '[RESULT_LN] yes' || echo '[RESULT_LN] no'");
    		params.add("exit");
    		new ExecCmd(params).run();
 

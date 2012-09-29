@@ -13,15 +13,19 @@ else
 	exit 1
 fi
 
-TERM=vt100
+is_trace=`echo $TRACE_MODE | grep -i "^y"`
+[ "$is_trace" ] && set -x
+
 PATH=$PATH:/usr/bin:/bin:/usr/sbin:/sbin
-export TERM PATH
+export PATH
+TERM=linux
+export TERM
 
 case "$1" in
 mount)
-	echo "[PRINT_LN] Mounting partitions:"
-	echo "[PRINT_WAIT] / ... "
-	mnt=`mount | grep $MNT_TARGET`
+	echo "[PRINT_LN] Mounting partitions: "
+	echo "[PRINT] / ... "
+	mnt=`cat /proc/mounts | grep " $MNT_TARGET "`
 	if [ -z "$mnt" ]; then
 		[ ! -d "$MNT_TARGET" ] && mkdir -p $MNT_TARGET
 		ext4_support=`cat /proc/filesystems | grep ext4`
@@ -29,106 +33,119 @@ mount)
 		[ -n "$ext4_support" ] && FS_TYPE="ext4"
 		mount -o rw,relatime -t $FS_TYPE $IMG_TARGET $MNT_TARGET
 		if [ $? -eq 0 ]; then
-			echo "[RESULT_DONE]"
+			echo "[RESULT_LN] done"
 		else
-			echo "[RESULT_FAIL]"; exit 1
+			echo "[RESULT_LN] fail"; exit 1
 		fi
 	else
-		echo "[RESULT_SKIP]"
+		echo "[RESULT_LN] skip"
 	fi
 	
-	echo "[PRINT_WAIT] /proc ... "
-	tg=$MNT_TARGET/proc; mnt=`mount | grep $tg`
+	echo "[PRINT] /proc ... "
+	tg=$MNT_TARGET/proc; mnt=`cat /proc/mounts | grep " $tg "`
 	if [ -z "$mnt" -a -d "$tg" ]; then
 		mount -t proc proc $tg
-		[ $? -eq 0 ] && echo "[RESULT_DONE]" || echo "[RESULT_FAIL]"
+		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 	else
-		echo "[RESULT_SKIP]"
+		echo "[RESULT_LN] skip"
 	fi
 	
-	echo "[PRINT_WAIT] /sys ... "
-	tg=$MNT_TARGET/sys; mnt=`mount | grep $tg`
+	echo "[PRINT] /sys ... "
+	tg=$MNT_TARGET/sys; mnt=`cat /proc/mounts | grep " $tg "`
 	if [ -z "$mnt" -a -d "$tg" ]; then
 		mount -t sysfs sys $tg
-		[ $? -eq 0 ] && echo "[RESULT_DONE]" || echo "[RESULT_FAIL]"
+		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 	else
-		echo "[RESULT_SKIP]"
+		echo "[RESULT_LN] skip"
 	fi
 	
-	echo "[PRINT_WAIT] /dev ... "
-	tg=$MNT_TARGET/dev; mnt=`mount | grep $tg`
+	echo "[PRINT] /dev ... "
+	tg=$MNT_TARGET/dev; mnt=`cat /proc/mounts | grep " $tg "`
 	if [ -z "$mnt" -a -d "$tg" ]; then
 		mount -o bind /dev $tg
-		[ $? -eq 0 ] && echo "[RESULT_DONE]" || echo "[RESULT_FAIL]"
+		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 	else
-		echo "[RESULT_SKIP]"
+		echo "[RESULT_LN] skip"
 	fi
 	
-	echo "[PRINT_WAIT] /dev/pts ... "
-	tg=$MNT_TARGET/dev/pts; mnt=`mount | grep $tg`
+	echo "[PRINT] /dev/pts ... "
+	tg=$MNT_TARGET/dev/pts; mnt=`cat /proc/mounts | grep " $tg "`
 	if [ -z "$mnt" -a -d "$tg" ]; then
 		mount -t devpts devpts $tg
-		[ $? -eq 0 ] && echo "[RESULT_DONE]" || echo "[RESULT_FAIL]"
+		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 	else
-		echo "[RESULT_SKIP]"
+		echo "[RESULT_LN] skip"
 	fi
 	
-	DISKS="$EXTERNAL_STORAGE $SECONDARY_STORAGE"
+	DISKS=`echo "$EXTERNAL_STORAGE:$SECONDARY_STORAGE:$CUSTOM_MOUNT" | tr ':' ' '`
 	for disk in $DISKS
 	do
-		echo "[PRINT_WAIT] $disk ... "
-		tg=$MNT_TARGET$disk
-		mtgt=`mount | grep $tg`
-		msrc=`mount | grep $disk`
-		if [ -z "$mtgt" -a -n "$msrc" ]; then
+		sname=`basename /root/$disk`
+		echo "[PRINT] /mnt/$sname ... "
+		tg=$MNT_TARGET/mnt/$sname
+		tmnt=`cat /proc/mounts | grep " $tg "`
+		smnt_dir=`cat /proc/mounts | grep ^/dev/ | grep " $disk "`
+		if [ -z "$tmnt" -a -n "$smnt_dir" -a -d "$disk" ]; then
 			[ ! -d "$tg" ] && mkdir -p $tg
 			mount -o bind $disk $tg
-			[ $? -eq 0 ] && echo "[RESULT_DONE]" || echo "[RESULT_FAIL]"
+			[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
+			continue
+		fi
+		smnt_dev=`cat /proc/mounts | grep ^/dev/ | grep "^$disk "`
+		is_dev=`echo $disk | grep ^/dev/`
+		if [ -z "$tmnt" -a -z "$smnt_dev" -a -n "$is_dev" -a -e "$disk" ]; then
+			[ ! -d "$tg" ] && mkdir -p $tg
+			ext4_support=`cat /proc/filesystems | grep ext4`
+			FS_TYPE="ext2"
+			[ -n "$ext4_support" ] && FS_TYPE="ext4"
+			[ ! -d "$tg" ] && mkdir -p $tg
+			mount -o rw,relatime -t $FS_TYPE $disk $tg
+			[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 		else
-			echo "[RESULT_SKIP]"
+			echo "[RESULT_LN] skip"
 		fi
 	done
 ;;
 umount)
-	echo "[PRINT_WAIT] Release resources ... "
+	echo "[PRINT] Release resources ... "
 	(set -e
-		pids=`lsof | grep $MNT_TARGET | awk '{print $2}' | uniq || true`
+		pids=`lsof | grep $MNT_TARGET | awk '{print $1}' | uniq || true`
 		[ -n "$pids" ] && kill -9 $pids
 	exit 0)
-	[ $? -eq 0 ] && echo "[RESULT_DONE]" || echo "[RESULT_FAIL]"
+	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 	
 	echo "[PRINT_LN] Unmounting partitions: "
 	um=0
 	for i in '.*' '*'
 	do
-		parts=`mount | awk '{print $3}' | grep "^$MNT_TARGET/$i$" | sort -r`
+		parts=`cat /proc/mounts | awk '{print $2}' | grep "^$MNT_TARGET/$i$" | sort -r`
 		for p in $parts
 		do
 			pp=`echo $p | sed "s|$MNT_TARGET/*|/|g"`
-			echo "[PRINT_WAIT] $pp ... "
+			echo "[PRINT] $pp ... "
 			umount $p
-			[ $? -eq 0 ] && echo "[RESULT_DONE]" || echo "[RESULT_FAIL]"
+			[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 			um=1
 		done
 	done
 	[ $um -eq 0 ] && echo "[PRINT_LN] ...not mounted anything"
 	
-	echo "[PRINT_WAIT] Disassociating loop device ... "
+	echo "[PRINT] Disassociating loop device ... "
 	(set -e
 		loop=`losetup | grep $IMG_TARGET | awk -F: '{print $1}' || true`
 		[ -n "$loop" ] && losetup -d $loop
 	exit 0)
-	[ $? -eq 0 ] && echo "[RESULT_DONE]" || echo "[RESULT_FAIL]"
+	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 ;;
 install)
 	if [ ! -e "$IMG_TARGET" ]; then
-		echo "[PRINT_WAIT] Making new disk image ($IMG_SIZE MB) ... "
+		echo "[PRINT] Making new disk image ($IMG_SIZE MB) ... "
 		(set -e
 			dd if=/dev/zero of=$IMG_TARGET bs=1048576 count=$IMG_SIZE
 		exit 0)
-		[ $? -eq 0 ] && echo "[RESULT_DONE]" || echo "[RESULT_FAIL]"
+		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 	fi
-	echo "[PRINT_WAIT] Making file system ... "
+	echo "[PRINT] Making file system ... "
 	(set -e
 		ext4_support=`cat /proc/filesystems | grep ext4`
 		FS_TYPE="ext2"
@@ -137,7 +154,7 @@ install)
 		is_raw=`cat /proc/mounts | grep $IMG_TARGET || true`
 		[ -z "$is_loop" -a -z "$is_raw" ] && mke2fs -qF -t $FS_TYPE -O ^has_journal $IMG_TARGET
 	exit 0)
-	[ $? -eq 0 ] && echo "[RESULT_DONE]" || echo "[RESULT_FAIL]"
+	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 
 	$0 mount
 	if [ $? -ne 0 ]; then
@@ -147,7 +164,7 @@ install)
 	echo "[PRINT_ALL] Installing Linux base system: "
 	[ -z "$DEBOOTSTRAP_DIR" ] && DEBOOTSTRAP_DIR=$HOME_DIR/deploy/debootstrap
 	export DEBOOTSTRAP_DIR
-	debootstrap --no-check-gpg --arch $ARCH --foreign --include=locales,openssh-server,sudo $SUITE $MNT_TARGET $MIRROR
+	debootstrap --no-check-gpg --arch $ARCH --foreign --extractor=ar --include=locales,openssh-server,sudo $SUITE $MNT_TARGET $MIRROR
 	if [ $? -ne 0 ]; then
 		echo "[PRINT_LN] FAIL to deploy!"; exit 1
 	fi
@@ -188,42 +205,43 @@ config)
 
 	echo "[PRINT_LN] Configuring Linux system: "
 
-	echo "[PRINT_WAIT] DNS ... "
+	echo "[PRINT] DNS ... "
 	(set -e
 		echo "nameserver 8.8.8.8" > $MNT_TARGET/etc/resolv.conf
 	exit 0)
-	[ $? -eq 0 ] && echo "[RESULT_DONE]" || echo "[RESULT_FAIL]"
+	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 
-	echo "[PRINT_WAIT] APT ... "
+	echo "[PRINT] APT ... "
 	(set -e
+		[ -e "$MNT_TARGET/etc/apt/sources.list" ] && cp $MNT_TARGET/etc/apt/sources.list $MNT_TARGET/etc/apt/sources.list.bak
 		echo "deb $MIRROR $SUITE main contrib non-free" > $MNT_TARGET/etc/apt/sources.list
 		echo "deb-src $MIRROR $SUITE main contrib non-free" >> $MNT_TARGET/etc/apt/sources.list
 	exit 0)
-	[ $? -eq 0 ] && echo "[RESULT_DONE]" || echo "[RESULT_FAIL]"
+	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 
-	echo "[PRINT_WAIT] mtab ... "
+	echo "[PRINT] mtab ... "
 	(set -e
 		#chroot $MNT_TARGET ln -sf /proc/mounts /etc/mtab
 		cat /proc/mounts | grep $MNT_TARGET | sed "s|$MNT_TARGET/*|/|g" > $MNT_TARGET/etc/mtab
 	exit 0)
-	[ $? -eq 0 ] && echo "[RESULT_DONE]" || echo "[RESULT_FAIL]"
+	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 
-	echo "[PRINT_WAIT] sudo ... "
+	echo "[PRINT] sudo ... "
 	(set -e
 		SUDO_STR="$USER_NAME ALL=(ALL:ALL) NOPASSWD:ALL"
 		is_str=`cat $MNT_TARGET/etc/sudoers | grep "$SUDO_STR" || true`
 		[ -z "$is_str" ] && echo $SUDO_STR >> $MNT_TARGET/etc/sudoers
 	exit 0)
-	[ $? -eq 0 ] && echo "[RESULT_DONE]" || echo "[RESULT_FAIL]"
+	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 	
-	echo "[PRINT_WAIT] sftp-server ... "
+	echo "[PRINT] sftp-server ... "
 	(set -e
 		cp $HOME_DIR/deploy/openssh/$ARCH/sftp-server $MNT_TARGET/usr/lib/openssh/sftp-server-fix
 		sed -i "s|^Subsystem sftp .*|Subsystem sftp /usr/lib/openssh/sftp-server-fix|g" $MNT_TARGET/etc/ssh/sshd_config
 	exit 0)
-	[ $? -eq 0 ] && echo "[RESULT_DONE]" || echo "[RESULT_FAIL]"
+	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 	
-	echo "[PRINT_WAIT] locales ... "
+	echo "[PRINT] locales ... "
 	(set -e
 		echo "en_US.UTF-8 UTF-8" > $MNT_TARGET/etc/locale.gen
 		echo "ru_RU.UTF-8 UTF-8" >> $MNT_TARGET/etc/locale.gen
@@ -234,32 +252,32 @@ config)
 		fi
 		chroot $MNT_TARGET locale-gen
 	exit 0)
-	[ $? -eq 0 ] && echo "[RESULT_DONE]" || echo "[RESULT_FAIL]"
+	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 	
-	echo "[PRINT_WAIT] timezone ... "
+	echo "[PRINT] timezone ... "
 	(set -e
 		TZ=`getprop persist.sys.timezone`
 		echo $TZ > $MNT_TARGET/etc/timezone
 		cp $MNT_TARGET/usr/share/zoneinfo/$TZ $MNT_TARGET/etc/localtime
 	exit 0)
-	[ $? -eq 0 ] && echo "[RESULT_DONE]" || echo "[RESULT_FAIL]"
+	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 
-	echo "[PRINT_WAIT] users and groups ... "
+	echo "[PRINT] users and groups ... "
 	(set -e
 		AIDS=`cat $HOME_DIR/etc/aids`
 		for AID in $AIDS
 		do
-			XNAME=`echo $AID | awk -F':' '{print $1}'`
-			XID=`echo $AID | awk -F':' '{print $2}'`
+			XNAME=`echo $AID | awk -F: '{print $1}'`
+			XID=`echo $AID | awk -F: '{print $2}'`
 			is_str=`cat $MNT_TARGET/etc/group | grep "^$XNAME:" || true`
 			[ -z "$is_str" ] && echo "$XNAME:x:$XID:$USER_NAME" >> $MNT_TARGET/etc/group
 			is_str=`cat $MNT_TARGET/etc/passwd | grep "^$XNAME:" || true`
 			[ -z "$is_str" ] && echo "$XNAME:x:$XID:$XID::/:/bin/false" >> $MNT_TARGET/etc/passwd	
 		done
 	exit 0)
-	[ $? -eq 0 ] && echo "[RESULT_DONE]" || echo "[RESULT_FAIL]"
+	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 	
-	echo "[PRINT_WAIT] \"$USER_NAME\" profile ... "
+	echo "[PRINT] $USER_NAME profile ... "
 	(set -e
 		MOTD="Debian GNU/Linux [running on Android via Linux Deploy]"
 		USER_ID=5000
@@ -279,44 +297,44 @@ config)
 		rm -f $MNT_TARGET/etc/motd || true
 		echo $MOTD > $MNT_TARGET/etc/motd
 	exit 0)
-	[ $? -eq 0 ] && echo "[RESULT_DONE]" || echo "[RESULT_FAIL]"
+	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 ;;
 uninstall)
 	$0 umount
 	[ $? -ne 0 ] && exit 1
 	
-	echo "[PRINT_WAIT] Removing disk image ... "
+	echo "[PRINT] Removing disk image ... "
 	(set -e
 		[ -f "$IMG_TARGET" ] && rm $IMG_TARGET
 		[ -d "$MNT_TARGET" ] && rmdir $MNT_TARGET
 	exit 0)
-	[ $? -eq 0 ] && echo "[RESULT_DONE]" || echo "[RESULT_FAIL]"
+	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 	
-	echo "[PRINT_WAIT] Removing environment ... "
+	echo "[PRINT] Removing environment ... "
 	(set -e
 		rm -rf $HOME_DIR/deploy $HOME_DIR/etc $HOME_DIR/bin
 		[ -d "$HOME_DIR" ] && rmdir $HOME_DIR
 	exit 0)
-	[ $? -eq 0 ] && echo "[RESULT_DONE]" || echo "[RESULT_FAIL]"
+	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 ;;
 start)
 	$0 mount
 	[ $? -ne 0 ] && exit 1
 	
 	echo "[PRINT_LN] Starting services: "
-	echo "[PRINT_WAIT] SSH ... "
+	echo "[PRINT] SSH ... "
 	is_ssh=`echo $SSH_START | grep -i "^y"`
 	if [ -n "$is_ssh" ]; then
 		(set -e
 			sed -i "s|^Port .*|Port $SSH_PORT|g" $MNT_TARGET/etc/ssh/sshd_config
 			chroot $MNT_TARGET /etc/init.d/ssh start
 		exit 0)
-		[ $? -eq 0 ] && echo "[RESULT_DONE]" || echo "[RESULT_FAIL]"
+		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 	else
-		echo "[RESULT_SKIP]"
+		echo "[RESULT_LN] skip"
 	fi
 
-	echo "[PRINT_WAIT] VNC ... "	
+	echo "[PRINT] VNC ... "	
 	is_vnc=`echo $VNC_START | grep -i "^y"`
 	if [ -n "$is_vnc" ]; then
 		(set -e
@@ -324,22 +342,24 @@ start)
 			[ -e "$MNT_TARGET/tmp/.X11-unix/X$VNC_DISPLAY" ] && rm $MNT_TARGET/tmp/.X11-unix/X$VNC_DISPLAY
 			chroot $MNT_TARGET su - $USER_NAME -c "vncserver -depth $VNC_DEPTH -geometry $VNC_GEOMETRY :$VNC_DISPLAY"
 		exit 0)
-		[ $? -eq 0 ] && echo "[RESULT_DONE]" || echo "[RESULT_FAIL]"
+		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 	else
-		echo "[RESULT_SKIP]"
+		echo "[RESULT_LN] skip"
 	fi
 	
-	if [ -n "$CUSTOM_STARTUP" ]; then
-		echo "[PRINT_WAIT] $CUSTOM_STARTUP ... "
+	SCRIPTS=`echo "$CUSTOM_STARTUP" | tr ':' ' '`
+	for script in $SCRIPTS
+	do
+		echo "[PRINT] $script ... "
 		(set -e
-			chroot $MNT_TARGET "$CUSTOM_STARTUP start"
+			chroot $MNT_TARGET $script start
 		exit 0)
-		[ $? -eq 0 ] && echo "[RESULT_DONE]" || echo "[RESULT_FAIL]"
-	fi
+		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
+	done
 ;;
 stop)
 	echo "[PRINT_LN] Stopping services: "
-	echo "[PRINT_WAIT] SSH ... "
+	echo "[PRINT] SSH ... "
 	is_ssh=`echo $SSH_START | grep -i "^y"`
 	if [ -n "$is_ssh" ]; then
 		(set -e
@@ -347,12 +367,12 @@ stop)
 			sleep 1
 			pkill -9 sshd || true
 		exit 0)
-		[ $? -eq 0 ] && echo "[RESULT_DONE]" || echo "[RESULT_FAIL]"
+		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 	else
-		echo "[RESULT_SKIP]"
+		echo "[RESULT_LN] skip"
 	fi
 
-	echo "[PRINT_WAIT] VNC ... "	
+	echo "[PRINT] VNC ... "	
 	is_vnc=`echo $VNC_START | grep -i "^y"`
 	if [ -n "$is_vnc" ]; then
 		(set -e
@@ -360,18 +380,20 @@ stop)
 			sleep 1
 			pkill -9 Xtightvnc || true
 		exit 0)
-		[ $? -eq 0 ] && echo "[RESULT_DONE]" || echo "[RESULT_FAIL]"
+		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 	else
-		echo "[RESULT_SKIP]"
+		echo "[RESULT_LN] skip"
 	fi
 	
-	if [ -n "$CUSTOM_STARTUP" ]; then
-		echo "[PRINT_WAIT] $CUSTOM_STARTUP ... "
+	SCRIPTS=`echo "$CUSTOM_STARTUP" | tr ':' ' '`
+	for script in $SCRIPTS
+	do
+		echo "[PRINT] $script ... "
 		(set -e
-			chroot $MNT_TARGET "$CUSTOM_STARTUP stop"
+			chroot $MNT_TARGET $script stop
 		exit 0)
-		[ $? -eq 0 ] && echo "[RESULT_DONE]" || echo "[RESULT_FAIL]"
-	fi
+		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
+	done
 	$0 umount	
 ;;
 *)
