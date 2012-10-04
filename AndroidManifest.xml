@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ru.meefik.linuxdeploy"
-    android:versionCode="19"
-    android:versionName="1.1.8" >
+    android:versionCode="22"
+    android:versionName="1.2.1" >
 
     <uses-sdk
         android:minSdkVersion="8"

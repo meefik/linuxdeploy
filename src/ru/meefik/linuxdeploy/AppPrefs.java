@@ -19,7 +19,9 @@ public class AppPrefs {
 	public static String SUITE;
 	public static String MIRROR;
 	public static String USER_NAME;
+	public static String SERVER_DNS;
 	public static String INSTALL_GUI;
+	public static String DESKTOP_ENV;
 	public static String CUSTOM_STARTUP;
 	public static String CUSTOM_MOUNT;
 	public static String SSH_START;
@@ -55,8 +57,10 @@ public class AppPrefs {
 		ARCH = sp.getString("architecture", "armhf");
 		SUITE = sp.getString("suite", "wheezy");
 		MIRROR = sp.getString("mirror", "http://mirror.yandex.ru/debian");
-		USER_NAME = sp.getString("username", "admin");
+		USER_NAME = sp.getString("username", "android").toLowerCase();
+		SERVER_DNS = sp.getString("serverdns", "8.8.8.8");
 		INSTALL_GUI = sp.getBoolean("installgui", false) ? "y" : "n";
+		DESKTOP_ENV = sp.getString("desktopenv", "LXDE");
 		CUSTOM_STARTUP = sp.getBoolean("startupcustom", false) ? sp.getString("customscript", "/etc/init.d/myscript") : "";
 		CUSTOM_MOUNT = sp.getBoolean("mountcustom", false) ? sp.getString("mountpath", "/mnt/usbdisk:/system") : "";
 		SSH_START = sp.getBoolean("sshstartup", false) ? "y" : "n";

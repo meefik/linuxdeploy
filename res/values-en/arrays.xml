@@ -45,4 +45,12 @@
         <item>16</item>
         <item>24</item>
     </string-array>
+    
+    <string-array name="desktop_envs">
+        <item>TWM</item>
+        <item>LXDE</item>
+        <item>XFCE</item>
+        <item>GNOME</item>
+        <item>KDE</item>
+    </string-array>
 </resources>

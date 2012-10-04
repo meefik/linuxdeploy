@@ -54,10 +54,7 @@
     <string name="title_diskimage_preferences">Диск (образ)</string>
     <string name="summary_diskimage_preferences">/mnt/sdcard/linux.img</string>
     <string name="dialog_title_diskimage_preference">Путь к разделу или файлу</string>
-<!-- 
-    <string name="title_loopdev_preferences">Образ диска</string>
-    <string name="summary_loopdev_preferences">Использовать файл образа диска</string>    
- -->
+
     <string name="title_disksize_preferences">Размер образа (МБ)</string>
     <string name="summary_disksize_preferences">1024</string>
     <string name="dialog_title_disksize_preference">Размер образа (МБ)</string>
@@ -75,11 +72,19 @@
     <string name="dialog_title_mirror_preference">URL-адрес зеркала</string>
 
     <string name="title_username_preferences">Имя пользователя</string>
-    <string name="summary_username_preferences">admin</string>
+    <string name="summary_username_preferences">android</string>
     <string name="dialog_title_username_preference">Имя пользователя</string>
+    
+    <string name="title_serverdns_preferences">DNS-сервер</string>
+    <string name="summary_serverdns_preferences">8.8.8.8</string>
+    <string name="dialog_title_serverdns_preference">Адрес DNS-сервера</string>
 
     <string name="title_installgui_preferences">Установить GUI</string>
     <string name="summary_installgui_preferences">Включить установку окружения рабочего стола и VNC сервера</string>
+    
+    <string name="title_desktopenv_preferences">Окружение рабочего стола</string>
+    <string name="summary_desktopenv_preferences">LXDE</string>
+    <string name="dialog_title_desktopenv_preference">Окружение рабочего стола</string>
 
     <string name="title_reconfigure_preference">Переконфигурация</string>
     <string name="summary_reconfigure_preference">Выполнить переконфигурацию системы</string>
@@ -146,6 +151,6 @@
     <string name="summary_logfile_preferences">/mnt/sdcard/linuxdeploy.log</string>
     <string name="dialog_title_logfile_preference">Файл журнала</string>
 
-    <string name="about_text"><font size="32"><b>Linux Deploy</b></font>\n\nЛицензия: GPL v3\n\nИсходный код: <a href="https://github.com/meefik/linuxdeploy">github.com</a>\n\nЭта программа поставляется БЕЗ ВСЯКИХ ГАРАНТИЙ, а автор не несет ответственности за любые возможные последствия ее использования. Это свободное программное обеспечение, и вы можете распространять его при определенных условиях.\n\n&#169; 2012 Антон Скшидлевский</string>
+    <string name="about_text"><font size="32"><b>Linux Deploy</b></font>\n\nЛицензия GPL v3\n\n[ <a href="https://github.com/meefik/linuxdeploy">github.com</a> , <a href="http://4pda.ru/forum/index.php?showtopic=378043">4pda.ru</a> ]\n\nЭта программа поставляется БЕЗ ВСЯКИХ ГАРАНТИЙ, а автор не несет ответственности за любые возможные последствия ее использования. Это свободное программное обеспечение, и вы можете распространять его при определенных условиях.\n\n&#169; 2012 Антон Скшидлевский</string>
 
 </resources>
