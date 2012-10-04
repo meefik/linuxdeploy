@@ -1,6 +1,19 @@
 Changelog (English)
 ===================
 
+1.2.1
+Bugfix: error set user password on third-party images
+Default user name changed to android
+
+1.2.0
+Improved function of the system configuration for third-party images
+
+1.1.9
+Added ability to select a desktop environment (TWM, LXDE, XFCE, GNOME, KDE)
+Added support for startup as root
+Added check for reserved usernames
+Added ability to change DNS server
+
 1.1.8
 Support mounting custom partitions from /dev (e.g. /dev/block/sda1)
 Interface improvements
@@ -72,6 +85,19 @@ Updated list packages of base system installation
 
 История изменений (Русский)
 ===========================
+
+1.2.1
+Исправлена ошибка установки пароля пользователя на некоторых образах
+Имя пользователя по умолчанию изменено на android 
+
+1.2.0
+Доработана функция переконфигурации системы для сторонних образов
+
+1.1.9
+Добавлена возможность выбора окружения рабочего стола (TWM, LXDE, XFCE, GNOME, KDE)
+Добавлена поддержка запуска системы под пользователем root
+Добавлена проверка на зарезервированные имена пользователей
+Добавлена возможность изменять адрес DNS сервера
 
 1.1.8
 Поддержка выборочного монтирования разделов из /dev (например, /dev/block/sda1)

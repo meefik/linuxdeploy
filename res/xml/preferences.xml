@@ -116,11 +116,28 @@
 	            android:summary="@string/summary_username_preferences"
 	            android:dialogTitle="@string/dialog_title_username_preference" />
 	    
+	    <EditTextPreference
+    	        android:key="serverdns"
+        	    android:defaultValue="@string/summary_serverdns_preferences"
+            	android:title="@string/title_serverdns_preferences"
+	            android:summary="@string/summary_serverdns_preferences"
+	            android:dialogTitle="@string/dialog_title_serverdns_preference" />
+	    
 	    <CheckBoxPreference
     	        android:key="installgui"
         	    android:defaultValue="false"
             	android:title="@string/title_installgui_preferences"
             	android:summary="@string/summary_installgui_preferences" />
+	    
+	    <ListPreference
+	        	android:dependency="installgui"
+    	        android:key="desktopenv"
+        	    android:defaultValue="@string/summary_desktopenv_preferences"
+            	android:title="@string/title_desktopenv_preferences"
+            	android:summary="@string/summary_desktopenv_preferences"
+            	android:entries="@array/desktop_envs"
+            	android:entryValues="@array/desktop_envs"
+            	android:dialogTitle="@string/dialog_title_desktopenv_preference" />
 	    
 	    <PreferenceScreen
 	        	android:key="reconfigure"

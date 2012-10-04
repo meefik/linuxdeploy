@@ -55,10 +55,7 @@
     <string name="title_diskimage_preferences">Disk (image) path</string>
     <string name="summary_diskimage_preferences">/mnt/sdcard/linux.img</string>
     <string name="dialog_title_diskimage_preference">Device or file path</string>
-<!--     
-    <string name="title_loopdev_preferences">Disk image</string>
-    <string name="summary_loopdev_preferences">Use a disk image file</string>   
- -->
+
     <string name="title_disksize_preferences">Image size (MB)</string>
     <string name="summary_disksize_preferences">1024</string>
     <string name="dialog_title_disksize_preference">Disk image size (MB)</string>
@@ -76,12 +73,20 @@
     <string name="dialog_title_mirror_preference">Mirror URL</string>
     
     <string name="title_username_preferences">User name</string>
-    <string name="summary_username_preferences">admin</string>
+    <string name="summary_username_preferences">android</string>
     <string name="dialog_title_username_preference">User name</string>
+
+    <string name="title_serverdns_preferences">DNS server</string>
+    <string name="summary_serverdns_preferences">8.8.8.8</string>
+    <string name="dialog_title_serverdns_preference">Address of DNS server</string>
     
     <string name="title_installgui_preferences">Install GUI</string>
     <string name="summary_installgui_preferences">Include installation desktop environment and VNC server</string>
     
+    <string name="title_desktopenv_preferences">Desktop environment</string>
+    <string name="summary_desktopenv_preferences">LXDE</string>
+    <string name="dialog_title_desktopenv_preference">Desktop environment</string>
+
     <string name="title_reconfigure_preference">Reconfigure</string>
     <string name="summary_reconfigure_preference">Run the system reconfiguration</string>
     <string name="message_reconfigure_confirm_dialog">Perform reconfiguration of the system?</string>
@@ -147,6 +152,6 @@
     <string name="summary_logfile_preferences">/mnt/sdcard/linuxdeploy.log</string>
     <string name="dialog_title_logfile_preference">Log file</string>
     
-    <string name="about_text"><font size="32"><b>Linux Deploy</b></font>\n\nLicense: GPL v3\n\nSource: <a href="https://github.com/meefik/linuxdeploy">github.com</a>\n\nThis program comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions.\n\n&#169; 2012 Anton Skshidlevsky</string>
+    <string name="about_text"><font size="32"><b>Linux Deploy</b></font>\n\nGPL v3\n\n[ <a href="https://github.com/meefik/linuxdeploy">github.com</a> , <a href="http://4pda.ru/forum/index.php?showtopic=378043">4pda.ru</a> ]\n\nThis program comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions.\n\n&#169; 2012 Anton Skshidlevsky</string>
 
 </resources>

@@ -55,6 +55,12 @@ public class PreferencesActivity extends PreferenceActivity implements Preferenc
         EditTextPreference username = (EditTextPreference)this.findPreference("username");
         username.setOnPreferenceChangeListener(this);
         
+        EditTextPreference serverdns = (EditTextPreference)this.findPreference("serverdns");
+        serverdns.setOnPreferenceChangeListener(this);
+        
+        ListPreference desktopenv = (ListPreference)this.findPreference("desktopenv");
+        desktopenv.setOnPreferenceChangeListener(this);
+        
         EditTextPreference sshport = (EditTextPreference)this.findPreference("sshport");
         sshport.setOnPreferenceChangeListener(this);
         
@@ -147,6 +153,12 @@ public class PreferencesActivity extends PreferenceActivity implements Preferenc
         
         EditTextPreference username = (EditTextPreference)this.findPreference("username");
         username.setSummary(username.getText());
+        
+        EditTextPreference serverdns = (EditTextPreference)this.findPreference("serverdns");
+        serverdns.setSummary(serverdns.getText());
+        
+        ListPreference desktopenv = (ListPreference)this.findPreference("desktopenv");
+        desktopenv.setSummary(desktopenv.getValue());
         
         EditTextPreference sshport = (EditTextPreference)this.findPreference("sshport");
         sshport.setSummary(sshport.getText());
