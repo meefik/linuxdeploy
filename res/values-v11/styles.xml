@@ -1,5 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+
 <resources>
 
-    <style name="AppTheme" parent="android:Theme.Holo.Light" />
+    <style name="LightTheme" parent="android:Theme.Holo.Light" >
+        <item name="android:imageButtonStyle">@style/ImageButton.Light</item>
+    </style>
+    
+    <style name="BlackTheme" parent="android:Theme.Holo" >
+        <item name="android:imageButtonStyle">@style/ImageButton</item>
+    </style>
+    
+    <style name="ImageButton">
+        <item name="android:background">@drawable/btn_default_holo_dark</item>
+        <item name="android:focusable">true</item>
+        <item name="android:clickable">true</item>
+        <item name="android:scaleType">center</item>
+    </style>
+    
+    <style name="ImageButton.Light">
+        <item name="android:background">@drawable/btn_default_holo_light</item>
+    </style>
 
 </resources>

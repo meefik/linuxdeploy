@@ -21,21 +21,327 @@ export PATH
 TERM=linux
 export TERM
 
-case "$1" in
-mount)
+install_system()
+{
+    echo "[PRINT_LN] Selected distribution: $DISTRIB"
+    
+	if [ ! -e "$IMG_TARGET" ]; then
+		echo "[PRINT] Making new disk image ($IMG_SIZE MB) ... "
+		(set -e
+			dd if=/dev/zero of=$IMG_TARGET bs=1048576 count=$IMG_SIZE
+		exit 0)
+		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
+	fi
+	if [ "$FS_TYPE" == "auto" ]; then
+		for fs in ext4 ext2
+		do
+			fs_support=`cat /proc/filesystems | grep $fs`
+			if [ -n "$fs_support" ]; then
+				FS_TYPE=$fs
+				break
+			fi
+		done
+	fi
+	echo "[PRINT] Making $FS_TYPE file system ... "
+	(set -e
+		is_loop=`losetup | grep $IMG_TARGET || true`
+		is_raw=`cat /proc/mounts | grep $IMG_TARGET || true`
+		[ -z "$is_loop" -a -z "$is_raw" ] && mke2fs -qF -t $FS_TYPE -O ^has_journal $IMG_TARGET
+	exit 0)
+	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
+
+	mount_system
+	if [ $? -ne 0 ]; then
+		echo "[PRINT_LN] FAIL to deploy!"; return 1
+	fi
+
+	echo "[PRINT_ALL] Installing Linux base system: "
+	[ -z "$DEBOOTSTRAP_DIR" ] && DEBOOTSTRAP_DIR=$HOME_DIR/deploy/debootstrap
+	export DEBOOTSTRAP_DIR
+	debootstrap --no-check-gpg --arch $ARCH --foreign --extractor=ar --include=locales,openssh-server,sudo $SUITE $MNT_TARGET $MIRROR
+	if [ $? -ne 0 ]; then
+		echo "[PRINT_LN] FAIL to deploy!"; return 1
+	fi
+	
+	mount_system
+	if [ $? -ne 0 ]; then
+		echo "[PRINT_LN] FAIL to deploy!"; return 1
+	fi
+	
+	echo "[PRINT_ALL] Preparing Linux system (second stage): "
+	unset DEBOOTSTRAP_DIR
+	chroot $MNT_TARGET /debootstrap/debootstrap --second-stage
+	if [ $? -ne 0 ]; then
+		echo "[PRINT_LN] FAIL to deploy!"; return 1
+	fi
+	
+	configure_system
+	if [ $? -ne 0 ]; then
+		echo "[PRINT_LN] FAIL to deploy!"; return 1
+	fi
+}
+
+configure_system()
+{
+	mount_system
+	[ $? -ne 0 ] && return 1
+	
+	update_system
+	
+	echo "[PRINT_LN] Configuring Linux system: "
+	
+	echo "[PRINT] APT ... "
+	case "$DISTRIB" in
+	Debian)
+		(set -e
+			[ -e "$MNT_TARGET/etc/apt/sources.list" ] && cp $MNT_TARGET/etc/apt/sources.list $MNT_TARGET/etc/apt/sources.list.bak
+			echo "deb $MIRROR $SUITE main contrib non-free" > $MNT_TARGET/etc/apt/sources.list
+			echo "deb-src $MIRROR $SUITE main contrib non-free" >> $MNT_TARGET/etc/apt/sources.list
+			chmod 644 $MNT_TARGET/etc/apt/sources.list
+		exit 0)
+		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
+	;;
+	Ubuntu)
+		(set -e
+			[ -e "$MNT_TARGET/etc/apt/sources.list" ] && cp $MNT_TARGET/etc/apt/sources.list $MNT_TARGET/etc/apt/sources.list.bak
+			echo "deb $MIRROR $SUITE main universe multiverse" > $MNT_TARGET/etc/apt/sources.list
+			echo "deb-src $MIRROR $SUITE main universe multiverse" >> $MNT_TARGET/etc/apt/sources.list
+			chmod 644 $MNT_TARGET/etc/apt/sources.list
+		exit 0)
+		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
+	;;
+	*)
+		echo "[RESULT_LN] skip"
+	;;
+	esac
+
+	echo "[PRINT] hosts ... "
+	(set -e
+		is_localhost=`cat $MNT_TARGET/etc/hosts | grep "^127.0.0.1" || true`
+		[ -z "$is_localhost" ] && echo '127.0.0.1 localhost' >> $MNT_TARGET/etc/hosts
+		chmod 644 $MNT_TARGET/etc/hosts
+	exit 0)
+	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
+	
+	echo "[PRINT] timezone ... "
+	(set -e
+		TZ=`getprop persist.sys.timezone`
+		echo $TZ > $MNT_TARGET/etc/timezone
+		cp $MNT_TARGET/usr/share/zoneinfo/$TZ $MNT_TARGET/etc/localtime
+		chmod 644 $MNT_TARGET/etc/timezone
+	exit 0)
+	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
+
+	echo "[PRINT] motd ... "
+	(set -e	
+		LINUX_VERSION=`cat $MNT_TARGET/etc/issue.net || true`
+		[ -z "$LINUX_VERSION" ] && LINUX_VERSION="GNU/Linux"
+		MOTD="$LINUX_VERSION [running on Android via Linux Deploy]"
+		rm -f $MNT_TARGET/etc/motd || true
+		echo $MOTD > $MNT_TARGET/etc/motd
+		chmod 644 $MNT_TARGET/etc/motd
+	exit 0)
+	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
+	
+	echo "[PRINT] sudo ... "
+	(set -e
+		SUDO_STR="$USER_NAME ALL=(ALL:ALL) NOPASSWD:ALL"
+		is_str=`cat $MNT_TARGET/etc/sudoers | grep "$SUDO_STR" || true`
+		[ -z "$is_str" ] && echo $SUDO_STR >> $MNT_TARGET/etc/sudoers
+		chmod 640 $MNT_TARGET/etc/sudoers
+	exit 0)
+	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
+	
+	echo "[PRINT] sftp-server ... "
+	if [ "$DISTRIB" == "Debian" ]; then
+		(set -e
+			cp $HOME_DIR/deploy/openssh/$ARCH/sftp-server $MNT_TARGET/usr/lib/openssh/sftp-server-fix
+			sed -i "s|^Subsystem sftp .*|Subsystem sftp /usr/lib/openssh/sftp-server-fix|g" $MNT_TARGET/etc/ssh/sshd_config
+		exit 0)
+		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
+	else
+		echo "[RESULT_LN] skip"
+	fi
+	
+	echo "[PRINT] locales ... "
+	(set -e
+		echo "$LOCALE UTF-8" > $MNT_TARGET/etc/locale.gen
+		chroot $MNT_TARGET locale-gen $LOCALE
+		echo "LANG=$LOCALE" > $MNT_TARGET/etc/default/locale
+		chmod 644 $MNT_TARGET/etc/locale.gen $MNT_TARGET/etc/default/locale
+	exit 0)
+	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
+	
+	echo "[PRINT] users and groups ... "
+	(set -e
+		AIDS=`cat $HOME_DIR/etc/aids`
+		for AID in $AIDS
+		do
+			XNAME=`echo $AID | awk -F: '{print $1}'`
+			XID=`echo $AID | awk -F: '{print $2}'`
+			sed -i "s|^$XNAME:x:$XID:.*|$XNAME:x:$XID:$USER_NAME|g" $MNT_TARGET/etc/group || true
+			is_str=`cat $MNT_TARGET/etc/group | grep "^$XNAME:" || true`
+			[ -z "$is_str" ] && echo "$XNAME:x:$XID:$USER_NAME" >> $MNT_TARGET/etc/group
+			is_str=`cat $MNT_TARGET/etc/passwd | grep "^$XNAME:" || true`
+			[ -z "$is_str" ] && echo "$XNAME:x:$XID:$XID::/:/bin/false" >> $MNT_TARGET/etc/passwd
+			sed -i 's|^UID_MIN.*|UID_MIN 10000|g' $MNT_TARGET/etc/login.defs
+			sed -i 's|^GID_MIN.*|GID_MIN 10000|g' $MNT_TARGET/etc/login.defs	
+		done
+	exit 0)
+	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
+	
+	echo "[PRINT] user profile ($USER_NAME) ... "
+	(set -e
+		reserved=`echo $USER_NAME | grep ^aid_ || true`
+		if [ -n "$reserved" ]; then
+			echo "Username $USER_NAME is reserved!"
+			exit 1
+		fi
+		if [ "$USER_NAME" != "root" ]; then
+			chroot $MNT_TARGET groupadd $USER_NAME || true
+			chroot $MNT_TARGET useradd -m -g $USER_NAME -s /bin/bash $USER_NAME || true
+			chroot $MNT_TARGET usermod -g $USER_NAME $USER_NAME || true
+		fi
+		chroot $MNT_TARGET sh -c "export $USER_NAME; printf '%s\n' changeme changeme | passwd $USER_NAME"
+		USER_HOME=`cat $MNT_TARGET/etc/passwd | grep "^$USER_NAME:" | awk -F: '{print $6}'`
+		USER_ID=`cat $MNT_TARGET/etc/passwd | grep "^$USER_NAME:" | awk -F: '{print $3}'`
+		GROUP_ID=`cat $MNT_TARGET/etc/passwd | grep "^$USER_NAME:" | awk -F: '{print $4}'`
+		PROFILE_STR='PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+		is_str=`cat $MNT_TARGET$USER_HOME/.profile | grep "$PROFILE_STR" || true`
+		[ -z "$is_str" ] && echo $PROFILE_STR >> $MNT_TARGET$USER_HOME/.profile
+		is_gui=`echo $INSTALL_GUI | grep -i "^y" || true`
+		if [ -n "$is_gui" ]; then
+			mkdir $MNT_TARGET$USER_HOME/.vnc || true
+			chmod 755 $MNT_TARGET$USER_HOME/.vnc
+			echo "MPTcXfgXGiY=" | base64 -d > $MNT_TARGET$USER_HOME/.vnc/passwd
+			chmod 600 $MNT_TARGET$USER_HOME/.vnc/passwd
+			echo 'XAUTHORITY=$HOME/.Xauthority' > $MNT_TARGET$USER_HOME/.vnc/xstartup
+			echo 'export XAUTHORITY' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
+			case "$DESKTOP_ENV" in
+			XTerm)
+				echo 'xterm -max &' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
+			;;
+			LXDE)
+				echo 'startlxde &' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
+			;;
+			Xfce)
+				echo 'startxfce4 &' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
+			;;
+			GNOME)
+				echo 'gnome-session --session=gnome &' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
+			;;
+			Unity)
+				echo 'gnome-session --session=ubuntu-2d &' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
+			;;
+			KDE)
+				echo 'startkde &' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
+			;;
+			*)
+				echo "$DESKTOP_ENV not found!"
+			;;
+			esac
+			chmod 755 $MNT_TARGET$USER_HOME/.vnc/xstartup
+			echo "#!/bin/sh" > $MNT_TARGET$USER_HOME/.xsession
+			cat $MNT_TARGET$USER_HOME/.vnc/xstartup >> $MNT_TARGET$USER_HOME/.xsession
+			chmod 755 $MNT_TARGET$USER_HOME/.xsession
+		fi
+		chown -R $USER_ID:$GROUP_ID $MNT_TARGET$USER_HOME
+	exit 0)
+	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
+	
+	is_gui=`echo $INSTALL_GUI | grep -i "^y"`
+	if [ -n "$is_gui" ]; then
+		echo "[PRINT_ALL] Installing additional packages: "
+		(set -e
+			chroot $MNT_TARGET apt-get update -yq
+			PKGS="tightvncserver x11-xserver-utils xfonts-base"
+			case "$DESKTOP_ENV" in
+			XTerm)
+				PKGS="$PKGS xterm"
+			;;
+			LXDE)
+				PKGS="$PKGS lxde menu-xdg hicolor-icon-theme gtk2-engines"
+			;;
+			Xfce)
+				PKGS="$PKGS xfce4 tango-icon-theme hicolor-icon-theme"
+			;;
+			GNOME)
+				PKGS="$PKGS gnome-core"
+			;;
+			Unity)
+				PKGS="$PKGS gnome-core unity-2d unity-common unity-lens-files unity-lens-applications unity-lens-music"
+			;;
+			KDE)
+				PKGS="$PKGS kde-standard"
+			;;
+			*)
+				echo "$DESKTOP_ENV not found!"
+			;;
+			esac
+			chroot $MNT_TARGET apt-get install $PKGS --no-install-recommends -yq
+			chroot $MNT_TARGET apt-get clean
+		exit 0)
+		if [ $? -ne 0 ]; then
+			echo "[PRINT_LN] FAIL to deploy!"; return 1
+		fi
+	fi
+}
+
+update_system()
+{
+	echo "[PRINT_LN] Updating Linux system: "
+
+	echo "[PRINT] DNS ... "
+	(set -e
+		if [ -z "$SERVER_DNS" ]; then
+			dns1=`getprop net.dns1`
+			dns2=`getprop net.dns2`
+			[ -n "$dns1" ] && echo "nameserver $dns1" > $MNT_TARGET/etc/resolv.conf
+			[ -n "$dns2" ] && echo "nameserver $dns2" >> $MNT_TARGET/etc/resolv.conf
+		else
+			DNS_LIST=`echo $SERVER_DNS | tr ',;' ' '`
+			echo -n > $MNT_TARGET/etc/resolv.conf
+			for dns in $DNS_LIST
+			do
+				echo "nameserver $dns" >> $MNT_TARGET/etc/resolv.conf
+			done
+		fi
+		chmod 644 $MNT_TARGET/etc/resolv.conf
+	exit 0)
+	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
+	
+	echo "[PRINT] mtab ... "
+	(set -e
+		#chroot $MNT_TARGET ln -sf /proc/mounts /etc/mtab
+		cat /proc/mounts | grep $MNT_TARGET | sed "s|$MNT_TARGET/*|/|g" > $MNT_TARGET/etc/mtab
+		chmod 644 $MNT_TARGET/etc/mtab
+	exit 0)
+	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
+}
+
+mount_system()
+{
+	#echo "[PRINT] Checking file system ... "
+	#if [ "$FS_TYPE" != "auto" ]; then
+	#	(set -e
+	#		fsck -t $FS_TYPE $IMG_TARGET
+	#	exit 0)
+	#	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
+	#else
+	#	echo "[RESULT_LN] skip"
+	#fi
+		
 	echo "[PRINT_LN] Mounting partitions: "
+	
 	echo "[PRINT] / ... "
 	mnt=`cat /proc/mounts | grep " $MNT_TARGET "`
 	if [ -z "$mnt" ]; then
 		[ ! -d "$MNT_TARGET" ] && mkdir -p $MNT_TARGET
-		ext4_support=`cat /proc/filesystems | grep ext4`
-		FS_TYPE="ext2"
-		[ -n "$ext4_support" ] && FS_TYPE="ext4"
-		mount -o rw,relatime -t $FS_TYPE $IMG_TARGET $MNT_TARGET
+		mount -o rw,relatime $IMG_TARGET $MNT_TARGET
 		if [ $? -eq 0 ]; then
 			echo "[RESULT_LN] done"
 		else
-			echo "[RESULT_LN] fail"; exit 1
+			echo "[RESULT_LN] fail"; return 1
 		fi
 	else
 		echo "[RESULT_LN] skip"
@@ -95,22 +401,29 @@ mount)
 		is_dev=`echo $disk | grep ^/dev/`
 		if [ -z "$tmnt" -a -z "$smnt_dev" -a -n "$is_dev" -a -e "$disk" ]; then
 			[ ! -d "$tg" ] && mkdir -p $tg
-			ext4_support=`cat /proc/filesystems | grep ext4`
-			FS_TYPE="ext2"
-			[ -n "$ext4_support" ] && FS_TYPE="ext4"
-			[ ! -d "$tg" ] && mkdir -p $tg
-			mount -o rw,relatime -t $FS_TYPE $disk $tg
+			mount -o rw,relatime $disk $tg
 			[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 		else
 			echo "[RESULT_LN] skip"
 		fi
 	done
-;;
-umount)
+}
+
+umount_system()
+{
 	echo "[PRINT] Release resources ... "
 	(set -e
-		pids=`lsof | grep $MNT_TARGET | awk '{print $1}' | uniq || true`
-		[ -n "$pids" ] && kill -9 $pids
+		for i in 1 2 3 4
+		do
+			[ "$i" -gt "3" ] && exit 1
+			pids=`lsof | grep $MNT_TARGET | awk '{print $1}' | uniq || true`
+			if [ -n "$pids" ]; then
+				kill -9 $pids || true
+				sleep 1
+			else
+				break
+			fi
+		done
 	exit 0)
 	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 	
@@ -136,279 +449,34 @@ umount)
 		[ -n "$loop" ] && losetup -d $loop
 	exit 0)
 	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
-;;
-install)
-	if [ ! -e "$IMG_TARGET" ]; then
-		echo "[PRINT] Making new disk image ($IMG_SIZE MB) ... "
-		(set -e
-			dd if=/dev/zero of=$IMG_TARGET bs=1048576 count=$IMG_SIZE
-		exit 0)
-		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
-	fi
-	ext4_support=`cat /proc/filesystems | grep ext4`
-	FS_TYPE="ext2"
-	[ -n "$ext4_support" ] && FS_TYPE="ext4"
-	echo "[PRINT] Making $FS_TYPE file system ... "
-	(set -e
-		is_loop=`losetup | grep $IMG_TARGET || true`
-		is_raw=`cat /proc/mounts | grep $IMG_TARGET || true`
-		[ -z "$is_loop" -a -z "$is_raw" ] && mke2fs -qF -t $FS_TYPE -O ^has_journal $IMG_TARGET
-	exit 0)
-	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
+}
 
-	$0 mount
-	if [ $? -ne 0 ]; then
-		echo "[PRINT_LN] FAIL to deploy!"; exit 1
-	fi
-
-	echo "[PRINT_ALL] Installing Linux base system: "
-	[ -z "$DEBOOTSTRAP_DIR" ] && DEBOOTSTRAP_DIR=$HOME_DIR/deploy/debootstrap
-	export DEBOOTSTRAP_DIR
-	debootstrap --no-check-gpg --arch $ARCH --foreign --extractor=ar --include=locales,openssh-server,sudo $SUITE $MNT_TARGET $MIRROR
-	if [ $? -ne 0 ]; then
-		echo "[PRINT_LN] FAIL to deploy!"; exit 1
-	fi
-	
-	$0 mount
-	if [ $? -ne 0 ]; then
-		echo "[PRINT_LN] FAIL to deploy!"; exit 1
-	fi
-	
-	echo "[PRINT_ALL] Preparing Linux system (second stage): "
-	unset DEBOOTSTRAP_DIR
-	chroot $MNT_TARGET /debootstrap/debootstrap --second-stage
-	if [ $? -ne 0 ]; then
-		echo "[PRINT_LN] FAIL to deploy!"; exit 1
-	fi
-	
-	$0 config
-	if [ $? -ne 0 ]; then
-		echo "[PRINT_LN] FAIL to deploy!"; exit 1
-	fi
-;;
-config)
-	$0 mount
-	[ $? -ne 0 ] && exit 1
-
-	echo "[PRINT_LN] Configuring Linux system: "
-
-	LINUX_VERSION=`cat $MNT_TARGET/etc/issue.net`
-	[ -z "$LINUX_VERSION" ] && LINUX_VERSION="GNU/Linux"
-	DEBIAN_VERSION=`echo $LINUX_VERSION | grep -i debian`
-
-	echo "[PRINT] DNS ... "
-	(set -e
-		DNS_LIST=`echo $SERVER_DNS | tr ',;' ' '`
-		echo -n > $MNT_TARGET/etc/resolv.conf
-		for dns in $DNS_LIST
-		do
-			echo "nameserver $dns" >> $MNT_TARGET/etc/resolv.conf
-		done
-	exit 0)
-	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
-
-	echo "[PRINT] APT ... "
-	if [ -n "$DEBIAN_VERSION" ]; then
-		(set -e
-			[ -e "$MNT_TARGET/etc/apt/sources.list" ] && cp $MNT_TARGET/etc/apt/sources.list $MNT_TARGET/etc/apt/sources.list.bak
-			echo "deb $MIRROR $SUITE main contrib non-free" > $MNT_TARGET/etc/apt/sources.list
-			echo "deb-src $MIRROR $SUITE main contrib non-free" >> $MNT_TARGET/etc/apt/sources.list
-		exit 0)
-		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
-	else
-		echo "[RESULT_LN] skip"
-	fi
-
-	echo "[PRINT] hosts ... "
-	(set -e
-		is_localhost=`cat $MNT_TARGET/etc/hosts | grep "^127.0.0.1" || true`
-		[ -z "$is_localhost" ] && echo '127.0.0.1 localhost' >> $MNT_TARGET/etc/hosts
-	exit 0)
-	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
-
-	echo "[PRINT] mtab ... "
-	(set -e
-		#chroot $MNT_TARGET ln -sf /proc/mounts /etc/mtab
-		cat /proc/mounts | grep $MNT_TARGET | sed "s|$MNT_TARGET/*|/|g" > $MNT_TARGET/etc/mtab
-	exit 0)
-	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
-
-	echo "[PRINT] motd ... "
-	(set -e	
-		MOTD="$LINUX_VERSION [running on Android via Linux Deploy]"
-		rm -f $MNT_TARGET/etc/motd || true
-		echo $MOTD > $MNT_TARGET/etc/motd
-	exit 0)
-	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
-	
-	echo "[PRINT] sudo ... "
-	(set -e
-		SUDO_STR="$USER_NAME ALL=(ALL:ALL) NOPASSWD:ALL"
-		is_str=`cat $MNT_TARGET/etc/sudoers | grep "$SUDO_STR" || true`
-		[ -z "$is_str" ] && echo $SUDO_STR >> $MNT_TARGET/etc/sudoers
-	exit 0)
-	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
-	
-	echo "[PRINT] sftp-server ... "
-	if [ -n "$DEBIAN_VERSION" ]; then
-		(set -e
-			cp $HOME_DIR/deploy/openssh/$ARCH/sftp-server $MNT_TARGET/usr/lib/openssh/sftp-server-fix
-			sed -i "s|^Subsystem sftp .*|Subsystem sftp /usr/lib/openssh/sftp-server-fix|g" $MNT_TARGET/etc/ssh/sshd_config
-		exit 0)
-		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
-	else
-		echo "[RESULT_LN] skip"
-	fi
-	
-	echo "[PRINT] locales ... "
-	(set -e
-		echo "en_US.UTF-8 UTF-8" > $MNT_TARGET/etc/locale.gen
-		echo "ru_RU.UTF-8 UTF-8" >> $MNT_TARGET/etc/locale.gen
-		chroot $MNT_TARGET locale-gen en_US.UTF-8 ru_RU.UTF-8
-		if [ "$LANGUAGE" == "ru" ]; then
-			echo "LANG=ru_RU.UTF-8" > $MNT_TARGET/etc/default/locale
-		else
-			echo "LANG=en_US.UTF-8" > $MNT_TARGET/etc/default/locale
-		fi
-	exit 0)
-	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
-	
-	echo "[PRINT] timezone ... "
-	(set -e
-		TZ=`getprop persist.sys.timezone`
-		echo $TZ > $MNT_TARGET/etc/timezone
-		cp $MNT_TARGET/usr/share/zoneinfo/$TZ $MNT_TARGET/etc/localtime
-	exit 0)
-	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
-
-	echo "[PRINT] users and groups ... "
-	(set -e
-		AIDS=`cat $HOME_DIR/etc/aids`
-		for AID in $AIDS
-		do
-			XNAME=`echo $AID | awk -F: '{print $1}'`
-			XID=`echo $AID | awk -F: '{print $2}'`
-			sed -i "s|^$XNAME:x:$XID:.*|$XNAME:x:$XID:$USER_NAME|g" $MNT_TARGET/etc/group || true
-			is_str=`cat $MNT_TARGET/etc/group | grep "^$XNAME:" || true`
-			[ -z "$is_str" ] && echo "$XNAME:x:$XID:$USER_NAME" >> $MNT_TARGET/etc/group
-			is_str=`cat $MNT_TARGET/etc/passwd | grep "^$XNAME:" || true`
-			[ -z "$is_str" ] && echo "$XNAME:x:$XID:$XID::/:/bin/false" >> $MNT_TARGET/etc/passwd
-			sed -i 's|^UID_MIN.*|UID_MIN 10000|g' $MNT_TARGET/etc/login.defs
-			sed -i 's|^GID_MIN.*|GID_MIN 10000|g' $MNT_TARGET/etc/login.defs	
-		done
-	exit 0)
-	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
-	
-	echo "[PRINT] $USER_NAME user profile ... "
-	(set -e
-		reserved=`echo $USER_NAME | grep ^aid_ || true`
-		if [ -n "$reserved" ]; then
-			echo "Username $USER_NAME is reserved!"
-			exit 1
-		fi
-		if [ "$USER_NAME" != "root" ]; then
-			chroot $MNT_TARGET groupadd $USER_NAME || true
-			chroot $MNT_TARGET useradd -m -g $USER_NAME -s /bin/bash $USER_NAME || true
-			chroot $MNT_TARGET usermod -g $USER_NAME $USER_NAME || true
-		fi
-		chroot $MNT_TARGET sh -c "export $USER_NAME; printf '%s\n' changeme changeme | passwd $USER_NAME"
-		USER_HOME=`cat $MNT_TARGET/etc/passwd | grep "^$USER_NAME:" | awk -F: '{print $6}'`
-		USER_ID=`cat $MNT_TARGET/etc/passwd | grep "^$USER_NAME:" | awk -F: '{print $3}'`
-		GROUP_ID=`cat $MNT_TARGET/etc/passwd | grep "^$USER_NAME:" | awk -F: '{print $4}'`
-		PROFILE_STR='PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
-		is_str=`cat $MNT_TARGET$USER_HOME/.profile | grep "$PROFILE_STR" || true`
-		[ -z "$is_str" ] && echo $PROFILE_STR >> $MNT_TARGET$USER_HOME/.profile
-		is_gui=`echo $INSTALL_GUI | grep -i "^y" || true`
-		if [ -n "$is_gui" ]; then
-			mkdir $MNT_TARGET$USER_HOME/.vnc || true
-			chmod 755 $MNT_TARGET$USER_HOME/.vnc
-			echo "MPTcXfgXGiY=" | base64 -d > $MNT_TARGET$USER_HOME/.vnc/passwd
-			chmod 600 $MNT_TARGET$USER_HOME/.vnc/passwd
-			echo 'XAUTHORITY=$HOME/.Xauthority' > $MNT_TARGET$USER_HOME/.vnc/xstartup
-			echo 'export XAUTHORITY' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
-			case "$DESKTOP_ENV" in
-			TWM)
-				echo 'xsetroot -solid grey' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
-				echo 'xterm -geometry 80x24+10+10 -ls -title "$VNCDESKTOP Desktop" &' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
-				echo 'twm &' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
-			;;
-			LXDE)
-				echo 'startlxde &' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
-			;;
-			XFCE)
-				echo 'startxfce4 &' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
-			;;
-			GNOME)
-				echo 'gnome-session &' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
-			;;
-			KDE)
-				echo 'startkde &' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
-			;;
-			*)
-				echo "$DESKTOP_ENV not found!"
-			;;
-			esac
-			chmod 755 $MNT_TARGET$USER_HOME/.vnc/xstartup
-		fi
-		chown -R $USER_ID:$GROUP_ID $MNT_TARGET$USER_HOME
-	exit 0)
-	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
-	
-	is_gui=`echo $INSTALL_GUI | grep -i "^y"`
-	if [ -n "$is_gui" -a -n "$DEBIAN_VERSION" ]; then
-		echo "[PRINT_ALL] Installing additional packages: "
-		(set -e
-			chroot $MNT_TARGET aptitude update -yq
-			PKGS="tightvncserver x11-xserver-utils xfonts-base"
-			case "$DESKTOP_ENV" in
-			TWM)
-				PKGS="$PKGS twm xterm"
-			;;
-			LXDE)
-				PKGS="$PKGS lxde gnome-themes gnome-menus hicolor-icon-theme"
-			;;
-			XFCE)
-				PKGS="$PKGS xfce4 tango-icon-theme hicolor-icon-theme"
-			;;
-			GNOME)
-				PKGS="$PKGS gnome-core"
-			;;
-			KDE)
-				PKGS="$PKGS kde-standard"
-			;;
-			*)
-				echo "$DESKTOP_ENV not found!"
-			;;
-			esac
-			chroot $MNT_TARGET aptitude install $PKGS --without-recommends -yq
-			chroot $MNT_TARGET aptitude clean
-		exit 0)
-		if [ $? -ne 0 ]; then
-			echo "[PRINT_LN] FAIL to deploy!"; exit 1
-		fi
-	fi
-;;
-uninstall)
+uninstall_system()
+{
 	$0 umount
-	[ $? -ne 0 ] && exit 1
+	[ $? -ne 0 ] && return 1
 	
-	echo "[PRINT] Removing disk image ... "
-	(set -e
-		[ -f "$IMG_TARGET" ] && rm $IMG_TARGET
-		[ -d "$MNT_TARGET" ] && rmdir $MNT_TARGET
-	exit 0)
-	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
+	#echo "[PRINT] Removing disk image ... "
+	#(set -e
+	#	[ -f "$IMG_TARGET" ] && rm $IMG_TARGET
+	#	[ -d "$MNT_TARGET" ] && rmdir $MNT_TARGET
+	#exit 0)
+	#[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 	
 	echo "[PRINT] Removing environment ... "
 	(set -e
-		rm -rf $HOME_DIR/deploy $HOME_DIR/etc $HOME_DIR/bin
+		rm -rf $HOME_DIR/mnt $HOME_DIR/deploy $HOME_DIR/etc $HOME_DIR/bin
 		[ -d "$HOME_DIR" ] && rmdir $HOME_DIR
 	exit 0)
 	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
-;;
-start)
-	$0 mount
-	[ $? -ne 0 ] && exit 1
+}
+
+start_system()
+{
+	mount_system
+	[ $? -ne 0 ] && return 1
+	
+	update_system
 	
 	echo "[PRINT_LN] Starting services: "
 	echo "[PRINT] SSH ... "
@@ -416,7 +484,7 @@ start)
 	if [ -n "$is_ssh" ]; then
 		(set -e
 			sed -i "s|^Port .*|Port $SSH_PORT|g" $MNT_TARGET/etc/ssh/sshd_config
-			chroot $MNT_TARGET /etc/init.d/ssh start
+			chroot $MNT_TARGET su - root -c "/etc/init.d/ssh start"
 		exit 0)
 		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 	else
@@ -436,23 +504,37 @@ start)
 		echo "[RESULT_LN] skip"
 	fi
 	
+	echo "[PRINT] X Window System ... "	
+	is_xserver=`echo $XSERVER_START | grep -i "^y"`
+	if [ -n "$is_xserver" ]; then
+		(set -e
+			chroot $MNT_TARGET su - $USER_NAME -c "export DISPLAY=$XSERVER_HOST:$XSERVER_DISPLAY; cut -d ' ' -f 6 /proc/self/stat > ~/.xsessionid; chmod 644 ~/.xsessionid; ~/.xsession"
+		exit 0)
+		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
+	else
+		echo "[RESULT_LN] skip"
+	fi
+	
 	SCRIPTS=`echo "$CUSTOM_STARTUP" | tr ':' ' '`
 	for script in $SCRIPTS
 	do
 		echo "[PRINT] $script ... "
 		(set -e
-			chroot $MNT_TARGET $script start
+			chroot $MNT_TARGET su - root -c "$script start"
 		exit 0)
 		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 	done
-;;
-stop)
+}
+
+stop_system()
+{
 	echo "[PRINT_LN] Stopping services: "
+	
 	echo "[PRINT] SSH ... "
 	is_ssh=`echo $SSH_START | grep -i "^y"`
 	if [ -n "$is_ssh" ]; then
 		(set -e
-			chroot $MNT_TARGET /etc/init.d/ssh stop
+			chroot $MNT_TARGET su - root -c "/etc/init.d/ssh stop"
 			sleep 1
 			pkill -9 sshd || true
 		exit 0)
@@ -474,18 +556,53 @@ stop)
 		echo "[RESULT_LN] skip"
 	fi
 	
+	echo "[PRINT] X Window System ... "	
+	is_xserver=`echo $XSERVER_START | grep -i "^y"`
+	if [ -n "$is_xserver" ]; then
+		(set -e
+			chroot $MNT_TARGET su - $USER_NAME -c 'kill -9 -$(cat ~/.xsessionid)'
+		exit 0)
+		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
+	else
+		echo "[RESULT_LN] skip"
+	fi
+	
 	SCRIPTS=`echo "$CUSTOM_STARTUP" | tr ':' ' '`
 	for script in $SCRIPTS
 	do
 		echo "[PRINT] $script ... "
 		(set -e
-			chroot $MNT_TARGET $script stop
+			chroot $MNT_TARGET su - root -c "$script stop"
 		exit 0)
 		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 	done
-	$0 umount	
+	
+	umount_system
+}
+
+case "$1" in
+mount)
+	mount_system
+;;
+umount)
+	umount_system
+;;
+install)
+	install_system
+;;
+configure)
+	configure_system
+;;
+uninstall)
+	uninstall_system
+;;
+start)
+	start_system
+;;
+stop)
+	stop_system
 ;;
 *)
-	echo "Usage: $0 <mount|umount|install|config|uninstall|start|stop>"
+	echo "Usage: $0 <mount|umount|install|configure|uninstall|start|stop>"
 ;;
 esac
