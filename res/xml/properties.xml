@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen
+        xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+            android:title="@string/deploy_preferences">
+	    
+	    <ListPreference
+    	        android:key="distribution"
+        	    android:defaultValue="@string/distribution"
+            	android:title="@string/title_distribution_preferences"
+            	android:summary="@string/distribution"
+            	android:entries="@array/distribution_values"
+            	android:entryValues="@array/distribution_values"
+            	android:dialogTitle="@string/dialog_title_distribution_preference" />
+	    
+	    <ListPreference
+    	        android:key="suite"
+        	    android:defaultValue="@string/suite"
+            	android:title="@string/title_suite_preferences"
+            	android:summary="@string/suite"
+            	android:entries="@array/debian_suite_values"
+            	android:entryValues="@array/debian_suite_values"
+            	android:dialogTitle="@string/dialog_title_suite_preference" />
+	    
+	    <EditTextPreference
+    	        android:key="mirror"
+        	    android:defaultValue="@string/mirror"
+            	android:title="@string/title_mirror_preferences"
+	            android:summary="@string/mirror"
+	            android:dialogTitle="@string/dialog_title_mirror_preference" />
+	    
+	    <ListPreference
+    	        android:key="architecture"
+        	    android:defaultValue="@string/architecture"
+            	android:title="@string/title_architecture_preferences"
+            	android:summary="@string/architecture"
+            	android:entries="@array/debian_architecture_values"
+            	android:entryValues="@array/debian_architecture_values"
+            	android:dialogTitle="@string/dialog_title_architecture_preference" />
+            
+	    <EditTextPreference
+    	        android:key="diskimage"
+        	    android:defaultValue="@string/diskimage"
+            	android:title="@string/title_diskimage_preferences"
+	            android:summary="@string/diskimage"
+	            android:dialogTitle="@string/dialog_title_diskimage_preference" />
+
+	    <EditTextPreference
+    	        android:key="disksize"
+        	    android:defaultValue="@string/disksize"
+        	    android:inputType="numberDecimal"
+            	android:title="@string/title_disksize_preferences"
+            	android:summary="@string/disksize"
+            	android:dialogTitle="@string/dialog_title_disksize_preference" />
+	    
+	    <ListPreference
+    	        android:key="fstype"
+        	    android:defaultValue="@string/fstype"
+            	android:title="@string/title_fstype_preferences"
+            	android:summary="@string/fstype"
+            	android:entries="@array/fstype_values"
+            	android:entryValues="@array/fstype_values"
+            	android:dialogTitle="@string/dialog_title_fstype_preference" />
+
+	    <EditTextPreference
+    	        android:key="username"
+        	    android:defaultValue="@string/username"
+            	android:title="@string/title_username_preferences"
+	            android:summary="@string/username"
+	            android:dialogTitle="@string/dialog_title_username_preference" />
+	    
+	    <EditTextPreference
+    	        android:key="serverdns"
+        	    android:defaultValue="@string/serverdns"
+            	android:title="@string/title_serverdns_preferences"
+	            android:summary="@string/serverdns"
+	            android:dialogTitle="@string/dialog_title_serverdns_preference" />
+	    
+	    <ListPreference
+    	        android:key="locale"
+        	    android:defaultValue="@string/locale"
+            	android:title="@string/title_locale_preferences"
+            	android:summary="@string/locale"
+            	android:entries="@array/locale_values"
+            	android:entryValues="@array/locale_values"
+            	android:dialogTitle="@string/dialog_title_locale_preference" />
+	    
+	    <CheckBoxPreference
+    	        android:key="installgui"
+        	    android:defaultValue="@string/installgui"
+            	android:title="@string/title_installgui_preferences"
+            	android:summary="@string/summary_installgui_preferences" />
+	    
+	    <ListPreference
+	        	android:dependency="installgui"
+    	        android:key="desktopenv"
+        	    android:defaultValue="@string/desktopenv"
+            	android:title="@string/title_desktopenv_preferences"
+            	android:summary="@string/installgui"
+            	android:entries="@array/debian_desktopenv_values"
+            	android:entryValues="@array/debian_desktopenv_values"
+            	android:dialogTitle="@string/dialog_title_desktopenv_preference" />
+	    
+	    <PreferenceScreen
+	        	android:key="reconfigure"
+                android:title="@string/title_reconfigure_preference"
+                android:summary="@string/summary_reconfigure_preference" />
+<!-- 	    
+	    <PreferenceScreen
+	        	android:key="reset"
+                android:title="@string/title_reset_preference"
+                android:summary="@string/summary_reset_preference" />
+ -->
+    </PreferenceCategory>
+    
+    <PreferenceCategory
+            android:title="@string/startup_preferences">
+
+       	<CheckBoxPreference
+  	        	android:key="sshstartup"
+       	    	android:defaultValue="@string/sshstartup"
+           		android:title="@string/title_sshstartup_preferences"
+            	android:summary="@string/summary_sshstartup_preferences" />
+       	
+   		<CheckBoxPreference
+   	        	android:key="vncstartup"
+       	    	android:defaultValue="@string/vncstartup"
+           		android:title="@string/title_vncstartup_preferences"
+            	android:summary="@string/summary_vncstartup_preferences" />
+   		
+   		<CheckBoxPreference
+   	        	android:key="xstartup"
+       	    	android:defaultValue="@string/xstartup"
+           		android:title="@string/title_xstartup_preferences"
+            	android:summary="@string/summary_xstartup_preferences" />
+
+	    <CheckBoxPreference
+    	        android:key="customstartup"
+        	    android:defaultValue="@string/customstartup"
+            	android:title="@string/title_customstartup_preferences"
+            	android:summary="@string/summary_customstartup_preferences" />
+
+       	<EditTextPreference
+       	    	android:dependency="customstartup"
+   	        	android:key="customscript"
+       	    	android:defaultValue="@string/customscript"
+           		android:title="@string/title_customscript_preferences"
+            	android:summary="@string/customscript"
+				android:dialogTitle="@string/dialog_title_customscript_preference" />
+       	
+	    <CheckBoxPreference
+    	        android:key="mountcustom"
+        	    android:defaultValue="@string/mountcustom"
+            	android:title="@string/title_mountcustom_preferences"
+            	android:summary="@string/summary_mountcustom_preferences" />
+
+       	<EditTextPreference
+       	    	android:dependency="mountcustom"
+   	        	android:key="mountpath"
+       	    	android:defaultValue="@string/mountpath"
+           		android:title="@string/title_mountpath_preferences"
+            	android:summary="@string/mountpath"
+				android:dialogTitle="@string/dialog_title_mountpath_preference" />
+       	
+	</PreferenceCategory>
+	
+    <PreferenceCategory
+        	android:title="@string/ssh_preferences">
+
+   		<EditTextPreference
+    		    android:dependency="sshstartup"
+   	        	android:key="sshport"
+       	    	android:defaultValue="@string/sshport"
+       	    	android:inputType="numberDecimal"
+           		android:title="@string/title_sshport_preferences"
+           		android:summary="@string/sshport"
+           		android:dialogTitle="@string/dialog_title_sshport_preference" />
+
+   	</PreferenceCategory>
+	
+    <PreferenceCategory
+        	android:title="@string/vnc_preferences">
+        	
+   		<EditTextPreference
+    		    android:dependency="vncstartup"
+   	        	android:key="vncdisplay"
+       	    	android:defaultValue="@string/vncdisplay"
+       	    	android:inputType="numberDecimal"
+           		android:title="@string/title_vncdisplay_preferences"
+           		android:summary="@string/vncdisplay"
+           		android:dialogTitle="@string/dialog_title_vncdisplay_preference" />
+	    		
+   		<ListPreference
+    		    android:dependency="vncstartup"
+   	        	android:key="vncdepth"
+       	    	android:defaultValue="@string/vncdepth"
+       	    	android:inputType="numberDecimal"
+           		android:title="@string/title_vncdepth_preferences"
+           		android:summary="@string/vncdepth"
+           		android:entries="@array/vncdepth_values"
+           		android:entryValues="@array/vncdepth_values"
+           		android:dialogTitle="@string/dialog_title_vncdepth_preference" />
+	    		
+   		<EditTextPreference
+    		    android:dependency="vncstartup"
+   	        	android:key="vncwidth"
+       	    	android:defaultValue="@string/vncwidth"
+       	    	android:inputType="numberDecimal"
+           		android:title="@string/title_vncwidth_preferences"
+           		android:summary="@string/vncwidth"
+           		android:dialogTitle="@string/dialog_title_vncwidth_preference" />
+	    		
+   		<EditTextPreference
+    		    android:dependency="vncstartup"
+   	        	android:key="vncheight"
+       	    	android:defaultValue="@string/vncheight"
+       	    	android:inputType="numberDecimal"
+           		android:title="@string/title_vncheight_preferences"
+           		android:summary="@string/vncheight"
+           		android:dialogTitle="@string/dialog_title_vncheight_preference" />
+
+    </PreferenceCategory>
+    
+    <PreferenceCategory
+        	android:title="@string/xserver_preferences">
+        	
+   		<EditTextPreference
+    		    android:dependency="xstartup"
+   	        	android:key="xdisplay"
+       	    	android:defaultValue="@string/xdisplay"
+       	    	android:inputType="numberDecimal"
+           		android:title="@string/title_xdisplay_preferences"
+           		android:summary="@string/xdisplay"
+           		android:dialogTitle="@string/dialog_title_xdisplay_preference" />
+	    		
+   		<EditTextPreference
+    		    android:dependency="xstartup"
+   	        	android:key="xhost"
+       	    	android:defaultValue="@string/xhost"
+           		android:title="@string/title_xhost_preferences"
+           		android:summary="@string/xhost"
+           		android:dialogTitle="@string/dialog_title_xhost_preference" />
+
+    </PreferenceCategory>
+    
+</PreferenceScreen>

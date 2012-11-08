@@ -1,156 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+
 <resources>
 
     <string name="app_name">Linux Deploy</string>
-    <string name="menu_settings">Настройки</string>
-    <string name="menu_about">О программе</string>
-    <string name="menu_exit">Выход</string>
-    <string name="menu_status">Информация</string>
-    <string name="menu_clear">Очистить</string>
+    <string name="menu_profiles">Profiles</string>
+    <string name="menu_settings">Settings</string>
+    <string name="menu_about">About</string>
+    <string name="menu_exit">Exit</string>
+    <string name="menu_status">SysInfo</string>
+    <string name="menu_clear">Clear</string>
+    <string name="menu_new">New</string>
+    <string name="menu_edit">Edit</string>
+    <string name="menu_discard">Delete</string>
     <string name="title_activity_main">Linux Deploy</string>
-    <string name="title_activity_about">О программе</string>
-    <string name="title_activity_preferences">Настройки</string>
-    <string name="confirm_install_title">Установить</string>
-    <string name="confirm_start_title">Запустить</string>
-    <string name="confirm_stop_title">Остановить</string>
-    <string name="confirm_uninstall_title">Удалить</string>
-    <string name="confirm_install_message">Запустить новую установку GNU/Linux?</string>
-    <string name="confirm_start_message">Смонтировать GNU/Linux и запустить сервисы?</string>
-    <string name="confirm_stop_message">Остановить сервисы и размонтировать GNU/Linux?</string>
-    <string name="confirm_uninstall_message">Удалить образ диска и все связанные данные?</string>
-
-    <string name="app_preferences">Приложение</string>
-
-    <string name="title_screenlock_preference">Не отключать экран</string>
-    <string name="summary_screenlock_preference">Оставлять экран включенным пока запущено приложение</string>
-
-    <string name="title_wifilock_preference">Не отключать WiFi</string>
-    <string name="summary_wifilock_preference">Оставлять WiFi включенным пока запущено приложение</string>
-
-    <string name="title_wifionly_preference">Требовать WiFi</string>
-    <string name="summary_wifionly_preference">Требовать активного WiFi соединения для начала установки</string>
-
-    <string name="title_language_preferences">Язык интерфейса</string>
-    <string name="summary_language_preferences">English</string>
-    <string name="dialog_title_language_preference">Выберите язык</string>
-
-    <string name="title_fontsize_preferences">Размер шрифта</string>
-    <string name="summary_fontsize_preferences">10</string>
-    <string name="dialog_title_fontsize_preference">Размер шрифта</string>
-
-    <string name="title_installenv_preference">Обновить окружение</string>
-    <string name="summary_installenv_preference">Установить или обновить рабочее окружение</string>
-    <string name="message_installenv_confirm_dialog">Запустить обновление рабочего окружения?</string>
-
-    <string name="title_reset_preference">Сбросить настройки</string>
-    <string name="summary_reset_preference">Восстановить исходные параметры приложения</string>
-    <string name="message_reset_confirm_dialog">Восстановить исходные параметры приложения?</string>
-
-    <string name="deploy_preferences">Развертывание</string>
-
-    <string name="title_installdir_preferences">Директория установки</string>
-    <string name="summary_installdir_preferences">/data/local/linux</string>
-    <string name="dialog_title_installdir_preference">Директория установки</string>
-
-    <string name="title_diskimage_preferences">Диск (образ)</string>
-    <string name="summary_diskimage_preferences">/mnt/sdcard/linux.img</string>
-    <string name="dialog_title_diskimage_preference">Путь к разделу или файлу</string>
-
-    <string name="title_disksize_preferences">Размер образа (МБ)</string>
-    <string name="summary_disksize_preferences">1024</string>
-    <string name="dialog_title_disksize_preference">Размер образа (МБ)</string>
-
-    <string name="title_architecture_preferences">Архитектура</string>
-    <string name="summary_architecture_preferences">armhf</string>
-    <string name="dialog_title_architecture_preference">Архитектура</string>
-
-    <string name="title_suite_preferences">Версия дистрибутива</string>
-    <string name="summary_suite_preferences">wheezy</string>
-    <string name="dialog_title_suite_preference">Версия дистрибутива</string>
-
-    <string name="title_mirror_preferences">URL-адрес зеркала</string>
-    <string name="summary_mirror_preferences">http://mirror.yandex.ru/debian</string>
-    <string name="dialog_title_mirror_preference">URL-адрес зеркала</string>
-
-    <string name="title_username_preferences">Имя пользователя</string>
-    <string name="summary_username_preferences">android</string>
-    <string name="dialog_title_username_preference">Имя пользователя</string>
+    <string name="title_activity_about">About</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="title_activity_properties">Properties</string>
+        
+    <string name="confirm_install_title">Install</string>
+    <string name="confirm_start_title">Start</string>
+    <string name="confirm_stop_title">Stop</string>
+    <string name="confirm_install_message">Start new deployment of GNU/Linux system?</string>
+    <string name="confirm_start_message">Mount GNU/Linux system and start services?</string>
+    <string name="confirm_stop_message">Stop services and unmount GNU/Linux system?</string>
     
-    <string name="title_serverdns_preferences">DNS-сервер</string>
-    <string name="summary_serverdns_preferences">8.8.8.8</string>
-    <string name="dialog_title_serverdns_preference">Адрес DNS-сервера</string>
-
-    <string name="title_installgui_preferences">Установить GUI</string>
-    <string name="summary_installgui_preferences">Включить установку окружения рабочего стола и VNC сервера</string>
+    <string name="app_preferences">Application</string>
     
-    <string name="title_desktopenv_preferences">Окружение рабочего стола</string>
-    <string name="summary_desktopenv_preferences">LXDE</string>
-    <string name="dialog_title_desktopenv_preference">Окружение рабочего стола</string>
+    <string name="title_screenlock_preference">Lock screen</string>
+    <string name="summary_screenlock_preference">Keep screen active while the application is running</string>
 
-    <string name="title_reconfigure_preference">Переконфигурация</string>
-    <string name="summary_reconfigure_preference">Выполнить переконфигурацию системы</string>
-    <string name="message_reconfigure_confirm_dialog">Запусить переконфигурацию системы?</string>
+    <string name="title_language_preferences">Language</string>
+    <string name="dialog_title_language_preference">Choose language</string>
     
-    <string name="startup_preferences">Запуск</string>
+    <string name="title_fontsize_preferences">Font size</string>
+    <string name="dialog_title_fontsize_preference">Font size</string>
+
+    <string name="title_theme_preferences">Theme</string>
+    <string name="dialog_title_theme_preference">Choose theme</string>
+    
+    <string name="title_installdir_preferences">Installation directory</string>
+    <string name="dialog_title_installdir_preference">Installation directory</string>
+
+    <string name="title_installenv_preference">Update ENV</string>
+    <string name="summary_installenv_preference">Update the operating environment</string>
+    <string name="message_installenv_confirm_dialog">Update the operating environment?</string>
+    
+    <string name="title_removeenv_preference">Remove ENV</string>
+    <string name="summary_removeenv_preference">Remove the operating environment</string>
+    <string name="message_removeenv_confirm_dialog">Remove the operating environment?</string>
+
+    <string name="deploy_preferences">Deploy</string>
+    
+    <string name="title_distribution_preferences">Distribution</string>
+    <string name="dialog_title_distribution_preference">Distribution</string>
+
+    <string name="title_diskimage_preferences">Disk (image) path</string>
+    <string name="dialog_title_diskimage_preference">Device or file path</string>
+
+    <string name="title_disksize_preferences">Image size (MB)</string>
+    <string name="dialog_title_disksize_preference">Disk image size (MB)</string>
+    
+    <string name="title_fstype_preferences">File system</string>
+    <string name="dialog_title_fstype_preference">File system</string>
+    
+    <string name="title_architecture_preferences">Architecture</string>
+    <string name="dialog_title_architecture_preference">Architecture</string>
+    
+    <string name="title_suite_preferences">Distribution suite</string>
+    <string name="dialog_title_suite_preference">Distribution suite</string>
+    
+    <string name="title_mirror_preferences">Mirror URL</string>
+    <string name="dialog_title_mirror_preference">Mirror URL</string>
+    
+    <string name="title_username_preferences">User name</string>
+    <string name="dialog_title_username_preference">User name</string>
+
+    <string name="title_serverdns_preferences">DNS server</string>
+    <string name="dialog_title_serverdns_preference">Address of DNS server</string>
+    <string name="summary_serverdns_preference">Automatic detection</string>
+    
+    <string name="title_locale_preferences">Localization</string>
+    <string name="dialog_title_locale_preference">Localization</string>
+    
+    <string name="title_installgui_preferences">Install GUI</string>
+    <string name="summary_installgui_preferences">Include installation desktop environment and VNC server</string>
+    
+    <string name="title_desktopenv_preferences">Desktop environment</string>
+    <string name="dialog_title_desktopenv_preference">Desktop environment</string>
+
+    <string name="title_reconfigure_preference">Reconfigure</string>
+    <string name="summary_reconfigure_preference">Run the system reconfiguration</string>
+    <string name="message_reconfigure_confirm_dialog">Perform reconfiguration of the system?</string>
+    
+    <string name="title_reset_preference">Reset settings</string>
+    <string name="summary_reset_preference">Restore default settings</string>
+    <string name="message_reset_confirm_dialog">Restore settings by default?</string>
+
+    <string name="startup_preferences">Startup</string>
 
     <string name="title_sshstartup_preferences">SSH</string>
-    <string name="summary_sshstartup_preferences">Разрешить запуск SSH сервера</string>
-
+    <string name="summary_sshstartup_preferences">Enable SSH server startup</string>
+    
     <string name="title_vncstartup_preferences">VNC</string>
-    <string name="summary_vncstartup_preferences">Разрешить запуск VNC сервера</string>
+    <string name="summary_vncstartup_preferences">Enable VNC server startup</string>
     
-    <string name="title_startupcustom_preferences">Cценарий</string>
-    <string name="summary_startupcustom_preferences">Разрешить запуск сценария</string>
+    <string name="title_xstartup_preferences">X Window System</string>
+    <string name="summary_xstartup_preferences">Enable startup GUI over X server</string>
     
-    <string name="title_customscript_preferences">Файл сценария</string>
-    <string name="summary_customscript_preferences">/etc/init.d/myscript</string>
-    <string name="dialog_title_customscript_preference">Файл сценария</string>
+    <string name="title_customstartup_preferences">Custom startup</string>
+    <string name="summary_customstartup_preferences">Allow a custom script</string>
     
-    <string name="title_mountcustom_preferences">Монтирование</string>
-    <string name="summary_mountcustom_preferences">Включить выборочное монтирование</string>
+    <string name="title_customscript_preferences">Script file</string>
+    <string name="dialog_title_customscript_preference">Script file</string>
     
-    <string name="title_mountpath_preferences">Путь монтирования</string>
-    <string name="summary_mountpath_preferences">/mnt/usbdisk:/system</string>
-    <string name="dialog_title_mountpath_preference">Путь монтирования</string>
+    <string name="title_mountcustom_preferences">Custom mount</string>
+    <string name="summary_mountcustom_preferences">Allow to mount custom partitions</string>
     
+    <string name="title_mountpath_preferences">Mount path</string>
+    <string name="dialog_title_mountpath_preference">Mount path</string>
+
     <string name="ssh_preferences">SSH</string>
     
-    <string name="title_sshport_preferences">Порт</string>
-    <string name="summary_sshport_preferences">22</string>
-    <string name="dialog_title_sshport_preference">SSH: порт</string>
+    <string name="title_sshport_preferences">Port</string>
+    <string name="dialog_title_sshport_preference">SSH: port</string>
 
     <string name="vnc_preferences">VNC</string>
     
-    <string name="title_vncdisplay_preferences">Номер дисплея</string>
-    <string name="summary_vncdisplay_preferences">0</string>
-    <string name="dialog_title_vncdisplay_preference">VNC: номер дисплея</string>
+    <string name="title_vncdisplay_preferences">Display</string>
+    <string name="dialog_title_vncdisplay_preference">VNC: display number</string>
     
-    <string name="title_vncdepth_preferences">Глубина цвета (бит)</string>
-    <string name="summary_vncdepth_preferences">16</string>
-    <string name="dialog_title_vncdepth_preference">VNC: глубина цвета (бит)</string>
+    <string name="title_vncdepth_preferences">Depth (bits)</string>
+    <string name="dialog_title_vncdepth_preference">VNC: depth (bits)</string>
     
-    <string name="title_vncwidth_preferences">Ширина экрана</string>
-    <string name="summary_vncwidth_preferences">800</string>
-    <string name="dialog_title_vncwidth_preference">VNC: ширина экрана</string>
+    <string name="title_vncwidth_preferences">Width</string>
+    <string name="dialog_title_vncwidth_preference">VNC: screen width</string>
     
-    <string name="title_vncheight_preferences">Высота экрана</string>
-    <string name="summary_vncheight_preferences">400</string>
-    <string name="dialog_title_vncheight_preference">VNC: высота экрана</string>
+    <string name="title_vncheight_preferences">Height</string>
+    <string name="dialog_title_vncheight_preference">VNC: screen height</string>
     
-    <string name="debug_preferences">Отладка</string>
+    <string name="xserver_preferences">X Window System</string>
     
-    <string name="title_debug_preference">Режим отладки</string>
-    <string name="summary_debug_preference">Включить отображение отладочной информации</string>
+    <string name="title_xdisplay_preferences">Display</string>
+    <string name="dialog_title_xdisplay_preference">X: display number</string>
     
-    <string name="title_trace_preference">Режим трассировки</string>
-    <string name="summary_trace_preference">Перейти в режим трассировки</string>
+    <string name="title_xhost_preferences">X server address</string>
+    <string name="dialog_title_xhost_preference">X: IP or host name</string>
     
-    <string name="title_logs_preference">Журналирование</string>
-    <string name="summary_logs_preference">Сохранять отчеты в файл</string>
-    
-    <string name="title_logfile_preferences">Файл журнала</string>
-    <string name="summary_logfile_preferences">/mnt/sdcard/linuxdeploy.log</string>
-    <string name="dialog_title_logfile_preference">Файл журнала</string>
+    <string name="debug_preferences">Debug</string>
 
-    <string name="about_text"><font size="32"><b>Linux Deploy</b></font>\n\nЛицензия GPL v3\n\n[ <a href="https://github.com/meefik/linuxdeploy">github.com</a> , <a href="http://4pda.ru/forum/index.php?showtopic=378043">4pda.ru</a> ]\n\nЭта программа поставляется БЕЗ ВСЯКИХ ГАРАНТИЙ, а автор не несет ответственности за любые возможные последствия ее использования. Это свободное программное обеспечение, и вы можете распространять его при определенных условиях.\n\n&#169; 2012 Антон Скшидлевский</string>
+    <string name="title_debug_preference">Debug mode</string>
+    <string name="summary_debug_preference">Show debugging information</string>
+    
+    <string name="title_trace_preference">Trace mode</string>
+    <string name="summary_trace_preference">Enable tracing mode</string>
+    
+    <string name="title_logs_preference">Logging</string>
+    <string name="summary_logs_preference">Save logs to file</string>
+    
+    <string name="title_logfile_preferences">Log file</string>
+    <string name="dialog_title_logfile_preference">Log file</string>
+    
+    <string name="about_text"><font size="32"><b>Linux Deploy</b></font>\n\nGPL v3\n\n[ <a href="https://github.com/meefik/linuxdeploy">github.com</a> , <a href="http://4pda.ru/forum/index.php?showtopic=378043">4pda.ru</a> ]\n\nThis program comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions.\n\n&#169; 2012 Anton Skshidlevsky</string>
+    
+    <string name="title_activity_profiles">Profiles</string>
+    <string name="new_profile_title">Profile name</string>
+	<string name="edit_profile_title">Profile name</string>
+    <string name="confirm_discard_title">Remove profile</string>
+    <string name="confirm_discard_message">Remove selected profile?</string>
 
 </resources>

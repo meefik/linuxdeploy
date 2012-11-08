@@ -1,6 +1,35 @@
 Changelog (English)
 ===================
 
+1.2.7
+Bugfix: incorrect startup GNOME session on Ubuntu
+Added support X Window System (startup GUI over X server)
+Added automatic DNS configuration
+Added support Unity desktop environment
+
+1.2.6
+Bugfix: incorrect profile management
+Added support Ubuntu installation
+Added information of active Linux system in SysInfo
+Improved wake lock
+
+1.2.5
+Added support for profiles
+Added select file system
+Added separate localization settings
+Change TWM to XTerm
+
+1.2.4
+Added information of available mount points and partitions in SysInfo
+Added ability to select and copy text in the main window (Android 3+)
+
+1.2.3
+Added themes support (dark and light)
+
+1.2.2
+Improved resources release function
+Improved auto-scrolling
+
 1.2.1
 Bugfix: error set user password on third-party images
 Default user name changed to android
@@ -85,6 +114,35 @@ Updated list packages of base system installation
 
 История изменений (Русский)
 ===========================
+
+1.2.7
+Исправлена ошибка запуска сессии GNOME в Ubuntu
+Добавлена поддержка X Window System (запуск GUI через X-сервер)
+Добавлена автоматическая конфигурация DNS
+Добавленна поддержка окружения рабочего стола Unity
+
+1.2.6
+Исправлена ошибка некорректного управления профилями
+Добавлена ​​поддержка установки Ubuntu
+Добавлена информация об активной системе Linux
+Доработана функция управления переходом в спящий режим
+
+1.2.5
+Добавлена поддержка профилей
+Добавлена возможность выбора файловой системы
+Выбор локализации системы вынесен в отдельных пункт настроек
+Заменен TWM на XTerm
+
+1.2.4
+Добавлена информация о доступных точках монтирования и разделах
+Добавлена возможность выделения и копирования текста в главном окне (Android 3+)
+
+1.2.3
+Добавлена поддержка тем интерфейса (темная и светлая)
+
+1.2.2
+Доработана функция освобождения ресурсов перед размонтированием разделов
+Доработана автоматическая прокрутка
 
 1.2.1
 Исправлена ошибка установки пароля пользователя на некоторых образах

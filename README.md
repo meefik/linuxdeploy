@@ -11,16 +11,15 @@ The application creates a disk image on the flash card, mount it and install the
 
 The program interface supports English and Russian. Through the interface you can manage the process of installing the OS, and after installation, you can start and stop services of the new system (there is support for running your scripts). The installation process is displayed as text reports in the main application window. During the installation, the program will adjust the work environment, which includes the base system, SSH server, VNC server and desktop environment. Also through the program interface to manage server settings SSH and VNC.
 
-Installing a new operating system takes about 30 minutes. The recommended minimum size of a disk image 1024 MB, without a GUI - 512 MB. When you install Linux in disk image on the flash card with the FAT32 file system, image size should not exceed 4095 MB! After the initial setup a default password for SSH and VNC - changeme. The password can be changed standard tools OS.
+Installing a new operating system takes about 30 minutes. The recommended minimum size of a disk image 1024 MB (for LXDE), without a GUI - 512 MB. When you install Linux in disk image on the flash card with the FAT32 file system, image size should not exceed 4095 MB! After the initial setup a default password for SSH and VNC - changeme. The password can be changed standard tools OS.
 
 #### Features: ####
-* Supported OS: Debian GNU / Linux
-* Version: stable, testing, unstable (squeeze, wheezy, sid)
+* Supported OS: Debian, Ubuntu
 * Architecture: armel, armhf
 * Installation type: loop device, SD card
 * Supported file systems: ext2, ext4
-* Control interface: SSH, VNC
-* Desktop environment: TWM, LXDE, XFCE, GNOME, KDE
+* Control interface: SSH, VNC, X
+* Desktop environment: XTerm, LXDE, Xfce, GNOME, KDE
 * Supported languages: English, Russian
 
 #### Install ####
@@ -28,6 +27,22 @@ You can install the app from Google play: <https://play.google.com/store/apps/de
 
 #### Update ####
 After updating the program you must perform: Settings -> Update ENV.
+
+#### Performance ####
+SD card read / write speed (10 class) on Android (Samsung Galaxy S II) for file systems vfat, ext2, ext4:
+* **vfat**: read speed 14.1 MB/s; write speed 12.0 MB/s
+* **ext2**: read speed 14.9 MB/s; write speed 3.9 MB/s
+* **ext4**: read speed 14.9 MB/s; write speed 16.6 MB/s
+* **ext2 (loop)**: read speed 17.0 MB/s; write speed 7.4 MB/s
+* **ext4 (loop)**: read speed 17.2 MB/s; write speed 8.8 MB/s
+
+Installation time and use space on disk (Debian wheezy/armhf on Samsung Galaxy S II):
+* **Without GUI** ~ 0:12 / 260 MB
+* **XTerm** ~ 0:14 / 290 MB
+* **LXDE** ~ 0:19 / 450 MB
+* **XFCE** ~ 0:20 / 495 MB
+* **GNOME** ~ 0:55 / 1.3 GB
+* **KDE** ~ 1:20 / 1.3 GB
 
 #### Source code ####
 Source code: <https://github.com/meefik/linuxdeploy>. This source code are written with use Android SDK/NDK and Eclipse ADT plugin.
@@ -49,31 +64,42 @@ Copyright (C) 2012  Антон Скшидлевский
 
 Интерфейс программы поддерживает английский и русский языки. Через интерфейс программы можно управлять процессом установки ОС, а после установки можно запускать и останавливать службы новой системы (есть поддержка запуска своих сценариев). Процесс установки отображается в виде текстовых отчетов в главном окне приложения. Во время установки программа сама настраивает рабочее окружение, которое включает в себя базовую систему, сервер SSH, сервер VNC и графическую среду на выбор. Также через интерфейс программы можно управлять параметрами сервера SSH и VNC.
 
-Установка новой ОС занимает около 30 минут. Рекомендованный минимальный размер образа диска без графического интерфейса - 512 МБ, а с графическим интерфейсом - 1024 МБ. При установке ОС в образ на карту памяти с файловой системой FAT32 размер образа не должен превышать 4095 МБ! После начальной установки пароль для доступа по SSH и VNC назначается как "changeme", который можно сменить стандартными средствами ОС.
+Установка новой ОС занимает около 30 минут. Рекомендованный минимальный размер образа диска без графического интерфейса - 512 МБ, а с графическим интерфейсом - 1024 МБ (для LXDE). При установке ОС в образ на карту памяти с файловой системой FAT32 размер образа не должен превышать 4095 МБ! После начальной установки пароль для доступа по SSH и VNC назначается как "changeme", который можно сменить стандартными средствами ОС.
 
 #### Характеристики: ####
-* Поддерживаемая ОС: Debian GNU/Linux
-* Версии дистрибутива: stable, testing, unstable (squeeze, wheezy, sid)
+* Поддерживаемые ОС: Debian, Ubuntu
 * Сборка под архитектуру: armel, armhf
 * Тип установки: loop-файл, SD карта
 * Поддерживаемые файловые системы: ext2, ext4
-* Интерфейс управления: SSH, VNC
-* Окружение рабочего стола: TWM, LXDE, XFCE, GNOME, KDE
+* Интерфейс управления: SSH, VNC, X
+* Окружение рабочего стола: XTerm, LXDE, Xfce, GNOME, KDE
 * Поддерживаемые языки: русский, английский
 
 #### Установка ####
-
 Вы можете установить это приложение из Google play: <https://play.google.com/store/apps/details?id=ru.meefik.linuxdeploy>.
 
 #### Обновление ####
-
 После обновления необходимо выполнить: Настройки -> Обновить окружение.
 
-#### Исходный код ####
+#### Производительность ####
+Скорость чтения/записи SD карты (10 класс) на Android (Samsung Galaxy S II) для файловых систем vfat, ext2, ext4:
+* **vfat**: скорость чтения 14.1 МБ/с; скорость записи 12.0 МБ/с
+* **ext2**: скорость чтения 14.9 МБ/с; скорость записи 3.9 МБ/с
+* **ext4**: скорость чтения 14.9 МБ/с; скорость записи 16.6 МБ/с
+* **ext2 (loop)**: скорость чтения 17.0 МБ/с; скорость записи 7.4 МБ/с
+* **ext4 (loop)**: скорость чтения 17.2 МБ/с; скорость записи 8.8 МБ/с
 
+Время установки и занимаемое место на диске (Debian wheezy/armhf на Samsung Galaxy S II):
+* **Без графики** ~ 0:12 / 260 МБ
+* **XTerm** ~ 0:14 / 290 МБ
+* **LXDE** ~ 0:19 / 450 МБ
+* **XFCE** ~ 0:20 / 495 МБ
+* **GNOME** ~ 0:55 / 1.3 ГБ
+* **KDE** ~ 1:20 / 1.3 ГБ
+
+#### Исходный код ####
 Исходный код доступен по адресу: <https://github.com/meefik/linuxdeploy>. Этот исходный код написан с использованием Android SDK/NDK и Eclipse ADT plugin.
 
 #### Помощь проекту ####
-
 Помочь проекту можно здесь: <http://meefik.github.com/linuxdeploy>.
 
