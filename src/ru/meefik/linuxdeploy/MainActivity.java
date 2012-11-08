@@ -1,5 +1,7 @@
 package ru.meefik.linuxdeploy;
 
+//import android.support.v4.*;
+
 import java.io.FileOutputStream;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -8,18 +10,16 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
 
-import android.net.wifi.WifiManager;
-import android.net.wifi.WifiManager.WifiLock;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.PowerManager;
-import android.os.PowerManager.WakeLock;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,286 +35,330 @@ public class MainActivity extends Activity implements OnClickListener {
 	private static ScrollView logScroll;
 	private static Boolean logFlag = false;
 	static Handler handler;
+
+	public static void printLogMsg(String msg) {
+		String printMsg = "";
+		String currentTimeString = "["
+				+ new SimpleDateFormat("HH:mm:ss").format(new Date()) + "] ";
+		if (PrefStore.DEBUG_MODE) {
+			printMsg = currentTimeString + msg + "\n";
+		} else {
+			if (logFlag) {
+				printMsg = currentTimeString + msg + "\n";
+			}
+			if (msg.matches("^\\[RESULT\\].*$")) {
+				printMsg = msg.replaceFirst("\\[RESULT\\] ", "");
+			}
+			if (msg.matches("^\\[RESULT_LN\\].*$")) {
+				printMsg = msg.replaceFirst("\\[RESULT_LN\\] ", "") + "\n";
+			}
+			if (msg.matches("^\\[PRINT\\].*$")) {
+				printMsg = currentTimeString
+						+ msg.replaceFirst("\\[PRINT\\] ", "");
+				logFlag = false;
+			}
+			if (msg.matches("^\\[PRINT_LN\\].*$")) {
+				printMsg = currentTimeString
+						+ msg.replaceFirst("\\[PRINT_LN\\] ", "") + "\n";
+				logFlag = false;
+			}
+			if (msg.matches("^\\[PRINT_ALL\\].*$")) {
+				printMsg = currentTimeString
+						+ msg.replaceFirst("\\[PRINT_ALL\\] ", "") + "\n";
+				logFlag = true;
+			}
+		}
+		if (printMsg.length() > 0) {
+			logView.append(printMsg);
+			logView.scrollTo(0, logView.getBottom());
+			logScroll.post(new Runnable() {
+				@Override
+				public void run() {
+					logScroll.fullScroll(View.FOCUS_DOWN);
+				}
+			});
+			if (PrefStore.LOGGING) {
+				saveLogs(printMsg);
+			}
+		}
+	}
+
+	public static void saveLogs(String msg) {
+		byte[] data = msg.getBytes();
+		try {
+			FileOutputStream fos = new FileOutputStream(PrefStore.LOG_FILE,
+					true);
+			fos.write(data);
+			fos.flush();
+			fos.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	private WakeLock wake_lock;
-	private WifiLock wifi_lock;
-	
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        
-        AppPrefs.updateLocale(getBaseContext());
-        
-        setContentView(R.layout.activity_main);
-        
-        logView = (TextView)findViewById(R.id.LogView);
-        logScroll = (ScrollView)findViewById(R.id.LogScrollView);
-        handler = new Handler();
-        
-        ImageButton installButton = (ImageButton)findViewById(R.id.InstallBtn);
-        installButton.setOnClickListener(this);
 
-        ImageButton startButton = (ImageButton)findViewById(R.id.StartBtn);
-        startButton.setOnClickListener(this);
-
-        ImageButton stopButton = (ImageButton)findViewById(R.id.StopBtn);
-        stopButton.setOnClickListener(this);
-        
-        ImageButton uninstallButton = (ImageButton)findViewById(R.id.UninstallBtn);
-        uninstallButton.setOnClickListener(this);
-        
-        // Screen lock
-        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        wake_lock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "linuxdeploy_wake_lock");
-        
-        // WiFi lock
-        WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-        wifi_lock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL, "linuxdeploy_wifi_lock");
-        
-		// ok we back, load the saved text
-        if ( savedInstanceState != null ) {
-            String savedText = savedInstanceState.getString( "LOG" );
-            logView.setText( savedText );
-        }
-
-    }
-    
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-    	AppPrefs.updateLocale(getBaseContext());
-        getMenuInflater().inflate(R.menu.activity_main, menu);
-        return true;
-    }
-
-    public void onSaveInstanceState( Bundle savedInstanceState ) {
-    	// now, save the text if something overlaps this Activity
-        savedInstanceState.putString( "LOG", logView.getText().toString() );
-    }
+	public String getLocalIpAddress() {
+		try {
+			for (Enumeration<NetworkInterface> en = NetworkInterface
+					.getNetworkInterfaces(); en.hasMoreElements();) {
+				NetworkInterface intf = en.nextElement();
+				for (Enumeration<InetAddress> enumIpAddr = intf
+						.getInetAddresses(); enumIpAddr.hasMoreElements();) {
+					InetAddress inetAddress = enumIpAddr.nextElement();
+					if (!inetAddress.isLoopbackAddress()
+							&& !inetAddress.isLinkLocalAddress()) {
+						return inetAddress.getHostAddress().toString();
+					}
+				}
+			}
+		} catch (SocketException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 	@Override
 	public void onClick(View v) {
-        switch (v.getId())
-        {
-            case R.id.InstallBtn:
-            {
-    			new AlertDialog.Builder(this)
-    			.setTitle(R.string.confirm_install_title)
-    			.setMessage(R.string.confirm_install_message)
-    			.setIcon(android.R.drawable.ic_dialog_alert)
-    			.setCancelable(false)
-    			.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-    				public void onClick(DialogInterface dialog, int id) {
-    	            	new ShellEnv(getBaseContext()).DeployCmd("install");
-    			    }
-    			})
-    			.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-    			    public void onClick(DialogInterface dialog, int id) {
-    			    	dialog.cancel();
-    			    }
-    			}).show();
-                break;
-            }
+		switch (v.getId()) {
+		case R.id.installBtn: {
+			new AlertDialog.Builder(this)
+					.setTitle(R.string.confirm_install_title)
+					.setMessage(R.string.confirm_install_message)
+					.setIcon(android.R.drawable.ic_dialog_alert)
+					.setCancelable(false)
+					.setPositiveButton(android.R.string.yes,
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int id) {
+									new ShellEnv(getApplicationContext())
+											.DeployCmd("install");
+								}
+							})
+					.setNegativeButton(android.R.string.no,
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int id) {
+									dialog.cancel();
+								}
+							}).show();
+			break;
+		}
 
-            case R.id.StartBtn:
-            {
-    			new AlertDialog.Builder(this)
-    			.setTitle(R.string.confirm_start_title)
-    			.setMessage(R.string.confirm_start_message)
-    			.setIcon(android.R.drawable.ic_dialog_alert)
-    			.setCancelable(false)
-    			.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-    				public void onClick(DialogInterface dialog, int id) {
-    	            	new ShellEnv(getBaseContext()).DeployCmd("start");
-    			    }
-    			})
-    			.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-    			    public void onClick(DialogInterface dialog, int id) {
-    			    	dialog.cancel();
-    			    }
-    			}).show();
-            	break;
-            }
+		case R.id.startBtn: {
+			new AlertDialog.Builder(this)
+					.setTitle(R.string.confirm_start_title)
+					.setMessage(R.string.confirm_start_message)
+					.setIcon(android.R.drawable.ic_dialog_alert)
+					.setCancelable(false)
+					.setPositiveButton(android.R.string.yes,
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int id) {
+									new ShellEnv(getApplicationContext())
+											.DeployCmd("start");
+								}
+							})
+					.setNegativeButton(android.R.string.no,
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int id) {
+									dialog.cancel();
+								}
+							}).show();
+			break;
+		}
 
-            case R.id.StopBtn:
-            {
-    			new AlertDialog.Builder(this)
-    			.setTitle(R.string.confirm_stop_title)
-    			.setMessage(R.string.confirm_stop_message)
-    			.setIcon(android.R.drawable.ic_dialog_alert)
-    			.setCancelable(false)
-    			.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-    				public void onClick(DialogInterface dialog, int id) {
-    	            	new ShellEnv(getBaseContext()).DeployCmd("stop");
-    			    }
-    			})
-    			.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-    			    public void onClick(DialogInterface dialog, int id) {
-    			    	dialog.cancel();
-    			    }
-    			}).show();
-                break;
-            }
-            
-            case R.id.UninstallBtn:
-            {
-    			new AlertDialog.Builder(this)
-    			.setTitle(R.string.confirm_uninstall_title)
-    			.setMessage(R.string.confirm_uninstall_message)
-    			.setIcon(android.R.drawable.ic_dialog_alert)
-    			.setCancelable(false)
-    			.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-    				public void onClick(DialogInterface dialog, int id) {
-    	            	new ShellEnv(getBaseContext()).DeployCmd("uninstall");
-    			    }
-    			})
-    			.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-    			    public void onClick(DialogInterface dialog, int id) {
-    			    	dialog.cancel();
-    			    }
-    			}).show();
-                break;
-            }
-            
-            default:
-                break;
-        }
+		case R.id.stopBtn: {
+			new AlertDialog.Builder(this)
+					.setTitle(R.string.confirm_stop_title)
+					.setMessage(R.string.confirm_stop_message)
+					.setIcon(android.R.drawable.ic_dialog_alert)
+					.setCancelable(false)
+					.setPositiveButton(android.R.string.yes,
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int id) {
+									new ShellEnv(getApplicationContext())
+											.DeployCmd("stop");
+								}
+							})
+					.setNegativeButton(android.R.string.no,
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int id) {
+									dialog.cancel();
+								}
+							}).show();
+			break;
+		}
+
+		case R.id.propertiesBtn: {
+			Intent intent_properties = new Intent(this,
+					DeployPrefsActivity.class);
+			startActivity(intent_properties);
+			break;
+		}
+
+		default:
+			break;
+		}
 	}
-	
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-    	switch (item.getItemId()) 
-    	{
-    		case R.id.menu_settings:
-    	        Intent intent_pref = new Intent(this,PreferencesActivity.class);
-    			startActivity(intent_pref);
-    	    break;
-    		case R.id.menu_about:
-    	        Intent intent_about = new Intent(this,AboutActivity.class);
-    			startActivity(intent_about);
-    	    break;
-    		case R.id.menu_status:
-    			new Thread(new Runnable(){
-    				public void run() {
-    					new ShellEnv(getBaseContext()).sysInfo();
-    				}
-    			}).start();
-    		break;
-    		case R.id.menu_clear:
-    			logView.setText("");
-    	    break;
-    		case R.id.menu_exit:
-    			finish();
-    	    break;
-    	    default:
 
-    	    break;
-    	}
-    	return false;
-    }
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		PrefStore.updateTheme(this);
+		super.onCreate(savedInstanceState);
+		PrefStore.updateLocale(this);
+		setContentView(R.layout.activity_main);
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        // Screen unlock
-        if (wake_lock.isHeld()) wake_lock.release();
-        // WiFi unlock
-        if (wifi_lock.isHeld()) wifi_lock.release();
-    }
+		logView = (TextView) findViewById(R.id.LogView);
+		logScroll = (ScrollView) findViewById(R.id.LogScrollView);
+		handler = new Handler();
+
+		ImageButton installButton = (ImageButton) findViewById(R.id.installBtn);
+		installButton.setOnClickListener(this);
+		if (PrefStore.THEME.equals("light"))
+			installButton.setImageResource(R.raw.installbtn_dark);
+		if (PrefStore.THEME.equals("dark"))
+			installButton.setImageResource(R.raw.installbtn_light);
+
+		ImageButton startButton = (ImageButton) findViewById(R.id.startBtn);
+		startButton.setOnClickListener(this);
+		if (PrefStore.THEME.equals("light"))
+			startButton.setImageResource(R.raw.startbtn_dark);
+		if (PrefStore.THEME.equals("dark"))
+			startButton.setImageResource(R.raw.startbtn_light);
+
+		ImageButton stopButton = (ImageButton) findViewById(R.id.stopBtn);
+		stopButton.setOnClickListener(this);
+		if (PrefStore.THEME.equals("light"))
+			stopButton.setImageResource(R.raw.stopbtn_dark);
+		if (PrefStore.THEME.equals("dark"))
+			stopButton.setImageResource(R.raw.stopbtn_light);
+
+		ImageButton uninstallButton = (ImageButton) findViewById(R.id.propertiesBtn);
+		uninstallButton.setOnClickListener(this);
+		if (PrefStore.THEME.equals("light"))
+			uninstallButton.setImageResource(R.raw.propertiesbtn_dark);
+		if (PrefStore.THEME.equals("dark"))
+			uninstallButton.setImageResource(R.raw.propertiesbtn_light);
+
+		// Screen lock
+		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+		wake_lock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK,
+				"linuxdeploy_wake_lock");
+
+		// ok we back, load the saved text
+		if (savedInstanceState != null) {
+			String savedText = savedInstanceState.getString("textlog");
+			logView.setText(savedText);
+			logScroll.post(new Runnable() {
+				@Override
+				public void run() {
+					logScroll.fullScroll(View.FOCUS_DOWN);
+				}
+			});
+		}
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		PrefStore.updateLocale(getApplicationContext());
+		getMenuInflater().inflate(R.menu.activity_main, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.menu_profiles:
+			Intent intent_profiles = new Intent(this, ProfilesActivity.class);
+			startActivity(intent_profiles);
+			break;
+		case R.id.menu_settings:
+			Intent intent_settings = new Intent(this, AppPrefsActivity.class);
+			startActivity(intent_settings);
+			break;
+		case R.id.menu_about:
+			Intent intent_about = new Intent(this, AboutActivity.class);
+			startActivity(intent_about);
+			break;
+		case R.id.menu_status:
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					new ShellEnv(getApplicationContext()).sysInfo();
+				}
+			}).start();
+			break;
+		case R.id.menu_clear:
+			logView.setText("");
+			break;
+		case R.id.menu_exit:
+			finish();
+			break;
+		default:
+
+			break;
+		}
+		return false;
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		// Screen unlock
+		if (wake_lock.isHeld())
+			wake_lock.release();
+	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
-		
-		AppPrefs.get(getBaseContext());
-		
+
+		PrefStore.get(getApplicationContext());
+
+		String titleMsg = PrefStore.getCurrentProfile(getApplicationContext());
 		String myIP = getLocalIpAddress();
-		String titleMsg = " IP:  "+myIP;
-		
+		String ssh = "";
+		String vnc = "";
+
 		int ot = getResources().getConfiguration().orientation;
-		if (ot == Configuration.ORIENTATION_LANDSCAPE) { 
-			String ssh = "";
-			String vnc = "";
-			if (AppPrefs.SSH_START == "y") ssh = "     SSH:  " + AppPrefs.SSH_PORT;
-			if (AppPrefs.VNC_START == "y") vnc = "     VNC:  " + String.valueOf(5900+Integer.parseInt(AppPrefs.VNC_DISPLAY));
-			titleMsg = " IP:  "+myIP +ssh+vnc;
+		if (ot == Configuration.ORIENTATION_LANDSCAPE) {
+			if (myIP != null)
+				myIP = "IP: " + myIP;
+			else
+				myIP = "";
+			if (PrefStore.SSH_START == "y")
+				ssh = "  SSH: " + PrefStore.SSH_PORT;
+			if (PrefStore.VNC_START == "y")
+				vnc = "  VNC: "
+						+ String.valueOf(5900 + Integer
+								.parseInt(PrefStore.VNC_DISPLAY));
+			titleMsg += "  [ " + myIP + ssh + vnc + " ]";
 		}
-		
-		if (myIP != null) this.setTitle(titleMsg);
-		else this.setTitle(R.string.app_name);
-		
+
+		this.setTitle(titleMsg);
+
 		// Restore text
-		logView.setTextSize(TypedValue.COMPLEX_UNIT_SP,AppPrefs.FONT_SIZE);
-    	
+		logView.setTextSize(TypedValue.COMPLEX_UNIT_SP, PrefStore.FONT_SIZE);
+
 		// Screen lock
-		if (AppPrefs.SCREEN_LOCK) wake_lock.acquire();
-		
-		// WiFi lock
-		if (AppPrefs.WIFI_LOCK) wifi_lock.acquire();
+		if (PrefStore.SCREEN_LOCK)
+			wake_lock.acquire();
 	}
-	
-    public String getLocalIpAddress() {
-        try {
-            for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) {
-                NetworkInterface intf = en.nextElement();
-                for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements();) {
-                    InetAddress inetAddress = enumIpAddr.nextElement();
-                    if (!inetAddress.isLoopbackAddress()&&!inetAddress.isLinkLocalAddress()) {
-                        return inetAddress.getHostAddress().toString();
-                    }
-                }
-            }
-        } catch (SocketException e) {
-        	e.printStackTrace();
-        }
-        return null;
-    }
-   
-    public static void printLogMsg(String msg) {
-    	String printMsg = "";
-    	String currentTimeString = "[" + new SimpleDateFormat("HH:mm:ss").format(new Date()) + "] ";
-    	if (AppPrefs.DEBUG_MODE) {
-    		printMsg = currentTimeString + msg + "\n";
-    	} else {
-        	if (logFlag) {
-        		printMsg = currentTimeString + msg + "\n";
-        	}
-        	if (msg.matches("^\\[RESULT\\].*$")) {
-        		printMsg = msg.replaceFirst("\\[RESULT\\] ", "");
-        	}
-        	if (msg.matches("^\\[RESULT_LN\\].*$")) {
-        		printMsg = msg.replaceFirst("\\[RESULT_LN\\] ", "") + "\n";
-        	}
-        	if (msg.matches("^\\[PRINT\\].*$")) {
-        		printMsg = currentTimeString + msg.replaceFirst("\\[PRINT\\] ", "");
-        		logFlag = false;
-        	}
-        	if (msg.matches("^\\[PRINT_LN\\].*$")) {
-        		printMsg = currentTimeString + msg.replaceFirst("\\[PRINT_LN\\] ", "") + "\n";
-        		logFlag = false;
-        	}
-        	if (msg.matches("^\\[PRINT_ALL\\].*$")) {
-        		printMsg = currentTimeString + msg.replaceFirst("\\[PRINT_ALL\\] ", "") + "\n";
-        		logFlag = true;
-        	}
-    	}
-    	if (printMsg.length() > 0) {
-        	logView.append(printMsg);
-        	logScroll.fullScroll(ScrollView.FOCUS_DOWN);
-        	if (AppPrefs.LOGGING) {
-        		saveLogs(printMsg);
-        	}
-    	}
-    }
-    
-    public static void saveLogs(String msg) {
-    	byte[] data = msg.getBytes();
-    	try {
-    		FileOutputStream fos = new FileOutputStream(AppPrefs.LOG_FILE, true);
-    	    fos.write(data);
-    	    fos.flush();
-    	    fos.close();
-    	} catch (Exception e) {
-    		e.printStackTrace();
-    	}
-    }
+
+	@Override
+	public void onSaveInstanceState(Bundle savedInstanceState) {
+		// now, save the text if something overlaps this Activity
+		savedInstanceState.putString("textlog", logView.getText().toString());
+	}
 
 }

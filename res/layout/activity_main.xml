@@ -20,8 +20,9 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="2dp"
                 android:textSize="10dp"
-                android:typeface="monospace"
-                tools:context=".MainActivity" />
+                android:textIsSelectable="true"
+                android:gravity="bottom"
+                android:typeface="monospace" />
         </LinearLayout>
     </ScrollView>
 
@@ -35,35 +36,35 @@
 
         <ImageButton
             android:layout_weight="0.25"
-            android:id="@+id/InstallBtn"
+            android:id="@+id/installBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:scaleType="center"
-            android:src="@raw/installbtn" />
+            android:src="@raw/installbtn_dark" />
 
         <ImageButton
             android:layout_weight="0.25"
-            android:id="@+id/StartBtn"
+            android:id="@+id/startBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:scaleType="center"
-            android:src="@raw/startbtn" />
+            android:src="@raw/startbtn_dark" />
 
         <ImageButton
             android:layout_weight="0.25"
-            android:id="@+id/StopBtn"
+            android:id="@+id/stopBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:scaleType="center"
-            android:src="@raw/stopbtn" />
+            android:src="@raw/stopbtn_dark" />
 
         <ImageButton
             android:layout_weight="0.25"
-            android:id="@+id/UninstallBtn"
+            android:id="@+id/propertiesBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:scaleType="center"
-            android:src="@raw/uninstallbtn" />
+            android:src="@raw/propertiesbtn_dark" />
     </LinearLayout>
 
 </RelativeLayout>
