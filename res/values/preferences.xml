@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+    <string name="screenlock" translatable="false">true</string>
+    <string name="fontsize" translatable="false">10</string>
+    <string name="language" translatable="false">en</string>
+    <string name="theme" translatable="false">dark</string>
+    <string name="installdir" translatable="false">/data/local/linux</string>
+    <string name="profile" translatable="false">Linux</string>
+    <string name="debug" translatable="false">false</string>
+    <string name="trace" translatable="false">false</string>
+    <string name="logs" translatable="false">false</string>
+    <string name="logfile" translatable="false">/mnt/sdcard/linuxdeploy.log</string>
+    <string name="distribution" translatable="false">Debian</string>
+    <string name="suite" translatable="false">@string/debian_suite</string>
+    <string name="mirror" translatable="false">@string/debian_mirror</string>
+    <string name="architecture" translatable="false">@string/debian_architecture</string>
+    <string name="diskimage" translatable="false">/mnt/sdcard/linux.img</string>
+    <string name="disksize" translatable="false">1024</string>
+    <string name="fstype" translatable="false">auto</string>
+    <string name="username" translatable="false">android</string>
+    <string name="serverdns" translatable="false"></string>
+    <string name="locale" translatable="false">en_US.UTF-8</string>
+    <string name="installgui" translatable="false">false</string>
+    <string name="desktopenv" translatable="false">@string/debian_desktopenv</string>
+    <string name="customstartup" translatable="false">false</string>
+    <string name="customscript" translatable="false">/etc/init.d/myscript</string>
+    <string name="mountcustom" translatable="false">false</string>
+    <string name="mountpath" translatable="false">/mnt/usbdisk</string>
+    <string name="sshstartup" translatable="false">true</string>
+    <string name="sshport" translatable="false">22</string>
+    <string name="vncstartup" translatable="false">false</string>
+    <string name="vncdisplay" translatable="false">0</string>
+    <string name="vncdepth" translatable="false">16</string>
+    <string name="vncwidth" translatable="false">800</string>
+    <string name="vncheight" translatable="false">400</string>
+    <string name="xstartup" translatable="false">false</string>
+    <string name="xdisplay" translatable="false">1</string>
+    <string name="xhost" translatable="false">127.0.0.1</string>
+    
+    <!-- Debian -->
+    <string name="debian_suite" translatable="false">wheezy</string>
+    <string name="debian_mirror" translatable="false">http://mirror.yandex.ru/debian</string>
+    <string name="debian_architecture" translatable="false">armel</string>
+    <string name="debian_desktopenv" translatable="false">LXDE</string>
+    
+    <!-- Ubuntu -->
+    <string name="ubuntu_suite" translatable="false">precise</string>
+    <string name="ubuntu_mirror" translatable="false">http://ports.ubuntu.com/ubuntu-ports</string>
+    <string name="ubuntu_architecture" translatable="false">armel</string>
+    <string name="ubuntu_desktopenv" translatable="false">LXDE</string>
+    
+</resources>
