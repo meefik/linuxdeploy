@@ -28,10 +28,6 @@ public class DeployPrefsActivity extends PreferenceActivity implements
 		this.addPreferencesFromResource(R.xml.properties);
 
 		this.initSummaries(this.getPreferenceScreen());
-
-		PreferenceScreen reconfigure = (PreferenceScreen) this
-				.findPreference("reconfigure");
-		reconfigure.setOnPreferenceClickListener(this);
 	}
 
 	@Override
@@ -102,6 +98,8 @@ public class DeployPrefsActivity extends PreferenceActivity implements
 				this.initSummaries((PreferenceGroup) p);
 			else
 				this.setSummary(p, false);
+			if (p instanceof PreferenceScreen)
+				p.setOnPreferenceClickListener(this);
 		}
 	}
 
@@ -142,7 +140,8 @@ public class DeployPrefsActivity extends PreferenceActivity implements
 				architecture.setEntries(R.array.debian_architecture_values);
 				architecture.setEntryValues(R.array.debian_architecture_values);
 				if (init)
-					architecture.setValue(getString(R.string.debian_architecture));
+					architecture
+							.setValue(getString(R.string.debian_architecture));
 				architecture.setSummary(architecture.getEntry());
 				// desktopenv
 				ListPreference desktopenv = (ListPreference) this
@@ -174,7 +173,8 @@ public class DeployPrefsActivity extends PreferenceActivity implements
 				architecture.setEntries(R.array.debian_architecture_values);
 				architecture.setEntryValues(R.array.debian_architecture_values);
 				if (init)
-					architecture.setValue(getString(R.string.debian_architecture));
+					architecture
+							.setValue(getString(R.string.debian_architecture));
 				architecture.setSummary(architecture.getEntry());
 				// desktopenv
 				ListPreference desktopenv = (ListPreference) this
