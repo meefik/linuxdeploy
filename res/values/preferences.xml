@@ -22,7 +22,7 @@
     <string name="username" translatable="false">android</string>
     <string name="serverdns" translatable="false"></string>
     <string name="locale" translatable="false">en_US.UTF-8</string>
-    <string name="installgui" translatable="false">false</string>
+    <string name="installgui" translatable="false">true</string>
     <string name="desktopenv" translatable="false">@string/debian_desktopenv</string>
     <string name="customstartup" translatable="false">false</string>
     <string name="customscript" translatable="false">/etc/init.d/myscript</string>

@@ -64,7 +64,7 @@ public class AppPrefsActivity extends PreferenceActivity implements
 	@Override
 	public void onPause() {
 		super.onPause();
-		
+
 		getPreferenceScreen().getSharedPreferences()
 				.unregisterOnSharedPreferenceChangeListener(this);
 	}
@@ -83,7 +83,7 @@ public class AppPrefsActivity extends PreferenceActivity implements
 	@Override
 	public void onResume() {
 		super.onResume();
-		
+
 		this.setTitle(R.string.title_activity_settings);
 		getPreferenceScreen().getSharedPreferences()
 				.registerOnSharedPreferenceChangeListener(this);

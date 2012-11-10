@@ -25,30 +25,33 @@ install_system()
 {
     echo "[PRINT_LN] Selected distribution: $DISTRIB"
     
-	if [ ! -e "$IMG_TARGET" ]; then
+	if [ ! -e "$IMG_TARGET" -o -f "$IMG_TARGET" ]; then
 		echo "[PRINT] Making new disk image ($IMG_SIZE MB) ... "
 		(set -e
 			dd if=/dev/zero of=$IMG_TARGET bs=1048576 count=$IMG_SIZE
 		exit 0)
 		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 	fi
-	if [ "$FS_TYPE" == "auto" ]; then
-		for fs in ext4 ext2
-		do
-			fs_support=`cat /proc/filesystems | grep $fs`
-			if [ -n "$fs_support" ]; then
-				FS_TYPE=$fs
-				break
-			fi
-		done
+
+	if [ ! -d "$IMG_TARGET" ]; then
+		if [ "$FS_TYPE" == "auto" ]; then
+			for fs in ext4 ext2
+			do
+				fs_support=`cat /proc/filesystems | grep $fs`
+				if [ -n "$fs_support" ]; then
+					FS_TYPE=$fs
+					break
+				fi
+			done
+		fi
+		echo "[PRINT] Making $FS_TYPE file system ... "
+		(set -e
+			is_loop=`losetup | grep $IMG_TARGET || true`
+			is_raw=`cat /proc/mounts | grep $IMG_TARGET || true`
+			[ -z "$is_loop" -a -z "$is_raw" ] && mke2fs -qF -t $FS_TYPE -O ^has_journal $IMG_TARGET
+		exit 0)
+		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 	fi
-	echo "[PRINT] Making $FS_TYPE file system ... "
-	(set -e
-		is_loop=`losetup | grep $IMG_TARGET || true`
-		is_raw=`cat /proc/mounts | grep $IMG_TARGET || true`
-		[ -z "$is_loop" -a -z "$is_raw" ] && mke2fs -qF -t $FS_TYPE -O ^has_journal $IMG_TARGET
-	exit 0)
-	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 
 	mount_system
 	if [ $? -ne 0 ]; then
@@ -59,11 +62,6 @@ install_system()
 	[ -z "$DEBOOTSTRAP_DIR" ] && DEBOOTSTRAP_DIR=$HOME_DIR/deploy/debootstrap
 	export DEBOOTSTRAP_DIR
 	debootstrap --no-check-gpg --arch $ARCH --foreign --extractor=ar --include=locales,openssh-server,sudo $SUITE $MNT_TARGET $MIRROR
-	if [ $? -ne 0 ]; then
-		echo "[PRINT_LN] FAIL to deploy!"; return 1
-	fi
-	
-	mount_system
 	if [ $? -ne 0 ]; then
 		echo "[PRINT_LN] FAIL to deploy!"; return 1
 	fi
@@ -337,7 +335,8 @@ mount_system()
 	mnt=`cat /proc/mounts | grep " $MNT_TARGET "`
 	if [ -z "$mnt" ]; then
 		[ ! -d "$MNT_TARGET" ] && mkdir -p $MNT_TARGET
-		mount -o rw,relatime $IMG_TARGET $MNT_TARGET
+		[ -d "$IMG_TARGET" ] && MNT_OPTS="bind" || MNT_OPTS="rw,relatime"
+		mount -o $MNT_OPTS $IMG_TARGET $MNT_TARGET
 		if [ $? -eq 0 ]; then
 			echo "[RESULT_LN] done"
 		else
@@ -349,7 +348,8 @@ mount_system()
 	
 	echo "[PRINT] /proc ... "
 	tg=$MNT_TARGET/proc; mnt=`cat /proc/mounts | grep " $tg "`
-	if [ -z "$mnt" -a -d "$tg" ]; then
+	if [ -z "$mnt" ]; then
+		[ ! -d "$tg" ] && mkdir -p $tg
 		mount -t proc proc $tg
 		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 	else
@@ -358,7 +358,8 @@ mount_system()
 	
 	echo "[PRINT] /sys ... "
 	tg=$MNT_TARGET/sys; mnt=`cat /proc/mounts | grep " $tg "`
-	if [ -z "$mnt" -a -d "$tg" ]; then
+	if [ -z "$mnt" ]; then
+		[ ! -d "$tg" ] && mkdir -p $tg
 		mount -t sysfs sys $tg
 		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 	else
@@ -367,7 +368,8 @@ mount_system()
 	
 	echo "[PRINT] /dev ... "
 	tg=$MNT_TARGET/dev; mnt=`cat /proc/mounts | grep " $tg "`
-	if [ -z "$mnt" -a -d "$tg" ]; then
+	if [ -z "$mnt" ]; then
+		[ ! -d "$tg" ] && mkdir -p $tg
 		mount -o bind /dev $tg
 		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 	else
@@ -376,7 +378,8 @@ mount_system()
 	
 	echo "[PRINT] /dev/pts ... "
 	tg=$MNT_TARGET/dev/pts; mnt=`cat /proc/mounts | grep " $tg "`
-	if [ -z "$mnt" -a -d "$tg" ]; then
+	if [ -z "$mnt" ]; then
+		[ ! -d "$tg" ] && mkdir -p $tg
 		mount -t devpts devpts $tg
 		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 	else
