@@ -59,21 +59,12 @@ public class AppPrefsActivity extends PreferenceActivity implements
 		addPreferencesFromResource(R.xml.settings);
 
 		this.initSummaries(this.getPreferenceScreen());
-
-		PreferenceScreen installenv = (PreferenceScreen) this
-				.findPreference("installenv");
-		installenv.setOnPreferenceClickListener(this);
-
-		PreferenceScreen removeenv = (PreferenceScreen) this
-				.findPreference("removeenv");
-		removeenv.setOnPreferenceClickListener(this);
-
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
-
+		
 		getPreferenceScreen().getSharedPreferences()
 				.unregisterOnSharedPreferenceChangeListener(this);
 	}
@@ -92,8 +83,8 @@ public class AppPrefsActivity extends PreferenceActivity implements
 	@Override
 	public void onResume() {
 		super.onResume();
+		
 		this.setTitle(R.string.title_activity_settings);
-
 		getPreferenceScreen().getSharedPreferences()
 				.registerOnSharedPreferenceChangeListener(this);
 	}
@@ -112,6 +103,8 @@ public class AppPrefsActivity extends PreferenceActivity implements
 				this.initSummaries((PreferenceGroup) p);
 			else
 				this.setSummary(p, false);
+			if (p instanceof PreferenceScreen)
+				p.setOnPreferenceClickListener(this);
 		}
 	}
 
