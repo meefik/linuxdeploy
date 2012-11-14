@@ -313,19 +313,19 @@ update_system()
 
 	echo "[PRINT] DNS ... "
 	(set -e
+		echo -n > $MNT_TARGET/etc/resolv.conf
 		if [ -z "$SERVER_DNS" ]; then
 			dns1=`getprop net.dns1`
 			dns2=`getprop net.dns2`
-			[ -n "$dns1" ] && echo "nameserver $dns1" > $MNT_TARGET/etc/resolv.conf
-			[ -n "$dns2" ] && echo "nameserver $dns2" >> $MNT_TARGET/etc/resolv.conf
+			DNS_LIST="$dns1 $dns2"
+			[ -z "$dns1" -a -z "$dns2" ] && DNS_LIST="8.8.8.8"
 		else
 			DNS_LIST=`echo $SERVER_DNS | tr ',;' ' '`
-			echo -n > $MNT_TARGET/etc/resolv.conf
-			for dns in $DNS_LIST
-			do
-				echo "nameserver $dns" >> $MNT_TARGET/etc/resolv.conf
-			done
 		fi
+		for dns in $DNS_LIST
+		do
+			echo "nameserver $dns" >> $MNT_TARGET/etc/resolv.conf
+		done
 		chmod 644 $MNT_TARGET/etc/resolv.conf
 	exit 0)
 	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
