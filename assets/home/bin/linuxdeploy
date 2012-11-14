@@ -185,7 +185,7 @@ configure_system()
 		echo "[RESULT_LN] skip"
 	fi
 	
-	echo "[PRINT] users and groups ... "
+	echo "[PRINT] Android users and groups ... "
 	(set -e
 		AIDS=`cat $HOME_DIR/etc/aids`
 		for AID in $AIDS
