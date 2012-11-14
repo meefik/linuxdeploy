@@ -16,10 +16,10 @@ Installing a new operating system takes about 30 minutes. The recommended minimu
 #### Features: ####
 * Supported OS: Debian, Ubuntu
 * Architecture: armel, armhf
-* Installation type: loop device, SD card
+* Installation type: loop device, SD card partition, directory
 * Supported file systems: ext2, ext4
 * Control interface: SSH, VNC, X
-* Desktop environment: XTerm, LXDE, Xfce, GNOME, KDE
+* Desktop environment: XTerm, LXDE, Xfce, GNOME, Unity, KDE
 * Supported languages: English, Russian
 
 #### Install ####
@@ -69,10 +69,10 @@ Copyright (C) 2012  Антон Скшидлевский
 #### Характеристики: ####
 * Поддерживаемые ОС: Debian, Ubuntu
 * Сборка под архитектуру: armel, armhf
-* Тип установки: loop-файл, SD карта
+* Тип установки: loop-файл, раздел SD-карты, директория
 * Поддерживаемые файловые системы: ext2, ext4
 * Интерфейс управления: SSH, VNC, X
-* Окружение рабочего стола: XTerm, LXDE, Xfce, GNOME, KDE
+* Окружение рабочего стола: XTerm, LXDE, Xfce, GNOME, Unity, KDE
 * Поддерживаемые языки: русский, английский
 
 #### Установка ####

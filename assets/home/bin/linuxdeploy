@@ -23,47 +23,51 @@ export TERM
 
 install_system()
 {
+	echo "[PRINT] Checking mount points ... "
+	is_mnt=`cat /proc/mounts | grep " $MNT_TARGET "`
+	if [ -n "$is_mnt" ]; then
+		echo "[RESULT_LN] fail"; return 1
+	else
+		echo "[RESULT_LN] done"
+	fi
+
     echo "[PRINT_LN] Selected distribution: $DISTRIB"
     
-	if [ ! -e "$IMG_TARGET" ]; then
+	if [ ! -e "$IMG_TARGET" -o -f "$IMG_TARGET" ]; then
 		echo "[PRINT] Making new disk image ($IMG_SIZE MB) ... "
 		(set -e
 			dd if=/dev/zero of=$IMG_TARGET bs=1048576 count=$IMG_SIZE
 		exit 0)
 		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 	fi
-	if [ "$FS_TYPE" == "auto" ]; then
-		for fs in ext4 ext2
-		do
-			fs_support=`cat /proc/filesystems | grep $fs`
-			if [ -n "$fs_support" ]; then
-				FS_TYPE=$fs
-				break
-			fi
-		done
+
+	if [ ! -d "$IMG_TARGET" ]; then
+		if [ "$FS_TYPE" == "auto" ]; then
+			for fs in ext4 ext2
+			do
+				fs_support=`cat /proc/filesystems | grep $fs`
+				if [ -n "$fs_support" ]; then
+					FS_TYPE=$fs
+					break
+				fi
+			done
+		fi
+		echo "[PRINT] Making $FS_TYPE file system ... "
+		(set -e
+			is_loop=`losetup | grep $IMG_TARGET || true`
+			is_raw=`cat /proc/mounts | grep $IMG_TARGET || true`
+			[ -z "$is_loop" -a -z "$is_raw" ] && mke2fs -qF -t $FS_TYPE -O ^has_journal $IMG_TARGET
+		exit 0)
+		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 	fi
-	echo "[PRINT] Making $FS_TYPE file system ... "
-	(set -e
-		is_loop=`losetup | grep $IMG_TARGET || true`
-		is_raw=`cat /proc/mounts | grep $IMG_TARGET || true`
-		[ -z "$is_loop" -a -z "$is_raw" ] && mke2fs -qF -t $FS_TYPE -O ^has_journal $IMG_TARGET
-	exit 0)
-	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 
 	mount_system
-	if [ $? -ne 0 ]; then
-		echo "[PRINT_LN] FAIL to deploy!"; return 1
-	fi
+	[ $? -ne 0 ] && return 1
 
 	echo "[PRINT_ALL] Installing Linux base system: "
 	[ -z "$DEBOOTSTRAP_DIR" ] && DEBOOTSTRAP_DIR=$HOME_DIR/deploy/debootstrap
 	export DEBOOTSTRAP_DIR
 	debootstrap --no-check-gpg --arch $ARCH --foreign --extractor=ar --include=locales,openssh-server,sudo $SUITE $MNT_TARGET $MIRROR
-	if [ $? -ne 0 ]; then
-		echo "[PRINT_LN] FAIL to deploy!"; return 1
-	fi
-	
-	mount_system
 	if [ $? -ne 0 ]; then
 		echo "[PRINT_LN] FAIL to deploy!"; return 1
 	fi
@@ -76,9 +80,7 @@ install_system()
 	fi
 	
 	configure_system
-	if [ $? -ne 0 ]; then
-		echo "[PRINT_LN] FAIL to deploy!"; return 1
-	fi
+	[ $? -ne 0 ] && return 1
 }
 
 configure_system()
@@ -148,7 +150,7 @@ configure_system()
 		SUDO_STR="$USER_NAME ALL=(ALL:ALL) NOPASSWD:ALL"
 		is_str=`cat $MNT_TARGET/etc/sudoers | grep "$SUDO_STR" || true`
 		[ -z "$is_str" ] && echo $SUDO_STR >> $MNT_TARGET/etc/sudoers
-		chmod 640 $MNT_TARGET/etc/sudoers
+		chmod 440 $MNT_TARGET/etc/sudoers
 	exit 0)
 	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 	
@@ -186,6 +188,7 @@ configure_system()
 			[ -z "$is_str" ] && echo "$XNAME:x:$XID:$XID::/:/bin/false" >> $MNT_TARGET/etc/passwd
 			sed -i 's|^UID_MIN.*|UID_MIN 10000|g' $MNT_TARGET/etc/login.defs
 			sed -i 's|^GID_MIN.*|GID_MIN 10000|g' $MNT_TARGET/etc/login.defs	
+			chroot $MNT_TARGET usermod -a -G root messagebus
 		done
 	exit 0)
 	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
@@ -228,7 +231,14 @@ configure_system()
 				echo 'startxfce4 &' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
 			;;
 			GNOME)
+				echo 'XKL_XMODMAP_DISABLE=1' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
+				echo 'export XKL_XMODMAP_DISABLE' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
+				echo 'SESSION_SUPPORT=`gnome-session -h | grep "\-\-session"`' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
+				echo 'if [ -n "$SESSION_SUPPORT" ]; then' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
 				echo 'gnome-session --session=gnome &' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
+				echo 'else' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
+				echo 'gnome-session &' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
+				echo 'fi' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
 			;;
 			Unity)
 				echo 'gnome-session --session=ubuntu-2d &' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
@@ -334,10 +344,11 @@ mount_system()
 	echo "[PRINT_LN] Mounting partitions: "
 	
 	echo "[PRINT] / ... "
-	mnt=`cat /proc/mounts | grep " $MNT_TARGET "`
-	if [ -z "$mnt" ]; then
+	is_mnt=`cat /proc/mounts | grep " $MNT_TARGET "`
+	if [ -z "$is_mnt" ]; then
 		[ ! -d "$MNT_TARGET" ] && mkdir -p $MNT_TARGET
-		mount -o rw,relatime $IMG_TARGET $MNT_TARGET
+		[ -d "$IMG_TARGET" ] && MNT_OPTS="bind" || MNT_OPTS="rw,relatime"
+		mount -o $MNT_OPTS $IMG_TARGET $MNT_TARGET
 		if [ $? -eq 0 ]; then
 			echo "[RESULT_LN] done"
 		else
@@ -348,8 +359,9 @@ mount_system()
 	fi
 	
 	echo "[PRINT] /proc ... "
-	tg=$MNT_TARGET/proc; mnt=`cat /proc/mounts | grep " $tg "`
-	if [ -z "$mnt" -a -d "$tg" ]; then
+	tg=$MNT_TARGET/proc; is_mnt=`cat /proc/mounts | grep " $tg "`
+	if [ -z "$is_mnt" ]; then
+		[ ! -d "$tg" ] && mkdir -p $tg
 		mount -t proc proc $tg
 		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 	else
@@ -357,8 +369,9 @@ mount_system()
 	fi
 	
 	echo "[PRINT] /sys ... "
-	tg=$MNT_TARGET/sys; mnt=`cat /proc/mounts | grep " $tg "`
-	if [ -z "$mnt" -a -d "$tg" ]; then
+	tg=$MNT_TARGET/sys; is_mnt=`cat /proc/mounts | grep " $tg "`
+	if [ -z "$is_mnt" ]; then
+		[ ! -d "$tg" ] && mkdir -p $tg
 		mount -t sysfs sys $tg
 		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 	else
@@ -366,8 +379,9 @@ mount_system()
 	fi
 	
 	echo "[PRINT] /dev ... "
-	tg=$MNT_TARGET/dev; mnt=`cat /proc/mounts | grep " $tg "`
-	if [ -z "$mnt" -a -d "$tg" ]; then
+	tg=$MNT_TARGET/dev; is_mnt=`cat /proc/mounts | grep " $tg "`
+	if [ -z "$is_mnt" ]; then
+		[ ! -d "$tg" ] && mkdir -p $tg
 		mount -o bind /dev $tg
 		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 	else
@@ -375,31 +389,29 @@ mount_system()
 	fi
 	
 	echo "[PRINT] /dev/pts ... "
-	tg=$MNT_TARGET/dev/pts; mnt=`cat /proc/mounts | grep " $tg "`
-	if [ -z "$mnt" -a -d "$tg" ]; then
+	tg=$MNT_TARGET/dev/pts; is_mnt=`cat /proc/mounts | grep " $tg "`
+	if [ -z "$is_mnt" ]; then
+		[ ! -d "$tg" ] && mkdir -p $tg
 		mount -t devpts devpts $tg
 		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 	else
 		echo "[RESULT_LN] skip"
 	fi
 	
-	DISKS=`echo "$EXTERNAL_STORAGE:$SECONDARY_STORAGE:$CUSTOM_MOUNT" | tr ':' ' '`
+	DISKS=`echo "$CUSTOM_MOUNT" | tr ',;' ' '`
 	for disk in $DISKS
 	do
-		sname=`basename /root/$disk`
-		echo "[PRINT] /mnt/$sname ... "
-		tg=$MNT_TARGET/mnt/$sname
-		tmnt=`cat /proc/mounts | grep " $tg "`
-		smnt_dir=`cat /proc/mounts | grep ^/dev/ | grep " $disk "`
-		if [ -z "$tmnt" -a -n "$smnt_dir" -a -d "$disk" ]; then
+		disk_name=`basename /root/$disk`
+		echo "[PRINT] /mnt/$disk_name ... "
+		tg=$MNT_TARGET/mnt/$disk_name
+		is_tg=`cat /proc/mounts | grep " $tg "`
+		if [ -z "$is_tg" -a -d "$disk" ]; then
 			[ ! -d "$tg" ] && mkdir -p $tg
 			mount -o bind $disk $tg
 			[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 			continue
 		fi
-		smnt_dev=`cat /proc/mounts | grep ^/dev/ | grep "^$disk "`
-		is_dev=`echo $disk | grep ^/dev/`
-		if [ -z "$tmnt" -a -z "$smnt_dev" -a -n "$is_dev" -a -e "$disk" ]; then
+		if [ -z "$is_tg" -a -e "$disk" ]; then
 			[ ! -d "$tg" ] && mkdir -p $tg
 			mount -o rw,relatime $disk $tg
 			[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
@@ -515,7 +527,7 @@ start_system()
 		echo "[RESULT_LN] skip"
 	fi
 	
-	SCRIPTS=`echo "$CUSTOM_STARTUP" | tr ':' ' '`
+	SCRIPTS=`echo "$CUSTOM_STARTUP" | tr ',;' ' '`
 	for script in $SCRIPTS
 	do
 		echo "[PRINT] $script ... "
@@ -567,7 +579,7 @@ stop_system()
 		echo "[RESULT_LN] skip"
 	fi
 	
-	SCRIPTS=`echo "$CUSTOM_STARTUP" | tr ':' ' '`
+	SCRIPTS=`echo "$CUSTOM_STARTUP" | tr ',;' ' '`
 	for script in $SCRIPTS
 	do
 		echo "[PRINT] $script ... "

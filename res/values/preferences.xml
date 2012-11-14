@@ -22,15 +22,15 @@
     <string name="username" translatable="false">android</string>
     <string name="serverdns" translatable="false"></string>
     <string name="locale" translatable="false">en_US.UTF-8</string>
-    <string name="installgui" translatable="false">false</string>
+    <string name="installgui" translatable="false">true</string>
     <string name="desktopenv" translatable="false">@string/debian_desktopenv</string>
     <string name="customstartup" translatable="false">false</string>
     <string name="customscript" translatable="false">/etc/init.d/myscript</string>
     <string name="mountcustom" translatable="false">false</string>
-    <string name="mountpath" translatable="false">/mnt/usbdisk</string>
+    <string name="mountpath" translatable="false">/mnt/sdcard</string>
     <string name="sshstartup" translatable="false">true</string>
     <string name="sshport" translatable="false">22</string>
-    <string name="vncstartup" translatable="false">false</string>
+    <string name="vncstartup" translatable="false">true</string>
     <string name="vncdisplay" translatable="false">0</string>
     <string name="vncdepth" translatable="false">16</string>
     <string name="vncwidth" translatable="false">800</string>
@@ -47,7 +47,7 @@
     
     <!-- Ubuntu -->
     <string name="ubuntu_suite" translatable="false">precise</string>
-    <string name="ubuntu_mirror" translatable="false">http://ports.ubuntu.com/ubuntu-ports</string>
+    <string name="ubuntu_mirror" translatable="false">http://ports.ubuntu.com</string>
     <string name="ubuntu_architecture" translatable="false">armel</string>
     <string name="ubuntu_desktopenv" translatable="false">LXDE</string>
     
