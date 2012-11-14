@@ -185,20 +185,20 @@ configure_system()
 		echo "[RESULT_LN] skip"
 	fi
 	
-	echo "[PRINT] Android users and groups ... "
+	echo "[PRINT] users and groups ... "
 	(set -e
 		AIDS=`cat $HOME_DIR/etc/aids`
 		for AID in $AIDS
 		do
 			XNAME=`echo $AID | awk -F: '{print $1}'`
 			XID=`echo $AID | awk -F: '{print $2}'`
-			sed -i "s|^$XNAME:x:$XID:.*|$XNAME:x:$XID:$USER_NAME|g" $MNT_TARGET/etc/group || true
+			sed -i "s|^$XNAME:.*|$XNAME:x:$XID:$USER_NAME|g" $MNT_TARGET/etc/group || true
 			is_str=`cat $MNT_TARGET/etc/group | grep "^$XNAME:" || true`
 			[ -z "$is_str" ] && echo "$XNAME:x:$XID:$USER_NAME" >> $MNT_TARGET/etc/group
 			is_str=`cat $MNT_TARGET/etc/passwd | grep "^$XNAME:" || true`
 			[ -z "$is_str" ] && echo "$XNAME:x:$XID:$XID::/:/bin/false" >> $MNT_TARGET/etc/passwd
-			sed -i 's|^UID_MIN.*|UID_MIN 10000|g' $MNT_TARGET/etc/login.defs
-			sed -i 's|^GID_MIN.*|GID_MIN 10000|g' $MNT_TARGET/etc/login.defs
+			sed -i 's|^UID_MIN.*|UID_MIN 5000|g' $MNT_TARGET/etc/login.defs
+			sed -i 's|^GID_MIN.*|GID_MIN 5000|g' $MNT_TARGET/etc/login.defs
 		done
 	exit 0)
 	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"

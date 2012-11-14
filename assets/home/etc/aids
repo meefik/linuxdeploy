@@ -34,5 +34,3 @@ aid_net_raw:3004
 aid_net_admin:3005
 aid_net_bw_stats:3006
 aid_net_bw_acct:3007
-aid_misc:9998
-aid_nobody:9999
