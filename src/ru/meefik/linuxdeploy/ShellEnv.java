@@ -351,7 +351,7 @@ public class ShellEnv {
 		params.add("chmod 755 " + PrefStore.HOME_DIR);
 		params.add("chmod 755 " + PrefStore.HOME_DIR + "/bin");
 		params.add("chmod 755 " + PrefStore.HOME_DIR + "/bin/busybox");
-		params.add(PrefStore.HOME_DIR + "/bin/busybox --install "
+		params.add(PrefStore.HOME_DIR + "/bin/busybox --install -s "
 				+ PrefStore.HOME_DIR + "/bin");
 		params.add("PATH=" + PrefStore.HOME_DIR + "/bin:$PATH; export PATH");
 		params.add("chmod -R 755 " + PrefStore.HOME_DIR + "/bin");

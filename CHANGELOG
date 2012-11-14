@@ -1,6 +1,13 @@
 Changelog (English)
 ===================
 
+1.2.8
+Bugfix: problem installing BusyBox on some devices (error updating the operating environment)
+Added support installation in directory
+Added checking mount points before installation
+Rebuilding image file at change the size
+Improved custom mounting
+
 1.2.7
 Bugfix: incorrect startup GNOME session on Ubuntu
 Added support X Window System (startup GUI over X server)
@@ -114,6 +121,13 @@ Updated list packages of base system installation
 
 История изменений (Русский)
 ===========================
+
+1.2.8
+Устранена проблема установки BusyBox на некоторых устройствах (ошибка обновления рабочего окружения)
+Добавлена поддержка установки в каталог
+Добавлена проверка точек монтирования перед установкой
+Пересоздание образа при изменении размера
+Доработана функция выборочного монтирования
 
 1.2.7
 Исправлена ошибка запуска сессии GNOME в Ubuntu
