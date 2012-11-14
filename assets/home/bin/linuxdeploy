@@ -174,6 +174,17 @@ configure_system()
 	exit 0)
 	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 	
+	echo "[PRINT] upstart ... "
+	if [ -e "$MNT_TARGET/sbin/initctl" ]; then
+		(set -e
+			rm $MNT_TARGET/sbin/initctl
+			chroot $MNT_TARGET ln -s /bin/true /sbin/initctl
+		exit 0) 
+		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
+	else
+		echo "[RESULT_LN] skip"
+	fi
+	
 	echo "[PRINT] users and groups ... "
 	(set -e
 		AIDS=`cat $HOME_DIR/etc/aids`
@@ -187,8 +198,7 @@ configure_system()
 			is_str=`cat $MNT_TARGET/etc/passwd | grep "^$XNAME:" || true`
 			[ -z "$is_str" ] && echo "$XNAME:x:$XID:$XID::/:/bin/false" >> $MNT_TARGET/etc/passwd
 			sed -i 's|^UID_MIN.*|UID_MIN 10000|g' $MNT_TARGET/etc/login.defs
-			sed -i 's|^GID_MIN.*|GID_MIN 10000|g' $MNT_TARGET/etc/login.defs	
-			chroot $MNT_TARGET usermod -a -G root messagebus
+			sed -i 's|^GID_MIN.*|GID_MIN 10000|g' $MNT_TARGET/etc/login.defs
 		done
 	exit 0)
 	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
