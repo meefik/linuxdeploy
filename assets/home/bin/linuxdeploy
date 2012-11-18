@@ -31,8 +31,8 @@ install_system()
 		echo "[RESULT_LN] done"
 	fi
 
-    echo "[PRINT_LN] Selected distribution: $DISTRIB"
-    
+	echo "[PRINT_LN] Selected distribution: $DISTRIB"
+
 	if [ ! -e "$IMG_TARGET" -o -f "$IMG_TARGET" ]; then
 		echo "[PRINT] Making new disk image ($IMG_SIZE MB) ... "
 		(set -e
@@ -43,7 +43,9 @@ install_system()
 
 	if [ ! -d "$IMG_TARGET" ]; then
 		if [ "$FS_TYPE" == "auto" ]; then
-			for fs in ext4 ext2
+			$FS_TYPE="none"
+			echo "[PRINT] Detecting file system ... "
+			for fs in ext4 ext3 ext2
 			do
 				fs_support=`cat /proc/filesystems | grep $fs`
 				if [ -n "$fs_support" ]; then
@@ -51,6 +53,8 @@ install_system()
 					break
 				fi
 			done
+			echo "[RESULT_LN] $FS_TYPE"
+			[ "$FS_TYPE" == "none" ] && return 1
 		fi
 		echo "[PRINT] Making $FS_TYPE file system ... "
 		(set -e
