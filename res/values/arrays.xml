@@ -32,6 +32,7 @@
     <string-array name="fstype_values" translatable="false">
         <item>auto</item>
         <item>ext2</item>
+        <item>ext3</item>
         <item>ext4</item>
     </string-array>
     
