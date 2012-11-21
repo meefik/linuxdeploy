@@ -12,19 +12,17 @@ import java.util.Enumeration;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.PowerManager;
-import android.os.PowerManager.WakeLock;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -95,8 +93,6 @@ public class MainActivity extends Activity implements OnClickListener {
 			e.printStackTrace();
 		}
 	}
-
-	private WakeLock wake_lock;
 
 	public String getLocalIpAddress() {
 		try {
@@ -250,11 +246,6 @@ public class MainActivity extends Activity implements OnClickListener {
 		if (PrefStore.THEME.equals("dark"))
 			uninstallButton.setImageResource(R.raw.propertiesbtn_light);
 
-		// Screen lock
-		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-		wake_lock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK,
-				"linuxdeploy_wake_lock");
-
 		// ok we back, load the saved text
 		if (savedInstanceState != null) {
 			String savedText = savedInstanceState.getString("textlog");
@@ -312,14 +303,6 @@ public class MainActivity extends Activity implements OnClickListener {
 	}
 
 	@Override
-	protected void onPause() {
-		super.onPause();
-		// Screen unlock
-		if (wake_lock.isHeld())
-			wake_lock.release();
-	}
-
-	@Override
 	public void onResume() {
 		super.onResume();
 
@@ -351,7 +334,9 @@ public class MainActivity extends Activity implements OnClickListener {
 
 		// Screen lock
 		if (PrefStore.SCREEN_LOCK)
-			wake_lock.acquire();
+			this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		else
+			this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 	}
 
 	@Override
