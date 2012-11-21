@@ -3,6 +3,7 @@
 <resources>
 
     <string name="app_name">Linux Deploy</string>
+    
     <string name="menu_profiles">Profiles</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_about">About</string>
@@ -12,10 +13,12 @@
     <string name="menu_new">New</string>
     <string name="menu_edit">Edit</string>
     <string name="menu_discard">Delete</string>
+    
     <string name="title_activity_main">Linux Deploy</string>
     <string name="title_activity_about">About</string>
     <string name="title_activity_settings">Settings</string>
     <string name="title_activity_properties">Properties</string>
+    <string name="title_activity_profiles">Profiles</string>
         
     <string name="confirm_install_title">Install</string>
     <string name="confirm_start_title">Start</string>
@@ -23,6 +26,10 @@
     <string name="confirm_install_message">Start new deployment of GNU/Linux system?</string>
     <string name="confirm_start_message">Mount GNU/Linux system and start services?</string>
     <string name="confirm_stop_message">Stop services and unmount GNU/Linux system?</string>
+    <string name="new_profile_title">Profile name</string>
+	<string name="edit_profile_title">Profile name</string>
+    <string name="confirm_discard_title">Remove profile</string>
+    <string name="confirm_discard_message">Remove selected profile?</string>
     
     <string name="app_preferences">Application</string>
     
@@ -38,6 +45,8 @@
     <string name="title_theme_preferences">Theme</string>
     <string name="dialog_title_theme_preference">Choose theme</string>
     
+    <string name="env_preferences">Operating environment</string>
+    
     <string name="title_installdir_preferences">Installation directory</string>
     <string name="dialog_title_installdir_preference">Installation directory</string>
 
@@ -48,29 +57,46 @@
     <string name="title_removeenv_preference">Remove ENV</string>
     <string name="summary_removeenv_preference">Remove the operating environment</string>
     <string name="message_removeenv_confirm_dialog">Remove the operating environment?</string>
+    
+    <string name="debug_preferences">Debug</string>
+
+    <string name="title_debug_preference">Debug mode</string>
+    <string name="summary_debug_preference">Show debugging information</string>
+    
+    <string name="title_trace_preference">Trace mode</string>
+    <string name="summary_trace_preference">Enable tracing mode</string>
+    
+    <string name="title_logs_preference">Logging</string>
+    <string name="summary_logs_preference">Save logs to file</string>
+    
+    <string name="title_logfile_preferences">Log file</string>
+    <string name="dialog_title_logfile_preference">Log file</string>
 
     <string name="deploy_preferences">Deploy</string>
     
     <string name="title_distribution_preferences">Distribution</string>
     <string name="dialog_title_distribution_preference">Distribution</string>
-
-    <string name="title_diskimage_preferences">Disk (image) path</string>
-    <string name="dialog_title_diskimage_preference">Device or file path</string>
-
-    <string name="title_disksize_preferences">Image size (MB)</string>
-    <string name="dialog_title_disksize_preference">Disk image size (MB)</string>
-    
-    <string name="title_fstype_preferences">File system</string>
-    <string name="dialog_title_fstype_preference">File system</string>
-    
-    <string name="title_architecture_preferences">Architecture</string>
-    <string name="dialog_title_architecture_preference">Architecture</string>
     
     <string name="title_suite_preferences">Distribution suite</string>
     <string name="dialog_title_suite_preference">Distribution suite</string>
     
     <string name="title_mirror_preferences">Mirror URL</string>
     <string name="dialog_title_mirror_preference">Mirror URL</string>
+    
+    <string name="title_architecture_preferences">Architecture</string>
+    <string name="dialog_title_architecture_preference">Architecture</string>
+    
+    <string name="title_deploytype_preferences">Installation type</string>
+    <string name="dialog_title_deploytype_preference">Installation type</string>
+
+    <string name="title_diskimage_preferences">Destination path</string>
+    <string name="dialog_title_diskimage_preference">Destination path</string>
+
+    <string name="title_disksize_preferences">Image size (MB)</string>
+    <string name="dialog_title_disksize_preference">Disk image size (MB)</string>
+    
+    <string name="title_fstype_preferences">File system</string>
+    <string name="dialog_title_fstype_preference">File system</string>
     
     <string name="title_username_preferences">User name</string>
     <string name="dialog_title_username_preference">User name</string>
@@ -92,17 +118,15 @@
     <string name="summary_reconfigure_preference">Run the system reconfiguration</string>
     <string name="message_reconfigure_confirm_dialog">Perform reconfiguration of the system?</string>
     
-    <string name="title_reset_preference">Reset settings</string>
-    <string name="summary_reset_preference">Restore default settings</string>
-    <string name="message_reset_confirm_dialog">Restore settings by default?</string>
-
     <string name="startup_preferences">Startup</string>
 
     <string name="title_sshstartup_preferences">SSH</string>
     <string name="summary_sshstartup_preferences">Enable SSH server startup</string>
     
     <string name="title_vncstartup_preferences">VNC</string>
-    <string name="summary_vncstartup_preferences">Enable VNC server startup</string>
+    <string name="summary_vncstartup_preferences">Enable VNC 
+    
+        server startup</string>
     
     <string name="title_xstartup_preferences">X Window System</string>
     <string name="summary_xstartup_preferences">Enable startup GUI over X server</string>
@@ -146,26 +170,6 @@
     <string name="title_xhost_preferences">X server address</string>
     <string name="dialog_title_xhost_preference">X: IP or host name</string>
     
-    <string name="debug_preferences">Debug</string>
-
-    <string name="title_debug_preference">Debug mode</string>
-    <string name="summary_debug_preference">Show debugging information</string>
-    
-    <string name="title_trace_preference">Trace mode</string>
-    <string name="summary_trace_preference">Enable tracing mode</string>
-    
-    <string name="title_logs_preference">Logging</string>
-    <string name="summary_logs_preference">Save logs to file</string>
-    
-    <string name="title_logfile_preferences">Log file</string>
-    <string name="dialog_title_logfile_preference">Log file</string>
-    
     <string name="about_text"><font size="32"><b>Linux Deploy</b></font>\n\nGPL v3\n\n[ <a href="https://github.com/meefik/linuxdeploy">github.com</a> , <a href="http://4pda.ru/forum/index.php?showtopic=378043">4pda.ru</a> ]\n\nThis program comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions.\n\n&#169; 2012 Anton Skshidlevsky</string>
-    
-    <string name="title_activity_profiles">Profiles</string>
-    <string name="new_profile_title">Profile name</string>
-	<string name="edit_profile_title">Profile name</string>
-    <string name="confirm_discard_title">Remove profile</string>
-    <string name="confirm_discard_message">Remove selected profile?</string>
 
 </resources>

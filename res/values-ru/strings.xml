@@ -3,6 +3,7 @@
 <resources>
 
     <string name="app_name">Linux Deploy</string>
+    
     <string name="menu_profiles">Профили</string>
     <string name="menu_settings">Настройки</string>
     <string name="menu_about">О программе</string>
@@ -12,111 +13,161 @@
     <string name="menu_new">Добавить</string>
     <string name="menu_edit">Изменить</string>
     <string name="menu_discard">Удалить</string>
+    
     <string name="title_activity_main">Linux Deploy</string>
     <string name="title_activity_about">О программе</string>
     <string name="title_activity_settings">Настройки</string>
     <string name="title_activity_properties">Параметры</string>
+    <string name="title_activity_profiles">Профили</string>
+    
     <string name="confirm_install_title">Установить</string>
     <string name="confirm_start_title">Запустить</string>
     <string name="confirm_stop_title">Остановить</string>
     <string name="confirm_install_message">Запустить новую установку GNU/Linux?</string>
     <string name="confirm_start_message">Смонтировать GNU/Linux и запустить сервисы?</string>
     <string name="confirm_stop_message">Остановить сервисы и размонтировать GNU/Linux?</string>
-    <string name="app_preferences">Приложение</string>
-    <string name="title_screenlock_preference">Не отключать экран</string>
-    <string name="summary_screenlock_preference">Оставлять экран включенным пока запущено приложение</string>
-    <string name="title_language_preferences">Язык интерфейса</string>
-    <string name="dialog_title_language_preference">Выберите язык</string>
-    <string name="title_fontsize_preferences">Размер шрифта</string>
-    <string name="dialog_title_fontsize_preference">Размер шрифта</string>
-    <string name="title_theme_preferences">Тема интерфейса</string>
-    <string name="dialog_title_theme_preference">Выберите тему</string>
-    <string name="title_installdir_preferences">Директория установки</string>
-    <string name="dialog_title_installdir_preference">Директория установки</string>
-    <string name="title_installenv_preference">Обновить окружение</string>
-    <string name="summary_installenv_preference">Обновить рабочее окружение</string>
-    <string name="message_installenv_confirm_dialog">Обновить рабочее окружение программы?</string>
-    <string name="title_removeenv_preference">Удалить окружение</string>
-    <string name="summary_removeenv_preference">Удалить рабочее окружение</string>
-    <string name="message_removeenv_confirm_dialog">Удалить рабочее окружение программы?</string>
-    <string name="deploy_preferences">Развертывание</string>
-    <string name="title_distribution_preferences">Дистрибутив</string>
-    <string name="dialog_title_distribution_preference">Дистрибутив</string>
-    <string name="title_diskimage_preferences">Диск (образ)</string>
-    <string name="dialog_title_diskimage_preference">Путь к разделу или файлу</string>
-    <string name="title_disksize_preferences">Размер образа (МБ)</string>
-    <string name="dialog_title_disksize_preference">Размер образа (МБ)</string>
-    <string name="title_fstype_preferences">Файловая система</string>
-    <string name="dialog_title_fstype_preference">Файловая система</string>
-    <string name="title_architecture_preferences">Архитектура</string>
-    <string name="dialog_title_architecture_preference">Архитектура</string>
-    <string name="title_suite_preferences">Версия дистрибутива</string>
-    <string name="dialog_title_suite_preference">Версия дистрибутива</string>
-    <string name="title_mirror_preferences">URL-адрес зеркала</string>
-    <string name="dialog_title_mirror_preference">URL-адрес зеркала</string>
-    <string name="title_username_preferences">Имя пользователя</string>
-    <string name="dialog_title_username_preference">Имя пользователя</string>
-    <string name="title_serverdns_preferences">DNS-сервер</string>
-    <string name="dialog_title_serverdns_preference">Адрес DNS-сервера</string>
-    <string name="summary_serverdns_preference">Автоматическое обнаружение</string>
-    <string name="title_locale_preferences">Локализация</string>
-    <string name="dialog_title_locale_preference">Локализация</string>
-    <string name="title_installgui_preferences">Установить GUI</string>
-    <string name="summary_installgui_preferences">Включить установку окружения рабочего стола и VNC сервера</string>
-    <string name="title_desktopenv_preferences">Окружение рабочего стола</string>
-    <string name="dialog_title_desktopenv_preference">Окружение рабочего стола</string>
-    <string name="title_reconfigure_preference">Переконфигурация</string>
-    <string name="summary_reconfigure_preference">Выполнить переконфигурацию системы</string>
-    <string name="message_reconfigure_confirm_dialog">Запусить переконфигурацию системы?</string>
-    <string name="title_reset_preference">Сбросить настройки</string>
-    <string name="summary_reset_preference">Восстановить исходные параметры</string>
-    <string name="message_reset_confirm_dialog">Восстановить исходные параметры?</string>
-    <string name="startup_preferences">Запуск</string>
-    <string name="title_sshstartup_preferences">SSH</string>
-    <string name="summary_sshstartup_preferences">Разрешить запуск SSH сервера</string>
-    <string name="title_vncstartup_preferences">VNC</string>
-    <string name="summary_vncstartup_preferences">Разрешить запуск VNC сервера</string>
-    <string name="title_xstartup_preferences">X Window System</string>
-    <string name="summary_xstartup_preferences">Разрешить запуск GUI через X-сервер</string>
-    <string name="title_customstartup_preferences">Cценарий</string>
-    <string name="summary_customstartup_preferences">Разрешить запуск сценария</string>
-    <string name="title_customscript_preferences">Файл сценария</string>
-    <string name="dialog_title_customscript_preference">Файл сценария</string>
-    <string name="title_mountcustom_preferences">Монтирование</string>
-    <string name="summary_mountcustom_preferences">Включить выборочное монтирование</string>
-    <string name="title_mountpath_preferences">Путь монтирования</string>
-    <string name="dialog_title_mountpath_preference">Путь монтирования</string>
-    <string name="ssh_preferences">SSH</string>
-    <string name="title_sshport_preferences">Порт</string>
-    <string name="dialog_title_sshport_preference">SSH: порт</string>
-    <string name="vnc_preferences">VNC</string>
-    <string name="title_vncdisplay_preferences">Номер дисплея</string>
-    <string name="dialog_title_vncdisplay_preference">VNC: номер дисплея</string>
-    <string name="title_vncdepth_preferences">Глубина цвета (бит)</string>
-    <string name="dialog_title_vncdepth_preference">VNC: глубина цвета (бит)</string>
-    <string name="title_vncwidth_preferences">Ширина экрана</string>
-    <string name="dialog_title_vncwidth_preference">VNC: ширина экрана</string>
-    <string name="title_vncheight_preferences">Высота экрана</string>
-    <string name="dialog_title_vncheight_preference">VNC: высота экрана</string>
-    <string name="xserver_preferences">X Window System</string>
-    <string name="title_xdisplay_preferences">Номер дисплея</string>
-    <string name="dialog_title_xdisplay_preference">X: номер дисплея</string>
-    <string name="title_xhost_preferences">Адрес X-сервера</string>
-    <string name="dialog_title_xhost_preference">X: IP или имя хоста</string>
-    <string name="debug_preferences">Отладка</string>
-    <string name="title_debug_preference">Режим отладки</string>
-    <string name="summary_debug_preference">Включить отображение отладочной информации</string>
-    <string name="title_trace_preference">Режим трассировки</string>
-    <string name="summary_trace_preference">Перейти в режим трассировки</string>
-    <string name="title_logs_preference">Журналирование</string>
-    <string name="summary_logs_preference">Сохранять отчеты в файл</string>
-    <string name="title_logfile_preferences">Файл журнала</string>
-    <string name="dialog_title_logfile_preference">Файл журнала</string>
-    <string name="about_text"><font size="32"><b>Linux Deploy</b></font>\n\nЛицензия GPL v3\n\n[ <a href="https://github.com/meefik/linuxdeploy">github.com</a> , <a href="http://4pda.ru/forum/index.php?showtopic=378043">4pda.ru</a> ]\n\nЭта программа поставляется БЕЗ ВСЯКИХ ГАРАНТИЙ, а автор не несет ответственности за любые возможные последствия ее использования. Это свободное программное обеспечение, и вы можете распространять его при определенных условиях.\n\n&#169; 2012 Антон Скшидлевский</string>
-    <string name="title_activity_profiles">Профили</string>
     <string name="new_profile_title">Имя профиля</string>
     <string name="edit_profile_title">Имя профиля</string>
     <string name="confirm_discard_title">Удаление профиля</string>
     <string name="confirm_discard_message">Удалить выбранный профиль?</string>
+    
+    <string name="app_preferences">Приложение</string>
+    
+    <string name="title_screenlock_preference">Не отключать экран</string>
+    <string name="summary_screenlock_preference">Оставлять экран включенным пока запущено приложение</string>
+    
+    <string name="title_language_preferences">Язык интерфейса</string>
+    <string name="dialog_title_language_preference">Выберите язык</string>
+    
+    <string name="title_fontsize_preferences">Размер шрифта</string>
+    <string name="dialog_title_fontsize_preference">Размер шрифта</string>
+    
+    <string name="title_theme_preferences">Тема интерфейса</string>
+    <string name="dialog_title_theme_preference">Выберите тему</string>
+    
+    <string name="env_preferences">Рабочее окружение</string>
+    
+    <string name="title_installdir_preferences">Директория установки</string>
+    <string name="dialog_title_installdir_preference">Директория установки</string>
+    
+    <string name="title_installenv_preference">Обновить окружение</string>
+    <string name="summary_installenv_preference">Обновить рабочее окружение</string>
+    <string name="message_installenv_confirm_dialog">Обновить рабочее окружение программы?</string>
+    
+    <string name="title_removeenv_preference">Удалить окружение</string>
+    <string name="summary_removeenv_preference">Удалить рабочее окружение</string>
+    <string name="message_removeenv_confirm_dialog">Удалить рабочее окружение программы?</string>
+    
+    <string name="debug_preferences">Отладка</string>
+    
+    <string name="title_debug_preference">Режим отладки</string>
+    <string name="summary_debug_preference">Включить отображение отладочной информации</string>
+    
+    <string name="title_trace_preference">Режим трассировки</string>
+    <string name="summary_trace_preference">Перейти в режим трассировки</string>
+    
+    <string name="title_logs_preference">Журналирование</string>
+    <string name="summary_logs_preference">Сохранять отчеты в файл</string>
+    
+    <string name="title_logfile_preferences">Файл журнала</string>
+    <string name="dialog_title_logfile_preference">Файл журнала</string>
+    
+    <string name="deploy_preferences">Развертывание</string>
+    
+    <string name="title_distribution_preferences">Дистрибутив</string>
+    <string name="dialog_title_distribution_preference">Дистрибутив</string>
+    
+    <string name="title_suite_preferences">Версия дистрибутива</string>
+    <string name="dialog_title_suite_preference">Версия дистрибутива</string>
+    
+    <string name="title_mirror_preferences">URL-адрес зеркала</string>
+    <string name="dialog_title_mirror_preference">URL-адрес зеркала</string>
+    
+    <string name="title_architecture_preferences">Архитектура</string>
+    <string name="dialog_title_architecture_preference">Архитектура</string>
+    
+    <string name="title_deploytype_preferences">Тип установки</string>
+    <string name="dialog_title_deploytype_preference">Тип установки</string>
+    
+    <string name="title_diskimage_preferences">Путь назначения</string>
+    <string name="dialog_title_diskimage_preference">Путь назначения</string>
+    
+    <string name="title_disksize_preferences">Размер образа (МБ)</string>
+    <string name="dialog_title_disksize_preference">Размер образа (МБ)</string>
+    
+    <string name="title_fstype_preferences">Файловая система</string>
+    <string name="dialog_title_fstype_preference">Файловая система</string>
+        
+    <string name="title_username_preferences">Имя пользователя</string>
+    <string name="dialog_title_username_preference">Имя пользователя</string>
+    
+    <string name="title_serverdns_preferences">DNS-сервер</string>
+    <string name="dialog_title_serverdns_preference">Адрес DNS-сервера</string>
+    <string name="summary_serverdns_preference">Автоматическое обнаружение</string>
+    
+    <string name="title_locale_preferences">Локализация</string>
+    <string name="dialog_title_locale_preference">Локализация</string>
+    
+    <string name="title_installgui_preferences">Установить GUI</string>
+    <string name="summary_installgui_preferences">Включить установку окружения рабочего стола и VNC сервера</string>
+    
+    <string name="title_desktopenv_preferences">Окружение рабочего стола</string>
+    <string name="dialog_title_desktopenv_preference">Окружение рабочего стола</string>
+    
+    <string name="title_reconfigure_preference">Переконфигурация</string>
+    <string name="summary_reconfigure_preference">Выполнить переконфигурацию системы</string>
+    <string name="message_reconfigure_confirm_dialog">Запусить переконфигурацию системы?</string>
+    
+    <string name="startup_preferences">Запуск</string>
+    
+    <string name="title_sshstartup_preferences">SSH</string>
+    <string name="summary_sshstartup_preferences">Разрешить запуск SSH сервера</string>
+    
+    <string name="title_vncstartup_preferences">VNC</string>
+    <string name="summary_vncstartup_preferences">Разрешить запуск VNC сервера</string>
+    
+    <string name="title_xstartup_preferences">X Window System</string>
+    <string name="summary_xstartup_preferences">Разрешить запуск GUI через X-сервер</string>
+    
+    <string name="title_customstartup_preferences">Cценарий</string>
+    <string name="summary_customstartup_preferences">Разрешить запуск сценария</string>
+    
+    <string name="title_customscript_preferences">Файл сценария</string>
+    <string name="dialog_title_customscript_preference">Файл сценария</string>
+    
+    <string name="title_mountcustom_preferences">Монтирование</string>
+    <string name="summary_mountcustom_preferences">Включить выборочное монтирование</string>
+    
+    <string name="title_mountpath_preferences">Путь монтирования</string>
+    <string name="dialog_title_mountpath_preference">Путь монтирования</string>
+    
+    <string name="ssh_preferences">SSH</string>
+    
+    <string name="title_sshport_preferences">Порт</string>
+    <string name="dialog_title_sshport_preference">SSH: порт</string>
+    
+    <string name="vnc_preferences">VNC</string>
+    
+    <string name="title_vncdisplay_preferences">Номер дисплея</string>
+    <string name="dialog_title_vncdisplay_preference">VNC: номер дисплея</string>
+    
+    <string name="title_vncdepth_preferences">Глубина цвета (бит)</string>
+    <string name="dialog_title_vncdepth_preference">VNC: глубина цвета (бит)</string>
+    
+    <string name="title_vncwidth_preferences">Ширина экрана</string>
+    <string name="dialog_title_vncwidth_preference">VNC: ширина экрана</string>
+    
+    <string name="title_vncheight_preferences">Высота экрана</string>
+    <string name="dialog_title_vncheight_preference">VNC: высота экрана</string>
+    
+    <string name="xserver_preferences">X Window System</string>
+    
+    <string name="title_xdisplay_preferences">Номер дисплея</string>
+    <string name="dialog_title_xdisplay_preference">X: номер дисплея</string>
+    
+    <string name="title_xhost_preferences">Адрес X-сервера</string>
+    <string name="dialog_title_xhost_preference">X: IP или имя хоста</string>
+    
+    <string name="about_text"><font size="32"><b>Linux Deploy</b></font>\n\nЛицензия GPL v3\n\n[ <a href="https://github.com/meefik/linuxdeploy">github.com</a> , <a href="http://4pda.ru/forum/index.php?showtopic=378043">4pda.ru</a> ]\n\nЭта программа поставляется БЕЗ ВСЯКИХ ГАРАНТИЙ, а автор не несет ответственности за любые возможные последствия ее использования. Это свободное программное обеспечение, и вы можете распространять его при определенных условиях.\n\n&#169; 2012 Антон Скшидлевский</string>
 
 </resources>

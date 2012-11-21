@@ -39,6 +39,15 @@
             	android:entries="@array/debian_architecture_values"
             	android:entryValues="@array/debian_architecture_values"
             	android:dialogTitle="@string/dialog_title_architecture_preference" />
+	    
+	    <ListPreference
+    	        android:key="deploytype"
+        	    android:defaultValue="@string/deploytype"
+            	android:title="@string/title_deploytype_preferences"
+            	android:summary="@string/deploytype"
+            	android:entries="@array/deploytype_entries"
+            	android:entryValues="@array/deploytype_values"
+            	android:dialogTitle="@string/dialog_title_deploytype_preference" />
             
 	    <EditTextPreference
     	        android:key="diskimage"
@@ -60,7 +69,7 @@
         	    android:defaultValue="@string/fstype"
             	android:title="@string/title_fstype_preferences"
             	android:summary="@string/fstype"
-            	android:entries="@array/fstype_values"
+            	android:entries="@array/fstype_entries"
             	android:entryValues="@array/fstype_values"
             	android:dialogTitle="@string/dialog_title_fstype_preference" />
 

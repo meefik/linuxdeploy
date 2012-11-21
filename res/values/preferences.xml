@@ -16,6 +16,7 @@
     <string name="suite" translatable="false">@string/debian_suite</string>
     <string name="mirror" translatable="false">@string/debian_mirror</string>
     <string name="architecture" translatable="false">@string/debian_architecture</string>
+    <string name="deploytype" translatable="false">image</string>
     <string name="diskimage" translatable="false">/mnt/sdcard/linux.img</string>
     <string name="disksize" translatable="false">1024</string>
     <string name="fstype" translatable="false">auto</string>

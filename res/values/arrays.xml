@@ -22,15 +22,27 @@
         <item>light</item>
     </string-array>
     
-    <string-array name="vncdepth_values" translatable="false">
-        <item>8</item>
-        <item>15</item>
-        <item>16</item>
-        <item>24</item>
+    <string-array name="deploytype_values" translatable="false">
+        <item>image</item>
+        <item>partition</item>
+        <item>directory</item>
     </string-array>
     
+    <string-array name="deploytype_entries">
+        <item>Image file</item>
+        <item>Disk partition</item>
+        <item>Directory</item>
+    </string-array>
+        
     <string-array name="fstype_values" translatable="false">
         <item>auto</item>
+        <item>ext2</item>
+        <item>ext3</item>
+        <item>ext4</item>
+    </string-array>
+    
+    <string-array name="fstype_entries">
+        <item>Autodetection</item>
         <item>ext2</item>
         <item>ext3</item>
         <item>ext4</item>
@@ -39,6 +51,13 @@
     <string-array name="locale_values" translatable="false">
         <item>en_US.UTF-8</item>
         <item>ru_RU.UTF-8</item>
+    </string-array>
+    
+    <string-array name="vncdepth_values" translatable="false">
+        <item>8</item>
+        <item>15</item>
+        <item>16</item>
+        <item>24</item>
     </string-array>
     
     <string-array name="distribution_values" translatable="false">
