@@ -7,4 +7,17 @@
         <item>Светлая</item>
     </string-array>
     
+    <string-array name="deploytype_entries">
+        <item>Файл образа</item>
+        <item>Раздел диска</item>
+        <item>Директория</item>
+    </string-array>
+    
+    <string-array name="fstype_entries">
+        <item>Автоопределение</item>
+        <item>ext2</item>
+        <item>ext3</item>
+        <item>ext4</item>
+    </string-array>
+    
 </resources>

@@ -218,7 +218,8 @@ public class ShellEnv {
 				+ "[ \"$BOOT\" = \"*\" ] && TYPE=`fdisk -l $DEVPATH | grep ^$PART | awk '{str=$7; for (i=8;i<=11;i++) if ($i!=\"\") str=str\" \"$i; print str}'` || "
 				+ "TYPE=`fdisk -l $DEVPATH | grep ^$PART | awk '{str=$6; for (i=7;i<=10;i++) if ($i!=\"\") str=str\" \"$i; print str}'`; "
 				+ "echo \"[PRINT_LN] $PART: $SIZE ($TYPE)\"; "
-				+ "done; fi; done");
+				+ "is_partitions=1; " + "done; fi; done");
+		params.add("[ -z \"$is_partitions\" ] && echo '[PRINT_LN] ...no available partitions'");
 		params.add("exit");
 		new ExecCmd(params).run();
 	}
@@ -248,6 +249,9 @@ public class ShellEnv {
 				+ "\"|g' " + PrefStore.HOME_DIR + "/etc/deploy.conf");
 		params.add("sed -i 's|^FS_TYPE=.*|FS_TYPE=\"" + PrefStore.FS_TYPE
 				+ "\"|g' " + PrefStore.HOME_DIR + "/etc/deploy.conf");
+		params.add("sed -i 's|^DEPLOY_TYPE=.*|DEPLOY_TYPE=\""
+				+ PrefStore.DEPLOY_TYPE + "\"|g' " + PrefStore.HOME_DIR
+				+ "/etc/deploy.conf");
 		params.add("sed -i 's|^DISTRIB=.*|DISTRIB=\"" + PrefStore.DISTRIB
 				+ "\"|g' " + PrefStore.HOME_DIR + "/etc/deploy.conf");
 		params.add("sed -i 's|^ARCH=.*|ARCH=\"" + PrefStore.ARCH + "\"|g' "

@@ -38,6 +38,11 @@
             	android:entryValues="@array/theme_values"
             	android:dialogTitle="@string/dialog_title_theme_preference" />
 
+	</PreferenceCategory>
+    
+    <PreferenceCategory
+            android:title="@string/env_preferences">
+            
 	    <EditTextPreference
     	        android:key="installdir"
         	    android:defaultValue="@string/installdir"

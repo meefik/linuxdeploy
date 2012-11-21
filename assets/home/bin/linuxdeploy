@@ -33,15 +33,37 @@ install_system()
 
 	echo "[PRINT_LN] Selected distribution: $DISTRIB"
 
-	if [ ! -e "$IMG_TARGET" -o -f "$IMG_TARGET" ]; then
+	echo "[PRINT] Checking destination path ... "
+	if [ "$DEPLOY_TYPE" == "image" ]; then
+		if [ -e "$IMG_TARGET" -a ! -f "$IMG_TARGET" ]; then
+			echo "[RESULT_LN] fail"; return 1
+		fi
+	fi
+	if [ "$DEPLOY_TYPE" == "partition" ]; then
+		if [ ! -b "$IMG_TARGET" ]; then
+			echo "[RESULT_LN] fail"; return 1
+		fi
+	fi
+	if [ "$DEPLOY_TYPE" == "directory" ]; then
+		if [ ! -d "$IMG_TARGET" ]; then
+			echo "[RESULT_LN] fail"; return 1
+		fi
+	fi
+	echo "[RESULT_LN] done"
+	
+	if [ "$DEPLOY_TYPE" == "image" ]; then
 		echo "[PRINT] Making new disk image ($IMG_SIZE MB) ... "
 		(set -e
 			dd if=/dev/zero of=$IMG_TARGET bs=1048576 count=$IMG_SIZE
 		exit 0)
-		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
+		if [ $? -eq 0 ]; then
+			echo "[RESULT_LN] done"
+		else
+			echo "[RESULT_LN] fail"; return 1
+		fi
 	fi
 
-	if [ ! -d "$IMG_TARGET" ]; then
+	if [ "$DEPLOY_TYPE" == "image" -o "$DEPLOY_TYPE" == "partition" ]; then
 		if [ "$FS_TYPE" == "auto" ]; then
 			$FS_TYPE="none"
 			echo "[PRINT] Detecting file system ... "
@@ -62,7 +84,11 @@ install_system()
 			is_raw=`cat /proc/mounts | grep $IMG_TARGET || true`
 			[ -z "$is_loop" -a -z "$is_raw" ] && mke2fs -qF -t $FS_TYPE -O ^has_journal $IMG_TARGET
 		exit 0)
-		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
+		if [ $? -eq 0 ]; then
+			echo "[RESULT_LN] done"
+		else
+			echo "[RESULT_LN] fail"; return 1
+		fi
 	fi
 
 	mount_system

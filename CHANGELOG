@@ -4,6 +4,7 @@ Changelog (English)
 1.2.9
 Bugfix: sudo, upstart, gnome-session, XKL_XMODMAP_DISABLE
 Added support ext3 file system
+Improved preferences organization
 Improved automatic detection of file system
 
 1.2.8
@@ -130,6 +131,7 @@ Updated list packages of base system installation
 1.2.9
 Исправлены ошибки, связанные с sudo, upstart, gnome-session, XKL_XMODMAP_DISABLE
 Добавлена поддержка файловой системы ext3
+Улучшена организация настроек и параметров
 Доработано автоматическое определение файловой системы
 
 1.2.8

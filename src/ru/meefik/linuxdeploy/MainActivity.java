@@ -332,7 +332,8 @@ public class MainActivity extends Activity implements OnClickListener {
 
 		int ot = getResources().getConfiguration().orientation;
 		if (ot == Configuration.ORIENTATION_LANDSCAPE) {
-			if (myIP == null) myIP = "127.0.0.1";
+			if (myIP == null)
+				myIP = "127.0.0.1";
 			myIP = "IP: " + myIP;
 			if (PrefStore.SSH_START == "y")
 				ssh = "  SSH: " + PrefStore.SSH_PORT;

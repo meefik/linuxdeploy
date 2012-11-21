@@ -27,13 +27,13 @@ public class PrefStore {
 	// to deploy
 	public static String MNT_TARGET;
 	public static String IMG_TARGET;
-	public static String LOOP_DEV;
+	public static String DEPLOY_TYPE;
 	public static String IMG_SIZE;
 	public static String FS_TYPE;
 	public static String DISTRIB;
-	public static String ARCH;
 	public static String SUITE;
 	public static String MIRROR;
+	public static String ARCH;
 	public static String USER_NAME;
 	public static String SERVER_DNS;
 	public static String LOCALE;
@@ -89,13 +89,15 @@ public class PrefStore {
 
 		MNT_TARGET = PrefStore.HOME_DIR + "/mnt";
 		IMG_TARGET = sp.getString("diskimage", c.getString(R.string.diskimage));
+		DEPLOY_TYPE = sp.getString("deploytype",
+				c.getString(R.string.deploytype));
 		IMG_SIZE = sp.getString("disksize", c.getString(R.string.disksize));
 		FS_TYPE = sp.getString("fstype", c.getString(R.string.fstype));
 		DISTRIB = sp.getString("distribution",
 				c.getString(R.string.distribution));
-		ARCH = sp.getString("architecture", c.getString(R.string.architecture));
 		SUITE = sp.getString("suite", c.getString(R.string.suite));
 		MIRROR = sp.getString("mirror", c.getString(R.string.mirror));
+		ARCH = sp.getString("architecture", c.getString(R.string.architecture));
 		USER_NAME = sp.getString("username", c.getString(R.string.username))
 				.toLowerCase();
 		SERVER_DNS = sp.getString("serverdns", c.getString(R.string.serverdns));
