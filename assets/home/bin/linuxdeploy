@@ -54,7 +54,14 @@ install_system()
 	if [ "$DEPLOY_TYPE" == "image" ]; then
 		echo "[PRINT] Making new disk image ($IMG_SIZE MB) ... "
 		(set -e
-			dd if=/dev/zero of=$IMG_TARGET bs=1048576 seek=$IMG_SIZE count=0
+			if [ "$IMG_SIZE" -ge 2048 ]; then
+				DD_SEEK=2047
+				let DD_COUNT=$IMG_SIZE-2047
+			else
+				DD_SEEK=$IMG_SIZE
+				DD_COUNT=0
+			fi 
+			dd if=/dev/zero of=$IMG_TARGET bs=1048576 seek=$DD_SEEK count=$DD_COUNT
 		exit 0)
 		if [ $? -eq 0 ]; then
 			echo "[RESULT_LN] done"
@@ -65,7 +72,7 @@ install_system()
 
 	if [ "$DEPLOY_TYPE" == "image" -o "$DEPLOY_TYPE" == "partition" ]; then
 		if [ "$FS_TYPE" == "auto" ]; then
-			$FS_TYPE="none"
+			FS_TYPE="none"
 			echo "[PRINT] Detecting file system ... "
 			for fs in ext4 ext3 ext2
 			do
