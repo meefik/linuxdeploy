@@ -95,15 +95,8 @@
             	android:entries="@array/locale_values"
             	android:entryValues="@array/locale_values"
             	android:dialogTitle="@string/dialog_title_locale_preference" />
-	    
-	    <CheckBoxPreference
-    	        android:key="installgui"
-        	    android:defaultValue="@string/installgui"
-            	android:title="@string/title_installgui_preferences"
-            	android:summary="@string/summary_installgui_preferences" />
-	    
+
 	    <ListPreference
-	        	android:dependency="installgui"
     	        android:key="desktopenv"
         	    android:defaultValue="@string/desktopenv"
             	android:title="@string/title_desktopenv_preferences"
@@ -111,6 +104,12 @@
             	android:entries="@array/debian_desktopenv_values"
             	android:entryValues="@array/debian_desktopenv_values"
             	android:dialogTitle="@string/dialog_title_desktopenv_preference" />
+
+	    <CheckBoxPreference
+    	        android:key="installgui"
+        	    android:defaultValue="@string/installgui"
+            	android:title="@string/title_installgui_preferences"
+            	android:summary="@string/summary_installgui_preferences" />
 	    
 	    <PreferenceScreen
 	        	android:key="reconfigure"

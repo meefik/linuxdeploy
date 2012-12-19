@@ -18,12 +18,12 @@
     <string name="architecture" translatable="false">@string/debian_architecture</string>
     <string name="deploytype" translatable="false">image</string>
     <string name="diskimage" translatable="false">/mnt/sdcard/linux.img</string>
-    <string name="disksize" translatable="false">1024</string>
+    <string name="disksize" translatable="false">0</string>
     <string name="fstype" translatable="false">auto</string>
     <string name="username" translatable="false">android</string>
     <string name="serverdns" translatable="false"></string>
     <string name="locale" translatable="false">en_US.UTF-8</string>
-    <string name="installgui" translatable="false">true</string>
+    <string name="installgui" translatable="false">false</string>
     <string name="desktopenv" translatable="false">@string/debian_desktopenv</string>
     <string name="customstartup" translatable="false">false</string>
     <string name="customscript" translatable="false">/etc/init.d/myscript</string>
@@ -51,5 +51,11 @@
     <string name="ubuntu_mirror" translatable="false">http://ports.ubuntu.com</string>
     <string name="ubuntu_architecture" translatable="false">armel</string>
     <string name="ubuntu_desktopenv" translatable="false">LXDE</string>
+    
+    <!-- BackTrack -->
+    <string name="backtrack_suite" translatable="false">lucid</string>
+    <string name="backtrack_mirror" translatable="false">http://ports.ubuntu.com</string>
+    <string name="backtrack_architecture" translatable="false">armel</string>
+    <string name="backtrack_desktopenv" translatable="false">GNOME</string>
     
 </resources>
