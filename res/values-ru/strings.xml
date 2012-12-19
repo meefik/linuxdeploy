@@ -94,6 +94,7 @@
     
     <string name="title_disksize_preferences">Размер образа (МБ)</string>
     <string name="dialog_title_disksize_preference">Размер образа (МБ)</string>
+    <string name="summary_disksize_preference">Вычисляется автоматически</string>
     
     <string name="title_fstype_preferences">Файловая система</string>
     <string name="dialog_title_fstype_preference">Файловая система</string>
@@ -108,11 +109,11 @@
     <string name="title_locale_preferences">Локализация</string>
     <string name="dialog_title_locale_preference">Локализация</string>
     
-    <string name="title_installgui_preferences">Установить GUI</string>
-    <string name="summary_installgui_preferences">Включить установку окружения рабочего стола и VNC сервера</string>
-    
     <string name="title_desktopenv_preferences">Окружение рабочего стола</string>
     <string name="dialog_title_desktopenv_preference">Окружение рабочего стола</string>
+        
+    <string name="title_installgui_preferences">Установить GUI</string>
+    <string name="summary_installgui_preferences">Включить установку окружения рабочего стола и VNC сервера</string>
     
     <string name="title_reconfigure_preference">Переконфигурация</string>
     <string name="summary_reconfigure_preference">Выполнить переконфигурацию системы</string>

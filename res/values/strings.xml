@@ -94,6 +94,7 @@
 
     <string name="title_disksize_preferences">Image size (MB)</string>
     <string name="dialog_title_disksize_preference">Disk image size (MB)</string>
+    <string name="summary_disksize_preference">Automatic calculation</string>
     
     <string name="title_fstype_preferences">File system</string>
     <string name="dialog_title_fstype_preference">File system</string>
@@ -108,11 +109,11 @@
     <string name="title_locale_preferences">Localization</string>
     <string name="dialog_title_locale_preference">Localization</string>
     
-    <string name="title_installgui_preferences">Install GUI</string>
-    <string name="summary_installgui_preferences">Include installation desktop environment and VNC server</string>
-    
     <string name="title_desktopenv_preferences">Desktop environment</string>
     <string name="dialog_title_desktopenv_preference">Desktop environment</string>
+    
+    <string name="title_installgui_preferences">Install GUI</string>
+    <string name="summary_installgui_preferences">Include installation of desktop environment and VNC server</string>
 
     <string name="title_reconfigure_preference">Reconfigure</string>
     <string name="summary_reconfigure_preference">Run the system reconfiguration</string>

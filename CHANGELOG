@@ -1,6 +1,10 @@
 Changelog (English)
 ===================
 
+1.3.0
+Added support BackTrack in configuration interface
+Added automatic calculation of image size
+
 1.2.9
 Bugfix: sudo, upstart, gnome-session, XKL_XMODMAP_DISABLE
 Added support ext3 file system
@@ -128,6 +132,10 @@ Updated list packages of base system installation
 
 История изменений (Русский)
 ===========================
+
+1.3.0
+Добавлена поддержка BackTrack в интерфейсе конфигурации
+Добавлена функция автоматического расчета размера образа диска
 
 1.2.9
 Исправлены ошибки, связанные с sudo, upstart, gnome-session, XKL_XMODMAP_DISABLE

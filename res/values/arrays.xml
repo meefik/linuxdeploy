@@ -63,6 +63,7 @@
     <string-array name="distribution_values" translatable="false">
         <item>Debian</item>
         <item>Ubuntu</item>
+        <item>BackTrack</item>
     </string-array>
     
     <!-- Debian -->
@@ -110,6 +111,19 @@
         <item>GNOME</item>
         <item>Unity</item>
         <item>KDE</item>
+    </string-array>
+    
+    <!-- BackTrack -->
+    <string-array name="backtrack_suite_values" translatable="false">
+        <item>lucid</item>
+    </string-array>
+
+    <string-array name="backtrack_architecture_values" translatable="false">
+        <item>armel</item>
+    </string-array>
+    
+    <string-array name="backtrack_desktopenv_values" translatable="false">
+        <item>GNOME</item>
     </string-array>
     
 </resources>
