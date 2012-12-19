@@ -3,7 +3,7 @@ Changelog (English)
 
 1.3.0
 Added support BackTrack in configuration interface
-Added automatic calculation of image size
+Added automatic calculation of image size (90% of free space, but not more than 4095 MB)
 
 1.2.9
 Bugfix: sudo, upstart, gnome-session, XKL_XMODMAP_DISABLE
@@ -135,7 +135,7 @@ Updated list packages of base system installation
 
 1.3.0
 Добавлена поддержка BackTrack в интерфейсе конфигурации
-Добавлена функция автоматического расчета размера образа диска
+Добавлена функция автоматического расчета размера образа диска (90% от свободного пространства, но не больше 4095 МБ)
 
 1.2.9
 Исправлены ошибки, связанные с sudo, upstart, gnome-session, XKL_XMODMAP_DISABLE
