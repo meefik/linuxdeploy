@@ -42,7 +42,7 @@
     </string-array>
     
     <string-array name="fstype_entries">
-        <item>Autodetection</item>
+        <item>Auto</item>
         <item>ext2</item>
         <item>ext3</item>
         <item>ext4</item>
@@ -60,10 +60,24 @@
         <item>24</item>
     </string-array>
     
+    <string-array name="desktopenv_values" translatable="false">
+        <item>XTerm</item>
+        <item>LXDE</item>
+        <item>Xfce</item>
+        <item>GNOME</item>
+        <item>KDE</item>
+    </string-array>
+    
     <string-array name="distribution_values" translatable="false">
+        <item>debian</item>
+        <item>ubuntu</item>
+        <item>archlinux</item>
+    </string-array>
+    
+    <string-array name="distribution_entries" translatable="false">
         <item>Debian</item>
         <item>Ubuntu</item>
-        <item>BackTrack</item>
+        <item>Arch Linux</item>
     </string-array>
     
     <!-- Debian -->
@@ -82,14 +96,6 @@
         <item>armhf</item>
     </string-array>
     
-    <string-array name="debian_desktopenv_values" translatable="false">
-        <item>XTerm</item>
-        <item>LXDE</item>
-        <item>Xfce</item>
-        <item>GNOME</item>
-        <item>KDE</item>
-    </string-array>
-    
     <!-- Ubuntu -->
     
     <string-array name="ubuntu_suite_values" translatable="false">
@@ -103,27 +109,15 @@
         <item>armel</item>
         <item>armhf</item>
     </string-array>
-    
-    <string-array name="ubuntu_desktopenv_values" translatable="false">
-        <item>XTerm</item>
-        <item>LXDE</item>
-        <item>Xfce</item>
-        <item>GNOME</item>
-        <item>Unity</item>
-        <item>KDE</item>
-    </string-array>
-    
-    <!-- BackTrack -->
-    <string-array name="backtrack_suite_values" translatable="false">
-        <item>lucid</item>
+
+    <!-- Arch Linux -->
+
+    <string-array name="archlinux_suite_values" translatable="false">
+        <item>rootfs</item>
     </string-array>
 
-    <string-array name="backtrack_architecture_values" translatable="false">
-        <item>armel</item>
-    </string-array>
-    
-    <string-array name="backtrack_desktopenv_values" translatable="false">
-        <item>GNOME</item>
+    <string-array name="archlinux_architecture_values" translatable="false">
+        <item>arm</item>
     </string-array>
     
 </resources>

@@ -19,7 +19,7 @@ Installing a new operating system takes about 30 minutes. The recommended minimu
 * Installation type: loop device, SD card partition, directory
 * Supported file systems: ext2, ext3, ext4
 * Control interface: SSH, VNC, X
-* Desktop environment: XTerm, LXDE, Xfce, GNOME, Unity, KDE
+* Desktop environment: XTerm, LXDE, Xfce, GNOME, KDE
 * Supported languages: English, Russian
 
 #### Install ####
@@ -72,7 +72,7 @@ Copyright (C) 2012  Антон Скшидлевский
 * Тип установки: loop-файл, раздел SD-карты, директория
 * Поддерживаемые файловые системы: ext2, ext3, ext4
 * Интерфейс управления: SSH, VNC, X
-* Окружение рабочего стола: XTerm, LXDE, Xfce, GNOME, Unity, KDE
+* Окружение рабочего стола: XTerm, LXDE, Xfce, GNOME, KDE
 * Поддерживаемые языки: русский, английский
 
 #### Установка ####
