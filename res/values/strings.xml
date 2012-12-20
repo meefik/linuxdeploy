@@ -108,7 +108,7 @@
     
     <string name="title_locale_preferences">Localization</string>
     <string name="dialog_title_locale_preference">Localization</string>
-    
+
     <string name="title_desktopenv_preferences">Desktop environment</string>
     <string name="dialog_title_desktopenv_preference">Desktop environment</string>
     
@@ -125,9 +125,7 @@
     <string name="summary_sshstartup_preferences">Enable SSH server startup</string>
     
     <string name="title_vncstartup_preferences">VNC</string>
-    <string name="summary_vncstartup_preferences">Enable VNC 
-    
-        server startup</string>
+    <string name="summary_vncstartup_preferences">Enable VNC server startup</string>
     
     <string name="title_xstartup_preferences">X Window System</string>
     <string name="summary_xstartup_preferences">Enable startup GUI over X server</string>

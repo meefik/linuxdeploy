@@ -125,7 +125,7 @@ public class DeployPrefsActivity extends PreferenceActivity implements
 			pref.setSummary(listPref.getEntry());
 
 			if (listPref.getKey().equals("distribution")) {
-				if (listPref.getEntry().equals("Debian")) {
+				if (listPref.getValue().equals("debian")) {
 					// suite
 					ListPreference suite = (ListPreference) this
 							.findPreference("suite");
@@ -150,16 +150,8 @@ public class DeployPrefsActivity extends PreferenceActivity implements
 						architecture
 								.setValue(getString(R.string.debian_architecture));
 					architecture.setSummary(architecture.getEntry());
-					// desktopenv
-					ListPreference desktopenv = (ListPreference) this
-							.findPreference("desktopenv");
-					desktopenv.setEntries(R.array.debian_desktopenv_values);
-					desktopenv.setEntryValues(R.array.debian_desktopenv_values);
-					if (init)
-						desktopenv.setValue(getString(R.string.debian_desktopenv));
-					desktopenv.setSummary(desktopenv.getEntry());
 				}
-				if (listPref.getEntry().equals("Ubuntu")) {
+				if (listPref.getValue().equals("ubuntu")) {
 					// suite
 					ListPreference suite = (ListPreference) this
 							.findPreference("suite");
@@ -177,55 +169,39 @@ public class DeployPrefsActivity extends PreferenceActivity implements
 					// architecture
 					ListPreference architecture = (ListPreference) this
 							.findPreference("architecture");
-					architecture.setEntries(R.array.debian_architecture_values);
+					architecture.setEntries(R.array.ubuntu_architecture_values);
 					architecture
-							.setEntryValues(R.array.debian_architecture_values);
+							.setEntryValues(R.array.ubuntu_architecture_values);
 					if (init)
 						architecture
-								.setValue(getString(R.string.debian_architecture));
+								.setValue(getString(R.string.ubuntu_architecture));
 					architecture.setSummary(architecture.getEntry());
-					// desktopenv
-					ListPreference desktopenv = (ListPreference) this
-							.findPreference("desktopenv");
-					desktopenv.setEntries(R.array.ubuntu_desktopenv_values);
-					desktopenv.setEntryValues(R.array.ubuntu_desktopenv_values);
-					if (init)
-						desktopenv.setValue(getString(R.string.ubuntu_desktopenv));
-					desktopenv.setSummary(desktopenv.getEntry());
 				}
-				if (listPref.getEntry().equals("BackTrack")) {
+				if (listPref.getValue().equals("archlinux")) {
 					// suite
 					ListPreference suite = (ListPreference) this
 							.findPreference("suite");
-					suite.setEntries(R.array.backtrack_suite_values);
-					suite.setEntryValues(R.array.backtrack_suite_values);
+					suite.setEntries(R.array.archlinux_suite_values);
+					suite.setEntryValues(R.array.archlinux_suite_values);
 					if (init)
-						suite.setValue(getString(R.string.backtrack_suite));
+						suite.setValue(getString(R.string.archlinux_suite));
 					suite.setSummary(suite.getEntry());
 					// mirror
 					EditTextPreference mirror = (EditTextPreference) this
 							.findPreference("mirror");
 					if (init)
-						mirror.setText(getString(R.string.backtrack_mirror));
+						mirror.setText(getString(R.string.archlinux_mirror));
 					mirror.setSummary(mirror.getText());
 					// architecture
 					ListPreference architecture = (ListPreference) this
 							.findPreference("architecture");
-					architecture.setEntries(R.array.backtrack_architecture_values);
+					architecture.setEntries(R.array.archlinux_architecture_values);
 					architecture
-							.setEntryValues(R.array.backtrack_architecture_values);
+							.setEntryValues(R.array.archlinux_architecture_values);
 					if (init)
 						architecture
-								.setValue(getString(R.string.backtrack_architecture));
+								.setValue(getString(R.string.archlinux_architecture));
 					architecture.setSummary(architecture.getEntry());
-					// desktopenv
-					ListPreference desktopenv = (ListPreference) this
-							.findPreference("desktopenv");
-					desktopenv.setEntries(R.array.backtrack_desktopenv_values);
-					desktopenv.setEntryValues(R.array.backtrack_desktopenv_values);
-					if (init)
-						desktopenv.setValue(getString(R.string.backtrack_desktopenv));
-					desktopenv.setSummary(desktopenv.getEntry());
 				}
 			}
 			if (listPref.getKey().equals("deploytype")) {

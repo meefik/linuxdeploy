@@ -11,7 +11,7 @@
         	    android:defaultValue="@string/distribution"
             	android:title="@string/title_distribution_preferences"
             	android:summary="@string/distribution"
-            	android:entries="@array/distribution_values"
+            	android:entries="@array/distribution_entries"
             	android:entryValues="@array/distribution_values"
             	android:dialogTitle="@string/dialog_title_distribution_preference" />
 	    
@@ -24,13 +24,6 @@
             	android:entryValues="@array/debian_suite_values"
             	android:dialogTitle="@string/dialog_title_suite_preference" />
 	    
-	    <EditTextPreference
-    	        android:key="mirror"
-        	    android:defaultValue="@string/mirror"
-            	android:title="@string/title_mirror_preferences"
-	            android:summary="@string/mirror"
-	            android:dialogTitle="@string/dialog_title_mirror_preference" />
-	    
 	    <ListPreference
     	        android:key="architecture"
         	    android:defaultValue="@string/architecture"
@@ -39,6 +32,13 @@
             	android:entries="@array/debian_architecture_values"
             	android:entryValues="@array/debian_architecture_values"
             	android:dialogTitle="@string/dialog_title_architecture_preference" />
+	    
+	    <EditTextPreference
+    	        android:key="mirror"
+        	    android:defaultValue="@string/mirror"
+            	android:title="@string/title_mirror_preferences"
+	            android:summary="@string/mirror"
+	            android:dialogTitle="@string/dialog_title_mirror_preference" />
 	    
 	    <ListPreference
     	        android:key="deploytype"
@@ -95,14 +95,14 @@
             	android:entries="@array/locale_values"
             	android:entryValues="@array/locale_values"
             	android:dialogTitle="@string/dialog_title_locale_preference" />
-
+	    
 	    <ListPreference
     	        android:key="desktopenv"
         	    android:defaultValue="@string/desktopenv"
             	android:title="@string/title_desktopenv_preferences"
             	android:summary="@string/installgui"
-            	android:entries="@array/debian_desktopenv_values"
-            	android:entryValues="@array/debian_desktopenv_values"
+            	android:entries="@array/desktopenv_values"
+            	android:entryValues="@array/desktopenv_values"
             	android:dialogTitle="@string/dialog_title_desktopenv_preference" />
 
 	    <CheckBoxPreference

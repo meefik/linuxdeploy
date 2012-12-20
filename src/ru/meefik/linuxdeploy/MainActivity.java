@@ -334,9 +334,11 @@ public class MainActivity extends Activity implements OnClickListener {
 
 		// Screen lock
 		if (PrefStore.SCREEN_LOCK)
-			this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+			this.getWindow().addFlags(
+					WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		else
-			this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+			this.getWindow().clearFlags(
+					WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 	}
 
 	@Override
