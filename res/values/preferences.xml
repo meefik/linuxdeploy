@@ -51,8 +51,8 @@
     <string name="ubuntu_architecture" translatable="false">armel</string>
     
     <!-- Arch Linux -->
-    <string name="archlinux_suite" translatable="false">rootfs</string>
-    <string name="archlinux_mirror" translatable="false">http://us.mirror.archlinuxarm.org/os/ArchLinuxARM-armv5te-latest.tar.gz</string>
+    <string name="archlinux_suite" translatable="false">latest</string>
+    <string name="archlinux_mirror" translatable="false">http://mirror.archlinuxarm.org</string>
     <string name="archlinux_architecture" translatable="false">arm</string>
     
 </resources>
