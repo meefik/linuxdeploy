@@ -14,8 +14,7 @@ The program interface supports English and Russian. Through the interface you ca
 Installing a new operating system takes about 30 minutes. The recommended minimum size of a disk image 1024 MB (for LXDE), without a GUI - 512 MB. When you install Linux in disk image on the flash card with the FAT32 file system, image size should not exceed 4095 MB! After the initial setup a default password for SSH and VNC - changeme. The password can be changed standard tools OS.
 
 #### Features: ####
-* Supported OS: Debian, Ubuntu
-* Architecture: armel, armhf
+* Supported OS: Debian, Ubuntu, Arch Linux
 * Installation type: loop device, SD card partition, directory
 * Supported file systems: ext2, ext3, ext4
 * Control interface: SSH, VNC, X
@@ -67,8 +66,7 @@ Copyright (C) 2012  Антон Скшидлевский
 Установка новой ОС занимает около 30 минут. Рекомендованный минимальный размер образа диска без графического интерфейса - 512 МБ, а с графическим интерфейсом - 1024 МБ (для LXDE). При установке ОС в образ на карту памяти с файловой системой FAT32 размер образа не должен превышать 4095 МБ! После начальной установки пароль для доступа по SSH и VNC назначается как "changeme", который можно сменить стандартными средствами ОС.
 
 #### Характеристики: ####
-* Поддерживаемые ОС: Debian, Ubuntu
-* Сборка под архитектуру: armel, armhf
+* Поддерживаемые ОС: Debian, Ubuntu, Arch Linux
 * Тип установки: loop-файл, раздел SD-карты, директория
 * Поддерживаемые файловые системы: ext2, ext3, ext4
 * Интерфейс управления: SSH, VNC, X

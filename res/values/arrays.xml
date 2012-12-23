@@ -113,11 +113,13 @@
     <!-- Arch Linux -->
 
     <string-array name="archlinux_suite_values" translatable="false">
-        <item>rootfs</item>
+        <item>latest</item>
     </string-array>
 
     <string-array name="archlinux_architecture_values" translatable="false">
         <item>arm</item>
+        <item>armv6h</item>
+        <item>armv7h</item>
     </string-array>
     
 </resources>
