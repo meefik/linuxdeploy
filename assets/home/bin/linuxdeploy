@@ -387,6 +387,7 @@ configure_system()
 				#rm -f $MNT_TARGET/var/lib/pacman/db.lck || true
 				chroot $MNT_TARGET pacman -Syq --noconfirm $PKGS
 				echo "[PRINT_LN] :: Clearing cache..."
+				CACHE_DIR="${MNT_TARGET%/}/var/cache/pacman/pkg"
 				rm -f $CACHE_DIR/*
 				#find $MNT_TARGET -type f -name "*.pacorig" -exec rm -f {} \;
 			;;
