@@ -250,16 +250,16 @@ configure_system()
 				sed -i 's|^UID_MIN.*|UID_MIN 5000|g' $MNT_TARGET/etc/login.defs
 				sed -i 's|^GID_MIN.*|GID_MIN 5000|g' $MNT_TARGET/etc/login.defs
 			done
-			if [ "`grep '^root:' $MNT_TARGET/etc/passwd`" ]; then
-				echo 'root:x:0:0:root:/root:/bin/bash' >> $MNT_TARGET/etc/passwd
-				[ ! -d "$MNT_TARGET/root" ] && mkdir $MNT_TARGET/root
-			fi
-			if [ "`grep '^root:' $MNT_TARGET/etc/group`" ]; then
-				echo 'root:x:0:' >> $MNT_TARGET/etc/group
-			fi
-			if [ "`grep '^root:' $MNT_TARGET/etc/shadow`" ]; then
-				echo 'root:*:14871::::::' >> $MNT_TARGET/etc/shadow
-			fi		
+			#if [ -z "`grep -v '^root:' $MNT_TARGET/etc/passwd`" ]; then
+			#	echo 'root:x:0:0:root:/root:/bin/bash' >> $MNT_TARGET/etc/passwd
+			#	[ ! -d "$MNT_TARGET/root" ] && mkdir $MNT_TARGET/root
+			#fi
+			#if [ -z "`grep '^root:' $MNT_TARGET/etc/group`" ]; then
+			#	echo 'root:x:0:' >> $MNT_TARGET/etc/group
+			#fi
+			#if [ -z "`grep '^root:' $MNT_TARGET/etc/shadow`" ]; then
+			#	echo 'root:*:14871::::::' >> $MNT_TARGET/etc/shadow
+			#fi
 		;;
 		profile)
 			reserved=`echo $USER_NAME | grep ^aid_ || true`
@@ -273,9 +273,9 @@ configure_system()
 				chroot $MNT_TARGET usermod -g $USER_NAME $USER_NAME || true
 			fi
 			chroot $MNT_TARGET sh -c "export $USER_NAME; printf '%s\n' changeme changeme | passwd $USER_NAME"
-			USER_HOME=`cat $MNT_TARGET/etc/passwd | grep "^$USER_NAME:" | awk -F: '{print $6}'`
-			USER_ID=`cat $MNT_TARGET/etc/passwd | grep "^$USER_NAME:" | awk -F: '{print $3}'`
-			GROUP_ID=`cat $MNT_TARGET/etc/passwd | grep "^$USER_NAME:" | awk -F: '{print $4}'`
+			USER_HOME=`cat $MNT_TARGET/etc/passwd | grep -m1 "^$USER_NAME:" | awk -F: '{print $6}'`
+			USER_ID=`cat $MNT_TARGET/etc/passwd | grep -m1 "^$USER_NAME:" | awk -F: '{print $3}'`
+			GROUP_ID=`cat $MNT_TARGET/etc/passwd | grep -m1 "^$USER_NAME:" | awk -F: '{print $4}'`
 			PROFILE_STR='PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
 			is_str=`cat $MNT_TARGET$USER_HOME/.profile | grep "$PROFILE_STR" || true`
 			[ -z "$is_str" ] && echo $PROFILE_STR >> $MNT_TARGET$USER_HOME/.profile
@@ -296,9 +296,9 @@ configure_system()
 			fi
 		;;
 		gui)
-			USER_HOME=`cat $MNT_TARGET/etc/passwd | grep "^$USER_NAME:" | awk -F: '{print $6}'`
-			USER_ID=`cat $MNT_TARGET/etc/passwd | grep "^$USER_NAME:" | awk -F: '{print $3}'`
-			GROUP_ID=`cat $MNT_TARGET/etc/passwd | grep "^$USER_NAME:" | awk -F: '{print $4}'`
+			USER_HOME=`cat $MNT_TARGET/etc/passwd | grep -m1 "^$USER_NAME:" | awk -F: '{print $6}'`
+			USER_ID=`cat $MNT_TARGET/etc/passwd | grep -m1 "^$USER_NAME:" | awk -F: '{print $3}'`
+			GROUP_ID=`cat $MNT_TARGET/etc/passwd | grep -m1 "^$USER_NAME:" | awk -F: '{print $4}'`
 			mkdir $MNT_TARGET$USER_HOME/.vnc || true
 			chmod 755 $MNT_TARGET$USER_HOME/.vnc
 			echo "MPTcXfgXGiY=" | base64 -d > $MNT_TARGET$USER_HOME/.vnc/passwd
@@ -366,7 +366,7 @@ configure_system()
 				chroot $MNT_TARGET apt-get clean
 			;;
 			archlinux)
-				PKGS="tightvnc xorg-utils"
+				PKGS="tightvnc xorg-utils ttf-dejavu"
 				case "$DESKTOP_ENV" in
 				XTerm)
 					PKGS="$PKGS xterm"
@@ -693,8 +693,7 @@ install_system()
 		
 		echo "[PRINT_LN] Installing GNU/Linux system: "
 		
-		CORE_PACKAGES="acl archlinux-keyring attr bash bzip2 ca-certificates coreutils cracklib curl db dirmngr e2fsprogs expat findutils gawk gcc-libs gdbm glibc gmp gnupg gpgme grep libarchive libassuan libcap libgcrypt libgpg-error libgssglue libksba libldap libsasl libssh2 libtirpc linux-api-headers ncurses openssl pacman pacman-mirrorlist pam pambase perl pinentry pth readline run-parts sed shadow tzdata util-linux xz zlib"
-		EXTRA_PACKAGES="binutils cronie cryptsetup dash dbus device-mapper dhcpcd diffutils dnssec-anchors file filesystem gettext glib2 groff gzip heirloom-mailx hwids iana-etc inetutils iproute2 iptables iputils jfsutils kbd keyutils kmod krb5 ldns less libedit libffi libnl libpcap libpipeline libusb-compat libusbx licenses logrotate man-db man-pages nano netcfg net-tools nss-myhostname openssh pciutils pcre popt ppp procps-ng psmisc reiserfsprogs sysfsutils systemd systemd-sysvcompat sysvinit-tools tar texinfo usbutils vi which wpa_supplicant xfsprogs initscripts sudo syslog-ng wget"
+		BASIC_PACKAGES="acl archlinux-keyring attr bash bzip2 ca-certificates coreutils cracklib curl db dirmngr e2fsprogs expat findutils gawk gcc-libs gdbm glibc gmp gnupg gpgme grep libarchive libassuan libcap libgcrypt libgpg-error libgssglue libksba libldap libsasl libssh2 libtirpc linux-api-headers ncurses openssl pacman pacman-mirrorlist pam pambase perl pinentry pth readline run-parts sed shadow tzdata util-linux xz zlib"
 		REPO="${MIRROR%/}/$ARCH/core"
 		CACHE_DIR="${MNT_TARGET%/}/var/cache/pacman/pkg"
 		
@@ -702,9 +701,9 @@ install_system()
 		PKG_LIST=`wget -q -O - "$REPO/" | sed -n '/<a / s/^.*<a [^>]*href="\([^\"]*\)".*$/\1/p' | awk -F'/' '{print $NF}' | sort -rn`
 		test "$PKG_LIST" || { echo "[PRINT_LN] Error processing packages list"; return 1; }
 
-		echo "[PRINT_LN] :: Retrieving packages from core..."
+		echo "[PRINT_LN] :: Retrieving basic packages..."
 		mkdir -p $CACHE_DIR
-		for PACKAGE in $CORE_PACKAGES; do
+		for PACKAGE in $BASIC_PACKAGES; do
     		FILE=`echo "$PKG_LIST" | grep -m1 -e "^$PACKAGE-[[:digit:]].*\.xz$" -e "^$PACKAGE-[[:digit:]].*\.gz$"`
     		test "$FILE" || { echo "[PRINT_LN] Error: cannot find package: $PACKAGE"; return 1; }
 
@@ -728,7 +727,11 @@ install_system()
 		configure_system dns mtab repository
 		
 		echo "[PRINT_ALL] :: Installing packages..."
-		chroot $MNT_TARGET /usr/bin/pacman --noconfirm --arch $ARCH -Syf $CORE_PACKAGES $EXTRA_PACKAGES
+		(set -e
+			chroot $MNT_TARGET /usr/bin/pacman --noconfirm -Sy
+			EXTRA_PACKAGES=`chroot $MNT_TARGET /usr/bin/pacman --noconfirm -Sg base | awk '{print $2}' | grep -v -e 'linux' -e 'kernel'`
+			chroot $MNT_TARGET /usr/bin/pacman --noconfirm -Sqf $BASIC_PACKAGES $EXTRA_PACKAGES openssh
+		exit 0)
 		[ $? -ne 0 ] && return 1
 		
 		echo "[PRINT_LN] :: Clearing cache..."
