@@ -730,7 +730,7 @@ install_system()
 		(set -e
 			chroot $MNT_TARGET /usr/bin/pacman --noconfirm -Sy
 			EXTRA_PACKAGES=`chroot $MNT_TARGET /usr/bin/pacman --noconfirm -Sg base | awk '{print $2}' | grep -v -e 'linux' -e 'kernel'`
-			chroot $MNT_TARGET /usr/bin/pacman --noconfirm -Sqf $BASIC_PACKAGES $EXTRA_PACKAGES openssh
+			chroot $MNT_TARGET /usr/bin/pacman --noconfirm -Sqf $BASIC_PACKAGES $EXTRA_PACKAGES initscripts sudo openssh 
 		exit 0)
 		[ $? -ne 0 ] && return 1
 		
