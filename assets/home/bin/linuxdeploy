@@ -114,13 +114,13 @@ configure_system()
 		echo "[PRINT_LN] Configuring GNU/Linux system: "
 		case "$DISTRIB" in
 		debian)
-			configure_system dns mtab motd hosts hostname timezone sudo locales repository users-n-groups profile sftp-server gui
+			configure_system dns mtab motd hosts hostname timezone sudo locales repository users profile sftp-server gui
 		;;
 		ubuntu)
-			configure_system dns mtab motd hosts hostname timezone sudo locales repository users-n-groups profile upstart gui
+			configure_system dns mtab motd hosts hostname timezone sudo locales repository users profile upstart gui
 		;;
 		archlinux)
-			configure_system dns mtab motd hosts hostname timezone sudo locales repository users-n-groups profile gui
+			configure_system dns mtab motd hosts hostname timezone sudo locales repository users profile gui
 		;;
 		esac
 		return 0
@@ -159,7 +159,7 @@ configure_system()
 			chmod 644 $MNT_TARGET/etc/mtab
 		;;
 		motd)
-			LINUX_VERSION=`. $MNT_TARGET/etc/os-release && echo $PRETTY_NAME || true`
+			LINUX_VERSION=`chroot $MNT_TARGET lsb_release -d | sed 's|Description:[[:space:]]*||' || true`
 			[ -z "$LINUX_VERSION" ] && LINUX_VERSION="GNU/Linux"
 			MOTD="$LINUX_VERSION [running on Android via Linux Deploy]"
 			rm -f $MNT_TARGET/etc/motd || true
@@ -236,7 +236,7 @@ configure_system()
 			;;
 			esac
 		;;
-		users-n-groups)
+		users)
 			AIDS=`cat $HOME_DIR/deploy/android-groups`
 			for AID in $AIDS
 			do
@@ -680,7 +680,7 @@ install_system()
 		
 		[ -z "$DEBOOTSTRAP_DIR" ] && DEBOOTSTRAP_DIR=$HOME_DIR/deploy/debootstrap
 		export DEBOOTSTRAP_DIR
-		debootstrap --no-check-gpg --arch $ARCH --foreign --extractor=ar --include=locales,openssh-server,sudo $SUITE $MNT_TARGET $MIRROR
+		debootstrap --no-check-gpg --arch $ARCH --foreign --extractor=ar --include=locales,openssh-server,sudo,lsb-release $SUITE $MNT_TARGET $MIRROR
 		[ $? -ne 0 ] && return 1
 
 		unset DEBOOTSTRAP_DIR
@@ -730,7 +730,7 @@ install_system()
 		(set -e
 			chroot $MNT_TARGET /usr/bin/pacman --noconfirm -Sy
 			EXTRA_PACKAGES=`chroot $MNT_TARGET /usr/bin/pacman --noconfirm -Sg base | awk '{print $2}' | grep -v -e 'linux' -e 'kernel'`
-			chroot $MNT_TARGET /usr/bin/pacman --noconfirm -Sqf $BASIC_PACKAGES $EXTRA_PACKAGES initscripts sudo openssh 
+			chroot $MNT_TARGET /usr/bin/pacman --noconfirm -Sqf $BASIC_PACKAGES $EXTRA_PACKAGES initscripts sudo openssh lsb-release
 		exit 0)
 		[ $? -ne 0 ] && return 1
 		
