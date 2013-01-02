@@ -231,7 +231,7 @@ configure_system()
 			;;
 			archlinux)
 				sed -i "s|^[[:space:]]*Architecture[[:space:]]*=.*$|Architecture = $ARCH|" $MNT_TARGET/etc/pacman.conf
-				sed -i "s|^[[:space:]]*\(CheckSpace\)|# \1|" $MNT_TARGET/etc/pacman.conf
+				sed -i "s|^[[:space:]]*\(CheckSpace\)|#\1|" $MNT_TARGET/etc/pacman.conf
 				sed -i "s|^[[:space:]]*SigLevel[[:space:]]*=.*$|SigLevel = Never|" $MNT_TARGET/etc/pacman.conf
 			;;
 			esac
