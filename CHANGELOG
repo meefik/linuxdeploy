@@ -4,6 +4,7 @@ Changelog (English)
 1.3.0
 Added support Arch Linux installation
 Added automatic calculation of image size (90% of free space, but not more than 4095 MB)
+Added subitem desktop environment "Other" (for manual settings)
 Interface improvements
 
 1.2.9
@@ -137,6 +138,7 @@ Updated list packages of base system installation
 1.3.0
 Добавлена ​​поддержка установки Arch Linux
 Добавлена функция автоматического расчета размера образа диска (90% от свободного пространства, но не больше 4095 МБ)
+Добавлен подпункт окружения рабочего стола "Другое" (для ручной настройки)
 Доработки интерфейса
 
 1.2.9

@@ -101,7 +101,7 @@
         	    android:defaultValue="@string/desktopenv"
             	android:title="@string/title_desktopenv_preferences"
             	android:summary="@string/installgui"
-            	android:entries="@array/desktopenv_values"
+            	android:entries="@array/desktopenv_entries"
             	android:entryValues="@array/desktopenv_values"
             	android:dialogTitle="@string/dialog_title_desktopenv_preference" />
 

@@ -20,4 +20,13 @@
         <item>ext4</item>
     </string-array>
     
+    <string-array name="desktopenv_entries">
+        <item>XTerm</item>
+        <item>LXDE</item>
+        <item>Xfce</item>
+        <item>GNOME</item>
+        <item>KDE</item>
+        <item>Другое</item>
+    </string-array>
+    
 </resources>
