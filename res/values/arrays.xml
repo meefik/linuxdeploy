@@ -61,11 +61,21 @@
     </string-array>
     
     <string-array name="desktopenv_values" translatable="false">
+        <item>xterm</item>
+        <item>lxde</item>
+        <item>xfce</item>
+        <item>gnome</item>
+        <item>kde</item>
+        <item>other</item>
+    </string-array>
+    
+    <string-array name="desktopenv_entries">
         <item>XTerm</item>
         <item>LXDE</item>
         <item>Xfce</item>
         <item>GNOME</item>
         <item>KDE</item>
+        <item>Other</item>
     </string-array>
     
     <string-array name="distribution_values" translatable="false">

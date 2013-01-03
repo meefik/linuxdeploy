@@ -303,32 +303,34 @@ configure_system()
 			chmod 755 $MNT_TARGET$USER_HOME/.vnc
 			echo "MPTcXfgXGiY=" | base64 -d > $MNT_TARGET$USER_HOME/.vnc/passwd
 			chmod 600 $MNT_TARGET$USER_HOME/.vnc/passwd
-			echo 'XAUTHORITY=$HOME/.Xauthority' > $MNT_TARGET$USER_HOME/.vnc/xstartup
-			echo 'export XAUTHORITY' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
-			case "$DESKTOP_ENV" in
-			XTerm)
-				echo 'xterm -max &' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
-			;;
-			LXDE)
-				echo 'startlxde &' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
-			;;
-			Xfce)
-				echo 'startxfce4 &' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
-			;;
-			GNOME)
-				echo 'XKL_XMODMAP_DISABLE=1' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
-				echo 'export XKL_XMODMAP_DISABLE' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
-				echo 'if [ -n "`gnome-session -h | grep "\-\-session"`" ]; then' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
-				echo '   gnome-session --session=gnome &' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
-				echo 'else' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
-				echo '   gnome-session &' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
-				echo 'fi' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
-			;;
-			KDE)
-				echo 'startkde &' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
-			;;
-			esac
-			chmod 755 $MNT_TARGET$USER_HOME/.vnc/xstartup
+			if [ "$DESKTOP_ENV" != "other" ]; then
+				echo 'XAUTHORITY=$HOME/.Xauthority' > $MNT_TARGET$USER_HOME/.vnc/xstartup
+				echo 'export XAUTHORITY' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
+				case "$DESKTOP_ENV" in
+				xterm)
+					echo 'xterm -max &' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
+				;;
+				lxde)
+					echo 'startlxde &' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
+				;;
+				xfce)
+					echo 'startxfce4 &' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
+				;;
+				gnome)
+					echo 'XKL_XMODMAP_DISABLE=1' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
+					echo 'export XKL_XMODMAP_DISABLE' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
+					echo 'if [ -n "`gnome-session -h | grep "\-\-session"`" ]; then' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
+					echo '   gnome-session --session=gnome &' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
+					echo 'else' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
+					echo '   gnome-session &' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
+					echo 'fi' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
+				;;
+				kde)
+					echo 'startkde &' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
+				;;
+				esac
+				chmod 755 $MNT_TARGET$USER_HOME/.vnc/xstartup
+			fi
 			echo "#!/bin/sh" > $MNT_TARGET$USER_HOME/.xsession
 			cat $MNT_TARGET$USER_HOME/.vnc/xstartup >> $MNT_TARGET$USER_HOME/.xsession
 			chmod 755 $MNT_TARGET$USER_HOME/.xsession
@@ -346,19 +348,19 @@ configure_system()
 				chroot $MNT_TARGET apt-get update -yq
 				PKGS="tightvncserver x11-xserver-utils xfonts-base"
 				case "$DESKTOP_ENV" in
-				XTerm)
+				xterm)
 					PKGS="$PKGS xterm"
 				;;
-				LXDE)
+				lxde)
 					PKGS="$PKGS lxde menu-xdg hicolor-icon-theme gtk2-engines"
 				;;
-				Xfce)
+				xfce)
 					PKGS="$PKGS xfce4 tango-icon-theme hicolor-icon-theme"
 				;;
-				GNOME)
+				gnome)
 					PKGS="$PKGS gnome-core"
 				;;
-				KDE)
+				kde)
 					PKGS="$PKGS kde-standard"
 				;;
 				esac
@@ -368,19 +370,19 @@ configure_system()
 			archlinux)
 				PKGS="tightvnc xorg-utils ttf-dejavu"
 				case "$DESKTOP_ENV" in
-				XTerm)
+				xterm)
 					PKGS="$PKGS xterm"
 				;;
-				LXDE)
+				lxde)
 					PKGS="$PKGS lxde gtk-engines"
 				;;
-				Xfce)
+				xfce)
 					PKGS="$PKGS xfce4"
 				;;
-				GNOME)
+				gnome)
 					PKGS="$PKGS gnome"
 				;;
-				KDE)
+				kde)
 					PKGS="$PKGS kdebase"
 				;;
 				esac
