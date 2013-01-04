@@ -24,7 +24,7 @@
     <string name="serverdns" translatable="false"></string>
     <string name="locale" translatable="false">en_US.UTF-8</string>
     <string name="installgui" translatable="false">true</string>
-    <string name="desktopenv" translatable="false">LXDE</string>
+    <string name="desktopenv" translatable="false">lxde</string>
     <string name="customstartup" translatable="false">false</string>
     <string name="customscript" translatable="false">/etc/init.d/myscript</string>
     <string name="mountcustom" translatable="false">false</string>
