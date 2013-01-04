@@ -330,8 +330,6 @@ configure_system()
 				;;
 				esac
 				chmod 755 $MNT_TARGET$USER_HOME/.vnc/xstartup
-			fi
-			if [ -e "$MNT_TARGET$USER_HOME/.vnc/xstartup" ]; then
 				echo "#!/bin/sh" > $MNT_TARGET$USER_HOME/.xsession
 				cat $MNT_TARGET$USER_HOME/.vnc/xstartup >> $MNT_TARGET$USER_HOME/.xsession
 				chmod 755 $MNT_TARGET$USER_HOME/.xsession
