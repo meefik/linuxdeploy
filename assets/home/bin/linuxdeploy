@@ -396,7 +396,7 @@ configure_system()
 				;;
 				esac
 				chroot $MNT_TARGET yum install $PKGS --nogpgcheck --skip-broken -y
-				[ -n "$YGRP" ] && chroot $MNT_TARGET yum groupinstall $YGRP --nogpgcheck --skip-broken -y
+				[ -n "$YGRP" ] && chroot $MNT_TARGET yum groupinstall "$YGRP" --nogpgcheck --skip-broken -y
 				chroot $MNT_TARGET yum clean all
 			;;
 			esac
