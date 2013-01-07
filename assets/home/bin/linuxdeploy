@@ -19,6 +19,8 @@ export PATH TERM
 
 [ -n "`echo $TRACE_MODE | grep -i "^y"`" ] && set -x
 
+umask 0022
+
 #################################################
 
 prepare_system()
@@ -122,6 +124,9 @@ configure_system()
 		archlinux)
 			configure_system dns mtab motd hosts hostname timezone sudo locales repository users profile gui
 		;;
+		fedora)
+			configure_system dns mtab motd hosts hostname timezone sudo locales repository users profile gui
+		;;
 		esac
 		return 0
 	fi
@@ -150,41 +155,32 @@ configure_system()
 			do
 				echo "nameserver $dns" >> $MNT_TARGET/etc/resolv.conf
 			done
-			chmod 644 $MNT_TARGET/etc/resolv.conf
 		;;
 		mtab)
 			#chroot $MNT_TARGET ln -sf /proc/mounts /etc/mtab
 			rm -f $MNT_TARGET/etc/mtab || true
 			cat /proc/mounts | grep $MNT_TARGET | sed "s|$MNT_TARGET/*|/|g" > $MNT_TARGET/etc/mtab
-			chmod 644 $MNT_TARGET/etc/mtab
 		;;
 		motd)
-			LINUX_VERSION=`chroot $MNT_TARGET lsb_release -d | sed 's|Description:[[:space:]]*||' || true`
+			#LINUX_VERSION=`chroot $MNT_TARGET lsb_release -d | sed 's|Description:[[:space:]]*||' || true`
+			LINUX_VERSION=`. $MNT_TARGET/etc/os-release && echo $PRETTY_NAME || true`
 			[ -z "$LINUX_VERSION" ] && LINUX_VERSION="GNU/Linux"
 			MOTD="$LINUX_VERSION [running on Android via Linux Deploy]"
 			rm -f $MNT_TARGET/etc/motd || true
 			echo $MOTD > $MNT_TARGET/etc/motd
-			chmod 644 $MNT_TARGET/etc/motd		
 		;;
 		hosts)
 			is_localhost=`cat $MNT_TARGET/etc/hosts | grep "^127.0.0.1" || true`
 			[ -z "$is_localhost" ] && echo '127.0.0.1 localhost' >> $MNT_TARGET/etc/hosts
-			chmod 644 $MNT_TARGET/etc/hosts
 		;;
 		hostname)
 			echo 'localhost' > $MNT_TARGET/etc/hostname
-			chmod 644 $MNT_TARGET/etc/hostname
 		;;
 		timezone)
 			TZ=`getprop persist.sys.timezone`
 			rm -f $MNT_TARGET/etc/localtime || true
 			cp $MNT_TARGET/usr/share/zoneinfo/$TZ $MNT_TARGET/etc/localtime
-			case "$DISTRIB" in
-			debian|ubuntu)
-				echo $TZ > $MNT_TARGET/etc/timezone
-				chmod 644 $MNT_TARGET/etc/timezone		
-			;;
-			esac
+			echo $TZ > $MNT_TARGET/etc/timezone
 		;;
 		sudo)
 			SUDO_STR="$USER_NAME ALL=(ALL:ALL) NOPASSWD:ALL"
@@ -193,17 +189,21 @@ configure_system()
 			chmod 440 $MNT_TARGET/etc/sudoers		
 		;;
 		locales)
-			echo "$LOCALE UTF-8" > $MNT_TARGET/etc/locale.gen
-			chmod 644 $MNT_TARGET/etc/locale.gen
-			chroot $MNT_TARGET locale-gen $LOCALE
+			#echo "$LOCALE UTF-8" > $MNT_TARGET/etc/locale.gen
+			#chmod 644 $MNT_TARGET/etc/locale.gen
+			#chroot $MNT_TARGET locale-gen $LOCALE
+			inputfile=`echo $LOCALE | awk -F. '{print $1}'`
+			charmapfile=`echo $LOCALE | awk -F. '{print $2}'`
+			chroot $MNT_TARGET localedef -i $inputfile -c -f $charmapfile $LOCALE
 			case "$DISTRIB" in
 			debian|ubuntu)
 				echo "LANG=$LOCALE" > $MNT_TARGET/etc/default/locale
-				chmod 644 $MNT_TARGET/etc/default/locale
 			;;
 			archlinux)
 				echo "LANG=$LOCALE" > $MNT_TARGET/etc/locale.conf
-				chmod 644 $MNT_TARGET/etc/locale.conf
+			;;
+			fedora)
+				echo "LANG=$LOCALE" > $MNT_TARGET/etc/sysconfig/i18n
 			;;
 			esac		
 		;;
@@ -227,7 +227,6 @@ configure_system()
 					;;
 					esac
 				fi
-				chmod 644 $MNT_TARGET/etc/apt/sources.list
 			;;
 			archlinux)
 				sed -i "s|^[[:space:]]*Architecture[[:space:]]*=.*$|Architecture = $ARCH|" $MNT_TARGET/etc/pacman.conf
@@ -250,16 +249,6 @@ configure_system()
 				sed -i 's|^UID_MIN.*|UID_MIN 5000|g' $MNT_TARGET/etc/login.defs
 				sed -i 's|^GID_MIN.*|GID_MIN 5000|g' $MNT_TARGET/etc/login.defs
 			done
-			#if [ -z "`grep -v '^root:' $MNT_TARGET/etc/passwd`" ]; then
-			#	echo 'root:x:0:0:root:/root:/bin/bash' >> $MNT_TARGET/etc/passwd
-			#	[ ! -d "$MNT_TARGET/root" ] && mkdir $MNT_TARGET/root
-			#fi
-			#if [ -z "`grep '^root:' $MNT_TARGET/etc/group`" ]; then
-			#	echo 'root:x:0:' >> $MNT_TARGET/etc/group
-			#fi
-			#if [ -z "`grep '^root:' $MNT_TARGET/etc/shadow`" ]; then
-			#	echo 'root:*:14871::::::' >> $MNT_TARGET/etc/shadow
-			#fi
 		;;
 		profile)
 			reserved=`echo $USER_NAME | grep ^aid_ || true`
@@ -282,12 +271,8 @@ configure_system()
 			chown -R $USER_ID:$GROUP_ID $MNT_TARGET$USER_HOME
 		;;
 		sftp-server)
-			case "$DISTRIB" in
-			debian)
-				cp $HOME_DIR/deploy/openssh/$ARCH/sftp-server $MNT_TARGET/usr/lib/openssh/sftp-server-fix
-				sed -i "s|^Subsystem sftp .*|Subsystem sftp /usr/lib/openssh/sftp-server-fix|g" $MNT_TARGET/etc/ssh/sshd_config			
-			;;
-			esac
+			cp $HOME_DIR/deploy/openssh/$ARCH/sftp-server $MNT_TARGET/usr/lib/openssh/sftp-server-fix
+			sed -i "s|^Subsystem sftp .*|Subsystem sftp /usr/lib/openssh/sftp-server-fix|g" $MNT_TARGET/etc/ssh/sshd_config			
 		;;
 		upstart)
 			if [ -e "$MNT_TARGET/sbin/initctl" ]; then
@@ -300,7 +285,6 @@ configure_system()
 			USER_ID=`cat $MNT_TARGET/etc/passwd | grep -m1 "^$USER_NAME:" | awk -F: '{print $3}'`
 			GROUP_ID=`cat $MNT_TARGET/etc/passwd | grep -m1 "^$USER_NAME:" | awk -F: '{print $4}'`
 			mkdir $MNT_TARGET$USER_HOME/.vnc || true
-			chmod 755 $MNT_TARGET$USER_HOME/.vnc
 			echo "MPTcXfgXGiY=" | base64 -d > $MNT_TARGET$USER_HOME/.vnc/passwd
 			chmod 600 $MNT_TARGET$USER_HOME/.vnc/passwd
 			if [ "$DESKTOP_ENV" != "other" ]; then
@@ -388,10 +372,30 @@ configure_system()
 				esac
 				#rm -f $MNT_TARGET/var/lib/pacman/db.lck || true
 				chroot $MNT_TARGET pacman -Syq --noconfirm $PKGS
-				echo "[PRINT_LN] :: Clearing cache..."
-				CACHE_DIR="${MNT_TARGET%/}/var/cache/pacman/pkg"
-				rm -f $CACHE_DIR/*
-				#find $MNT_TARGET -type f -name "*.pacorig" -exec rm -f {} \;
+				rm -f ${MNT_TARGET%/}/var/cache/pacman/pkg/* || true
+			;;
+			fedora)
+				PKGS="tigervnc-server xorg-x11-utils xorg-x11-fonts-misc dejavu-*"
+				case "$DESKTOP_ENV" in
+				xterm)
+					PKGS="$PKGS xterm"
+				;;
+				lxde)
+					YGRP="LXDE"
+				;;
+				xfce)
+					YGRP="XFCE"
+				;;
+				gnome)
+					YGRP="GNOME Desktop Environment"
+				;;
+				kde)
+					YGRP="KDE Software Compilation"
+				;;
+				esac
+				chroot $MNT_TARGET yum install $PKGS --nogpgcheck --skip-broken -y
+				[ -n "$YGRP" ] && chroot $MNT_TARGET yum groupinstall $YGRP --nogpgcheck --skip-broken -y
+				chroot $MNT_TARGET yum clean all
 			;;
 			esac
 		exit 0)
@@ -552,15 +556,17 @@ start_system()
 	is_ssh=`echo $SSH_START | grep -i "^y"`
 	if [ -n "$is_ssh" ]; then
 		(set -e
-			sed -i "s|^Port .*|Port $SSH_PORT|g" $MNT_TARGET/etc/ssh/sshd_config
-			case "$DISTRIB" in
-			debian|ubuntu)
-				chroot $MNT_TARGET su - root -c "/etc/init.d/ssh start"
-			;;
-			archlinux)
-				chroot $MNT_TARGET su - root -c "/etc/rc.d/sshd start"
-			;;
-			esac
+			#sed -i "s|^Port .*|Port $SSH_PORT|g" $MNT_TARGET/etc/ssh/sshd_config
+			#case "$DISTRIB" in
+			#debian|ubuntu)
+			#	chroot $MNT_TARGET su - root -c "/etc/init.d/ssh start"
+			#;;
+			#archlinux)
+			#	chroot $MNT_TARGET su - root -c "/etc/rc.d/sshd start"
+			#;;
+			#esac
+			[ -z "`ls $MNT_TARGET/etc/ssh/ | grep key`" ] && chroot $MNT_TARGET su - root -c "/usr/sbin/sshd-keygen" 
+			chroot $MNT_TARGET su - root -c "/usr/sbin/sshd -p $SSH_PORT"
 		exit 0)
 		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 	else
@@ -584,7 +590,7 @@ start_system()
 	is_xserver=`echo $XSERVER_START | grep -i "^y"`
 	if [ -n "$is_xserver" ]; then
 		(set -e
-			chroot $MNT_TARGET su - $USER_NAME -c "export DISPLAY=$XSERVER_HOST:$XSERVER_DISPLAY; cut -d ' ' -f 6 /proc/self/stat > ~/.xsessionid; chmod 644 ~/.xsessionid; ~/.xsession"
+			chroot $MNT_TARGET su - $USER_NAME -c "export DISPLAY=$XSERVER_HOST:$XSERVER_DISPLAY; cut -d ' ' -f 6 /proc/self/stat > ~/.xsessionid; ~/.xsession"
 		exit 0)
 		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 	else
@@ -612,14 +618,15 @@ stop_system()
 	is_ssh=`echo $SSH_START | grep -i "^y"`
 	if [ -n "$is_ssh" ]; then
 		(set -e
-			case "$DISTRIB" in
-			debian|ubuntu)
-				chroot $MNT_TARGET su - root -c "/etc/init.d/ssh stop"
-			;;
-			archlinux)
-				chroot $MNT_TARGET su - root -c "/etc/rc.d/sshd stop"
-			;;
-			esac
+			#case "$DISTRIB" in
+			#debian|ubuntu)
+			#	chroot $MNT_TARGET su - root -c "/etc/init.d/ssh stop"
+			#;;
+			#archlinux)
+			#	chroot $MNT_TARGET su - root -c "/etc/rc.d/sshd stop"
+			#;;
+			#esac
+			chroot $MNT_TARGET su - root -c 'kill -9 `cat /var/run/sshd.pid`'
 			sleep 1
 			pkill -9 sshd || true
 		exit 0)
@@ -634,7 +641,7 @@ stop_system()
 		(set -e
 			chroot $MNT_TARGET su - $USER_NAME -c "vncserver -kill :$VNC_DISPLAY"
 			sleep 1
-			pkill -9 Xtightvnc || true
+			pkill -9 X*vnc || true
 		exit 0)
 		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 	else
@@ -682,7 +689,7 @@ install_system()
 		
 		[ -z "$DEBOOTSTRAP_DIR" ] && DEBOOTSTRAP_DIR=$HOME_DIR/deploy/debootstrap
 		export DEBOOTSTRAP_DIR
-		debootstrap --no-check-gpg --arch $ARCH --foreign --extractor=ar --include=locales,openssh-server,sudo,lsb-release $SUITE $MNT_TARGET $MIRROR
+		debootstrap --no-check-gpg --arch $ARCH --foreign --extractor=ar --include=locales,openssh-server,sudo $SUITE $MNT_TARGET $MIRROR
 		[ $? -ne 0 ] && return 1
 
 		unset DEBOOTSTRAP_DIR
@@ -732,13 +739,81 @@ install_system()
 		(set -e
 			chroot $MNT_TARGET /usr/bin/pacman --noconfirm -Sy
 			EXTRA_PACKAGES=`chroot $MNT_TARGET /usr/bin/pacman --noconfirm -Sg base | awk '{print $2}' | grep -v -e 'linux' -e 'kernel'`
-			chroot $MNT_TARGET /usr/bin/pacman --noconfirm -Sqf $BASIC_PACKAGES $EXTRA_PACKAGES initscripts sudo openssh lsb-release
+			chroot $MNT_TARGET /usr/bin/pacman --noconfirm -Sqf $BASIC_PACKAGES $EXTRA_PACKAGES initscripts sudo openssh
 		exit 0)
 		[ $? -ne 0 ] && return 1
 		
 		echo "[PRINT_LN] :: Clearing cache..."
 		rm -f $CACHE_DIR/*
 		find $MNT_TARGET -type f -name "*.pacorig" -exec rm -f {} \;
+	;;
+	fedora)
+		echo "[PRINT_LN] Installing GNU/Linux system: "
+		
+		BASIC_PACKAGES="acl attr audit audit-libs authconfig avahi-autoipd basesystem bash bind-libs bind-libs-lite bind-license bind-utils bzip2 bzip2-libs ca-certificates checkpolicy chkconfig coreutils cpio cracklib cracklib-dicts crda cronie cronie-anacron crontabs cryptsetup-libs curl cyrus-sasl-lib db4 dbus dbus-glib dbus-libs device-mapper device-mapper-libs dhclient dhcp-common dhcp-libs diffutils dnsmasq dosfstools dracut e2fsprogs e2fsprogs-libs elfutils-libelf ethtool expat fedora-release fedora-release-notes file file-libs filesystem findutils fipscheck fipscheck-lib gamin gawk gdbm glib2 glibc glibc-common gmp gnupg2 gpgme grep gzip hardlink hostname hwdata info initscripts iproute iptables iputils iw kbd kbd-misc keyutils keyutils-libs kmod kmod-libs krb5-libs libacl libassuan libattr libblkid libcap libcap-ng libcom_err libcurl libdaemon libdb libdb-utils libedit libevent libffi libgcc libgcrypt libgpg-error libgssglue libgudev1 libidn libmount libnfsidmap libnl libnl3 libpcap libpwquality libselinux libselinux-utils libsemanage libsepol libss libssh2 libsss_sudo libstdc++ libtirpc libudev libusb1 libuser libutempter libuuid libxml2 linux-atm-libs logrotate lua m4 mingetty mobile-broadband-provider-info ncurses ncurses-base ncurses-libs net-tools newt newt-python nfs-utils nspr nss nss-myhostname nss-softokn nss-softokn-freebl nss-sysinit nss-tools nss-util ntpdate openldap openssh openssh-clients openssh-server openssl pam parted passwd pciutils-libs pcre pinentry pkgconfig policycoreutils polkit popt ppp procps psmisc pth pygpgme python python-chardet python-iniparse python-kitchen python-libs python-pycurl python-urlgrabber readline rootfiles rootfs-resize rpcbind rpm rpm-build-libs rpm-libs rpm-python rsyslog sed selinux-policy selinux-policy-targeted setserial setup shadow-utils shared-mime-info slang sqlite sudo systemd systemd-sysv sysvinit-tools tar tcp_wrappers-libs tzdata udev usbutils ustr util-linux vim-minimal wget wireless-tools wpa_supplicant xz xz-libs yum yum-metadata-parser yum-utils zlib"
+		REPO="${MIRROR%/}/$SUITE/Everything/$ARCH/os"
+		PKG_LIST="${MNT_TARGET%/}/tmp/packages.list"
+
+		echo "[PRINT] Preparing directories ... "
+		(set -e
+			cd $MNT_TARGET
+			mkdir -p usr/bin usr/sbin usr/lib
+			ln -sf usr/bin; ln -sf usr/sbin; ln -sf usr/lib
+			mkdir tmp; chmod 01777 tmp
+		exit 0)
+		[ $? -eq 0 ] && echo "[RESULT_LN] done" || { echo "[RESULT_LN] fail"; return 1; }
+		
+		echo "[PRINT] Retrieving packages list ... "
+		(set -e
+			REPODATA_FILE=`wget -q -O - $REPO/repodata | sed -n '/<a / s/^.*<a [^>]*href="\([^\"]*\)".*$/\1/p' | grep -m1 -e '-primary.xml.gz'`
+			wget -q -O - $REPO/repodata/$REPODATA_FILE | gzip -dc | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\)".*$/\1/p' > $PKG_LIST
+		exit 0)
+		[ $? -eq 0 ] && echo "[RESULT_LN] done" || { echo "[RESULT_LN] fail"; return 1; }
+		
+		echo "[PRINT_LN] Retrieving basic packages: "
+		for PACKAGE in $BASIC_PACKAGES; do
+			echo "[PRINT] $PACKAGE ... "
+    		PKG_URL=`cat $PKG_LIST | grep -m1 -e "^.*/$PACKAGE-[[:digit:]].*\.rpm$"`
+    		test "$PKG_URL" || { echo "[RESULT_LN] fail"; continue; }
+    		FILE=`basename $PKG_URL`
+    		#echo "[PRINT_LN] downloading ${FILE}... "
+    		for i in 1 2 3
+    		do
+    			wget -q -c -O ${MNT_TARGET%/}/tmp/$FILE $REPO/$PKG_URL
+    			[ $? -eq 0 ] && break
+    			sleep 30s
+    		done
+    		#echo "[PRINT_LN] unpacking ${FILE}... "
+    		(cd $MNT_TARGET; rpm2cpio ${MNT_TARGET%/}/tmp/$FILE | cpio -idmu)
+    		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
+		done
+
+		echo "[PRINT_ALL] Installing basic packages: "
+		chroot $MNT_TARGET /bin/rpm -i --force --nosignature --nodeps /tmp/*.rpm
+		# to fix cap_set_file failed
+		chroot $MNT_TARGET /bin/rpm -i --nosignature --justdb /tmp/glibc-common-*.rpm /tmp/iputils-*.rpm
+		# to fix chown32(/dev/pts/*) operation not permitted
+		chmod 04755 ${MNT_TARGET%/}/usr/libexec/pt_chown
+		chmod 04755 ${MNT_TARGET%/}/usr/bin/ping
+		# clean cache
+		rm -rf ${MNT_TARGET%/}/tmp/*
+		
+		#echo "[PRINT_LN] Installing basic packages: "
+		#for FILE in `cd $CACHE_DIR && ls *.rpm`; do
+		#	echo "[PRINT] $FILE ... "
+		#	chroot $MNT_TARGET /bin/rpm -i --nodeps --force /tmp/$FILE
+		#	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
+		#done
+		
+		#echo "[PRINT_LN] Preconfigure system: "
+		#configure_system dns mtab repository
+		
+		#echo "[PRINT_ALL] Installing base system: "
+		#chroot $MNT_TARGET /usr/bin/yum groupinstall "Base" --nogpgcheck --skip-broken -y
+		
+		#echo "[PRINT] Clearing cache ... "
+		#chroot $MNT_TARGET /usr/bin/yum clean all
+    	#[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 	;;
 	esac
 

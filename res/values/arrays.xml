@@ -82,12 +82,14 @@
         <item>debian</item>
         <item>ubuntu</item>
         <item>archlinux</item>
+        <item>fedora</item>
     </string-array>
     
     <string-array name="distribution_entries" translatable="false">
         <item>Debian</item>
         <item>Ubuntu</item>
         <item>Arch Linux</item>
+        <item>Fedora</item>
     </string-array>
     
     <!-- Debian -->
@@ -130,6 +132,17 @@
         <item>arm</item>
         <item>armv6h</item>
         <item>armv7h</item>
+    </string-array>
+    
+    <!-- Fedora -->
+
+    <string-array name="fedora_suite_values" translatable="false">
+        <item>17</item>
+    </string-array>
+
+    <string-array name="fedora_architecture_values" translatable="false">
+        <item>arm</item>
+        <item>armhfp</item>
     </string-array>
     
 </resources>

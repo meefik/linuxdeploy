@@ -134,12 +134,6 @@ public class DeployPrefsActivity extends PreferenceActivity implements
 					if (init)
 						suite.setValue(getString(R.string.debian_suite));
 					suite.setSummary(suite.getEntry());
-					// mirror
-					EditTextPreference mirror = (EditTextPreference) this
-							.findPreference("mirror");
-					if (init)
-						mirror.setText(getString(R.string.debian_mirror));
-					mirror.setSummary(mirror.getText());
 					// architecture
 					ListPreference architecture = (ListPreference) this
 							.findPreference("architecture");
@@ -150,6 +144,12 @@ public class DeployPrefsActivity extends PreferenceActivity implements
 						architecture
 								.setValue(getString(R.string.debian_architecture));
 					architecture.setSummary(architecture.getEntry());
+					// mirror
+					EditTextPreference mirror = (EditTextPreference) this
+							.findPreference("mirror");
+					if (init)
+						mirror.setText(getString(R.string.debian_mirror));
+					mirror.setSummary(mirror.getText());
 				}
 				if (listPref.getValue().equals("ubuntu")) {
 					// suite
@@ -160,12 +160,6 @@ public class DeployPrefsActivity extends PreferenceActivity implements
 					if (init)
 						suite.setValue(getString(R.string.ubuntu_suite));
 					suite.setSummary(suite.getEntry());
-					// mirror
-					EditTextPreference mirror = (EditTextPreference) this
-							.findPreference("mirror");
-					if (init)
-						mirror.setText(getString(R.string.ubuntu_mirror));
-					mirror.setSummary(mirror.getText());
 					// architecture
 					ListPreference architecture = (ListPreference) this
 							.findPreference("architecture");
@@ -176,6 +170,12 @@ public class DeployPrefsActivity extends PreferenceActivity implements
 						architecture
 								.setValue(getString(R.string.ubuntu_architecture));
 					architecture.setSummary(architecture.getEntry());
+					// mirror
+					EditTextPreference mirror = (EditTextPreference) this
+							.findPreference("mirror");
+					if (init)
+						mirror.setText(getString(R.string.ubuntu_mirror));
+					mirror.setSummary(mirror.getText());
 				}
 				if (listPref.getValue().equals("archlinux")) {
 					// suite
@@ -186,12 +186,6 @@ public class DeployPrefsActivity extends PreferenceActivity implements
 					if (init)
 						suite.setValue(getString(R.string.archlinux_suite));
 					suite.setSummary(suite.getEntry());
-					// mirror
-					EditTextPreference mirror = (EditTextPreference) this
-							.findPreference("mirror");
-					if (init)
-						mirror.setText(getString(R.string.archlinux_mirror));
-					mirror.setSummary(mirror.getText());
 					// architecture
 					ListPreference architecture = (ListPreference) this
 							.findPreference("architecture");
@@ -202,6 +196,54 @@ public class DeployPrefsActivity extends PreferenceActivity implements
 						architecture
 								.setValue(getString(R.string.archlinux_architecture));
 					architecture.setSummary(architecture.getEntry());
+					// mirror
+					EditTextPreference mirror = (EditTextPreference) this
+							.findPreference("mirror");
+					if (init)
+						mirror.setText(getString(R.string.archlinux_mirror));
+					mirror.setSummary(mirror.getText());
+				}
+				if (listPref.getValue().equals("fedora")) {
+					// suite
+					ListPreference suite = (ListPreference) this
+							.findPreference("suite");
+					suite.setEntries(R.array.fedora_suite_values);
+					suite.setEntryValues(R.array.fedora_suite_values);
+					if (init)
+						suite.setValue(getString(R.string.fedora_suite));
+					suite.setSummary(suite.getEntry());
+					// architecture
+					ListPreference architecture = (ListPreference) this
+							.findPreference("architecture");
+					architecture.setEntries(R.array.fedora_architecture_values);
+					architecture
+							.setEntryValues(R.array.fedora_architecture_values);
+					if (init)
+						architecture
+								.setValue(getString(R.string.fedora_architecture));
+					architecture.setSummary(architecture.getEntry());
+					// mirror
+					EditTextPreference mirror = (EditTextPreference) this
+							.findPreference("mirror");
+					if (init)
+						mirror.setText(getString(R.string.fedora_mirror));
+					mirror.setSummary(mirror.getText());
+				}
+			}
+			if (listPref.getKey().equals("architecture")) {
+				// distribution
+				ListPreference distribution = (ListPreference) this
+						.findPreference("distribution");
+				if (distribution.getValue().equals("fedora")) {
+					// mirror
+					EditTextPreference mirror = (EditTextPreference) this
+							.findPreference("mirror");
+					if (listPref.getValue().equals("arm")) {
+						mirror.setText(getString(R.string.fedora_mirror));
+					} else {
+						mirror.setText(getString(R.string.fedora_mirror_armhfp));
+					}
+					mirror.setSummary(mirror.getText());
 				}
 			}
 			if (listPref.getKey().equals("deploytype")) {
