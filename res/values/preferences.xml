@@ -58,7 +58,6 @@
     <!-- Fedora -->
     <string name="fedora_suite" translatable="false">17</string>
     <string name="fedora_mirror" translatable="false">http://download.fedoraproject.org/pub/fedora-secondary/releases</string>
-    <string name="fedora_mirror_armhfp" translatable="false">http://download.fedoraproject.org/pub/fedora-secondary/releases/17/Images/armhfp/Fedora-17-armhfp-console.tar.xz</string>
     <string name="fedora_architecture" translatable="false">arm</string>
     
 </resources>

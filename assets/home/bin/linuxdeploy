@@ -565,7 +565,9 @@ start_system()
 			#	chroot $MNT_TARGET su - root -c "/etc/rc.d/sshd start"
 			#;;
 			#esac
-			[ -z "`ls $MNT_TARGET/etc/ssh/ | grep key`" ] && chroot $MNT_TARGET su - root -c "/usr/sbin/sshd-keygen" 
+			if [ -z "`ls $MNT_TARGET/etc/ssh/ | grep key`" ]; then
+				chroot $MNT_TARGET su - root -c "ssh-keygen"
+			fi 
 			chroot $MNT_TARGET su - root -c "/usr/sbin/sshd -p $SSH_PORT"
 		exit 0)
 		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
@@ -706,36 +708,36 @@ install_system()
 		REPO="${MIRROR%/}/$ARCH/core"
 		CACHE_DIR="${MNT_TARGET%/}/var/cache/pacman/pkg"
 		
-		echo "[PRINT_LN] :: Retrieving packages list..."
+		echo "[PRINT] Retrieving packages list ... "
 		PKG_LIST=`wget -q -O - "$REPO/" | sed -n '/<a / s/^.*<a [^>]*href="\([^\"]*\)".*$/\1/p' | awk -F'/' '{print $NF}' | sort -rn`
-		test "$PKG_LIST" || { echo "[PRINT_LN] Error processing packages list"; return 1; }
+		[ $? -eq 0 ] && echo "[RESULT_LN] done" || { echo "[RESULT_LN] fail"; return 1; }
 
-		echo "[PRINT_LN] :: Retrieving basic packages..."
+		echo "[PRINT_LN] Retrieving base packages: "
 		mkdir -p $CACHE_DIR
 		for PACKAGE in $BASIC_PACKAGES; do
+			echo "[PRINT] $PACKAGE ... "
     		FILE=`echo "$PKG_LIST" | grep -m1 -e "^$PACKAGE-[[:digit:]].*\.xz$" -e "^$PACKAGE-[[:digit:]].*\.gz$"`
-    		test "$FILE" || { echo "[PRINT_LN] Error: cannot find package: $PACKAGE"; return 1; }
-
-    		echo "[PRINT_LN] downloading ${FILE}... "
+    		test "$FILE" || { echo "[RESULT_LN] fail"; continue; }
+    		#echo "[PRINT_LN] downloading ${FILE}... "
     		for i in 1 2 3
     		do
     			wget -q -c -O $CACHE_DIR/$FILE $REPO/$FILE
     			[ $? -eq 0 ] && break
     			sleep 30s
     		done
-    		
     		#echo "[PRINT_LN] unpacking ${FILE}... "
 			case "$FILE" in
     		*.gz) tar xzf $CACHE_DIR/$FILE -C $MNT_TARGET;;
     		*.xz) xz -dc $CACHE_DIR/$FILE | tar x -C $MNT_TARGET;;
-    		*) echo "[PRINT_LN] Error: unknown package format: $FILE"; return 1;;
+    		*) echo "[RESULT_LN] fail"; return 1;;
 			esac
+			[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 		done
 		
-		echo "[PRINT_LN] :: Preconfigure system:"
+		echo "[PRINT_LN] Preconfigure system: "
 		configure_system dns mtab repository
 		
-		echo "[PRINT_ALL] :: Installing packages..."
+		echo "[PRINT_ALL] Installing base packages: "
 		(set -e
 			chroot $MNT_TARGET /usr/bin/pacman --noconfirm -Sy
 			EXTRA_PACKAGES=`chroot $MNT_TARGET /usr/bin/pacman --noconfirm -Sg base | awk '{print $2}' | grep -v -e 'linux' -e 'kernel'`
@@ -743,14 +745,17 @@ install_system()
 		exit 0)
 		[ $? -ne 0 ] && return 1
 		
-		echo "[PRINT_LN] :: Clearing cache..."
-		rm -f $CACHE_DIR/*
-		find $MNT_TARGET -type f -name "*.pacorig" -exec rm -f {} \;
+		echo "[PRINT] Clearing cache ... "
+		(set -e
+			rm -f $CACHE_DIR/*
+			find $MNT_TARGET -type f -name "*.pacorig" -exec rm -f {} \;
+		exit 0)
+		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 	;;
 	fedora)
 		echo "[PRINT_LN] Installing GNU/Linux system: "
 		
-		BASIC_PACKAGES="acl attr audit audit-libs authconfig avahi-autoipd basesystem bash bind-libs bind-libs-lite bind-license bind-utils bzip2 bzip2-libs ca-certificates checkpolicy chkconfig coreutils cpio cracklib cracklib-dicts crda cronie cronie-anacron crontabs cryptsetup-libs curl cyrus-sasl-lib db4 dbus dbus-glib dbus-libs device-mapper device-mapper-libs dhclient dhcp-common dhcp-libs diffutils dnsmasq dosfstools dracut e2fsprogs e2fsprogs-libs elfutils-libelf ethtool expat fedora-release fedora-release-notes file file-libs filesystem findutils fipscheck fipscheck-lib gamin gawk gdbm glib2 glibc glibc-common gmp gnupg2 gpgme grep gzip hardlink hostname hwdata info initscripts iproute iptables iputils iw kbd kbd-misc keyutils keyutils-libs kmod kmod-libs krb5-libs libacl libassuan libattr libblkid libcap libcap-ng libcom_err libcurl libdaemon libdb libdb-utils libedit libevent libffi libgcc libgcrypt libgpg-error libgssglue libgudev1 libidn libmount libnfsidmap libnl libnl3 libpcap libpwquality libselinux libselinux-utils libsemanage libsepol libss libssh2 libsss_sudo libstdc++ libtirpc libudev libusb1 libuser libutempter libuuid libxml2 linux-atm-libs logrotate lua m4 mingetty mobile-broadband-provider-info ncurses ncurses-base ncurses-libs net-tools newt newt-python nfs-utils nspr nss nss-myhostname nss-softokn nss-softokn-freebl nss-sysinit nss-tools nss-util ntpdate openldap openssh openssh-clients openssh-server openssl pam parted passwd pciutils-libs pcre pinentry pkgconfig policycoreutils polkit popt ppp procps psmisc pth pygpgme python python-chardet python-iniparse python-kitchen python-libs python-pycurl python-urlgrabber readline rootfiles rootfs-resize rpcbind rpm rpm-build-libs rpm-libs rpm-python rsyslog sed selinux-policy selinux-policy-targeted setserial setup shadow-utils shared-mime-info slang sqlite sudo systemd systemd-sysv sysvinit-tools tar tcp_wrappers-libs tzdata udev usbutils ustr util-linux vim-minimal wget wireless-tools wpa_supplicant xz xz-libs yum yum-metadata-parser yum-utils zlib"
+		BASIC_PACKAGES="acl attr audit audit-libs authconfig avahi-autoipd basesystem bash bind-libs bind-libs-lite bind-license bind-utils bzip2 bzip2-libs ca-certificates checkpolicy chkconfig coreutils cpio cracklib cracklib-dicts crda cronie cronie-anacron crontabs cryptsetup-libs curl cyrus-sasl-lib db4 dbus dbus-glib dbus-libs device-mapper device-mapper-libs dhclient dhcp-common dhcp-libs diffutils dnsmasq dosfstools dracut e2fsprogs e2fsprogs-libs elfutils-libelf ethtool expat fedora-release fedora-release-notes file file-libs filesystem findutils fipscheck fipscheck-lib gamin gawk gdbm glib2 glibc glibc-common gmp gnupg2 gpgme grep groff groff-base gzip hardlink hostname hwdata info initscripts iproute iptables iputils iw kbd kbd-misc keyutils keyutils-libs kmod kmod-libs krb5-libs less libacl libassuan libattr libblkid libcap libcap-ng libcom_err libcurl libdaemon libdb libdb-utils libedit libevent libffi libgcc libgcrypt libgpg-error libgssglue libgudev1 libidn libmount libnfsidmap libnl libnl3 libpcap libpipeline libpwquality libselinux libselinux-utils libsemanage libsepol libss libssh2 libsss_sudo libstdc++ libtirpc libudev libusb1 libuser libutempter libuuid libxml2 linux-atm-libs logrotate lua m4 man-db man-pages mingetty mobile-broadband-provider-info ncurses ncurses-base ncurses-libs net-tools newt newt-python nfs-utils nspr nss nss-myhostname nss-softokn nss-softokn-freebl nss-sysinit nss-tools nss-util ntpdate openldap openssh openssh-clients openssh-server openssl pam parted passwd pciutils-libs pcre pinentry pkgconfig policycoreutils polkit popt ppp procps psmisc pth pygpgme python python-chardet python-iniparse python-kitchen python-libs python-pycurl python-urlgrabber readline rootfiles rootfs-resize rpcbind rpm rpm-build-libs rpm-libs rpm-python rsyslog sed selinux-policy selinux-policy-targeted setserial setup shadow-utils shared-mime-info slang sqlite sudo systemd systemd-sysv sysvinit-tools tar tcp_wrappers-libs tzdata udev usbutils ustr util-linux vim-minimal wget wireless-tools wpa_supplicant xz xz-libs yum yum-metadata-parser yum-utils zlib"
 		REPO="${MIRROR%/}/$SUITE/Everything/$ARCH/os"
 		PKG_LIST="${MNT_TARGET%/}/tmp/packages.list"
 
@@ -770,7 +775,7 @@ install_system()
 		exit 0)
 		[ $? -eq 0 ] && echo "[RESULT_LN] done" || { echo "[RESULT_LN] fail"; return 1; }
 		
-		echo "[PRINT_LN] Retrieving basic packages: "
+		echo "[PRINT_LN] Retrieving base packages: "
 		for PACKAGE in $BASIC_PACKAGES; do
 			echo "[PRINT] $PACKAGE ... "
     		PKG_URL=`cat $PKG_LIST | grep -m1 -e "^.*/$PACKAGE-[[:digit:]].*\.rpm$"`
@@ -788,8 +793,8 @@ install_system()
     		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 		done
 
-		echo "[PRINT_ALL] Installing basic packages: "
-		chroot $MNT_TARGET /bin/rpm -i --force --nosignature --nodeps /tmp/*.rpm
+		echo "[PRINT_ALL] Installing base packages: "
+		chroot $MNT_TARGET /bin/rpm -iv --force --nosignature --nodeps /tmp/*.rpm
 		# to fix cap_set_file failed
 		chroot $MNT_TARGET /bin/rpm -i --nosignature --justdb /tmp/glibc-common-*.rpm /tmp/iputils-*.rpm
 		# to fix chown32(/dev/pts/*) operation not permitted
@@ -798,7 +803,7 @@ install_system()
 		# clean cache
 		rm -rf ${MNT_TARGET%/}/tmp/*
 		
-		#echo "[PRINT_LN] Installing basic packages: "
+		#echo "[PRINT_LN] Installing base packages: "
 		#for FILE in `cd $CACHE_DIR && ls *.rpm`; do
 		#	echo "[PRINT] $FILE ... "
 		#	chroot $MNT_TARGET /bin/rpm -i --nodeps --force /tmp/$FILE
