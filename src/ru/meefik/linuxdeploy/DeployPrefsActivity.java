@@ -230,22 +230,6 @@ public class DeployPrefsActivity extends PreferenceActivity implements
 					mirror.setSummary(mirror.getText());
 				}
 			}
-			if (listPref.getKey().equals("architecture")) {
-				// distribution
-				ListPreference distribution = (ListPreference) this
-						.findPreference("distribution");
-				if (distribution.getValue().equals("fedora")) {
-					// mirror
-					EditTextPreference mirror = (EditTextPreference) this
-							.findPreference("mirror");
-					if (listPref.getValue().equals("arm")) {
-						mirror.setText(getString(R.string.fedora_mirror));
-					} else {
-						mirror.setText(getString(R.string.fedora_mirror_armhfp));
-					}
-					mirror.setSummary(mirror.getText());
-				}
-			}
 			if (listPref.getKey().equals("deploytype")) {
 				EditTextPreference disksize = (EditTextPreference) this
 						.findPreference("disksize");
