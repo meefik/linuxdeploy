@@ -290,6 +290,8 @@ configure_system()
 			if [ "$DESKTOP_ENV" != "other" ]; then
 				echo 'XAUTHORITY=$HOME/.Xauthority' > $MNT_TARGET$USER_HOME/.vnc/xstartup
 				echo 'export XAUTHORITY' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
+				echo "LANG=$LOCALE" >> $MNT_TARGET$USER_HOME/.vnc/xstartup
+				echo "export LANG" >> $MNT_TARGET$USER_HOME/.vnc/xstartup
 				case "$DESKTOP_ENV" in
 				xterm)
 					echo 'xterm -max &' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
@@ -556,19 +558,21 @@ start_system()
 	is_ssh=`echo $SSH_START | grep -i "^y"`
 	if [ -n "$is_ssh" ]; then
 		(set -e
-			#sed -i "s|^Port .*|Port $SSH_PORT|g" $MNT_TARGET/etc/ssh/sshd_config
-			#case "$DISTRIB" in
-			#debian|ubuntu)
-			#	chroot $MNT_TARGET su - root -c "/etc/init.d/ssh start"
-			#;;
-			#archlinux)
-			#	chroot $MNT_TARGET su - root -c "/etc/rc.d/sshd start"
-			#;;
-			#esac
-			if [ -z "`ls $MNT_TARGET/etc/ssh/ | grep key`" ]; then
-				chroot $MNT_TARGET su - root -c "ssh-keygen"
-			fi 
-			chroot $MNT_TARGET su - root -c "/usr/sbin/sshd -p $SSH_PORT"
+			sed -i "s|^Port .*|Port $SSH_PORT|g" $MNT_TARGET/etc/ssh/sshd_config
+			case "$DISTRIB" in
+			debian|ubuntu)
+				chroot $MNT_TARGET su - root -c "/etc/init.d/ssh start"
+			;;
+			archlinux)
+				chroot $MNT_TARGET su - root -c "/etc/rc.d/sshd start"
+			;;
+			fedora)
+				if [ -z "`ls $MNT_TARGET/etc/ssh/ | grep key`" ]; then
+					chroot $MNT_TARGET su - root -c "ssh-keygen -A" || true
+				fi 
+				chroot $MNT_TARGET su - root -c "/usr/sbin/sshd -p $SSH_PORT"			
+			;;
+			esac
 		exit 0)
 		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 	else
@@ -620,15 +624,17 @@ stop_system()
 	is_ssh=`echo $SSH_START | grep -i "^y"`
 	if [ -n "$is_ssh" ]; then
 		(set -e
-			#case "$DISTRIB" in
-			#debian|ubuntu)
-			#	chroot $MNT_TARGET su - root -c "/etc/init.d/ssh stop"
-			#;;
-			#archlinux)
-			#	chroot $MNT_TARGET su - root -c "/etc/rc.d/sshd stop"
-			#;;
-			#esac
-			chroot $MNT_TARGET su - root -c 'kill -9 `cat /var/run/sshd.pid`'
+			case "$DISTRIB" in
+			debian|ubuntu)
+				chroot $MNT_TARGET su - root -c "/etc/init.d/ssh stop"
+			;;
+			archlinux)
+				chroot $MNT_TARGET su - root -c "/etc/rc.d/sshd stop"
+			;;
+			fedora)
+				chroot $MNT_TARGET su - root -c 'kill -9 `cat /var/run/sshd.pid`'
+			;;
+			esac
 			sleep 1
 			pkill -9 sshd || true
 		exit 0)
@@ -691,7 +697,7 @@ install_system()
 		
 		[ -z "$DEBOOTSTRAP_DIR" ] && DEBOOTSTRAP_DIR=$HOME_DIR/deploy/debootstrap
 		export DEBOOTSTRAP_DIR
-		debootstrap --no-check-gpg --arch $ARCH --foreign --extractor=ar --include=locales,openssh-server,sudo $SUITE $MNT_TARGET $MIRROR
+		debootstrap --no-check-gpg --arch $ARCH --foreign --extractor=ar --include=locales,openssh-server,sudo,man-db $SUITE $MNT_TARGET $MIRROR
 		[ $? -ne 0 ] && return 1
 
 		unset DEBOOTSTRAP_DIR
@@ -718,14 +724,14 @@ install_system()
 			echo "[PRINT] $PACKAGE ... "
     		FILE=`echo "$PKG_LIST" | grep -m1 -e "^$PACKAGE-[[:digit:]].*\.xz$" -e "^$PACKAGE-[[:digit:]].*\.gz$"`
     		test "$FILE" || { echo "[RESULT_LN] fail"; continue; }
-    		#echo "[PRINT_LN] downloading ${FILE}... "
+    		echo "downloading ${FILE}... "
     		for i in 1 2 3
     		do
     			wget -q -c -O $CACHE_DIR/$FILE $REPO/$FILE
     			[ $? -eq 0 ] && break
     			sleep 30s
     		done
-    		#echo "[PRINT_LN] unpacking ${FILE}... "
+    		#echo "unpacking ${FILE}... "
 			case "$FILE" in
     		*.gz) tar xzf $CACHE_DIR/$FILE -C $MNT_TARGET;;
     		*.xz) xz -dc $CACHE_DIR/$FILE | tar x -C $MNT_TARGET;;
@@ -778,17 +784,17 @@ install_system()
 		echo "[PRINT_LN] Retrieving base packages: "
 		for PACKAGE in $BASIC_PACKAGES; do
 			echo "[PRINT] $PACKAGE ... "
-    		PKG_URL=`cat $PKG_LIST | grep -m1 -e "^.*/$PACKAGE-[[:digit:]].*\.rpm$"`
+    		PKG_URL=`cat $PKG_LIST | grep -m1 -e "^.*/$PACKAGE-[0-9][0-9\.\-].*\.rpm$"`
     		test "$PKG_URL" || { echo "[RESULT_LN] fail"; continue; }
     		FILE=`basename $PKG_URL`
-    		#echo "[PRINT_LN] downloading ${FILE}... "
+    		echo "downloading ${FILE}... "
     		for i in 1 2 3
     		do
     			wget -q -c -O ${MNT_TARGET%/}/tmp/$FILE $REPO/$PKG_URL
     			[ $? -eq 0 ] && break
     			sleep 30s
     		done
-    		#echo "[PRINT_LN] unpacking ${FILE}... "
+    		#echo "unpacking ${FILE}... "
     		(cd $MNT_TARGET; rpm2cpio ${MNT_TARGET%/}/tmp/$FILE | cpio -idmu)
     		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 		done
