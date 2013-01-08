@@ -569,7 +569,8 @@ start_system()
 			fedora)
 				if [ -z "`ls $MNT_TARGET/etc/ssh/ | grep key`" ]; then
 					chroot $MNT_TARGET su - root -c "ssh-keygen -A" || true
-				fi 
+					echo
+				fi
 				chroot $MNT_TARGET su - root -c "/usr/sbin/sshd -p $SSH_PORT"			
 			;;
 			esac
