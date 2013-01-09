@@ -413,16 +413,16 @@ configure_system()
 					PKGS="$PKGS xterm"
 				;;
 				lxde)
-					PKGS="patterns-openSUSE-lxde"
+					PKGS="$PKGS patterns-openSUSE-lxde"
 				;;
 				xfce)
-					PKGS="patterns-openSUSE-xfce"
+					PKGS="$PKGS patterns-openSUSE-xfce"
 				;;
 				gnome)
-					PKGS="patterns-openSUSE-gnome"
+					PKGS="$PKGS patterns-openSUSE-gnome"
 				;;
 				kde)
-					PKGS="patterns-openSUSE-kde"
+					PKGS="$PKGS patterns-openSUSE-kde"
 				;;
 				esac
 				chroot $MNT_TARGET zypper --no-gpg-checks --non-interactive install $PKGS 
