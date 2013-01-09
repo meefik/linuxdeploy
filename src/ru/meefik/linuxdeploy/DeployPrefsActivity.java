@@ -189,7 +189,8 @@ public class DeployPrefsActivity extends PreferenceActivity implements
 					// architecture
 					ListPreference architecture = (ListPreference) this
 							.findPreference("architecture");
-					architecture.setEntries(R.array.archlinux_architecture_values);
+					architecture
+							.setEntries(R.array.archlinux_architecture_values);
 					architecture
 							.setEntryValues(R.array.archlinux_architecture_values);
 					if (init)
@@ -227,6 +228,33 @@ public class DeployPrefsActivity extends PreferenceActivity implements
 							.findPreference("mirror");
 					if (init)
 						mirror.setText(getString(R.string.fedora_mirror));
+					mirror.setSummary(mirror.getText());
+				}
+				if (listPref.getValue().equals("opensuse")) {
+					// suite
+					ListPreference suite = (ListPreference) this
+							.findPreference("suite");
+					suite.setEntries(R.array.opensuse_suite_values);
+					suite.setEntryValues(R.array.opensuse_suite_values);
+					if (init)
+						suite.setValue(getString(R.string.opensuse_suite));
+					suite.setSummary(suite.getEntry());
+					// architecture
+					ListPreference architecture = (ListPreference) this
+							.findPreference("architecture");
+					architecture
+							.setEntries(R.array.opensuse_architecture_values);
+					architecture
+							.setEntryValues(R.array.opensuse_architecture_values);
+					if (init)
+						architecture
+								.setValue(getString(R.string.opensuse_architecture));
+					architecture.setSummary(architecture.getEntry());
+					// mirror
+					EditTextPreference mirror = (EditTextPreference) this
+							.findPreference("mirror");
+					if (init)
+						mirror.setText(getString(R.string.opensuse_mirror));
 					mirror.setSummary(mirror.getText());
 				}
 			}

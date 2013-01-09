@@ -121,10 +121,7 @@ configure_system()
 		ubuntu)
 			configure_system dns mtab motd hosts hostname timezone sudo locales repository users profile upstart gui
 		;;
-		archlinux)
-			configure_system dns mtab motd hosts hostname timezone sudo locales repository users profile gui
-		;;
-		fedora)
+		*)
 			configure_system dns mtab motd hosts hostname timezone sudo locales repository users profile gui
 		;;
 		esac
@@ -205,6 +202,9 @@ configure_system()
 			fedora)
 				echo "LANG=$LOCALE" > $MNT_TARGET/etc/sysconfig/i18n
 			;;
+			opensuse)
+				echo "RC_LANG=$LOCALE" > $MNT_TARGET/etc/sysconfig/language
+			;;
 			esac		
 		;;
 		repository)
@@ -233,6 +233,12 @@ configure_system()
 				sed -i "s|^[[:space:]]*\(CheckSpace\)|#\1|" $MNT_TARGET/etc/pacman.conf
 				sed -i "s|^[[:space:]]*SigLevel[[:space:]]*=.*$|SigLevel = Never|" $MNT_TARGET/etc/pacman.conf
 				sed -i "s|^[[:space:]]*Server[[:space:]]*=.*|Server = $MIRROR/$ARCH/\$repo|" $MNT_TARGET/etc/pacman.d/mirrorlist
+			;;
+			opensuse)
+				REPO="${MIRROR%/}/${SUITE%:}:/ARM/${ARCH}/openSUSE:$SUITE:ARM.repo"
+				chroot $MNT_TARGET zypper addrepo $REPO
+				sed -i "/^[[:space:]]*gpgcheck[[:space:]]*=.*$/d" $MNT_TARGET/etc/zypp/repos.d/*
+				sed -i "/^[[:space:]]*gpgkey[[:space:]]*=.*$/d" $MNT_TARGET/etc/zypp/repos.d/*
 			;;
 			esac
 		;;
@@ -375,30 +381,52 @@ configure_system()
 				esac
 				#rm -f $MNT_TARGET/var/lib/pacman/db.lck || true
 				chroot $MNT_TARGET pacman -Syq --noconfirm $PKGS
-				rm -f ${MNT_TARGET%/}/var/cache/pacman/pkg/* || true
+				rm -f $MNT_TARGET%/}/var/cache/pacman/pkg/* || true
 			;;
 			fedora)
-				PKGS="tigervnc-server xorg-x11-utils xorg-x11-fonts-misc dejavu-*"
+				PKGS="tigervnc-server xorg-x11-server-utils xorg-x11-fonts-misc dejavu-*"
 				case "$DESKTOP_ENV" in
 				xterm)
 					PKGS="$PKGS xterm"
 				;;
 				lxde)
-					YGRP="LXDE"
+					IGRP="LXDE"
 				;;
 				xfce)
-					YGRP="XFCE"
+					IGRP="XFCE"
 				;;
 				gnome)
-					YGRP="GNOME Desktop Environment"
+					IGRP="GNOME Desktop Environment"
 				;;
 				kde)
-					YGRP="KDE Software Compilation"
+					PKGS="$PKGS kde-baseapps kde-workspace ark konsole gwenview"
 				;;
 				esac
 				chroot $MNT_TARGET yum install $PKGS --nogpgcheck --skip-broken -y
-				[ -n "$YGRP" ] && chroot $MNT_TARGET yum groupinstall "$YGRP" --nogpgcheck --skip-broken -y
+				[ -n "$IGRP" ] && chroot $MNT_TARGET yum groupinstall "$IGRP" --nogpgcheck --skip-broken -y
 				chroot $MNT_TARGET yum clean all
+			;;
+			opensuse)
+				PKGS="tightvnc xorg-x11-fonts-core dejavu-fonts xauth"
+				case "$DESKTOP_ENV" in
+				xterm)
+					PKGS="$PKGS xterm"
+				;;
+				lxde)
+					IGRP="LXDE"
+				;;
+				xfce)
+					IGRP="XFCE"
+				;;
+				gnome)
+					IGRP="GNOME"
+				;;
+				kde)
+					IGRP="KDE"
+				;;
+				esac
+				chroot $MNT_TARGET zypper --no-gpg-checks --non-interactive install $PKGS 
+				chroot $MNT_TARGET zypper clean
 			;;
 			esac
 		exit 0)
@@ -574,6 +602,9 @@ start_system()
 				fi
 				chroot $MNT_TARGET su - root -c "/usr/sbin/sshd -p $SSH_PORT"			
 			;;
+			opensuse)
+				chroot $MNT_TARGET su - root -c "/etc/init.d/sshd start"
+			;;
 			esac
 		exit 0)
 		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
@@ -635,6 +666,9 @@ stop_system()
 			;;
 			fedora)
 				chroot $MNT_TARGET su - root -c 'kill -9 `cat /var/run/sshd.pid`'
+			;;
+			opensuse)
+				chroot $MNT_TARGET su - root -c "/etc/init.d/sshd stop"
 			;;
 			esac
 			sleep 1
@@ -714,7 +748,7 @@ install_system()
 		
 		BASIC_PACKAGES="acl archlinux-keyring attr bash bzip2 ca-certificates coreutils cracklib curl db dirmngr e2fsprogs expat findutils gawk gcc-libs gdbm glibc gmp gnupg gpgme grep libarchive libassuan libcap libgcrypt libgpg-error libgssglue libksba libldap libsasl libssh2 libtirpc linux-api-headers ncurses openssl pacman pacman-mirrorlist pam pambase perl pinentry pth readline run-parts sed shadow tzdata util-linux xz zlib"
 		REPO="${MIRROR%/}/$ARCH/core"
-		CACHE_DIR="${MNT_TARGET%/}/var/cache/pacman/pkg"
+		CACHE_DIR="$MNT_TARGET/var/cache/pacman/pkg"
 		
 		echo "[PRINT] Retrieving packages list ... "
 		PKG_LIST=`wget -q -O - "$REPO/" | sed -n '/<a / s/^.*<a [^>]*href="\([^\"]*\)".*$/\1/p' | awk -F'/' '{print $NF}' | sort -rn`
@@ -764,12 +798,16 @@ install_system()
 		echo "[PRINT_LN] Installing GNU/Linux system: "
 		
 		BASIC_PACKAGES="acl attr audit audit-libs authconfig avahi-autoipd basesystem bash bind-libs bind-libs-lite bind-license bind-utils bzip2 bzip2-libs ca-certificates checkpolicy chkconfig coreutils cpio cracklib cracklib-dicts crda cronie cronie-anacron crontabs cryptsetup-libs curl cyrus-sasl-lib db4 dbus dbus-glib dbus-libs device-mapper device-mapper-libs dhclient dhcp-common dhcp-libs diffutils dnsmasq dosfstools dracut e2fsprogs e2fsprogs-libs elfutils-libelf ethtool expat fedora-release fedora-release-notes file file-libs filesystem findutils fipscheck fipscheck-lib gamin gawk gdbm glib2 glibc glibc-common gmp gnupg2 gpgme grep groff groff-base gzip hardlink hostname hwdata info initscripts iproute iptables iputils iw kbd kbd-misc keyutils keyutils-libs kmod kmod-libs krb5-libs less libacl libassuan libattr libblkid libcap libcap-ng libcom_err libcurl libdaemon libdb libdb-utils libedit libevent libffi libgcc libgcrypt libgpg-error libgssglue libgudev1 libidn libmount libnfsidmap libnl libnl3 libpcap libpipeline libpwquality libselinux libselinux-utils libsemanage libsepol libss libssh2 libsss_sudo libstdc++ libtirpc libudev libusb1 libuser libutempter libuuid libxml2 linux-atm-libs logrotate lua m4 man-db man-pages mingetty mobile-broadband-provider-info ncurses ncurses-base ncurses-libs net-tools newt newt-python nfs-utils nspr nss nss-myhostname nss-softokn nss-softokn-freebl nss-sysinit nss-tools nss-util ntpdate openldap openssh openssh-clients openssh-server openssl pam parted passwd pciutils-libs pcre pinentry pkgconfig policycoreutils polkit popt ppp procps psmisc pth pygpgme python python-chardet python-iniparse python-kitchen python-libs python-pycurl python-urlgrabber readline rootfiles rootfs-resize rpcbind rpm rpm-build-libs rpm-libs rpm-python rsyslog sed selinux-policy selinux-policy-targeted setserial setup shadow-utils shared-mime-info slang sqlite sudo systemd systemd-sysv sysvinit-tools tar tcp_wrappers-libs tzdata udev usbutils ustr util-linux vim-minimal wget wireless-tools wpa_supplicant xz xz-libs yum yum-metadata-parser yum-utils zlib"
-		REPO="${MIRROR%/}/$SUITE/Everything/$ARCH/os"
-		PKG_LIST="${MNT_TARGET%/}/tmp/packages.list"
+		REPO="${MIRROR%/}/${SUITE}/Everything/${ARCH}/os"
+		PKG_LIST="$MNT_TARGET/tmp/packages.list"
 
-		echo "[PRINT] Preparing directories ... "
+		echo "[PRINT] Preparing for deployment ... "
 		(set -e
 			cd $MNT_TARGET
+			mkdir etc
+			echo "root:x:0:0:root:/root:/bin/bash" > etc/passwd
+			echo "root:x:0:" > etc/group
+			touch etc/fstab
 			mkdir -p usr/bin usr/sbin usr/lib
 			ln -sf usr/bin; ln -sf usr/sbin; ln -sf usr/lib
 			mkdir tmp; chmod 01777 tmp
@@ -778,7 +816,7 @@ install_system()
 		
 		echo "[PRINT] Retrieving packages list ... "
 		(set -e
-			REPODATA_FILE=`wget -q -O - $REPO/repodata | sed -n '/<a / s/^.*<a [^>]*href="\([^\"]*\)".*$/\1/p' | grep -m1 -e '-primary.xml.gz'`
+			REPODATA_FILE=`wget -q -O - $REPO/repodata | sed -n '/<a / s/^.*<a [^>]*href="\([^\"]*\-primary\.xml\.gz\)".*$/\1/p'`
 			wget -q -O - $REPO/repodata/$REPODATA_FILE | gzip -dc | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\)".*$/\1/p' > $PKG_LIST
 		exit 0)
 		[ $? -eq 0 ] && echo "[RESULT_LN] done" || { echo "[RESULT_LN] fail"; return 1; }
@@ -792,12 +830,12 @@ install_system()
     		echo "downloading ${FILE}... "
     		for i in 1 2 3
     		do
-    			wget -q -c -O ${MNT_TARGET%/}/tmp/$FILE $REPO/$PKG_URL
+    			wget -q -c -O $MNT_TARGET/tmp/$FILE $REPO/$PKG_URL
     			[ $? -eq 0 ] && break
     			sleep 30s
     		done
     		#echo "unpacking ${FILE}... "
-    		(cd $MNT_TARGET; rpm2cpio ${MNT_TARGET%/}/tmp/$FILE | cpio -idmu)
+    		(cd $MNT_TARGET; rpm2cpio $MNT_TARGET/tmp/$FILE | cpio -idmu)
     		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 		done
 
@@ -806,10 +844,10 @@ install_system()
 		# to fix cap_set_file failed
 		chroot $MNT_TARGET /bin/rpm -i --nosignature --justdb /tmp/glibc-common-*.rpm /tmp/iputils-*.rpm
 		# to fix chown32(/dev/pts/*) operation not permitted
-		chmod 04755 ${MNT_TARGET%/}/usr/libexec/pt_chown
-		chmod 04755 ${MNT_TARGET%/}/usr/bin/ping
+		chmod 04755 $MNT_TARGET/usr/libexec/pt_chown
+		chmod 04755 $MNT_TARGET/usr/bin/ping
 		# clean cache
-		rm -rf ${MNT_TARGET%/}/tmp/*
+		rm -rf $MNT_TARGET/tmp/*
 		
 		#echo "[PRINT_LN] Installing base packages: "
 		#for FILE in `cd $CACHE_DIR && ls *.rpm`; do
@@ -827,6 +865,54 @@ install_system()
 		#echo "[PRINT] Clearing cache ... "
 		#chroot $MNT_TARGET /usr/bin/yum clean all
     	#[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
+	;;
+	opensuse)
+		echo "[PRINT_LN] Installing GNU/Linux system: "
+		
+		BASIC_PACKAGES="aaa_base aaa_base-extras autoyast2-installation bash bind-libs bind-utils branding-openSUSE bridge-utils bzip2 coreutils cpio cracklib cracklib-dict-full cron cronie cryptsetup curl cyrus-sasl dbus-1 dbus-1-x11 device-mapper dhcpcd diffutils dirmngr dmraid e2fsprogs elfutils file filesystem fillup findutils fontconfig gawk gio-branding-openSUSE glib2-tools glibc glibc-extra glibc-i18ndata glibc-locale gnu-unifont-bitmap-fonts gpg2 grep gzip hwinfo ifplugd info initviocons insserv iproute2 iputils kbd kernel-default kernel-firmware kpartx krb5 less libX11-6 libX11-data libXau6 libXext6 libXft2 libXrender1 libacl1 libadns1 libaio1 libasm1 libassuan0 libattr1 libaudit1 libaugeas0 libblkid1 libblocxx6 libbz2-1 libcairo2 libcap-ng0 libcap2 libcom_err2 libcrack2 libcryptsetup4 libcurl4 libdaemon0 libdb-4_8 libdbus-1-3 libdrm2 libdw1 libedit0 libelf0 libelf1 libestr0 libexpat1 libext2fs2 libffi4 libfreetype6 libgcc_s1 libgcrypt11 libgdbm4 libgio-2_0-0 libglib-2_0-0 libgmodule-2_0-0 libgmp10 libgnutls28 libgobject-2_0-0 libgpg-error0 libgssglue1 libharfbuzz0 libhogweed2 libicu49 libidn11 libiw30 libjson0 libkeyutils1 libkmod2 libksba8 libldap-2_4-2 liblua5_1 liblzma5 libmagic-data libmagic1 libmicrohttpd10 libmodman1 libmount1 libncurses5 libncurses6 libnettle4 libnl-1_1 libopenssl1_0_0 libp11-kit0 libpango-1_0-0 libparted0 libpci3 libpcre1 libpixman-1-0 libply-boot-client2 libply-splash-core2 libply-splash-graphics2 libply2 libpng15-15 libpolkit0 libpopt0 libprocps1 libproxy1 libpth20 libpython2_7-1_0 libqrencode3 libreadline6 libreiserfs-0_3-0 libselinux1 libsemanage1 libsepol1 libsolv-tools libssh2-1 libstdc++6 libstorage4 libtasn1 libtasn1-6 libtirpc1 libudev1 libusb-0_1-4 libusb-1_0-0 libustr-1_0-1 libuuid1 libxcb-render0 libxcb-shm0 libxcb1 libxml2-2 libxtables9 libyui-ncurses-pkg4 libyui-ncurses4 libyui4 libz1 libzio1 libzypp limal limal-perl logrotate lsscsi lvm2 mdadm mkinitrd module-init-tools multipath-tools ncurses-utils net-tools netcfg openSUSE openSUSE-build-key openSUSE-release openSUSE-release-ftp openslp openssh openssl pam pam-config pango-tools parted pciutils pciutils-ids perl perl-Bootloader perl-Config-Crontab perl-XML-Parser perl-XML-Simple perl-base perl-gettext permissions pinentry pkg-config plymouth plymouth-branding-openSUSE plymouth-plugin-label plymouth-plugin-script plymouth-scripts polkit procps python-base rpcbind rpm rsyslog sed shadow shared-mime-info sudo suse-module-tools sysconfig sysfsutils syslog-service systemd systemd-presets-branding-openSUSE systemd-sysvinit sysvinit-tools tar tcpd terminfo-base timezone tunctl u-boot-tools udev unzip update-alternatives util-linux vim vim-base vlan wallpaper-branding-openSUSE wireless-tools wpa_supplicant xz yast2 yast2-bootloader yast2-core yast2-country yast2-country-data yast2-dbus-client yast2-firstboot yast2-hardware-detection yast2-installation yast2-mouse yast2-packager yast2-perl-bindings yast2-pkg-bindings yast2-proxy yast2-slp yast2-storage yast2-trans-stats yast2-transfer yast2-update yast2-xml yast2-ycp-ui-bindings zypper"
+		REPO="${MIRROR%/}/${SUITE%:}:/ARM/${ARCH}"
+		PKG_LIST="$MNT_TARGET/tmp/packages.list"
+
+		echo "[PRINT] Preparing for deployment ... "
+		(set -e
+			cd $MNT_TARGET
+			mkdir etc
+			echo "root:x:0:0:root:/root:/bin/bash" > etc/passwd
+			echo "root:x:0:" > etc/group
+			touch etc/fstab
+			mkdir tmp; chmod 01777 tmp
+		exit 0)
+		[ $? -eq 0 ] && echo "[RESULT_LN] done" || { echo "[RESULT_LN] fail"; return 1; }
+		
+		echo "[PRINT] Retrieving packages list ... "
+		(set -e
+			REPODATA_FILE=`wget -q -O - $REPO/repodata | sed -n '/<a / s/^.*<a [^>]*href="\([^\"]*\-primary\.xml\.gz\)".*$/\1/p'`
+			wget -q -O - $REPO/repodata/$REPODATA_FILE | gzip -dc | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\)".*$/\1/p' > $PKG_LIST
+		exit 0)
+		[ $? -eq 0 ] && echo "[RESULT_LN] done" || { echo "[RESULT_LN] fail"; return 1; }
+		
+		echo "[PRINT_LN] Retrieving base packages: "
+		for PACKAGE in $BASIC_PACKAGES; do
+			echo "[PRINT] $PACKAGE ... "
+    		PKG_URL=`cat $PKG_LIST | grep -m1 -e "^.*/$PACKAGE-[0-9][0-9\.\-].*\.rpm$"`
+    		test "$PKG_URL" || { echo "[RESULT_LN] fail"; continue; }
+    		FILE=`basename $PKG_URL`
+    		echo "downloading ${FILE}... "
+    		for i in 1 2 3
+    		do
+    			wget -q -c -O $MNT_TARGET/tmp/$FILE $REPO/$PKG_URL
+    			[ $? -eq 0 ] && break
+    			sleep 30s
+    		done
+    		#echo "unpacking ${FILE}... "
+    		(cd $MNT_TARGET; rpm2cpio $MNT_TARGET/tmp/$FILE | cpio -idmu)
+    		[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
+		done
+
+		echo "[PRINT_ALL] Installing base packages: "
+		chroot $MNT_TARGET /bin/rpm -iv --force --nosignature --nodeps /tmp/*.rpm
+		# clean cache
+		rm -rf $MNT_TARGET/tmp/*
 	;;
 	esac
 

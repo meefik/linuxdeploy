@@ -166,8 +166,8 @@ public class ShellEnv {
 		params.add("echo '[PRINT] Supported file systems: '");
 		params.add("echo '[RESULT] '$(cat /proc/filesystems | grep -v nodev | sort | xargs)");
 		params.add("echo '[RESULT_LN] '");
-		params.add("active_sys=`cat $MNT_TARGET/etc/issue.net || echo none`");
-		params.add("echo '[PRINT_LN] Active Linux system: '$active_sys");
+		params.add("LINUX_VERSION=`(. $MNT_TARGET/etc/os-release && echo $NAME) || echo unknown`");
+		params.add("echo '[PRINT_LN] Active Linux system: '$LINUX_VERSION");
 		params.add("echo '[PRINT_LN] Running services: '");
 		params.add("echo '[PRINT] SSH server: '");
 		params.add("is_ssh=`ps | grep '/usr/sbin/sshd' | grep -v grep`");
@@ -239,9 +239,6 @@ public class ShellEnv {
 		params.add("cd " + PrefStore.HOME_DIR);
 		params.add("sed -i 's|^HOME_DIR=.*|HOME_DIR=\"" + PrefStore.HOME_DIR
 				+ "\"|g' " + PrefStore.HOME_DIR + "/etc/deploy.conf");
-		params.add("sed -i 's|^MNT_TARGET=.*|MNT_TARGET=\""
-				+ PrefStore.MNT_TARGET + "\"|g' " + PrefStore.HOME_DIR
-				+ "/etc/deploy.conf");
 		params.add("sed -i 's|^IMG_TARGET=.*|IMG_TARGET=\""
 				+ PrefStore.IMG_TARGET + "\"|g' " + PrefStore.HOME_DIR
 				+ "/etc/deploy.conf");

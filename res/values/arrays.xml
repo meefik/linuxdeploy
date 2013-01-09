@@ -83,6 +83,7 @@
         <item>ubuntu</item>
         <item>archlinux</item>
         <item>fedora</item>
+        <item>opensuse</item>
     </string-array>
     
     <string-array name="distribution_entries" translatable="false">
@@ -90,6 +91,7 @@
         <item>Ubuntu</item>
         <item>Arch Linux</item>
         <item>Fedora</item>
+        <item>openSUSE</item>
     </string-array>
     
     <!-- Debian -->
@@ -143,6 +145,17 @@
     <string-array name="fedora_architecture_values" translatable="false">
         <item>arm</item>
         <item>armhfp</item>
+    </string-array>
+    
+    <!-- openSUSE -->
+
+    <string-array name="opensuse_suite_values" translatable="false">
+        <item>Factory</item>
+    </string-array>
+
+    <string-array name="opensuse_architecture_values" translatable="false">
+        <item>armv5el</item>
+        <item>standard</item>
     </string-array>
     
 </resources>

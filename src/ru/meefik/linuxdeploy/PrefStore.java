@@ -25,7 +25,6 @@ public class PrefStore {
 	public static String LOG_FILE;
 
 	// to deploy
-	public static String MNT_TARGET;
 	public static String IMG_TARGET;
 	public static String DEPLOY_TYPE;
 	public static String IMG_SIZE;
@@ -87,7 +86,6 @@ public class PrefStore {
 
 		sp = c.getSharedPreferences(CURRENT_PROFILE, Context.MODE_PRIVATE);
 
-		MNT_TARGET = PrefStore.HOME_DIR + "/mnt";
 		IMG_TARGET = sp.getString("diskimage", c.getString(R.string.diskimage));
 		DEPLOY_TYPE = sp.getString("deploytype",
 				c.getString(R.string.deploytype));
