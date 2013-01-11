@@ -360,7 +360,6 @@ public class ShellEnv {
 				+ PrefStore.HOME_DIR + "/deploy");
 		params.add("chmod 755 " + PrefStore.HOME_DIR
 				+ "/deploy/debootstrap/pkgdetails");
-		params.add("chmod -R 755 " + PrefStore.HOME_DIR + "/deploy/openssh");
 		params.add("chown -R root:root " + PrefStore.HOME_DIR + "/bin "
 				+ PrefStore.HOME_DIR + "/etc " + PrefStore.HOME_DIR + "/deploy");
 		params.add("exit");

@@ -72,17 +72,11 @@ prepare_system()
 			fi
 			dd if=/dev/zero of=$IMG_TARGET bs=1048576 seek=$DD_SEEK count=$DD_COUNT
 		exit 0)
-		if [ $? -eq 0 ]; then
-			echo "[RESULT_LN] done"
-		else
-			echo "[RESULT_LN] fail"; return 1
-		fi
+		[ $? -eq 0 ] && echo "[RESULT_LN] done" || { echo "[RESULT_LN] fail"; return 1; }
 	fi
 
 	if [ "$DEPLOY_TYPE" == "image" -o "$DEPLOY_TYPE" == "partition" ]; then
 		if [ "$FS_TYPE" == "auto" ]; then
-			FS_TYPE="none"
-			echo "[PRINT] Detecting file system ... "
 			for fs in ext4 ext3 ext2
 			do
 				fs_support=`cat /proc/filesystems | grep $fs`
@@ -91,20 +85,15 @@ prepare_system()
 					break
 				fi
 			done
-			echo "[RESULT_LN] $FS_TYPE"
-			[ "$FS_TYPE" == "none" ] && return 1
 		fi
-		echo "[PRINT] Making $FS_TYPE file system ... "
+		echo "[PRINT] Making file system ($FS_TYPE) ... "
 		(set -e
+			[ "$FS_TYPE" == "auto" ] && exit 1
 			is_loop=`losetup | grep $IMG_TARGET || true`
 			is_raw=`cat /proc/mounts | grep $IMG_TARGET || true`
 			[ -z "$is_loop" -a -z "$is_raw" ] && mke2fs -qF -t $FS_TYPE -O ^has_journal $IMG_TARGET
 		exit 0)
-		if [ $? -eq 0 ]; then
-			echo "[RESULT_LN] done"
-		else
-			echo "[RESULT_LN] fail"; return 1
-		fi
+		[ $? -eq 0 ] && echo "[RESULT_LN] done" || { echo "[RESULT_LN] fail"; return 1; }
 	fi
 	
 	return 0
@@ -157,7 +146,7 @@ configure_system()
 		;;
 		motd)
 			#LINUX_VERSION=`chroot $MNT_TARGET lsb_release -d | sed 's|Description:[[:space:]]*||' || true`
-			LINUX_VERSION=`. $MNT_TARGET/etc/os-release && echo $PRETTY_NAME || true`
+			LINUX_VERSION=`(. $MNT_TARGET/etc/os-release && echo $PRETTY_NAME) || true`
 			[ -z "$LINUX_VERSION" ] && LINUX_VERSION="GNU/Linux"
 			MOTD="$LINUX_VERSION [running on Android via Linux Deploy]"
 			rm -f $MNT_TARGET/etc/motd || true
@@ -270,7 +259,7 @@ configure_system()
 			USER_ID=`cat $MNT_TARGET/etc/passwd | grep -m1 "^$USER_NAME:" | awk -F: '{print $3}'`
 			GROUP_ID=`cat $MNT_TARGET/etc/passwd | grep -m1 "^$USER_NAME:" | awk -F: '{print $4}'`
 			PROFILE_STR='PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
-			is_str=`cat $MNT_TARGET$USER_HOME/.profile | grep "$PROFILE_STR" || true`
+			 is_str=`cat $MNT_TARGET$USER_HOME/.profile | grep "$PROFILE_STR" || true`
 			[ -z "$is_str" ] && echo $PROFILE_STR >> $MNT_TARGET$USER_HOME/.profile
 			chown -R $USER_ID:$GROUP_ID $MNT_TARGET$USER_HOME
 		;;
@@ -319,8 +308,9 @@ configure_system()
 				echo "#!/bin/sh" > $MNT_TARGET$USER_HOME/.xsession
 				cat $MNT_TARGET$USER_HOME/.vnc/xstartup >> $MNT_TARGET$USER_HOME/.xsession
 				chmod 755 $MNT_TARGET$USER_HOME/.xsession
+				chown $USER_ID:$GROUP_ID $MNT_TARGET$USER_HOME/.xsession
 			fi
-			chown -R $USER_ID:$GROUP_ID $MNT_TARGET$USER_HOME
+			chown -R $USER_ID:$GROUP_ID $MNT_TARGET$USER_HOME/.vnc
 		;;
 		esac
 	exit 0)
