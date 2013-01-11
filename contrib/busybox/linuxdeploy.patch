@@ -1,6 +1,6 @@
-diff -urN ../busybox.orig/archival/libarchive/open_transformer.c ./archival/libarchive/open_transformer.c
---- ../busybox.orig/archival/libarchive/open_transformer.c	2013-01-09 01:19:11.000000000 +0400
-+++ ./archival/libarchive/open_transformer.c	2013-01-09 03:02:17.212558013 +0400
+diff -urN ../busybox-1.20.2.orig/archival/libarchive/open_transformer.c ./archival/libarchive/open_transformer.c
+--- ../busybox-1.20.2.orig/archival/libarchive/open_transformer.c	2012-06-26 17:35:45.000000000 +0400
++++ ./archival/libarchive/open_transformer.c	2013-01-11 03:49:07.000000000 +0400
 @@ -151,12 +151,21 @@
  			goto found_magic;
  		}
@@ -23,14 +23,14 @@ diff -urN ../busybox.orig/archival/libarchive/open_transformer.c ./archival/liba
  			" magic");
  	xlseek(fd, offset, SEEK_CUR);
  	return 1;
-diff -urN ../busybox.orig/configs/linuxdeploy_defconfig ./configs/linuxdeploy_defconfig
---- ../busybox.orig/configs/linuxdeploy_defconfig	1970-01-01 03:00:00.000000000 +0300
-+++ ./configs/linuxdeploy_defconfig	2013-01-09 04:27:58.000000000 +0400
-@@ -0,0 +1,1019 @@
+diff -urN ../busybox-1.20.2.orig/configs/linuxdeploy_defconfig ./configs/linuxdeploy_defconfig
+--- ../busybox-1.20.2.orig/configs/linuxdeploy_defconfig	1970-01-01 03:00:00.000000000 +0300
++++ ./configs/linuxdeploy_defconfig	2013-01-11 05:02:59.700024979 +0400
+@@ -0,0 +1,1016 @@
 +#
 +# Automatically generated make config: don't edit
-+# Busybox version: 1.21.0.git
-+# Wed Jan  9 04:25:16 2013
++# Busybox version: 1.20.2
++# Fri Jan 11 04:41:04 2013
 +#
 +CONFIG_HAVE_DOT_CONFIG=y
 +
@@ -41,7 +41,7 @@ diff -urN ../busybox.orig/configs/linuxdeploy_defconfig ./configs/linuxdeploy_de
 +#
 +# General Configuration
 +#
-+CONFIG_DESKTOP=y
++# CONFIG_DESKTOP is not set
 +# CONFIG_EXTRA_COMPAT is not set
 +# CONFIG_INCLUDE_SUSv2 is not set
 +# CONFIG_USE_PORTABLE_CODE is not set
@@ -49,11 +49,11 @@ diff -urN ../busybox.orig/configs/linuxdeploy_defconfig ./configs/linuxdeploy_de
 +CONFIG_FEATURE_BUFFERS_USE_MALLOC=y
 +# CONFIG_FEATURE_BUFFERS_GO_ON_STACK is not set
 +# CONFIG_FEATURE_BUFFERS_GO_IN_BSS is not set
-+CONFIG_SHOW_USAGE=y
-+CONFIG_FEATURE_VERBOSE_USAGE=y
-+CONFIG_FEATURE_COMPRESS_USAGE=y
++# CONFIG_SHOW_USAGE is not set
++# CONFIG_FEATURE_VERBOSE_USAGE is not set
++# CONFIG_FEATURE_COMPRESS_USAGE is not set
 +CONFIG_FEATURE_INSTALLER=y
-+CONFIG_INSTALL_NO_USR=y
++# CONFIG_INSTALL_NO_USR is not set
 +# CONFIG_LOCALE_SUPPORT is not set
 +# CONFIG_UNICODE_SUPPORT is not set
 +# CONFIG_UNICODE_USING_LOCALE is not set
@@ -71,7 +71,6 @@ diff -urN ../busybox.orig/configs/linuxdeploy_defconfig ./configs/linuxdeploy_de
 +# CONFIG_FEATURE_UTMP is not set
 +# CONFIG_FEATURE_WTMP is not set
 +# CONFIG_FEATURE_PIDFILE is not set
-+CONFIG_PID_FILE_PATH=""
 +# CONFIG_FEATURE_SUID is not set
 +# CONFIG_FEATURE_SUID_CONFIG is not set
 +# CONFIG_FEATURE_SUID_CONFIG_QUIET is not set
@@ -93,7 +92,7 @@ diff -urN ../busybox.orig/configs/linuxdeploy_defconfig ./configs/linuxdeploy_de
 +# CONFIG_LFS is not set
 +CONFIG_CROSS_COMPILER_PREFIX="${ANDROID_NDK_ROOT}/toolchains/arm-linux-androideabi-4.4.3/prebuilt/linux-x86/bin/arm-linux-androideabi-"
 +CONFIG_SYSROOT="${ANDROID_NDK_ROOT}/platforms/android-9/arch-arm"
-+CONFIG_EXTRA_CFLAGS="-DANDROID -D__ANDROID__ -DSK_RELEASE -nostdlib -march=armv5te -msoft-float -mfloat-abi=softfp -mfpu=neon -mthumb -mthumb-interwork -fpic -fno-short-enums -fgcse-after-reload -frename-registers"
++CONFIG_EXTRA_CFLAGS="-DANDROID -D__ANDROID__ -DSK_RELEASE -nostdlib -march=armv5te -msoft-float -mfloat-abi=soft -mthumb -mthumb-interwork -fpic -fno-short-enums -fgcse-after-reload -frename-registers"
 +CONFIG_EXTRA_LDFLAGS="-Xlinker -z -Xlinker muldefs -nostdlib -Bdynamic -Xlinker -dynamic-linker -Xlinker /system/bin/linker -Xlinker -z -Xlinker nocopyreloc -Xlinker --no-undefined ${SYSROOT}/usr/lib/crtbegin_dynamic.o ${SYSROOT}/usr/lib/crtend_android.o"
 +CONFIG_EXTRA_LDLIBS="m c gcc"
 +
@@ -170,7 +169,7 @@ diff -urN ../busybox.orig/configs/linuxdeploy_defconfig ./configs/linuxdeploy_de
 +CONFIG_FEATURE_CPIO_P=y
 +CONFIG_DPKG=y
 +CONFIG_DPKG_DEB=y
-+# CONFIG_FEATURE_DPKG_DEB_EXTRACT_ONLY is not set
++CONFIG_FEATURE_DPKG_DEB_EXTRACT_ONLY=y
 +CONFIG_GUNZIP=y
 +CONFIG_GZIP=y
 +# CONFIG_FEATURE_GZIP_LONG_OPTIONS is not set
@@ -347,26 +346,26 @@ diff -urN ../busybox.orig/configs/linuxdeploy_defconfig ./configs/linuxdeploy_de
 +#
 +# Console Utilities
 +#
-+CONFIG_CHVT=y
-+CONFIG_FGCONSOLE=y
-+CONFIG_CLEAR=y
-+CONFIG_DEALLOCVT=y
-+CONFIG_DUMPKMAP=y
++# CONFIG_CHVT is not set
++# CONFIG_FGCONSOLE is not set
++# CONFIG_CLEAR is not set
++# CONFIG_DEALLOCVT is not set
++# CONFIG_DUMPKMAP is not set
 +# CONFIG_KBD_MODE is not set
 +# CONFIG_LOADFONT is not set
-+CONFIG_LOADKMAP=y
-+CONFIG_OPENVT=y
-+CONFIG_RESET=y
-+CONFIG_RESIZE=y
-+CONFIG_FEATURE_RESIZE_PRINT=y
-+CONFIG_SETCONSOLE=y
++# CONFIG_LOADKMAP is not set
++# CONFIG_OPENVT is not set
++# CONFIG_RESET is not set
++# CONFIG_RESIZE is not set
++# CONFIG_FEATURE_RESIZE_PRINT is not set
++# CONFIG_SETCONSOLE is not set
 +# CONFIG_FEATURE_SETCONSOLE_LONG_OPTIONS is not set
 +# CONFIG_SETFONT is not set
 +# CONFIG_FEATURE_SETFONT_TEXTUAL_MAP is not set
 +CONFIG_DEFAULT_SETFONT_DIR=""
-+CONFIG_SETKEYCODES=y
-+CONFIG_SETLOGCONS=y
-+CONFIG_SHOWKEY=y
++# CONFIG_SETKEYCODES is not set
++# CONFIG_SETLOGCONS is not set
++# CONFIG_SHOWKEY is not set
 +# CONFIG_FEATURE_LOADFONT_PSF2 is not set
 +# CONFIG_FEATURE_LOADFONT_RAW is not set
 +
@@ -401,6 +400,7 @@ diff -urN ../busybox.orig/configs/linuxdeploy_defconfig ./configs/linuxdeploy_de
 +# CONFIG_FEATURE_VI_SET is not set
 +# CONFIG_FEATURE_VI_WIN_RESIZE is not set
 +# CONFIG_FEATURE_VI_ASK_TERMINAL is not set
++# CONFIG_FEATURE_VI_OPTIMIZE_CURSOR is not set
 +CONFIG_AWK=y
 +CONFIG_FEATURE_AWK_LIBM=y
 +CONFIG_CMP=y
@@ -511,18 +511,18 @@ diff -urN ../busybox.orig/configs/linuxdeploy_defconfig ./configs/linuxdeploy_de
 +#
 +# Linux Ext2 FS Progs
 +#
-+CONFIG_CHATTR=y
-+CONFIG_FSCK=y
-+CONFIG_LSATTR=y
-+CONFIG_TUNE2FS=y
++# CONFIG_CHATTR is not set
++# CONFIG_FSCK is not set
++# CONFIG_LSATTR is not set
++# CONFIG_TUNE2FS is not set
 +
 +#
 +# Linux Module Utilities
 +#
-+CONFIG_MODINFO=y
-+CONFIG_MODPROBE_SMALL=y
-+CONFIG_FEATURE_MODPROBE_SMALL_OPTIONS_ON_CMDLINE=y
-+CONFIG_FEATURE_MODPROBE_SMALL_CHECK_ALREADY_LOADED=y
++# CONFIG_MODINFO is not set
++# CONFIG_MODPROBE_SMALL is not set
++# CONFIG_FEATURE_MODPROBE_SMALL_OPTIONS_ON_CMDLINE is not set
++# CONFIG_FEATURE_MODPROBE_SMALL_CHECK_ALREADY_LOADED is not set
 +# CONFIG_INSMOD is not set
 +# CONFIG_RMMOD is not set
 +# CONFIG_LSMOD is not set
@@ -544,29 +544,29 @@ diff -urN ../busybox.orig/configs/linuxdeploy_defconfig ./configs/linuxdeploy_de
 +# CONFIG_FEATURE_CHECK_TAINTED_MODULE is not set
 +# CONFIG_FEATURE_MODUTILS_ALIAS is not set
 +# CONFIG_FEATURE_MODUTILS_SYMBOLS is not set
-+CONFIG_DEFAULT_MODULES_DIR="/system/lib/modules"
-+CONFIG_DEFAULT_DEPMOD_FILE="modules.dep"
++CONFIG_DEFAULT_MODULES_DIR=""
++CONFIG_DEFAULT_DEPMOD_FILE=""
 +
 +#
 +# Linux System Utilities
 +#
-+CONFIG_BLOCKDEV=y
-+CONFIG_MDEV=y
-+CONFIG_FEATURE_MDEV_CONF=y
-+CONFIG_FEATURE_MDEV_RENAME=y
-+CONFIG_FEATURE_MDEV_RENAME_REGEXP=y
-+CONFIG_FEATURE_MDEV_EXEC=y
-+CONFIG_FEATURE_MDEV_LOAD_FIRMWARE=y
-+CONFIG_REV=y
++# CONFIG_BLOCKDEV is not set
++# CONFIG_MDEV is not set
++# CONFIG_FEATURE_MDEV_CONF is not set
++# CONFIG_FEATURE_MDEV_RENAME is not set
++# CONFIG_FEATURE_MDEV_RENAME_REGEXP is not set
++# CONFIG_FEATURE_MDEV_EXEC is not set
++# CONFIG_FEATURE_MDEV_LOAD_FIRMWARE is not set
++# CONFIG_REV is not set
 +# CONFIG_ACPID is not set
 +# CONFIG_FEATURE_ACPID_COMPAT is not set
-+CONFIG_BLKID=y
-+CONFIG_FEATURE_BLKID_TYPE=y
-+CONFIG_DMESG=y
-+CONFIG_FEATURE_DMESG_PRETTY=y
-+CONFIG_FBSET=y
-+CONFIG_FEATURE_FBSET_FANCY=y
-+CONFIG_FEATURE_FBSET_READMODE=y
++# CONFIG_BLKID is not set
++# CONFIG_FEATURE_BLKID_TYPE is not set
++# CONFIG_DMESG is not set
++# CONFIG_FEATURE_DMESG_PRETTY is not set
++# CONFIG_FBSET is not set
++# CONFIG_FEATURE_FBSET_FANCY is not set
++# CONFIG_FEATURE_FBSET_READMODE is not set
 +# CONFIG_FDFLUSH is not set
 +# CONFIG_FDFORMAT is not set
 +CONFIG_FDISK=y
@@ -578,28 +578,28 @@ diff -urN ../busybox.orig/configs/linuxdeploy_defconfig ./configs/linuxdeploy_de
 +# CONFIG_FEATURE_OSF_LABEL is not set
 +CONFIG_FEATURE_GPT_LABEL=y
 +CONFIG_FEATURE_FDISK_ADVANCED=y
-+CONFIG_FINDFS=y
-+CONFIG_FLOCK=y
-+CONFIG_FREERAMDISK=y
++# CONFIG_FINDFS is not set
++# CONFIG_FLOCK is not set
++# CONFIG_FREERAMDISK is not set
 +# CONFIG_FSCK_MINIX is not set
 +# CONFIG_MKFS_EXT2 is not set
 +# CONFIG_MKFS_MINIX is not set
 +# CONFIG_FEATURE_MINIX2 is not set
 +# CONFIG_MKFS_REISER is not set
 +# CONFIG_MKFS_VFAT is not set
-+CONFIG_GETOPT=y
-+CONFIG_FEATURE_GETOPT_LONG=y
-+CONFIG_HEXDUMP=y
-+CONFIG_FEATURE_HEXDUMP_REVERSE=y
-+CONFIG_HD=y
++# CONFIG_GETOPT is not set
++# CONFIG_FEATURE_GETOPT_LONG is not set
++# CONFIG_HEXDUMP is not set
++# CONFIG_FEATURE_HEXDUMP_REVERSE is not set
++# CONFIG_HD is not set
 +# CONFIG_HWCLOCK is not set
 +# CONFIG_FEATURE_HWCLOCK_LONG_OPTIONS is not set
 +# CONFIG_FEATURE_HWCLOCK_ADJTIME_FHS is not set
 +# CONFIG_IPCRM is not set
 +# CONFIG_IPCS is not set
 +CONFIG_LOSETUP=y
-+CONFIG_LSPCI=y
-+CONFIG_LSUSB=y
++# CONFIG_LSPCI is not set
++# CONFIG_LSUSB is not set
 +CONFIG_MKSWAP=y
 +CONFIG_FEATURE_MKSWAP_UUID=y
 +CONFIG_MORE=y
@@ -611,14 +611,14 @@ diff -urN ../busybox.orig/configs/linuxdeploy_defconfig ./configs/linuxdeploy_de
 +# CONFIG_FEATURE_MOUNT_NFS is not set
 +CONFIG_FEATURE_MOUNT_CIFS=y
 +CONFIG_FEATURE_MOUNT_FLAGS=y
-+# CONFIG_FEATURE_MOUNT_FSTAB is not set
++CONFIG_FEATURE_MOUNT_FSTAB=y
 +# CONFIG_PIVOT_ROOT is not set
-+CONFIG_RDATE=y
-+CONFIG_RDEV=y
-+CONFIG_READPROFILE=y
-+CONFIG_RTCWAKE=y
-+CONFIG_SCRIPT=y
-+CONFIG_SCRIPTREPLAY=y
++# CONFIG_RDATE is not set
++# CONFIG_RDEV is not set
++# CONFIG_READPROFILE is not set
++# CONFIG_RTCWAKE is not set
++# CONFIG_SCRIPT is not set
++# CONFIG_SCRIPTREPLAY is not set
 +# CONFIG_SETARCH is not set
 +# CONFIG_SWAPONOFF is not set
 +# CONFIG_FEATURE_SWAPON_PRI is not set
@@ -641,11 +641,9 @@ diff -urN ../busybox.orig/configs/linuxdeploy_defconfig ./configs/linuxdeploy_de
 +CONFIG_FEATURE_VOLUMEID_BTRFS=y
 +CONFIG_FEATURE_VOLUMEID_REISERFS=y
 +CONFIG_FEATURE_VOLUMEID_FAT=y
-+CONFIG_FEATURE_VOLUMEID_EXFAT=y
 +CONFIG_FEATURE_VOLUMEID_HFS=y
 +CONFIG_FEATURE_VOLUMEID_JFS=y
 +CONFIG_FEATURE_VOLUMEID_XFS=y
-+CONFIG_FEATURE_VOLUMEID_NILFS=y
 +CONFIG_FEATURE_VOLUMEID_NTFS=y
 +CONFIG_FEATURE_VOLUMEID_ISO9660=y
 +CONFIG_FEATURE_VOLUMEID_UDF=y
@@ -756,19 +754,19 @@ diff -urN ../busybox.orig/configs/linuxdeploy_defconfig ./configs/linuxdeploy_de
 +# CONFIG_NAMEIF is not set
 +# CONFIG_FEATURE_NAMEIF_EXTENDED is not set
 +# CONFIG_NBDCLIENT is not set
-+CONFIG_NC=y
-+CONFIG_NC_SERVER=y
-+CONFIG_NC_EXTRA=y
++# CONFIG_NC is not set
++# CONFIG_NC_SERVER is not set
++# CONFIG_NC_EXTRA is not set
 +# CONFIG_NC_110_COMPAT is not set
-+CONFIG_PING=y
++# CONFIG_PING is not set
 +# CONFIG_PING6 is not set
-+CONFIG_FEATURE_FANCY_PING=y
-+CONFIG_WHOIS=y
++# CONFIG_FEATURE_FANCY_PING is not set
++# CONFIG_WHOIS is not set
 +# CONFIG_FEATURE_IPV6 is not set
 +# CONFIG_FEATURE_UNIX_LOCAL is not set
 +# CONFIG_FEATURE_PREFER_IPV4_ADDRESS is not set
 +# CONFIG_VERBOSE_RESOLUTION_ERRORS is not set
-+CONFIG_ARP=y
++# CONFIG_ARP is not set
 +# CONFIG_ARPING is not set
 +# CONFIG_BRCTL is not set
 +# CONFIG_FEATURE_BRCTL_FANCY is not set
@@ -779,8 +777,8 @@ diff -urN ../busybox.orig/configs/linuxdeploy_defconfig ./configs/linuxdeploy_de
 +# CONFIG_FTPD is not set
 +# CONFIG_FEATURE_FTP_WRITE is not set
 +# CONFIG_FEATURE_FTPD_ACCEPT_BROKEN_LIST is not set
-+CONFIG_FTPGET=y
-+CONFIG_FTPPUT=y
++# CONFIG_FTPGET is not set
++# CONFIG_FTPPUT is not set
 +# CONFIG_FEATURE_FTPGETPUT_LONG_OPTIONS is not set
 +# CONFIG_HOSTNAME is not set
 +# CONFIG_HTTPD is not set
@@ -796,12 +794,12 @@ diff -urN ../busybox.orig/configs/linuxdeploy_defconfig ./configs/linuxdeploy_de
 +# CONFIG_FEATURE_HTTPD_ERROR_PAGES is not set
 +# CONFIG_FEATURE_HTTPD_PROXY is not set
 +# CONFIG_FEATURE_HTTPD_GZIP is not set
-+CONFIG_IFCONFIG=y
-+CONFIG_FEATURE_IFCONFIG_STATUS=y
++# CONFIG_IFCONFIG is not set
++# CONFIG_FEATURE_IFCONFIG_STATUS is not set
 +# CONFIG_FEATURE_IFCONFIG_SLIP is not set
-+CONFIG_FEATURE_IFCONFIG_MEMSTART_IOADDR_IRQ=y
-+CONFIG_FEATURE_IFCONFIG_HW=y
-+CONFIG_FEATURE_IFCONFIG_BROADCAST_PLUS=y
++# CONFIG_FEATURE_IFCONFIG_MEMSTART_IOADDR_IRQ is not set
++# CONFIG_FEATURE_IFCONFIG_HW is not set
++# CONFIG_FEATURE_IFCONFIG_BROADCAST_PLUS is not set
 +# CONFIG_IFENSLAVE is not set
 +# CONFIG_IFPLUGD is not set
 +# CONFIG_IFUPDOWN is not set
@@ -836,19 +834,19 @@ diff -urN ../busybox.orig/configs/linuxdeploy_defconfig ./configs/linuxdeploy_de
 +# CONFIG_IPCALC is not set
 +# CONFIG_FEATURE_IPCALC_FANCY is not set
 +# CONFIG_FEATURE_IPCALC_LONG_OPTIONS is not set
-+CONFIG_NETSTAT=y
-+CONFIG_FEATURE_NETSTAT_WIDE=y
-+CONFIG_FEATURE_NETSTAT_PRG=y
++# CONFIG_NETSTAT is not set
++# CONFIG_FEATURE_NETSTAT_WIDE is not set
++# CONFIG_FEATURE_NETSTAT_PRG is not set
 +# CONFIG_NSLOOKUP is not set
 +# CONFIG_NTPD is not set
 +# CONFIG_FEATURE_NTPD_SERVER is not set
-+CONFIG_PSCAN=y
-+CONFIG_ROUTE=y
++# CONFIG_PSCAN is not set
++# CONFIG_ROUTE is not set
 +# CONFIG_SLATTACH is not set
 +# CONFIG_TCPSVD is not set
-+CONFIG_TELNET=y
-+CONFIG_FEATURE_TELNET_TTYPE=y
-+CONFIG_FEATURE_TELNET_AUTOLOGIN=y
++# CONFIG_TELNET is not set
++# CONFIG_FEATURE_TELNET_TTYPE is not set
++# CONFIG_FEATURE_TELNET_AUTOLOGIN is not set
 +# CONFIG_TELNETD is not set
 +# CONFIG_FEATURE_TELNETD_STANDALONE is not set
 +# CONFIG_FEATURE_TELNETD_INETD_WAIT is not set
@@ -859,9 +857,9 @@ diff -urN ../busybox.orig/configs/linuxdeploy_defconfig ./configs/linuxdeploy_de
 +# CONFIG_FEATURE_TFTP_BLOCKSIZE is not set
 +# CONFIG_FEATURE_TFTP_PROGRESS_BAR is not set
 +# CONFIG_TFTP_DEBUG is not set
-+CONFIG_TRACEROUTE=y
++# CONFIG_TRACEROUTE is not set
 +# CONFIG_TRACEROUTE6 is not set
-+CONFIG_FEATURE_TRACEROUTE_VERBOSE=y
++# CONFIG_FEATURE_TRACEROUTE_VERBOSE is not set
 +# CONFIG_FEATURE_TRACEROUTE_SOURCE_ROUTE is not set
 +# CONFIG_FEATURE_TRACEROUTE_USE_ICMP is not set
 +# CONFIG_TUNCTL is not set
@@ -921,13 +919,6 @@ diff -urN ../busybox.orig/configs/linuxdeploy_defconfig ./configs/linuxdeploy_de
 +CONFIG_PSTREE=y
 +CONFIG_PWDX=y
 +CONFIG_SMEMCAP=y
-+CONFIG_TOP=y
-+CONFIG_FEATURE_TOP_CPU_USAGE_PERCENTAGE=y
-+CONFIG_FEATURE_TOP_CPU_GLOBAL_PERCENTS=y
-+CONFIG_FEATURE_TOP_SMP_CPU=y
-+CONFIG_FEATURE_TOP_DECIMALS=y
-+CONFIG_FEATURE_TOP_SMP_PROCESS=y
-+CONFIG_FEATURE_TOPMEM=y
 +CONFIG_UPTIME=y
 +# CONFIG_FEATURE_UPTIME_UTMP_SUPPORT is not set
 +CONFIG_FREE=y
@@ -941,13 +932,20 @@ diff -urN ../busybox.orig/configs/linuxdeploy_defconfig ./configs/linuxdeploy_de
 +CONFIG_FEATURE_PIDOF_OMIT=y
 +CONFIG_PKILL=y
 +CONFIG_PS=y
-+# CONFIG_FEATURE_PS_WIDE is not set
-+# CONFIG_FEATURE_PS_LONG is not set
-+CONFIG_FEATURE_PS_TIME=y
-+CONFIG_FEATURE_PS_ADDITIONAL_COLUMNS=y
++CONFIG_FEATURE_PS_WIDE=y
++CONFIG_FEATURE_PS_LONG=y
++# CONFIG_FEATURE_PS_TIME is not set
++# CONFIG_FEATURE_PS_ADDITIONAL_COLUMNS is not set
 +# CONFIG_FEATURE_PS_UNUSUAL_SYSTEMS is not set
 +CONFIG_RENICE=y
 +CONFIG_BB_SYSCTL=y
++# CONFIG_TOP is not set
++# CONFIG_FEATURE_TOP_CPU_USAGE_PERCENTAGE is not set
++# CONFIG_FEATURE_TOP_CPU_GLOBAL_PERCENTS is not set
++# CONFIG_FEATURE_TOP_SMP_CPU is not set
++# CONFIG_FEATURE_TOP_DECIMALS is not set
++# CONFIG_FEATURE_TOP_SMP_PROCESS is not set
++# CONFIG_FEATURE_TOPMEM is not set
 +CONFIG_FEATURE_SHOW_THREADS=y
 +CONFIG_WATCH=y
 +
@@ -1019,9 +1017,9 @@ diff -urN ../busybox.orig/configs/linuxdeploy_defconfig ./configs/linuxdeploy_de
 +CONFIG_FEATURE_SH_IS_ASH=y
 +# CONFIG_FEATURE_SH_IS_HUSH is not set
 +# CONFIG_FEATURE_SH_IS_NONE is not set
-+CONFIG_FEATURE_BASH_IS_ASH=y
++# CONFIG_FEATURE_BASH_IS_ASH is not set
 +# CONFIG_FEATURE_BASH_IS_HUSH is not set
-+# CONFIG_FEATURE_BASH_IS_NONE is not set
++CONFIG_FEATURE_BASH_IS_NONE=y
 +CONFIG_SH_MATH_SUPPORT=y
 +CONFIG_SH_MATH_SUPPORT_64=y
 +CONFIG_FEATURE_SH_EXTRA_QUIET=y
@@ -1042,13 +1040,31 @@ diff -urN ../busybox.orig/configs/linuxdeploy_defconfig ./configs/linuxdeploy_de
 +CONFIG_FEATURE_IPC_SYSLOG_BUFFER_SIZE=0
 +# CONFIG_LOGREAD is not set
 +# CONFIG_FEATURE_LOGREAD_REDUCED_LOCKING is not set
-+# CONFIG_FEATURE_KMSG_SYSLOG is not set
-+CONFIG_KLOGD=y
-+CONFIG_FEATURE_KLOGD_KLOGCTL=y
++# CONFIG_KLOGD is not set
++# CONFIG_FEATURE_KLOGD_KLOGCTL is not set
 +# CONFIG_LOGGER is not set
-diff -urN ../busybox.orig/include/bb_archive.h ./include/bb_archive.h
---- ../busybox.orig/include/bb_archive.h	2013-01-09 01:19:11.000000000 +0400
-+++ ./include/bb_archive.h	2013-01-09 01:46:02.000000000 +0400
+diff -urN ../busybox-1.20.2.orig/coreutils/stat.c ./coreutils/stat.c
+--- ../busybox-1.20.2.orig/coreutils/stat.c	2012-07-02 18:08:25.000000000 +0400
++++ ./coreutils/stat.c	2013-01-11 04:02:36.000000000 +0400
+@@ -99,9 +99,15 @@
+ 	if (S_ISFIFO(st->st_mode)) return "fifo";
+ 	if (S_ISLNK(st->st_mode))  return "symbolic link";
+ 	if (S_ISSOCK(st->st_mode)) return "socket";
++#ifdef S_TYPEISMQ
+ 	if (S_TYPEISMQ(st))        return "message queue";
++#endif
++#ifdef S_TYPEISSEM
+ 	if (S_TYPEISSEM(st))       return "semaphore";
++#endif
++#ifdef S_TYPEISSHM
+ 	if (S_TYPEISSHM(st))       return "shared memory object";
++#endif
+ #ifdef S_TYPEISTMO
+ 	if (S_TYPEISTMO(st))       return "typed memory object";
+ #endif
+diff -urN ../busybox-1.20.2.orig/include/bb_archive.h ./include/bb_archive.h
+--- ../busybox-1.20.2.orig/include/bb_archive.h	2012-07-02 18:08:25.000000000 +0400
++++ ./include/bb_archive.h	2013-01-11 03:49:07.000000000 +0400
 @@ -17,6 +17,8 @@
  	/* (unsigned) cast suppresses "integer overflow in expression" warning */
  	XZ_MAGIC1a  = 256 * (unsigned)(256 * (256 * 0xfd + '7') + 'z') + 'X',
@@ -1067,9 +1083,9 @@ diff -urN ../busybox.orig/include/bb_archive.h ./include/bb_archive.h
  #endif
  };
  
-diff -urN ../busybox.orig/libbb/Kbuild.src ./libbb/Kbuild.src
---- ../busybox.orig/libbb/Kbuild.src	2013-01-09 01:19:11.000000000 +0400
-+++ ./libbb/Kbuild.src	2013-01-09 02:57:35.397103124 +0400
+diff -urN ../busybox-1.20.2.orig/libbb/Kbuild.src ./libbb/Kbuild.src
+--- ../busybox-1.20.2.orig/libbb/Kbuild.src	2012-06-26 17:35:45.000000000 +0400
++++ ./libbb/Kbuild.src	2013-01-11 03:49:07.000000000 +0400
 @@ -114,6 +114,7 @@
  lib-y += xgethostbyname.o
  lib-y += xreadlink.o
@@ -1078,9 +1094,55 @@ diff -urN ../busybox.orig/libbb/Kbuild.src ./libbb/Kbuild.src
  
  lib-$(CONFIG_PLATFORM_LINUX) += match_fstype.o
  
-diff -urN ../busybox.orig/libbb/mntent_r.c ./libbb/mntent_r.c
---- ../busybox.orig/libbb/mntent_r.c	1970-01-01 03:00:00.000000000 +0300
-+++ ./libbb/mntent_r.c	2012-11-14 22:06:14.000000000 +0400
+diff -urN ../busybox-1.20.2.orig/libbb/missing_syscalls.c ./libbb/missing_syscalls.c
+--- ../busybox-1.20.2.orig/libbb/missing_syscalls.c	1970-01-01 03:00:00.000000000 +0300
++++ ./libbb/missing_syscalls.c	2013-01-11 03:57:25.000000000 +0400
+@@ -0,0 +1,42 @@
++/*
++ * Copyright 2012, Denys Vlasenko
++ *
++ * Licensed under GPLv2, see file LICENSE in this source tree.
++ */
++
++//kbuild:lib-y += missing_syscalls.o
++
++/*#include <linux/timex.h> - for struct timex, but may collide with <time.h> */
++#include <sys/syscall.h>
++#include "libbb.h"
++
++#if defined(ANDROID) || defined(__ANDROID__)
++pid_t getsid(pid_t pid)
++{
++	return syscall(__NR_getsid, pid);
++}
++
++int stime(const time_t *t)
++{
++	struct timeval tv;
++	tv.tv_sec = *t;
++	tv.tv_usec = 0;
++	return settimeofday(&tv, NULL);
++}
++
++int sethostname(const char *name, size_t len)
++{
++	return syscall(__NR_sethostname, name, len);
++}
++
++struct timex;
++int adjtimex(struct timex *buf)
++{
++	return syscall(__NR_adjtimex, buf);
++}
++
++int pivot_root(const char *new_root, const char *put_old)
++{
++	return syscall(__NR_pivot_root, new_root, put_old);
++}
++#endif
+diff -urN ../busybox-1.20.2.orig/libbb/mntent_r.c ./libbb/mntent_r.c
+--- ../busybox-1.20.2.orig/libbb/mntent_r.c	1970-01-01 03:00:00.000000000 +0300
++++ ./libbb/mntent_r.c	2013-01-11 03:49:07.000000000 +0400
 @@ -0,0 +1,288 @@
 +/* Utilities for reading/writing fstab, mtab, etc.
 +   Copyright (C) 1995-2000, 2001, 2002, 2003, 2006, 2010, 2011
