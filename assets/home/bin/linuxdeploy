@@ -6,8 +6,8 @@
 
 [ -z "$HOME_DIR" ] && HOME_DIR="."
 
-if [ -r "$HOME_DIR/etc/deploy.conf" ]; then
-	. $HOME_DIR/etc/deploy.conf
+if [ -r "${HOME_DIR%/}/etc/deploy.conf" ]; then
+	. ${HOME_DIR%/}/etc/deploy.conf
 else
 	echo "Configuration file not found!"
 	exit 1
@@ -52,17 +52,17 @@ prepare_system()
 	echo "[RESULT_LN] done"
 	
 	if [ "$DEPLOY_TYPE" == "image" ]; then
+	    if [ "$IMG_SIZE" -eq 0 ]; then
+	    	[ -f "$IMG_TARGET" ] && FILE_SIZE=`stat -c %s $IMG_TARGET` || FILE_SIZE=0
+	    	DIR_NAME=`dirname $IMG_TARGET`
+	    	BLOCK_SIZE=`stat -c %s -f $DIR_NAME`
+			AVAILABLE_SIZE=`stat -c %a -f $DIR_NAME`
+			let AVAILABLE_SIZE="($BLOCK_SIZE*$AVAILABLE_SIZE)+$FILE_SIZE"
+			let IMG_SIZE="($AVAILABLE_SIZE-$AVAILABLE_SIZE/10)/1048576"
+			[ "$IMG_SIZE" -gt 4095 ] && IMG_SIZE=4095
+		fi
 		echo "[PRINT] Making new disk image ($IMG_SIZE MB) ... "
 		(set -e
-		    if [ "$IMG_SIZE" -eq 0 ]; then
-		    	[ -f "$IMG_TARGET" ] && FILE_SIZE=`stat -c %s $IMG_TARGET` || FILE_SIZE=0
-		    	DIR_NAME=`dirname $IMG_TARGET`
-		    	BLOCK_SIZE=`stat -c %s -f $DIR_NAME`
-				AVAILABLE_SIZE=`stat -c %a -f $DIR_NAME`
-				let AVAILABLE_SIZE="($BLOCK_SIZE*$AVAILABLE_SIZE)+$FILE_SIZE"
-				let IMG_SIZE="($AVAILABLE_SIZE-$AVAILABLE_SIZE/10)/1048576"
-				[ "$IMG_SIZE" -gt 4095 ] && IMG_SIZE=4095
-			fi
 			if [ "$IMG_SIZE" -ge 2048 ]; then
 				DD_SEEK=2047
 				let DD_COUNT=$IMG_SIZE-2047
@@ -115,9 +115,6 @@ configure_system()
 	if [ "$#" -eq 0 ]; then
 		echo "[PRINT_LN] Configuring GNU/Linux system: "
 		case "$DISTRIB" in
-		debian)
-			configure_system dns mtab motd hosts hostname timezone sudo locales repository users profile sftp-server gui
-		;;
 		ubuntu)
 			configure_system dns mtab motd hosts hostname timezone sudo locales repository users profile upstart gui
 		;;
@@ -243,7 +240,7 @@ configure_system()
 			esac
 		;;
 		users)
-			AIDS=`cat $HOME_DIR/deploy/android-groups`
+			AIDS=`cat ${HOME_DIR%/}/deploy/android-groups`
 			for AID in $AIDS
 			do
 				XNAME=`echo $AID | awk -F: '{print $1}'`
@@ -276,10 +273,6 @@ configure_system()
 			is_str=`cat $MNT_TARGET$USER_HOME/.profile | grep "$PROFILE_STR" || true`
 			[ -z "$is_str" ] && echo $PROFILE_STR >> $MNT_TARGET$USER_HOME/.profile
 			chown -R $USER_ID:$GROUP_ID $MNT_TARGET$USER_HOME
-		;;
-		sftp-server)
-			cp $HOME_DIR/deploy/openssh/$ARCH/sftp-server $MNT_TARGET/usr/lib/openssh/sftp-server-fix
-			sed -i "s|^Subsystem sftp .*|Subsystem sftp /usr/lib/openssh/sftp-server-fix|g" $MNT_TARGET/etc/ssh/sshd_config			
 		;;
 		upstart)
 			if [ -e "$MNT_TARGET/sbin/initctl" ]; then
@@ -731,7 +724,7 @@ install_system()
 	debian|ubuntu)
 		echo "[PRINT_ALL] Installing GNU/Linux system: "
 		
-		[ -z "$DEBOOTSTRAP_DIR" ] && DEBOOTSTRAP_DIR=$HOME_DIR/deploy/debootstrap
+		[ -z "$DEBOOTSTRAP_DIR" ] && DEBOOTSTRAP_DIR=${HOME_DIR%/}/deploy/debootstrap
 		export DEBOOTSTRAP_DIR
 		debootstrap --no-check-gpg --arch $ARCH --foreign --extractor=ar --include=locales,openssh-server,sudo,man-db $SUITE $MNT_TARGET $MIRROR
 		[ $? -ne 0 ] && return 1
@@ -936,7 +929,7 @@ uninstall_system()
 	
 	echo "[PRINT] Removing environment ... "
 	(set -e
-		rm -rf $HOME_DIR/mnt $HOME_DIR/deploy $HOME_DIR/etc $HOME_DIR/bin
+		rm -rf ${HOME_DIR%/}/mnt ${HOME_DIR%/}/deploy ${HOME_DIR%/}/etc ${HOME_DIR%/}/bin
 		[ -d "$HOME_DIR" ] && rmdir $HOME_DIR
 	exit 0)
 	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
