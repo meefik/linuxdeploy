@@ -237,8 +237,10 @@ public class ShellEnv {
 		params.add("PATH=" + PrefStore.HOME_DIR + "/bin:$PATH; export PATH");
 		params.add("echo '[PRINT] Updating configuration file ... '");
 		params.add("cd " + PrefStore.HOME_DIR);
-		params.add("sed -i 's|^HOME_DIR=.*|HOME_DIR=\"" + PrefStore.HOME_DIR
-				+ "\"|g' " + PrefStore.HOME_DIR + "/etc/deploy.conf");
+		params.add("sed -i 's|^ENV_DIR=.*|ENV_DIR=\"" + PrefStore.HOME_DIR
+				+ "\"|g' " + PrefStore.HOME_DIR + "/bin/linuxdeploy");
+		params.add("sed -i 's|^#!.*|#!" + PrefStore.HOME_DIR + "/bin/sh|g' "
+				+ PrefStore.HOME_DIR + "/bin/linuxdeploy");
 		params.add("sed -i 's|^IMG_TARGET=.*|IMG_TARGET=\""
 				+ PrefStore.IMG_TARGET + "\"|g' " + PrefStore.HOME_DIR
 				+ "/etc/deploy.conf");
@@ -302,8 +304,6 @@ public class ShellEnv {
 		params.add("sed -i 's|^XSERVER_HOST=.*|XSERVER_HOST=\""
 				+ PrefStore.XSERVER_HOST + "\"|g' " + PrefStore.HOME_DIR
 				+ "/etc/deploy.conf");
-		params.add("sed -i 's|^HOME_DIR=.*|HOME_DIR=\"" + PrefStore.HOME_DIR
-				+ "\"|g' " + PrefStore.HOME_DIR + "/bin/linuxchroot");
 		params.add("[ $? -eq 0 ] && echo '[RESULT_LN] done' || echo '[RESULT_LN] fail'");
 		if (PrefStore.DEBUG_MODE)
 			params.add("cat " + PrefStore.HOME_DIR
