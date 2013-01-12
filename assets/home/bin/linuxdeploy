@@ -1,19 +1,19 @@
-#!./bin/sh
+#!/system/bin/sh
 #
 # Linux Deploy for Android
 # (C) 2012 Anton Skshidlevsky <meefik@gmail.com>
 #
 
-[ -z "$HOME_DIR" ] && HOME_DIR="."
+ENV_DIR="."
 
-if [ -r "${HOME_DIR%/}/etc/deploy.conf" ]; then
-	. ${HOME_DIR%/}/etc/deploy.conf
+if [ -r "${ENV_DIR%/}/etc/deploy.conf" ]; then
+	. ${ENV_DIR%/}/etc/deploy.conf
 else
 	echo "Configuration file not found!"
 	exit 1
 fi
 
-PATH=$PATH:/usr/bin:/bin:/usr/sbin:/sbin
+PATH=${ENV_DIR%/}/bin:$PATH:/usr/bin:/bin:/usr/sbin:/sbin
 TERM=vt100
 export PATH TERM
 
@@ -229,7 +229,7 @@ configure_system()
 			esac
 		;;
 		users)
-			AIDS=`cat ${HOME_DIR%/}/deploy/android-groups`
+			AIDS=`cat ${ENV_DIR%/}/deploy/android-groups`
 			for AID in $AIDS
 			do
 				XNAME=`echo $AID | awk -F: '{print $1}'`
@@ -714,7 +714,7 @@ install_system()
 	debian|ubuntu)
 		echo "[PRINT_ALL] Installing GNU/Linux system: "
 		
-		[ -z "$DEBOOTSTRAP_DIR" ] && DEBOOTSTRAP_DIR=${HOME_DIR%/}/deploy/debootstrap
+		[ -z "$DEBOOTSTRAP_DIR" ] && DEBOOTSTRAP_DIR=${ENV_DIR%/}/deploy/debootstrap
 		export DEBOOTSTRAP_DIR
 		debootstrap --no-check-gpg --arch $ARCH --foreign --extractor=ar --include=locales,openssh-server,sudo,man-db $SUITE $MNT_TARGET $MIRROR
 		[ $? -ne 0 ] && return 1
@@ -919,8 +919,8 @@ uninstall_system()
 	
 	echo "[PRINT] Removing environment ... "
 	(set -e
-		rm -rf ${HOME_DIR%/}/mnt ${HOME_DIR%/}/deploy ${HOME_DIR%/}/etc ${HOME_DIR%/}/bin
-		[ -d "$HOME_DIR" ] && rmdir $HOME_DIR
+		rm -rf ${ENV_DIR%/}/mnt ${ENV_DIR%/}/deploy ${ENV_DIR%/}/etc ${ENV_DIR%/}/bin
+		[ -d "$ENV_DIR" ] && rmdir $ENV_DIR
 	exit 0)
 	[ $? -eq 0 ] && echo "[RESULT_LN] done" || echo "[RESULT_LN] fail"
 	

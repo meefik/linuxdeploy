@@ -322,8 +322,8 @@ public class MainActivity extends Activity implements OnClickListener {
 				ssh = "  SSH: " + PrefStore.SSH_PORT;
 			if (PrefStore.VNC_START == "y")
 				vnc = "  VNC: "
-						+ String.valueOf(5900 + Integer
-								.parseInt(PrefStore.VNC_DISPLAY));
+						+ String.valueOf(5900 + (int) Double
+								.parseDouble(PrefStore.VNC_DISPLAY));
 			titleMsg += "  [ " + myIP + ssh + vnc + " ]";
 		}
 
