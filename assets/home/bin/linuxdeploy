@@ -31,11 +31,8 @@ msg()
 	if [ -n "$APK_SHELL" ]; then
 		echo "$1 $2" >&3
 	else
-		TS=`date '+%H:%M:%S'`
-		MSG="$2"
-		[ -n "`echo $1 | grep -e '^\[RESULT\]' -e '^\[RESULT_LN\]'`" ] || MSG="[$TS] $2" 
 		[ -n "`echo $1 | grep -e '^\[PRINT\]' -e '^\[RESULT\]'`" ] && 
-			{ echo -n "$MSG" >&3; } || { echo "$MSG" >&3; }
+			{ echo -n "$2" >&3; } || { echo "$2" >&3; }
 	fi
 	
 	return 0;
