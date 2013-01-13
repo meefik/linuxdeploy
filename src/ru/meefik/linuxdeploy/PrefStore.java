@@ -17,9 +17,10 @@ public class PrefStore {
 	public static Integer FONT_SIZE;
 	public static String THEME;
 	public static String HOME_DIR;
+	public static Boolean SYMLINK;
 
 	// to debug
-	public static Boolean DEBUG_MODE;
+	public static String DEBUG_MODE;
 	public static String TRACE_MODE;
 	public static Boolean LOGGING;
 	public static String LOG_FILE;
@@ -54,6 +55,7 @@ public class PrefStore {
 
 	// miscellaneous
 	public static String CURRENT_PROFILE;
+	public static Boolean PREF_CHANGE = false;
 	public static final String ROOT_ASSETS = "home";
 	public static final String APP_PREF_FILE_NAME = "app_settings";
 	public static final String PROFILES_FILE_NAME = "profiles";
@@ -70,13 +72,17 @@ public class PrefStore {
 		LANGUAGE = sp.getString("language", c.getString(R.string.language));
 		THEME = sp.getString("theme", c.getString(R.string.theme));
 		HOME_DIR = sp.getString("installdir", c.getString(R.string.installdir));
+		SYMLINK = sp.getBoolean("symlink",
+				c.getString(R.string.symlink) == "true" ? true : false);
 		CURRENT_PROFILE = sp.getString("profile", null);
 		if (CURRENT_PROFILE == null)
 			setCurrentProfile(c, String.valueOf(System.currentTimeMillis()));
 
 		DEBUG_MODE = sp.getBoolean("debug",
-				c.getString(R.string.debug) == "true" ? true : false);
-		TRACE_MODE = DEBUG_MODE
+				c.getString(R.string.debug) == "true" ? true : false) ? "y"
+				: "n";
+		TRACE_MODE = sp.getBoolean("debug",
+				c.getString(R.string.debug) == "true" ? true : false)
 				&& sp.getBoolean("trace",
 						c.getString(R.string.trace) == "true" ? true : false) ? "y"
 				: "n";

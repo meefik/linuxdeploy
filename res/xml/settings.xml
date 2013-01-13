@@ -49,6 +49,12 @@
             	android:title="@string/title_installdir_preferences"
 	            android:summary="@string/installdir"
 	            android:dialogTitle="@string/dialog_title_installdir_preference" />
+	    
+	    <CheckBoxPreference
+    	        android:key="symlink"
+        	    android:defaultValue="@string/symlink"
+            	android:title="@string/title_symlink_preference"
+	            android:summary="@string/summary_symlink_preference" />
 
 	    <PreferenceScreen
 	        	android:key="installenv"

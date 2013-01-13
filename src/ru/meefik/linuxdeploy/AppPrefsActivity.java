@@ -26,6 +26,7 @@ public class AppPrefsActivity extends PreferenceActivity implements
 						new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int id) {
+								PrefStore.PREF_CHANGE = false;
 								(new Thread() {
 									@Override
 									public void run() {
@@ -94,6 +95,7 @@ public class AppPrefsActivity extends PreferenceActivity implements
 			String key) {
 		Preference pref = this.findPreference(key);
 		this.setSummary(pref, true);
+		PrefStore.PREF_CHANGE = true;
 	}
 
 	private void initSummaries(PreferenceGroup pg) {
@@ -130,8 +132,16 @@ public class AppPrefsActivity extends PreferenceActivity implements
 						new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int id) {
-								new ShellEnv(getApplicationContext())
-										.DeployCmd("uninstall");
+								PrefStore.PREF_CHANGE = false;
+								(new Thread() {
+									@Override
+									public void run() {
+										new ShellEnv(getApplicationContext())
+												.updateConfig();
+										new ShellEnv(getApplicationContext())
+												.deployCmd("uninstall");
+									}
+								}).start();
 								finish();
 							}
 						})

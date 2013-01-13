@@ -50,6 +50,8 @@ public class ExecCmd implements Runnable {
 			}).start();
 
 			process.waitFor();
+			if (process.exitValue() != 0)
+				status = false;
 			stdin.close();
 			stdout.close();
 			stderr.close();

@@ -31,17 +31,19 @@ public class MainActivity extends Activity implements OnClickListener {
 
 	private static TextView logView;
 	private static ScrollView logScroll;
-	private static Boolean logFlag = false;
+	private static Boolean fullLogFlag = false;
 	static Handler handler;
 
 	public static void printLogMsg(String msg) {
+		if (msg.length() <= 0)
+			return;
 		String printMsg = "";
 		String currentTimeString = "["
 				+ new SimpleDateFormat("HH:mm:ss").format(new Date()) + "] ";
-		if (PrefStore.DEBUG_MODE) {
+		if (PrefStore.DEBUG_MODE.equals("y")) {
 			printMsg = currentTimeString + msg + "\n";
 		} else {
-			if (logFlag) {
+			if (fullLogFlag) {
 				printMsg = currentTimeString + msg + "\n";
 			}
 			if (msg.matches("^\\[RESULT\\].*$")) {
@@ -53,17 +55,17 @@ public class MainActivity extends Activity implements OnClickListener {
 			if (msg.matches("^\\[PRINT\\].*$")) {
 				printMsg = currentTimeString
 						+ msg.replaceFirst("\\[PRINT\\] ", "");
-				logFlag = false;
+				fullLogFlag = false;
 			}
 			if (msg.matches("^\\[PRINT_LN\\].*$")) {
 				printMsg = currentTimeString
 						+ msg.replaceFirst("\\[PRINT_LN\\] ", "") + "\n";
-				logFlag = false;
+				fullLogFlag = false;
 			}
 			if (msg.matches("^\\[PRINT_ALL\\].*$")) {
 				printMsg = currentTimeString
 						+ msg.replaceFirst("\\[PRINT_ALL\\] ", "") + "\n";
-				logFlag = true;
+				fullLogFlag = true;
 			}
 		}
 		if (printMsg.length() > 0) {
@@ -128,8 +130,14 @@ public class MainActivity extends Activity implements OnClickListener {
 								@Override
 								public void onClick(DialogInterface dialog,
 										int id) {
-									new ShellEnv(getApplicationContext())
-											.DeployCmd("install");
+									(new Thread() {
+										@Override
+										public void run() {
+											new ShellEnv(
+													getApplicationContext())
+													.deployCmd("install");
+										}
+									}).start();
 								}
 							})
 					.setNegativeButton(android.R.string.no,
@@ -154,8 +162,14 @@ public class MainActivity extends Activity implements OnClickListener {
 								@Override
 								public void onClick(DialogInterface dialog,
 										int id) {
-									new ShellEnv(getApplicationContext())
-											.DeployCmd("start");
+									(new Thread() {
+										@Override
+										public void run() {
+											new ShellEnv(
+													getApplicationContext())
+													.deployCmd("start");
+										}
+									}).start();
 								}
 							})
 					.setNegativeButton(android.R.string.no,
@@ -180,8 +194,14 @@ public class MainActivity extends Activity implements OnClickListener {
 								@Override
 								public void onClick(DialogInterface dialog,
 										int id) {
-									new ShellEnv(getApplicationContext())
-											.DeployCmd("stop");
+									(new Thread() {
+										@Override
+										public void run() {
+											new ShellEnv(
+													getApplicationContext())
+													.deployCmd("stop");
+										}
+									}).start();
 								}
 							})
 					.setNegativeButton(android.R.string.no,
@@ -339,6 +359,17 @@ public class MainActivity extends Activity implements OnClickListener {
 		else
 			this.getWindow().clearFlags(
 					WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+		// update configuration file
+		if (PrefStore.PREF_CHANGE) {
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					new ShellEnv(getApplicationContext()).updateConfig();
+				}
+			}).start();
+			PrefStore.PREF_CHANGE = false;
+		}
 	}
 
 	@Override

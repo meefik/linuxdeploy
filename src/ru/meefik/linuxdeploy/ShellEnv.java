@@ -13,41 +13,6 @@ import android.content.res.AssetManager;
 
 public class ShellEnv {
 
-	public class DeployCmd implements Runnable {
-
-		private Context c;
-		private String cmd;
-
-		public DeployCmd(Context c, String cmd) {
-			this.c = c;
-			this.cmd = cmd;
-		}
-
-		@Override
-		public void run() {
-			File f = new File(PrefStore.HOME_DIR + "/bin/sh");
-			if (!f.exists()) {
-				// new ShellEnv(c).updateEnv();
-				sendLogs("[PRINT_LN] Need to update the operating environment!");
-				return;
-			}
-			new ShellEnv(c).updateConfig();
-
-			List<String> params = new ArrayList<String>();
-			params.add("su");
-			if (PrefStore.TRACE_MODE.equals("y"))
-				params.add("set -x");
-			params.add("PATH=" + PrefStore.HOME_DIR + "/bin:$PATH; export PATH");
-			params.add("echo '[PRINT_LN] >>> begin: " + cmd + "'");
-			params.add("cd " + PrefStore.HOME_DIR);
-			params.add("linuxdeploy " + cmd);
-			params.add("echo '[PRINT_LN] <<< end: " + cmd + "'");
-			params.add("exit");
-
-			new ExecCmd(params).run();
-		}
-	}
-
 	private Context c;
 
 	public ShellEnv(Context c) {
@@ -130,13 +95,6 @@ public class ShellEnv {
 		return true;
 	}
 
-	public Thread DeployCmd(String cmd) {
-		DeployCmd ex = new DeployCmd(c, cmd);
-		Thread thread = new Thread(ex, "DeployCmd_" + cmd);
-		thread.start();
-		return thread;
-	}
-
 	private void sendLogs(final String msg) {
 		MainActivity.handler.post(new Runnable() {
 			@Override
@@ -153,6 +111,9 @@ public class ShellEnv {
 			params.add("set -x");
 		params.add("PATH=" + PrefStore.HOME_DIR + "/bin:$PATH; export PATH");
 		params.add("MNT_TARGET=" + PrefStore.HOME_DIR + "/mnt");
+		if (PrefStore.DEBUG_MODE.equals("y"))
+			params.add("cat " + PrefStore.HOME_DIR
+					+ "/etc/deploy.conf | grep -v ^#");
 		params.add("echo '[PRINT_LN] =================='");
 		params.add("echo '[PRINT_LN] SYSTEM INFORMATION'");
 		params.add("echo '[PRINT_LN] =================='");
@@ -179,18 +140,6 @@ public class ShellEnv {
 		params.add("for i in `cat /proc/mounts | grep $MNT_TARGET | awk '{print $2}' | sed \"s|$MNT_TARGET/*|/|g\"`; "
 				+ "do echo \"[PRINT_LN] * $i\"; is_mounted=1; done");
 		params.add("[ -z \"$is_mounted\" ] && echo '[PRINT_LN] ...not mounted anything'");
-		/*
-		 * if (PrefStore.DEBUG_MODE) { params.add("echo '[PRINT_LN] SU: '");
-		 * params.add("echo '[PRINT_LN] Version: '$(su -v)");
-		 * params.add("echo '[PRINT_LN] Location: '$(which su)");
-		 * params.add("echo '[PRINT_LN] BusyBox: '"); params.add(
-		 * "echo '[PRINT_LN] Version: '$(busybox | grep '^BusyBox v' | awk '{print $2}')"
-		 * ); params.add("echo '[PRINT_LN] Location: '$(which busybox)");
-		 * params.add("echo '[PRINT_ALL] All mount points: '"); params.add(
-		 * "cat /proc/mounts | grep ^/dev/ | awk '{print $1\": \"$2\" (\"$3\")\"}'"
-		 * ); params.add("echo '[PRINT_ALL] All partitions: '");
-		 * params.add("cat /proc/partitions"); }
-		 */
 		params.add("exit");
 		new ExecCmd(params).run();
 
@@ -230,17 +179,24 @@ public class ShellEnv {
 		if (!f.exists())
 			return;
 
+		sendLogs("[PRINT] Updating configuration file ... ");
+
 		List<String> params = new ArrayList<String>();
 		params.add("su");
 		if (PrefStore.TRACE_MODE.equals("y"))
 			params.add("set -x");
 		params.add("PATH=" + PrefStore.HOME_DIR + "/bin:$PATH; export PATH");
-		params.add("echo '[PRINT] Updating configuration file ... '");
 		params.add("cd " + PrefStore.HOME_DIR);
 		params.add("sed -i 's|^ENV_DIR=.*|ENV_DIR=\"" + PrefStore.HOME_DIR
 				+ "\"|g' " + PrefStore.HOME_DIR + "/bin/linuxdeploy");
 		params.add("sed -i 's|^#!.*|#!" + PrefStore.HOME_DIR + "/bin/sh|g' "
 				+ PrefStore.HOME_DIR + "/bin/linuxdeploy");
+		params.add("sed -i 's|^DEBUG_MODE=.*|DEBUG_MODE=\""
+				+ PrefStore.DEBUG_MODE + "\"|g' " + PrefStore.HOME_DIR
+				+ "/etc/deploy.conf");
+		params.add("sed -i 's|^TRACE_MODE=.*|TRACE_MODE=\""
+				+ PrefStore.TRACE_MODE + "\"|g' " + PrefStore.HOME_DIR
+				+ "/etc/deploy.conf");
 		params.add("sed -i 's|^IMG_TARGET=.*|IMG_TARGET=\""
 				+ PrefStore.IMG_TARGET + "\"|g' " + PrefStore.HOME_DIR
 				+ "/etc/deploy.conf");
@@ -272,9 +228,6 @@ public class ShellEnv {
 		params.add("sed -i 's|^DESKTOP_ENV=.*|DESKTOP_ENV=\""
 				+ PrefStore.DESKTOP_ENV + "\"|g' " + PrefStore.HOME_DIR
 				+ "/etc/deploy.conf");
-		params.add("sed -i 's|^TRACE_MODE=.*|TRACE_MODE=\""
-				+ PrefStore.TRACE_MODE + "\"|g' " + PrefStore.HOME_DIR
-				+ "/etc/deploy.conf");
 		params.add("sed -i 's|^CUSTOM_STARTUP=.*|CUSTOM_STARTUP=\""
 				+ PrefStore.CUSTOM_STARTUP + "\"|g' " + PrefStore.HOME_DIR
 				+ "/etc/deploy.conf");
@@ -304,13 +257,15 @@ public class ShellEnv {
 		params.add("sed -i 's|^XSERVER_HOST=.*|XSERVER_HOST=\""
 				+ PrefStore.XSERVER_HOST + "\"|g' " + PrefStore.HOME_DIR
 				+ "/etc/deploy.conf");
-		params.add("[ $? -eq 0 ] && echo '[RESULT_LN] done' || echo '[RESULT_LN] fail'");
-		if (PrefStore.DEBUG_MODE)
-			params.add("cat " + PrefStore.HOME_DIR
-					+ "/etc/deploy.conf | grep -v ^#");
-		params.add("exit");
+		params.add("[ $? -eq 0 ] && exit 0 || exit 1");
 
-		new ExecCmd(params).run();
+		ExecCmd ex = new ExecCmd(params);
+		ex.run();
+		if (!ex.status) {
+			sendLogs("[RESULT_LN] fail");
+			return;
+		}
+		sendLogs("[RESULT_LN] done");
 	}
 
 	public void updateEnv() {
@@ -362,6 +317,15 @@ public class ShellEnv {
 				+ "/deploy/debootstrap/pkgdetails");
 		params.add("chown -R root:root " + PrefStore.HOME_DIR + "/bin "
 				+ PrefStore.HOME_DIR + "/etc " + PrefStore.HOME_DIR + "/deploy");
+		if (PrefStore.SYMLINK) {
+			params.add("rm -f /system/bin/linuxdeploy");
+			params.add("ln -s "
+					+ PrefStore.HOME_DIR
+					+ "/bin/linuxdeploy /system/bin/linuxdeploy || "
+					+ "{ mount -o rw,remount /system; rm -f /system/bin/linuxdeploy; ln -s "
+					+ PrefStore.HOME_DIR
+					+ "/bin/linuxdeploy /system/bin/linuxdeploy; mount -o ro,remount /system; }");
+		}
 		params.add("exit");
 		ex = new ExecCmd(params);
 		ex.run();
@@ -370,6 +334,28 @@ public class ShellEnv {
 			return;
 		}
 		sendLogs("[RESULT_LN] done");
+	}
+
+	public void deployCmd(String cmd) {
+		File f = new File(PrefStore.HOME_DIR + "/bin/linuxdeploy");
+		if (!f.exists()) {
+			// new ShellEnv(c).updateEnv();
+			sendLogs("[PRINT_LN] Need to update the operating environment!");
+			return;
+		}
+		// new ShellEnv(c).updateConfig();
+		List<String> params = new ArrayList<String>();
+		params.add("su");
+		if (PrefStore.TRACE_MODE.equals("y"))
+			params.add("set -x");
+		params.add("PATH=" + PrefStore.HOME_DIR + "/bin:$PATH; export PATH");
+		params.add("echo '[PRINT_LN] >>> begin: " + cmd + "'");
+		params.add("cd " + PrefStore.HOME_DIR);
+		params.add("export APK_SHELL=1");
+		params.add("linuxdeploy " + cmd);
+		params.add("echo '[PRINT_LN] <<< end: " + cmd + "'");
+		params.add("exit");
+		new ExecCmd(params).run();
 	}
 
 }
