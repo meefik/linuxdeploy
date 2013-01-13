@@ -17,8 +17,8 @@ PATH=${ENV_DIR%/}/bin:$PATH:/usr/bin:/bin:/usr/sbin:/sbin
 TERM=vt100
 export PATH TERM
 
-exec 3>&1
-[ "$DEBUG_MODE" != "y" ] && { exec 2>/dev/null; exec 1>/dev/null; }
+exec 3>&1; exec 4>&2
+[ "$DEBUG_MODE" != "y" ] && { exec 1>/dev/null; exec 2>/dev/null; }
 [ "$TRACE_MODE" == "y" ] && set -x
 
 cd $ENV_DIR
@@ -31,8 +31,11 @@ msg()
 	if [ -n "$APK_SHELL" ]; then
 		echo "$1 $2" >&3
 	else
-		[ -n "`echo $1 | grep -e '\[PRINT\]' -e '\[RESULT\]'`" ] && 
-			{ echo -n "$2" >&3; } || { echo "$2" >&3; }
+		TS=`date '+%H:%M:%S'`
+		MSG="$2"
+		[ -n "`echo $1 | grep -e '^\[RESULT\]' -e '^\[RESULT_LN\]'`" ] || MSG="[$TS] $2" 
+		[ -n "`echo $1 | grep -e '^\[PRINT\]' -e '^\[RESULT\]'`" ] && 
+			{ echo -n "$MSG" >&3; } || { echo "$MSG" >&3; }
 	fi
 	
 	return 0;
@@ -427,7 +430,7 @@ configure_system()
 				chroot $MNT_TARGET zypper clean
 			;;
 			esac
-		exit 0) 1>&3
+		exit 0) 1>&3 2>&4
 		[ $? -ne 0 ] && return 1
 	fi
 	
@@ -711,6 +714,17 @@ stop_system()
 	return 0
 }
 
+chroot_system()
+{
+	mount_system
+	[ $? -ne 0 ] && return 1
+	
+	chroot $MNT_TARGET /bin/bash 1>&3 2>&4 
+	[ $? -ne 0 ] && return 1
+	
+	return 0
+}
+
 install_system()
 {
 	prepare_system
@@ -725,11 +739,11 @@ install_system()
 		
 		[ -z "$DEBOOTSTRAP_DIR" ] && DEBOOTSTRAP_DIR=${ENV_DIR%/}/deploy/debootstrap
 		export DEBOOTSTRAP_DIR
-		debootstrap --no-check-gpg --arch $ARCH --foreign --extractor=ar --include=locales,openssh-server,sudo,man-db $SUITE $MNT_TARGET $MIRROR 1>&3
+		debootstrap --no-check-gpg --arch $ARCH --foreign --extractor=ar --include=locales,openssh-server,sudo,man-db $SUITE $MNT_TARGET $MIRROR 1>&3 2>&4
 		[ $? -ne 0 ] && return 1
 
 		unset DEBOOTSTRAP_DIR
-		chroot $MNT_TARGET /debootstrap/debootstrap --second-stage 1>&3
+		chroot $MNT_TARGET /debootstrap/debootstrap --second-stage 1>&3 2>&4
 		[ $? -ne 0 ] && return 1
 	;;
 	archlinux)
@@ -776,7 +790,7 @@ install_system()
 			chroot $MNT_TARGET /usr/bin/pacman --noconfirm -Sy
 			EXTRA_PACKAGES=`chroot $MNT_TARGET /usr/bin/pacman --noconfirm -Sg base | awk '{print $2}' | grep -v -e 'linux' -e 'kernel'`
 			chroot $MNT_TARGET /usr/bin/pacman --noconfirm -Sqf $BASIC_PACKAGES $EXTRA_PACKAGES initscripts sudo openssh
-		exit 0) 1>&3
+		exit 0) 1>&3 2>&4
 		[ $? -ne 0 ] && return 1
 		
 		msg "[PRINT]" "Clearing cache ... "
@@ -832,7 +846,7 @@ install_system()
 		done
 
 		msg "[PRINT_ALL]" "Installing base packages: "
-		chroot $MNT_TARGET /bin/rpm -iv --force --nosignature --nodeps /tmp/*.rpm 1>&3
+		chroot $MNT_TARGET /bin/rpm -iv --force --nosignature --nodeps /tmp/*.rpm 1>&3 2>&4
 		# to fix cap_set_file failed
 		chroot $MNT_TARGET /bin/rpm -i --nosignature --justdb /tmp/glibc-common-*.rpm /tmp/iputils-*.rpm
 		# to fix chown32(/dev/pts/*) operation not permitted
@@ -852,7 +866,7 @@ install_system()
 		#configure_system dns mtab repository
 		
 		#msg "[PRINT_ALL]" "Installing base system: "
-		#chroot $MNT_TARGET /usr/bin/yum groupinstall "Base" --nogpgcheck --skip-broken -y 1>&3
+		#chroot $MNT_TARGET /usr/bin/yum groupinstall "Base" --nogpgcheck --skip-broken -y 1>&3 2>&4
 		
 		#msg "[PRINT]" "Clearing cache ... "
 		#chroot $MNT_TARGET /usr/bin/yum clean all
@@ -902,7 +916,7 @@ install_system()
 		done
 
 		msg "[PRINT_ALL]" "Installing base packages: "
-		chroot $MNT_TARGET /bin/rpm -iv --force --nosignature --nodeps /tmp/*.rpm 1>&3
+		chroot $MNT_TARGET /bin/rpm -iv --force --nosignature --nodeps /tmp/*.rpm 1>&3 2>&4
 		# clean cache
 		rm -rf $MNT_TARGET/tmp/*
 	;;
@@ -970,7 +984,10 @@ start)
 stop)
 	stop_system
 ;;
+shell)
+	chroot_system
+;;
 *)
-	msg "[PRINT_LN]" "Usage: $0 <mount|umount|install|configure|uninstall|start|stop>"
+	msg "[PRINT_LN]" "Usage: $0 <mount|umount|install|configure|uninstall|start|stop|shell>"
 ;;
 esac
