@@ -5,6 +5,9 @@ Changelog (English)
 Added support openSUSE installation
 Improved Arch Linux mirrors settings
 Updated BusyBox
+Script linuxdeploy can now be run from Android console
+Now can create a symbolic link to linuxdeploy in /system/bin (Settings -> Create symlink)
+Fixed wrong information size of image file in automatic calculation mode
 
 1.3.1
 Added support Fedora installation
@@ -148,6 +151,9 @@ Updated list packages of base system installation
 Добавлена ​​поддержка установки openSUSE
 Доработана настройка зеркал в Arch Linux
 Обновлен BusyBox
+Скрипт linuxdeploy теперь можно запускать из консоли Android
+Добавлена возможность создания символьной ссылки на linuxdeploy в /system/bin (Настройки -> Создать симлинк)
+Исправлена ошибка отображения размера образа в режиме автоматического расчета (когда указано 0 МБ)
 
 1.3.1
 Добавлена ​​поддержка установки Fedora

@@ -70,8 +70,16 @@ public class DeployPrefsActivity extends PreferenceActivity implements
 						new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int id) {
-								new ShellEnv(getApplicationContext())
-										.DeployCmd("configure");
+								PrefStore.PREF_CHANGE = false;
+								(new Thread() {
+									@Override
+									public void run() {
+										new ShellEnv(getApplicationContext())
+												.updateConfig();
+										new ShellEnv(getApplicationContext())
+												.deployCmd("configure");
+									}
+								}).start();
 								finish();
 							}
 						})
@@ -89,6 +97,7 @@ public class DeployPrefsActivity extends PreferenceActivity implements
 			String key) {
 		Preference pref = this.findPreference(key);
 		this.setSummary(pref, true);
+		PrefStore.PREF_CHANGE = true;
 	}
 
 	private void initSummaries(PreferenceGroup pg) {

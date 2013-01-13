@@ -7,6 +7,7 @@
     <string name="language" translatable="false">en</string>
     <string name="theme" translatable="false">dark</string>
     <string name="installdir" translatable="false">/data/local/linux</string>
+    <string name="symlink" translatable="false">false</string>
     <string name="profile" translatable="false">Linux</string>
     <string name="debug" translatable="false">false</string>
     <string name="trace" translatable="false">false</string>
