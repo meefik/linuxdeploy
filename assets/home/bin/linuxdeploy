@@ -434,6 +434,15 @@ configure_system()
 	return 0
 }
 
+update_system()
+{
+	msg "[PRINT_LN]" "Updating configuration: "
+	configure_system dns mtab
+	[ $? -ne 0 ] && return 1
+	
+	return 0
+}
+
 mount_system()
 {
 	#msg "[PRINT]" "Checking file system ... "
@@ -445,7 +454,7 @@ mount_system()
 	#else
 	#	msg "[RESULT_LN]" "skip"
 	#fi
-		
+	
 	msg "[PRINT_LN]" "Mounting partitions: "
 	
 	msg "[PRINT]" "/ ... "
@@ -576,10 +585,9 @@ start_system()
 {
 	mount_system
 	[ $? -ne 0 ] && return 1
-	
-	msg "[PRINT_LN]" "Updating configuration: "
-	configure_system dns mtab
-	
+
+	update_system
+
 	msg "[PRINT_LN]" "Starting services: "
 	msg "[PRINT]" "SSH ... "
 	if [ "$SSH_START" == "y" ]; then
@@ -713,8 +721,13 @@ stop_system()
 
 chroot_system()
 {
-	mount_system
-	[ $? -ne 0 ] && return 1
+	is_mnt=`cat /proc/mounts | grep " $MNT_TARGET "`
+	if [ -z "$is_mnt" ]; then
+		mount_system
+		[ $? -ne 0 ] && return 1
+	fi
+	
+	update_system
 	
 	chroot $MNT_TARGET /bin/bash 1>&3 2>&4 
 	[ $? -ne 0 ] && return 1
