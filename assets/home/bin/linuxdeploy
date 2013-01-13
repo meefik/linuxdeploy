@@ -176,6 +176,7 @@ configure_system()
 		;;
 		timezone)
 			TZ=`getprop persist.sys.timezone`
+			[ -z "$TZ" ] && exit 1
 			rm -f $MNT_TARGET/etc/localtime || true
 			cp $MNT_TARGET/usr/share/zoneinfo/$TZ $MNT_TARGET/etc/localtime
 			echo $TZ > $MNT_TARGET/etc/timezone
