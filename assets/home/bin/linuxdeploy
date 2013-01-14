@@ -28,6 +28,8 @@ umask 0022
 
 msg()
 {
+	[ -z "$1" -o -z "$2" ] && return 1
+	
 	if [ -n "$APK_SHELL" ]; then
 		echo "$1 $2" >&3
 	else
@@ -429,7 +431,7 @@ configure_system()
 			;;
 			esac
 		exit 0) 1>&3 2>&4
-		[ $? -ne 0 ] && return 1
+		[ $? -ne 0 ] && { msg "[RESULT_ALL]"; return 1; } || msg "[RESULT_ALL]"
 	fi
 	
 	return 0
@@ -751,11 +753,13 @@ install_system()
 		[ -z "$DEBOOTSTRAP_DIR" ] && DEBOOTSTRAP_DIR=${ENV_DIR%/}/deploy/debootstrap
 		export DEBOOTSTRAP_DIR
 		debootstrap --no-check-gpg --arch $ARCH --foreign --extractor=ar --include=locales,openssh-server,sudo,man-db $SUITE $MNT_TARGET $MIRROR 1>&3 2>&4
-		[ $? -ne 0 ] && return 1
+		[ $? -ne 0 ] && { msg "[RESULT_ALL]"; return 1; }
 
 		unset DEBOOTSTRAP_DIR
 		chroot $MNT_TARGET /debootstrap/debootstrap --second-stage 1>&3 2>&4
-		[ $? -ne 0 ] && return 1
+		[ $? -ne 0 ] && { msg "[RESULT_ALL]"; return 1; }
+		
+		msg "[RESULT_ALL]"
 	;;
 	archlinux)
 		#wget -O - $MIRROR | tar xzf - -C $MNT_TARGET
@@ -802,7 +806,7 @@ install_system()
 			EXTRA_PACKAGES=`chroot $MNT_TARGET /usr/bin/pacman --noconfirm -Sg base | awk '{print $2}' | grep -v -e 'linux' -e 'kernel'`
 			chroot $MNT_TARGET /usr/bin/pacman --noconfirm -Sqf $BASIC_PACKAGES $EXTRA_PACKAGES initscripts sudo openssh
 		exit 0) 1>&3 2>&4
-		[ $? -ne 0 ] && return 1
+		[ $? -ne 0 ] && { msg "[RESULT_ALL]"; return 1; } || msg "[RESULT_ALL]"
 		
 		msg "[PRINT]" "Clearing cache ... "
 		(set -e
@@ -865,6 +869,7 @@ install_system()
 		chmod 04755 $MNT_TARGET/usr/bin/ping
 		# clean cache
 		rm -rf $MNT_TARGET/tmp/*
+		msg "[RESULT_ALL]"
 		
 		#msg "[PRINT_LN]" "Installing base packages: "
 		#for FILE in `cd $CACHE_DIR && ls *.rpm`; do
@@ -930,6 +935,7 @@ install_system()
 		chroot $MNT_TARGET /bin/rpm -iv --force --nosignature --nodeps /tmp/*.rpm 1>&3 2>&4
 		# clean cache
 		rm -rf $MNT_TARGET/tmp/*
+		msg "[RESULT_ALL]"
 	;;
 	esac
 
