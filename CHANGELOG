@@ -8,6 +8,7 @@ Updated BusyBox
 Configuration file is updated only when the parameters are updated
 Script linuxdeploy can now be run from Android console
 Now can create a symbolic link to linuxdeploy in /system/bin (Settings -> Create symlink)
+Notification of need to update the operating environment
 Bugfix: wrong information size of image file in automatic calculation mode
 Bugfix: crashes when VNC display not integer number
 
@@ -156,6 +157,7 @@ Updated list packages of base system installation
 Обновление конфигурационного файла теперь происходит только при изменении параметров
 Скрипт linuxdeploy теперь можно запускать из консоли Android
 Добавлена возможность создания символьной ссылки на linuxdeploy в /system/bin (Настройки -> Создать симлинк)
+Уведомление о необходимости обновить рабочее окружение
 Исправлена ошибка отображения размера образа в режиме автоматического расчета
 Исправлена ошибка падения приложения, когда VNC дисплей не целое число
 
