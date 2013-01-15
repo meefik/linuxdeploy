@@ -846,7 +846,7 @@ install_system()
 		for PACKAGE in $BASIC_PACKAGES; do
 			msg "[PRINT]" "$PACKAGE ... "
     		PKG_URL=`cat $PKG_LIST | grep -m1 -e "^.*/$PACKAGE-[0-9][0-9\.\-].*\.rpm$"`
-    		test "$PKG_URL" || { msg "[RESULT_LN]" "fail"; continue; }
+    		test "$PKG_URL" || { msg "[RESULT_LN]" "fail"; return 1; }
     		FILE=`basename $PKG_URL`
     		#echo "downloading ${FILE}... "
     		for i in 1 2 3
@@ -857,7 +857,7 @@ install_system()
     		done
     		#echo "unpacking ${FILE}... "
     		(cd $MNT_TARGET; rpm2cpio $MNT_TARGET/tmp/$FILE | cpio -idmu)
-    		[ $? -eq 0 ] && msg "[RESULT_LN]" "done" || msg "[RESULT_LN]" "fail"
+    		[ $? -eq 0 ] && msg "[RESULT_LN]" "done" || { msg "[RESULT_LN]" "fail"; return 1; }
 		done
 
 		msg "[PRINT_ALL]" "Installing base packages: "
@@ -917,7 +917,7 @@ install_system()
 		for PACKAGE in $BASIC_PACKAGES; do
 			msg "[PRINT]" "$PACKAGE ... "
     		PKG_URL=`cat $PKG_LIST | grep -m1 -e "^\(arm.*\|noarch\)/$PACKAGE-[0-9][0-9\.\-].*\.rpm$"`
-    		test "$PKG_URL" || { msg "[RESULT_LN]" "fail"; continue; }
+    		test "$PKG_URL" || { msg "[RESULT_LN]" "fail"; return 1; }
     		FILE=`basename $PKG_URL`
     		#echo "downloading ${FILE}... "
     		for i in 1 2 3
@@ -928,7 +928,7 @@ install_system()
     		done
     		#echo "unpacking ${FILE}... "
     		(cd $MNT_TARGET; rpm2cpio $MNT_TARGET/tmp/$FILE | cpio -idmu)
-    		[ $? -eq 0 ] && msg "[RESULT_LN]" "done" || msg "[RESULT_LN]" "fail"
+    		[ $? -eq 0 ] && msg "[RESULT_LN]" "done" || { msg "[RESULT_LN]" "fail"; return 1; }
 		done
 
 		msg "[PRINT_ALL]" "Installing base packages: "
