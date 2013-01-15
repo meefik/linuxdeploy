@@ -810,8 +810,7 @@ install_system()
 		
 		msg "[PRINT]" "Clearing cache ... "
 		(set -e
-			rm -f $CACHE_DIR/*
-			find $MNT_TARGET -type f -name "*.pacorig" -exec rm -f {} \;
+			rm -f $CACHE_DIR/* `find $MNT_TARGET -type f -name "*.pacorig"`
 		exit 0)
 		[ $? -eq 0 ] && msg "[RESULT_LN]" "done" || msg "[RESULT_LN]" "fail"
 	;;
