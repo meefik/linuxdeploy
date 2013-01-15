@@ -53,7 +53,7 @@ public class MainActivity extends Activity implements OnClickListener {
 				printMsg = msg.replaceFirst("\\[RESULT_LN\\] ", "") + "\n";
 			}
 			if (msg.matches("^\\[RESULT_ALL\\].*$")) {
-				//printMsg = msg.replaceFirst("\\[RESULT_ALL\\] ", "") + "\n";
+				// printMsg = msg.replaceFirst("\\[RESULT_ALL\\] ", "") + "\n";
 				fullLogFlag = false;
 			}
 			if (msg.matches("^\\[PRINT\\].*$")) {
