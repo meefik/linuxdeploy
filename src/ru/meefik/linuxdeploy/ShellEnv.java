@@ -1,7 +1,10 @@
 package ru.meefik.linuxdeploy;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -9,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.AssetManager;
 
 public class ShellEnv {
@@ -117,6 +121,8 @@ public class ShellEnv {
 		params.add("echo '[PRINT_LN] =================='");
 		params.add("echo '[PRINT_LN] SYSTEM INFORMATION'");
 		params.add("echo '[PRINT_LN] =================='");
+		params.add("echo '[PRINT_LN] Application version: "
+				+ PrefStore.VERSION_NAME + " (" + PrefStore.VERSION_CODE + ")'");
 		params.add("echo '[PRINT_LN] Device: '$(getprop ro.product.brand) $(getprop ro.product.device)");
 		params.add("echo '[PRINT_LN] CPU: '$(cat /proc/cpuinfo | grep ^Processor | awk -F': ' '{print $2}')");
 		params.add("echo '[PRINT_LN] Android version: '$(getprop ro.build.version.release)");
@@ -326,6 +332,8 @@ public class ShellEnv {
 					+ PrefStore.HOME_DIR
 					+ "/bin/linuxdeploy /system/bin/linuxdeploy; mount -o ro,remount /system; }");
 		}
+		params.add("echo '" + PrefStore.VERSION_CODE + "' > "
+				+ PrefStore.HOME_DIR + "/etc/version");
 		params.add("exit");
 		ex = new ExecCmd(params);
 		ex.run();
@@ -337,12 +345,28 @@ public class ShellEnv {
 	}
 
 	public void deployCmd(String cmd) {
-		File f = new File(PrefStore.HOME_DIR + "/bin/linuxdeploy");
-		if (!f.exists()) {
+		boolean update = true;
+		File f = new File(PrefStore.HOME_DIR + "/etc/version");
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(f));
+			try {
+				String line = br.readLine();
+				if (PrefStore.VERSION_CODE.equals(line))
+					update = false;
+			} finally {
+				br.close();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		if (update) {
 			// new ShellEnv(c).updateEnv();
 			sendLogs("[PRINT_LN] Need to update the operating environment!");
+			sendLogs("[PRINT_LN] Try Menu -> Settings -> Update ENV");
 			return;
 		}
+
 		// new ShellEnv(c).updateConfig();
 		List<String> params = new ArrayList<String>();
 		params.add("su");
