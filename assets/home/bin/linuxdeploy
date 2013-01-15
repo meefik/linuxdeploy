@@ -780,7 +780,7 @@ install_system()
 		for PACKAGE in $BASIC_PACKAGES; do
 			msg "[PRINT]" "$PACKAGE ... "
     		FILE=`echo "$PKG_LIST" | grep -m1 -e "^$PACKAGE-[[:digit:]].*\.xz$" -e "^$PACKAGE-[[:digit:]].*\.gz$"`
-    		test "$FILE" || { msg "[RESULT_LN]" "fail"; continue; }
+    		test "$FILE" || { msg "[RESULT_LN]" "fail"; return 1; }
     		#echo "downloading ${FILE}... "
     		for i in 1 2 3
     		do
@@ -794,7 +794,7 @@ install_system()
     		*.xz) xz -dc $CACHE_DIR/$FILE | tar x -C $MNT_TARGET;;
     		*) msg "[RESULT_LN]" "fail"; return 1;;
 			esac
-			[ $? -eq 0 ] && msg "[RESULT_LN]" "done" || msg "[RESULT_LN]" "fail"
+			[ $? -eq 0 ] && msg "[RESULT_LN]" "done" || { msg "[RESULT_LN]" "fail"; return 1; }
 		done
 		
 		msg "[PRINT_LN]" "Preconfigure system: "
