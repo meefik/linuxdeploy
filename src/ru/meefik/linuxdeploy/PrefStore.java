@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 
 public class PrefStore {
@@ -56,6 +57,8 @@ public class PrefStore {
 	// miscellaneous
 	public static String CURRENT_PROFILE;
 	public static Boolean PREF_CHANGE = false;
+	public static String VERSION_CODE = "unknown";
+	public static String VERSION_NAME = "unknown";
 	public static final String ROOT_ASSETS = "home";
 	public static final String APP_PREF_FILE_NAME = "app_settings";
 	public static final String PROFILES_FILE_NAME = "profiles";
@@ -140,6 +143,14 @@ public class PrefStore {
 				c.getString(R.string.xdisplay));
 		XSERVER_HOST = sp.getString("xhost", c.getString(R.string.xhost));
 
+		try {
+			VERSION_CODE = String.valueOf(c.getPackageManager().getPackageInfo(
+					c.getPackageName(), 0).versionCode);
+			VERSION_NAME = c.getPackageManager().getPackageInfo(
+					c.getPackageName(), 0).versionName;
+		} catch (NameNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 
 	// get current profile name
