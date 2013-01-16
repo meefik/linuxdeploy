@@ -332,6 +332,7 @@ public class ShellEnv {
 		}
 		params.add("echo '" + PrefStore.VERSION_CODE + "' > "
 				+ PrefStore.HOME_DIR + "/etc/version");
+		params.add("chmod 644 " + PrefStore.HOME_DIR + "/etc/version");
 		params.add("exit");
 		ex = new ExecCmd(params);
 		ex.run();
