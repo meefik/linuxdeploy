@@ -362,7 +362,7 @@ configure_system()
 				chroot $MNT_TARGET apt-get clean
 			;;
 			archlinux)
-				PKGS="tightvnc xorg-utils ttf-dejavu"
+				PKGS="tightvnc xorg-utils xorg-fonts-misc ttf-dejavu"
 				case "$DESKTOP_ENV" in
 				xterm)
 					PKGS="$PKGS xterm"
