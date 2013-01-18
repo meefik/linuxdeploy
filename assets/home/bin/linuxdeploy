@@ -120,14 +120,7 @@ configure_system()
 {
 	if [ "$#" -eq 0 ]; then
 		msg "[PRINT_LN]" "Configuring GNU/Linux system: "
-		case "$DISTRIB" in
-		ubuntu)
-			configure_system dns mtab motd hosts hostname timezone sudo locales repository users profile upstart gui
-		;;
-		*)
-			configure_system dns mtab motd hosts hostname timezone sudo locales repository users profile gui
-		;;
-		esac
+		configure_system dns mtab motd hosts hostname timezone sudo locales repository users profile upstart dbus gui
 		return 0
 	fi
 	if [ "$#" -gt 1 ]; then
@@ -279,13 +272,22 @@ configure_system()
 			PROFILE_STR='PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
 			 is_str=`cat $MNT_TARGET$USER_HOME/.profile | grep "$PROFILE_STR" || true`
 			[ -z "$is_str" ] && echo $PROFILE_STR >> $MNT_TARGET$USER_HOME/.profile
-			chown -R $USER_ID:$GROUP_ID $MNT_TARGET$USER_HOME
+			chown -R $USER_ID:$GROUP_ID $MNT_TARGET$USER_HOME || true
 		;;
 		upstart)
 			if [ -e "$MNT_TARGET/sbin/initctl" ]; then
 				rm $MNT_TARGET/sbin/initctl
 				chroot $MNT_TARGET ln -s /bin/true /sbin/initctl
 			fi
+		;;
+		dbus)
+			case "$DISTRIB" in
+			debian|ubuntu)
+				if [ -z "`grep '^aid_inet:.*,messagebus' $MNT_TARGET/etc/group`" ]; then
+					sed -i "s|^\(aid_inet:.*\)|\1,messagebus|g" $MNT_TARGET/etc/group
+				fi
+			;;
+			esac
 		;;
 		gui)
 			USER_HOME=`cat $MNT_TARGET/etc/passwd | grep -m1 "^$USER_NAME:" | awk -F: '{print $6}'`
@@ -623,6 +625,12 @@ start_system()
 	msg "[PRINT]" "VNC ... "	
 	if [ "$VNC_START" == "y" ]; then
 		(set -e
+			case "$DISTRIB" in
+			debian|ubuntu)
+				[ -e "$MNT_TARGET/run/dbus/pid" ] && rm $MNT_TARGET/run/dbus/pid
+				chroot $MNT_TARGET dbus-daemon --system --fork || true
+			;;
+			esac
 			[ -e "$MNT_TARGET/tmp/.X$VNC_DISPLAY-lock" ] && rm $MNT_TARGET/tmp/.X$VNC_DISPLAY-lock
 			[ -e "$MNT_TARGET/tmp/.X11-unix/X$VNC_DISPLAY" ] && rm $MNT_TARGET/tmp/.X11-unix/X$VNC_DISPLAY
 			chroot $MNT_TARGET su - $USER_NAME -c "vncserver -depth $VNC_DEPTH -geometry $VNC_GEOMETRY :$VNC_DISPLAY"
