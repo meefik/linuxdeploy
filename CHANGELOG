@@ -1,6 +1,10 @@
 Changelog (English)
 ===================
 
+1.3.3
+Added xorg-fonts-misc package in Arch Linux GUI installation
+Fixed dbus error for Debian/Ubuntu
+
 1.3.2
 Added support openSUSE installation
 Improved Arch Linux mirrors settings
@@ -149,6 +153,10 @@ Updated list packages of base system installation
 
 История изменений (Русский)
 ===========================
+
+1.3.3
+Добавлен пакет xorg-fonts-misc к установке GUI в Arch Linux
+Исправлена ошибка dbus в Debian/Ubuntu
 
 1.3.2
 Добавлена ​​поддержка установки openSUSE
