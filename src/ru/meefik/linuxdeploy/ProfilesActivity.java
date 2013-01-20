@@ -158,9 +158,13 @@ public class ProfilesActivity extends Activity {
 		PrefStore.setProfiles(getApplicationContext(), listItems);
 		int pos = profilesList.getCheckedItemPosition();
 		int last = listItems.size() - 1;
-		if (pos >= 0 && pos <= last)
-			PrefStore.setCurrentProfile(getApplicationContext(),
-					listItems.get(pos).getKey());
+		if (pos >= 0 && pos <= last) {
+			String profile = listItems.get(pos).getKey();
+			if (!PrefStore.CURRENT_PROFILE.equals(profile)) {
+				PrefStore.setCurrentProfile(getApplicationContext(), profile);
+				PrefStore.PREF_CHANGE = true;
+			}
+		}
 		super.onPause();
 	}
 
