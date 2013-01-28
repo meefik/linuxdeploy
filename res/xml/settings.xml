@@ -15,7 +15,7 @@
 	    <ListPreference
     	        android:key="language"
         	    android:defaultValue="@string/language"
-            	android:title="@string/title_language_preferences"
+            	android:title="@string/title_language_preference"
             	android:summary="@string/language"
             	android:entries="@array/language_entries"
             	android:entryValues="@array/language_values"
@@ -25,18 +25,24 @@
     	        android:key="fontsize"
         	    android:defaultValue="@string/fontsize"
         	    android:inputType="numberDecimal"
-            	android:title="@string/title_fontsize_preferences"
+            	android:title="@string/title_fontsize_preference"
             	android:summary="@string/fontsize"
             	android:dialogTitle="@string/dialog_title_fontsize_preference" />
 
 	    <ListPreference
     	        android:key="theme"
         	    android:defaultValue="@string/theme"
-            	android:title="@string/title_theme_preferences"
+            	android:title="@string/title_theme_preference"
             	android:summary="@string/theme"
             	android:entries="@array/theme_entries"
             	android:entryValues="@array/theme_values"
             	android:dialogTitle="@string/dialog_title_theme_preference" />
+	    
+	    <CheckBoxPreference
+    	        android:key="autostart"
+        	    android:defaultValue="@string/autostart"
+            	android:title="@string/title_autostart_preference"
+	            android:summary="@string/summary_autostart_preference" />
 
 	</PreferenceCategory>
     
@@ -46,7 +52,7 @@
 	    <EditTextPreference
     	        android:key="installdir"
         	    android:defaultValue="@string/installdir"
-            	android:title="@string/title_installdir_preferences"
+            	android:title="@string/title_installdir_preference"
 	            android:summary="@string/installdir"
 	            android:dialogTitle="@string/dialog_title_installdir_preference" />
 	    
@@ -94,7 +100,7 @@
     		    android:dependency="logs"
    	        	android:key="logfile"
        	    	android:defaultValue="@string/logfile"
-           		android:title="@string/title_logfile_preferences"
+           		android:title="@string/title_logfile_preference"
            		android:summary="@string/logfile"
            		android:dialogTitle="@string/dialog_title_logfile_preference" />
 	    

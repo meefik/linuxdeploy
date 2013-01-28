@@ -57,8 +57,7 @@ public class PrefStore {
 	// miscellaneous
 	public static String CURRENT_PROFILE;
 	public static Boolean PREF_CHANGE = false;
-	public static String VERSION_CODE = "unknown";
-	public static String VERSION_NAME = "unknown";
+	public static String VERSION = "unknown";
 	public static final String ROOT_ASSETS = "home";
 	public static final String APP_PREF_FILE_NAME = "app_settings";
 	public static final String PROFILES_FILE_NAME = "profiles";
@@ -106,7 +105,7 @@ public class PrefStore {
 		MIRROR = sp.getString("mirror", c.getString(R.string.mirror));
 		ARCH = sp.getString("architecture", c.getString(R.string.architecture));
 		USER_NAME = sp.getString("username", c.getString(R.string.username))
-				.toLowerCase();
+				.toLowerCase(Locale.ENGLISH);
 		SERVER_DNS = sp.getString("serverdns", c.getString(R.string.serverdns));
 		LOCALE = sp.getString("locale", c.getString(R.string.locale));
 		INSTALL_GUI = sp.getBoolean("installgui",
@@ -144,10 +143,11 @@ public class PrefStore {
 		XSERVER_HOST = sp.getString("xhost", c.getString(R.string.xhost));
 
 		try {
-			VERSION_CODE = String.valueOf(c.getPackageManager().getPackageInfo(
-					c.getPackageName(), 0).versionCode);
-			VERSION_NAME = c.getPackageManager().getPackageInfo(
-					c.getPackageName(), 0).versionName;
+			VERSION = c.getPackageManager().getPackageInfo(c.getPackageName(),
+					0).versionName
+					+ "-"
+					+ String.valueOf(c.getPackageManager().getPackageInfo(
+							c.getPackageName(), 0).versionCode);
 		} catch (NameNotFoundException e) {
 			e.printStackTrace();
 		}

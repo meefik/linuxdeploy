@@ -98,83 +98,14 @@ public class ShellEnv {
 	}
 
 	private void sendLogs(final String msg) {
-		MainActivity.handler.post(new Runnable() {
-			@Override
-			public void run() {
-				MainActivity.printLogMsg(msg);
-			}
-		});
-	}
-
-	public void sysInfo() {
-		List<String> params = new ArrayList<String>();
-		params.add("sh");
-		if (PrefStore.TRACE_MODE.equals("y"))
-			params.add("set -x");
-		params.add("PATH=" + PrefStore.HOME_DIR + "/bin:$PATH; export PATH");
-		params.add("MNT_TARGET=" + PrefStore.HOME_DIR + "/mnt");
-		if (PrefStore.DEBUG_MODE.equals("y"))
-			params.add("cat " + PrefStore.HOME_DIR
-					+ "/etc/deploy.conf | grep -v ^#");
-		params.add("echo '[PRINT_LN] =================='");
-		params.add("echo '[PRINT_LN] SYSTEM INFORMATION'");
-		params.add("echo '[PRINT_LN] =================='");
-		params.add("echo '[PRINT_LN] Application version: "
-				+ PrefStore.VERSION_NAME + " (" + PrefStore.VERSION_CODE + ")'");
-		params.add("echo '[PRINT_LN] Device: '$(getprop ro.product.brand) $(getprop ro.product.device)");
-		params.add("echo '[PRINT_LN] CPU: '$(cat /proc/cpuinfo | grep ^Processor | awk -F': ' '{print $2}')");
-		params.add("echo '[PRINT_LN] Android version: '$(getprop ro.build.version.release)");
-		params.add("echo '[PRINT_LN] '$(cat /proc/meminfo | grep ^MemTotal)");
-		params.add("echo '[PRINT_LN] '$(cat /proc/meminfo | grep ^SwapTotal)");
-		params.add("echo '[PRINT] Support loop device: '");
-		params.add("is_loop=`ls /dev/block/loop0`; [ -n \"$is_loop\" ] && echo '[RESULT_LN] yes' || echo '[RESULT_LN] no'");
-		params.add("echo '[PRINT] Supported file systems: '");
-		params.add("echo '[RESULT] '$(cat /proc/filesystems | grep -v nodev | sort | xargs)");
-		params.add("echo '[RESULT_LN] '");
-		params.add("LINUX_VERSION=`(. $MNT_TARGET/etc/os-release && echo $NAME) || echo unknown`");
-		params.add("echo '[PRINT_LN] Active Linux system: '$LINUX_VERSION");
-		params.add("echo '[PRINT_LN] Running services: '");
-		params.add("echo '[PRINT] SSH server: '");
-		params.add("is_ssh=`ps | grep '/usr/sbin/sshd' | grep -v grep`");
-		params.add("[ -n \"$is_ssh\" ] && echo '[RESULT_LN] yes' || echo '[RESULT_LN] no'");
-		params.add("echo '[PRINT] VNC server: '");
-		params.add("is_ssh=`ps | grep 'Xtightvnc' | grep -v grep`");
-		params.add("[ -n \"$is_ssh\" ] && echo '[RESULT_LN] yes' || echo '[RESULT_LN] no'");
-		params.add("echo '[PRINT_LN] Mounted parts on Linux: '");
-		params.add("for i in `cat /proc/mounts | grep $MNT_TARGET | awk '{print $2}' | sed \"s|$MNT_TARGET/*|/|g\"`; "
-				+ "do echo \"[PRINT_LN] * $i\"; is_mounted=1; done");
-		params.add("[ -z \"$is_mounted\" ] && echo '[PRINT_LN] ...not mounted anything'");
-		params.add("exit");
-		new ExecCmd(params).run();
-
-		params.clear();
-		params.add("su");
-		if (PrefStore.TRACE_MODE.equals("y"))
-			params.add("set -x");
-		params.add("PATH=" + PrefStore.HOME_DIR + "/bin:$PATH; export PATH");
-		params.add("MNT_TARGET=" + PrefStore.HOME_DIR + "/mnt");
-		params.add("echo '[PRINT_LN] Available mount points:'");
-		params.add("MOUNTS=`cat /proc/mounts | grep ^/dev/ | grep -v $MNT_TARGET | grep -v ' /mnt/asec/' | grep -v ' /mnt/secure/' | awk '{print $2\":\"$3}'`");
-		params.add("for p in $MOUNTS; do PART=`echo $p | awk -F: '{print $1}'`; FSTYPE=`echo $p | awk -F: '{print $2}'`; "
-				+ "stat -f $PART | grep ^Block | tr -d '\n' | awk '{avail=sprintf(\"%.1f\",$10*$3/1024/1024/1024);"
-				+ "total=sprintf(\"%.1f\",$6*$3/1024/1024/1024);print \"[PRINT_LN] '$PART': \"avail\"/\"total\" GB ('$FSTYPE')\"}'; done");
-		params.add("echo '[PRINT_LN] Available partitions: '");
-		params.add("for i in /sys/block/*/dev; do "
-				+ "if [ -f $i ]; then "
-				+ "DEVNAME=$(echo $i | sed -e 's@/dev@@' -e 's@.*/@@'); "
-				+ "[ -e \"/dev/$DEVNAME\" ] && DEVPATH=/dev/$DEVNAME; "
-				+ "[ -e \"/dev/block/$DEVNAME\" ] && DEVPATH=/dev/block/$DEVNAME; "
-				+ "[ -n \"$DEVPATH\" ] && PARTS=`fdisk -l $DEVPATH | grep ^/dev/ | awk '{print $1}'`; "
-				+ "for PART in $PARTS; do "
-				+ "SIZE=`fdisk -l $PART | grep 'Disk.*bytes' | awk '{ sub(/,/,\"\"); print $3\" \"$4}'`; "
-				+ "BOOT=`fdisk -l $DEVPATH | grep ^$PART | awk '{print $2}'`; "
-				+ "[ \"$BOOT\" = \"*\" ] && TYPE=`fdisk -l $DEVPATH | grep ^$PART | awk '{str=$7; for (i=8;i<=11;i++) if ($i!=\"\") str=str\" \"$i; print str}'` || "
-				+ "TYPE=`fdisk -l $DEVPATH | grep ^$PART | awk '{str=$6; for (i=7;i<=10;i++) if ($i!=\"\") str=str\" \"$i; print str}'`; "
-				+ "echo \"[PRINT_LN] $PART: $SIZE ($TYPE)\"; "
-				+ "is_partitions=1; " + "done; fi; done");
-		params.add("[ -z \"$is_partitions\" ] && echo '[PRINT_LN] ...no available partitions'");
-		params.add("exit");
-		new ExecCmd(params).run();
+		if (MainActivity.handler != null) {
+			MainActivity.handler.post(new Runnable() {
+				@Override
+				public void run() {
+					MainActivity.printLogMsg(msg);
+				}
+			});
+		}
 	}
 
 	public void updateConfig() {
@@ -183,12 +114,16 @@ public class ShellEnv {
 		if (!f.exists())
 			return;
 
-		sendLogs("[PRINT] Updating configuration file ... ");
+		sendLogs("Updating configuration file ... ");
 
 		List<String> params = new ArrayList<String>();
 		params.add("su");
 		if (PrefStore.TRACE_MODE.equals("y"))
 			params.add("set -x");
+		if (!PrefStore.DEBUG_MODE.equals("y")) {
+			params.add("exec 1>/dev/null");
+			params.add("exec 2>/dev/null");
+		}
 		params.add("PATH=" + PrefStore.HOME_DIR + "/bin:$PATH; export PATH");
 		params.add("cd " + PrefStore.HOME_DIR);
 		params.add("sed -i 's|^ENV_DIR=.*|ENV_DIR=\"" + PrefStore.HOME_DIR
@@ -266,17 +201,17 @@ public class ShellEnv {
 		ExecCmd ex = new ExecCmd(params);
 		ex.run();
 		if (!ex.status) {
-			sendLogs("[RESULT_LN] fail");
+			sendLogs("fail\n");
 			return;
 		}
-		sendLogs("[RESULT_LN] done");
+		sendLogs("done\n");
 	}
 
 	public void updateEnv() {
-		sendLogs("[PRINT] Updating environment ... ");
+		sendLogs("Updating environment ... ");
 
 		if (PrefStore.HOME_DIR.length() == 0) {
-			sendLogs("[RESULT_LN] fail");
+			sendLogs("fail\n");
 			return;
 		}
 
@@ -284,6 +219,10 @@ public class ShellEnv {
 		params.add("su");
 		if (PrefStore.TRACE_MODE.equals("y"))
 			params.add("set -x");
+		if (!PrefStore.DEBUG_MODE.equals("y")) {
+			params.add("exec 1>/dev/null");
+			params.add("exec 2>/dev/null");
+		}
 		params.add("mkdir " + PrefStore.HOME_DIR);
 		params.add("rm -R " + PrefStore.HOME_DIR + "/bin");
 		params.add("rm -R " + PrefStore.HOME_DIR + "/etc");
@@ -293,14 +232,14 @@ public class ShellEnv {
 		ExecCmd ex = new ExecCmd(params);
 		ex.run();
 		if (!ex.status) {
-			sendLogs("[RESULT_LN] fail");
+			sendLogs("fail\n");
 			return;
 		}
 
 		boolean copyResult = copyFileOrDir(PrefStore.HOME_DIR,
 				PrefStore.ROOT_ASSETS);
 		if (!copyResult) {
-			sendLogs("[RESULT_LN] fail");
+			sendLogs("fail\n");
 			return;
 		}
 
@@ -308,6 +247,10 @@ public class ShellEnv {
 		params.add("su");
 		if (PrefStore.TRACE_MODE.equals("y"))
 			params.add("set -x");
+		if (!PrefStore.DEBUG_MODE.equals("y")) {
+			params.add("exec 1>/dev/null");
+			params.add("exec 2>/dev/null");
+		}
 		params.add("chmod 755 " + PrefStore.HOME_DIR);
 		params.add("chmod 755 " + PrefStore.HOME_DIR + "/bin");
 		params.add("chmod 755 " + PrefStore.HOME_DIR + "/bin/busybox");
@@ -330,17 +273,17 @@ public class ShellEnv {
 					+ PrefStore.HOME_DIR
 					+ "/bin/linuxdeploy /system/bin/linuxdeploy; mount -o ro,remount /system; }");
 		}
-		params.add("echo '" + PrefStore.VERSION_CODE + "' > "
-				+ PrefStore.HOME_DIR + "/etc/version");
+		params.add("echo '" + PrefStore.VERSION + "' > " + PrefStore.HOME_DIR
+				+ "/etc/version");
 		params.add("chmod 644 " + PrefStore.HOME_DIR + "/etc/version");
 		params.add("exit");
 		ex = new ExecCmd(params);
 		ex.run();
 		if (!ex.status) {
-			sendLogs("[RESULT_LN] fail");
+			sendLogs("fail\n");
 			return;
 		}
-		sendLogs("[RESULT_LN] done");
+		sendLogs("done\n");
 	}
 
 	public void deployCmd(String cmd) {
@@ -350,7 +293,7 @@ public class ShellEnv {
 			BufferedReader br = new BufferedReader(new FileReader(f));
 			try {
 				String line = br.readLine();
-				if (PrefStore.VERSION_CODE.equals(line))
+				if (PrefStore.VERSION.equals(line))
 					update = false;
 			} finally {
 				br.close();
@@ -361,8 +304,7 @@ public class ShellEnv {
 
 		if (update) {
 			// new ShellEnv(c).updateEnv();
-			sendLogs("[PRINT_LN] Need to update the operating environment!");
-			sendLogs("[PRINT_LN] Try Menu -> Settings -> Update ENV");
+			sendLogs("Need to update the operating environment!\nTry Menu -> Settings -> Update ENV\n");
 			return;
 		}
 
@@ -371,12 +313,7 @@ public class ShellEnv {
 		params.add("su");
 		if (PrefStore.TRACE_MODE.equals("y"))
 			params.add("set -x");
-		params.add("PATH=" + PrefStore.HOME_DIR + "/bin:$PATH; export PATH");
-		params.add("echo '[PRINT_LN] >>> begin: " + cmd + "'");
-		params.add("cd " + PrefStore.HOME_DIR);
-		params.add("export APK_SHELL=1");
-		params.add("linuxdeploy " + cmd);
-		params.add("echo '[PRINT_LN] <<< end: " + cmd + "'");
+		params.add(PrefStore.HOME_DIR + "/bin/linuxdeploy " + cmd);
 		params.add("exit");
 		new ExecCmd(params).run();
 	}

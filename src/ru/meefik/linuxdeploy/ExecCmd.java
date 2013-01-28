@@ -62,25 +62,26 @@ public class ExecCmd implements Runnable {
 	}
 
 	private void sendLogs(InputStream stdstream) {
-		try {
-			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					stdstream));
-			while (true) {
-				String line = reader.readLine();
-				if (line == null)
-					break;
-				final String logLine = line.toString();
-				MainActivity.handler.post(new Runnable() {
-					@Override
-					public void run() {
-						MainActivity.printLogMsg(logLine);
-					}
-				});
+		if (MainActivity.handler != null) {
+			try {
+				BufferedReader reader = new BufferedReader(
+						new InputStreamReader(stdstream));
+				int n;
+				char[] buffer = new char[1024];
+				while ((n = reader.read(buffer)) != -1) {
+					final String logLine = String.valueOf(buffer, 0, n);
+					MainActivity.handler.post(new Runnable() {
+						@Override
+						public void run() {
+							MainActivity.printLogMsg(logLine);
+						}
+					});
+				}
+				reader.close();
+			} catch (IOException e) {
+				status = false;
+				e.printStackTrace();
 			}
-			reader.close();
-		} catch (IOException e) {
-			status = false;
-			e.printStackTrace();
 		}
 	}
 

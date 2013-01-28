@@ -28,45 +28,53 @@ umask 0022
 
 msg()
 {
-	[ -z "$1" -o -z "$2" ] && return 1
+	ECHO_OPT=""
+	ECHO_STR=""
 	
-	if [ -n "$APK_SHELL" ]; then
-		echo "$1 $2" >&3
-	else
-		[ -n "`echo $1 | grep -e '^\[PRINT\]' -e '^\[RESULT\]'`" ] && 
-			{ echo -n "$2" >&3; } || { echo "$2" >&3; }
-	fi
+	for i in "$@"
+	do
+		case $i in
+		-n)
+			ECHO_OPT="-n"
+		;;
+		*)
+			ECHO_STR="$i"
+		;;
+		esac
+	done
 	
-	return 0;
+	echo $ECHO_OPT "$ECHO_STR" >&3
+	
+	return 0
 }
 
 prepare_system()
 {
-	msg "[PRINT]" "Checking mount points ... "
+	msg -n "Checking mount points ... "
 	is_mnt=`cat /proc/mounts | grep " $MNT_TARGET "`
 	if [ -n "$is_mnt" ]; then
-		msg "[RESULT_LN]" "fail"; return 1
+		msg "fail"; return 1
 	else
-		msg "[RESULT_LN]" "done"
+		msg "done"
 	fi
 
-	msg "[PRINT]" "Checking destination path ... "
+	msg -n "Checking destination path ... "
 	if [ "$DEPLOY_TYPE" == "image" ]; then
 		if [ -e "$IMG_TARGET" -a ! -f "$IMG_TARGET" ]; then
-			msg "[RESULT_LN]" "fail"; return 1
+			msg "fail"; return 1
 		fi
 	fi
 	if [ "$DEPLOY_TYPE" == "partition" ]; then
 		if [ ! -b "$IMG_TARGET" ]; then
-			msg "[RESULT_LN]" "fail"; return 1
+			msg "fail"; return 1
 		fi
 	fi
 	if [ "$DEPLOY_TYPE" == "directory" ]; then
 		if [ ! -d "$IMG_TARGET" ]; then
-			msg "[RESULT_LN]" "fail"; return 1
+			msg "fail"; return 1
 		fi
 	fi
-	msg "[RESULT_LN]" "done"
+	msg "done"
 	
 	if [ "$DEPLOY_TYPE" == "image" ]; then
 	    if [ "$IMG_SIZE" -eq 0 ]; then
@@ -78,7 +86,7 @@ prepare_system()
 			let IMG_SIZE="($AVAILABLE_SIZE-$AVAILABLE_SIZE/10)/1048576"
 			[ "$IMG_SIZE" -gt 4095 ] && IMG_SIZE=4095
 		fi
-		msg "[PRINT]" "Making new disk image ($IMG_SIZE MB) ... "
+		msg -n "Making new disk image ($IMG_SIZE MB) ... "
 		(set -e
 			if [ "$IMG_SIZE" -ge 2048 ]; then
 				DD_SEEK=2047
@@ -89,7 +97,7 @@ prepare_system()
 			fi
 			dd if=/dev/zero of=$IMG_TARGET bs=1048576 seek=$DD_SEEK count=$DD_COUNT
 		exit 0)
-		[ $? -eq 0 ] && msg "[RESULT_LN]" "done" || { msg "[RESULT_LN]" "fail"; return 1; }
+		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 	fi
 
 	if [ "$DEPLOY_TYPE" == "image" -o "$DEPLOY_TYPE" == "partition" ]; then
@@ -103,14 +111,14 @@ prepare_system()
 				fi
 			done
 		fi
-		msg "[PRINT]" "Making file system ($FS_TYPE) ... "
+		msg -n "Making file system ($FS_TYPE) ... "
 		(set -e
 			[ "$FS_TYPE" == "auto" ] && exit 1
 			is_loop=`losetup | grep $IMG_TARGET || true`
 			is_raw=`cat /proc/mounts | grep $IMG_TARGET || true`
 			[ -z "$is_loop" -a -z "$is_raw" ] && mke2fs -qF -t $FS_TYPE -O ^has_journal $IMG_TARGET
 		exit 0)
-		[ $? -eq 0 ] && msg "[RESULT_LN]" "done" || { msg "[RESULT_LN]" "fail"; return 1; }
+		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 	fi
 	
 	return 0
@@ -119,7 +127,7 @@ prepare_system()
 configure_system()
 {
 	if [ "$#" -eq 0 ]; then
-		msg "[PRINT_LN]" "Configuring GNU/Linux system: "
+		msg "Configuring GNU/Linux system: "
 		configure_system dns mtab motd hosts hostname timezone sudo locales repository users profile upstart dbus gui
 		return 0
 	fi
@@ -131,7 +139,7 @@ configure_system()
 		return 0
 	fi
 
-	msg "[PRINT]" "$1 ... "
+	msg -n "$1 ... "
 	(set -e	
 		case "$1" in
 		dns)
@@ -334,10 +342,10 @@ configure_system()
 		;;
 		esac
 	exit 0)
-	[ $? -eq 0 ] && msg "[RESULT_LN]" "done" || msg "[RESULT_LN]" "fail"
+	[ $? -eq 0 ] && msg "done" || msg "fail"
 	
 	if [ "$1" == "gui" -a "$INSTALL_GUI" == "y" ]; then
-		msg "[PRINT_ALL]" "Installing GUI packages: "
+		msg "Installing GUI packages: "
 		(set -e
 			case "$DISTRIB" in
 			debian|ubuntu)
@@ -433,7 +441,7 @@ configure_system()
 			;;
 			esac
 		exit 0) 1>&3 2>&4
-		[ $? -ne 0 ] && { msg "[RESULT_ALL]"; return 1; } || msg "[RESULT_ALL]"
+		[ $? -ne 0 ] && return 1
 	fi
 	
 	return 0
@@ -441,7 +449,7 @@ configure_system()
 
 update_system()
 {
-	msg "[PRINT_LN]" "Updating configuration: "
+	msg "Updating configuration: "
 	configure_system dns mtab
 	[ $? -ne 0 ] && return 1
 	
@@ -450,92 +458,92 @@ update_system()
 
 mount_system()
 {
-	#msg "[PRINT]" "Checking file system ... "
+	#msg -n "Checking file system ... "
 	#if [ "$FS_TYPE" != "auto" ]; then
 	#	(set -e
 	#		fsck -t $FS_TYPE $IMG_TARGET
 	#	exit 0)
-	#	[ $? -eq 0 ] && msg "[RESULT_LN]" "done" || msg "[RESULT_LN]" "fail"
+	#	[ $? -eq 0 ] && msg "done" || msg "fail"
 	#else
-	#	msg "[RESULT_LN]" "skip"
+	#	msg "skip"
 	#fi
 	
-	msg "[PRINT_LN]" "Mounting partitions: "
+	msg "Mounting partitions: "
 	
-	msg "[PRINT]" "/ ... "
+	msg -n "/ ... "
 	is_mnt=`cat /proc/mounts | grep " $MNT_TARGET "`
 	if [ -z "$is_mnt" ]; then
 		[ ! -d "$MNT_TARGET" ] && mkdir -p $MNT_TARGET
 		[ -d "$IMG_TARGET" ] && MNT_OPTS="bind" || MNT_OPTS="rw,relatime"
 		mount -o $MNT_OPTS $IMG_TARGET $MNT_TARGET
 		if [ $? -eq 0 ]; then
-			msg "[RESULT_LN]" "done"
+			msg "done"
 		else
-			msg "[RESULT_LN]" "fail"; return 1
+			msg "fail"; return 1
 		fi
 	else
-		msg "[RESULT_LN]" "skip"
+		msg "skip"
 	fi
 	
-	msg "[PRINT]" "/proc ... "
+	msg -n "/proc ... "
 	tg=$MNT_TARGET/proc; is_mnt=`cat /proc/mounts | grep " $tg "`
 	if [ -z "$is_mnt" ]; then
 		[ ! -d "$tg" ] && mkdir -p $tg
 		mount -t proc proc $tg
-		[ $? -eq 0 ] && msg "[RESULT_LN]" "done" || msg "[RESULT_LN]" "fail"
+		[ $? -eq 0 ] && msg "done" || msg "fail"
 	else
-		msg "[RESULT_LN]" "skip"
+		msg "skip"
 	fi
 	
-	msg "[PRINT]" "/sys ... "
+	msg -n "/sys ... "
 	tg=$MNT_TARGET/sys; is_mnt=`cat /proc/mounts | grep " $tg "`
 	if [ -z "$is_mnt" ]; then
 		[ ! -d "$tg" ] && mkdir -p $tg
 		mount -t sysfs sys $tg
-		[ $? -eq 0 ] && msg "[RESULT_LN]" "done" || msg "[RESULT_LN]" "fail"
+		[ $? -eq 0 ] && msg "done" || msg "fail"
 	else
-		msg "[RESULT_LN]" "skip"
+		msg "skip"
 	fi
 	
-	msg "[PRINT]" "/dev ... "
+	msg -n "/dev ... "
 	tg=$MNT_TARGET/dev; is_mnt=`cat /proc/mounts | grep " $tg "`
 	if [ -z "$is_mnt" ]; then
 		[ ! -d "$tg" ] && mkdir -p $tg
 		mount -o bind /dev $tg
-		[ $? -eq 0 ] && msg "[RESULT_LN]" "done" || msg "[RESULT_LN]" "fail"
+		[ $? -eq 0 ] && msg "done" || msg "fail"
 	else
-		msg "[RESULT_LN]" "skip"
+		msg "skip"
 	fi
 	
-	msg "[PRINT]" "/dev/pts ... "
+	msg -n "/dev/pts ... "
 	tg=$MNT_TARGET/dev/pts; is_mnt=`cat /proc/mounts | grep " $tg "`
 	if [ -z "$is_mnt" ]; then
 		[ ! -d "$tg" ] && mkdir -p $tg
 		mount -t devpts devpts $tg
-		[ $? -eq 0 ] && msg "[RESULT_LN]" "done" || msg "[RESULT_LN]" "fail"
+		[ $? -eq 0 ] && msg "done" || msg "fail"
 	else
-		msg "[RESULT_LN]" "skip"
+		msg "skip"
 	fi
 	
 	DISKS=`echo "$CUSTOM_MOUNT" | tr ',;' ' '`
 	for disk in $DISKS
 	do
 		disk_name=`basename /root/$disk`
-		msg "[PRINT]" "/mnt/$disk_name ... "
+		msg -n "/mnt/$disk_name ... "
 		tg=$MNT_TARGET/mnt/$disk_name
 		is_tg=`cat /proc/mounts | grep " $tg "`
 		if [ -z "$is_tg" -a -d "$disk" ]; then
 			[ ! -d "$tg" ] && mkdir -p $tg
 			mount -o bind $disk $tg
-			[ $? -eq 0 ] && msg "[RESULT_LN]" "done" || msg "[RESULT_LN]" "fail"
+			[ $? -eq 0 ] && msg "done" || msg "fail"
 			continue
 		fi
 		if [ -z "$is_tg" -a -e "$disk" ]; then
 			[ ! -d "$tg" ] && mkdir -p $tg
 			mount -o rw,relatime $disk $tg
-			[ $? -eq 0 ] && msg "[RESULT_LN]" "done" || msg "[RESULT_LN]" "fail"
+			[ $? -eq 0 ] && msg "done" || msg "fail"
 		else
-			msg "[RESULT_LN]" "skip"
+			msg "skip"
 		fi
 	done
 	
@@ -544,7 +552,7 @@ mount_system()
 
 umount_system()
 {
-	msg "[PRINT]" "Release resources ... "
+	msg -n "Release resources ... "
 	(set -e
 		for i in 1 2 3 4
 		do
@@ -558,9 +566,9 @@ umount_system()
 			fi
 		done
 	exit 0)
-	[ $? -eq 0 ] && msg "[RESULT_LN]" "done" || msg "[RESULT_LN]" "fail"
+	[ $? -eq 0 ] && msg "done" || msg "fail"
 	
-	msg "[PRINT_LN]" "Unmounting partitions: "
+	msg "Unmounting partitions: "
 	um=0
 	for i in '.*' '*'
 	do
@@ -568,20 +576,20 @@ umount_system()
 		for p in $parts
 		do
 			pp=`echo $p | sed "s|$MNT_TARGET/*|/|g"`
-			msg "[PRINT]" "$pp ... "
+			msg -n "$pp ... "
 			umount $p
-			[ $? -eq 0 ] && msg "[RESULT_LN]" "done" || msg "[RESULT_LN]" "fail"
+			[ $? -eq 0 ] && msg "done" || msg "fail"
 			um=1
 		done
 	done
-	[ $um -eq 0 ] && msg "[PRINT_LN]" "...not mounted anything"
+	[ $um -eq 0 ] && msg "...not mounted anything"
 	
-	msg "[PRINT]" "Disassociating loop device ... "
+	msg -n "Disassociating loop device ... "
 	(set -e
 		loop=`losetup | grep $IMG_TARGET | awk -F: '{print $1}' || true`
 		[ -n "$loop" ] && losetup -d $loop
 	exit 0)
-	[ $? -eq 0 ] && msg "[RESULT_LN]" "done" || msg "[RESULT_LN]" "fail"
+	[ $? -eq 0 ] && msg "done" || msg "fail"
 	
 	return 0
 }
@@ -593,8 +601,8 @@ start_system()
 
 	update_system
 
-	msg "[PRINT_LN]" "Starting services: "
-	msg "[PRINT]" "SSH ... "
+	msg "Starting services: "
+	msg -n "SSH ... "
 	if [ "$SSH_START" == "y" ]; then
 		(set -e
 			sed -i "s|^Port .*|Port $SSH_PORT|g" $MNT_TARGET/etc/ssh/sshd_config
@@ -617,12 +625,12 @@ start_system()
 			;;
 			esac
 		exit 0)
-		[ $? -eq 0 ] && msg "[RESULT_LN]" "done" || msg "[RESULT_LN]" "fail"
+		[ $? -eq 0 ] && msg "done" || msg "fail"
 	else
-		msg "[RESULT_LN]" "skip"
+		msg "skip"
 	fi
 
-	msg "[PRINT]" "VNC ... "	
+	msg -n "VNC ... "	
 	if [ "$VNC_START" == "y" ]; then
 		(set -e
 			case "$DISTRIB" in
@@ -635,29 +643,29 @@ start_system()
 			[ -e "$MNT_TARGET/tmp/.X11-unix/X$VNC_DISPLAY" ] && rm $MNT_TARGET/tmp/.X11-unix/X$VNC_DISPLAY
 			chroot $MNT_TARGET su - $USER_NAME -c "vncserver -depth $VNC_DEPTH -geometry $VNC_GEOMETRY :$VNC_DISPLAY"
 		exit 0)
-		[ $? -eq 0 ] && msg "[RESULT_LN]" "done" || msg "[RESULT_LN]" "fail"
+		[ $? -eq 0 ] && msg "done" || msg "fail"
 	else
-		msg "[RESULT_LN]" "skip"
+		msg "skip"
 	fi
 	
-	msg "[PRINT]" "X Window System ... "	
+	msg -n "X Window System ... "	
 	if [ "$XSERVER_START" == "y" ]; then
 		(set -e
 			chroot $MNT_TARGET su - $USER_NAME -c "export DISPLAY=$XSERVER_HOST:$XSERVER_DISPLAY; cut -d ' ' -f 6 /proc/self/stat > ~/.xsessionid; ~/.xsession"
 		exit 0)
-		[ $? -eq 0 ] && msg "[RESULT_LN]" "done" || msg "[RESULT_LN]" "fail"
+		[ $? -eq 0 ] && msg "done" || msg "fail"
 	else
-		msg "[RESULT_LN]" "skip"
+		msg "skip"
 	fi
 	
 	SCRIPTS=`echo "$CUSTOM_STARTUP" | tr ',;' ' '`
 	for script in $SCRIPTS
 	do
-		msg "[PRINT]" "$script ... "
+		msg -n "$script ... "
 		(set -e
 			chroot $MNT_TARGET su - root -c "$script start"
 		exit 0)
-		[ $? -eq 0 ] && msg "[RESULT_LN]" "done" || msg "[RESULT_LN]" "fail"
+		[ $? -eq 0 ] && msg "done" || msg "fail"
 	done
 	
 	return 0
@@ -665,9 +673,9 @@ start_system()
 
 stop_system()
 {
-	msg "[PRINT_LN]" "Stopping services: "
+	msg "Stopping services: "
 	
-	msg "[PRINT]" "SSH ... "
+	msg -n "SSH ... "
 	if [ "$SSH_START" == "y" ]; then
 		(set -e
 			case "$DISTRIB" in
@@ -687,41 +695,41 @@ stop_system()
 			sleep 1
 			pkill -9 sshd || true
 		exit 0)
-		[ $? -eq 0 ] && msg "[RESULT_LN]" "done" || msg "[RESULT_LN]" "fail"
+		[ $? -eq 0 ] && msg "done" || msg "fail"
 	else
-		msg "[RESULT_LN]" "skip"
+		msg "skip"
 	fi
 
-	msg "[PRINT]" "VNC ... "	
+	msg -n "VNC ... "	
 	if [ "$VNC_START" == "y" ]; then
 		(set -e
 			chroot $MNT_TARGET su - $USER_NAME -c "vncserver -kill :$VNC_DISPLAY"
 			sleep 1
 			pkill -9 X*vnc || true
 		exit 0)
-		[ $? -eq 0 ] && msg "[RESULT_LN]" "done" || msg "[RESULT_LN]" "fail"
+		[ $? -eq 0 ] && msg "done" || msg "fail"
 	else
-		msg "[RESULT_LN]" "skip"
+		msg "skip"
 	fi
 	
-	msg "[PRINT]" "X Window System ... "	
+	msg -n "X Window System ... "	
 	if [ "$XSERVER_START" == "y" ]; then
 		(set -e
 			chroot $MNT_TARGET su - $USER_NAME -c 'kill -9 -$(cat ~/.xsessionid)'
 		exit 0)
-		[ $? -eq 0 ] && msg "[RESULT_LN]" "done" || msg "[RESULT_LN]" "fail"
+		[ $? -eq 0 ] && msg "done" || msg "fail"
 	else
-		msg "[RESULT_LN]" "skip"
+		msg "skip"
 	fi
 	
 	SCRIPTS=`echo "$CUSTOM_STARTUP" | tr ',;' ' '`
 	for script in $SCRIPTS
 	do
-		msg "[PRINT]" "$script ... "
+		msg -n "$script ... "
 		(set -e
 			chroot $MNT_TARGET su - root -c "$script stop"
 		exit 0)
-		[ $? -eq 0 ] && msg "[RESULT_LN]" "done" || msg "[RESULT_LN]" "fail"
+		[ $? -eq 0 ] && msg "done" || msg "fail"
 	done
 	
 	umount_system
@@ -756,39 +764,37 @@ install_system()
 
 	case "$DISTRIB" in
 	debian|ubuntu)
-		msg "[PRINT_ALL]" "Installing GNU/Linux system: "
+		msg "Installing GNU/Linux system: "
 		
 		[ -z "$DEBOOTSTRAP_DIR" ] && DEBOOTSTRAP_DIR=${ENV_DIR%/}/deploy/debootstrap
 		export DEBOOTSTRAP_DIR
 		debootstrap --no-check-gpg --arch $ARCH --foreign --extractor=ar --include=locales,openssh-server,sudo,man-db $SUITE $MNT_TARGET $MIRROR 1>&3 2>&4
-		[ $? -ne 0 ] && { msg "[RESULT_ALL]"; return 1; }
+		[ $? -ne 0 ] && return 1
 
 		unset DEBOOTSTRAP_DIR
 		chroot $MNT_TARGET /debootstrap/debootstrap --second-stage 1>&3 2>&4
-		[ $? -ne 0 ] && { msg "[RESULT_ALL]"; return 1; }
-		
-		msg "[RESULT_ALL]"
+		[ $? -ne 0 ] && return 1
 	;;
 	archlinux)
 		#wget -O - $MIRROR | tar xzf - -C $MNT_TARGET
 		#[ $? -ne 0 ] && return 1
 		
-		msg "[PRINT_LN]" "Installing GNU/Linux system: "
+		msg "Installing GNU/Linux system: "
 		
 		BASIC_PACKAGES="acl archlinux-keyring attr bash bzip2 ca-certificates coreutils cracklib curl db dirmngr e2fsprogs expat findutils gawk gcc-libs gdbm glibc gmp gnupg gpgme grep libarchive libassuan libcap libgcrypt libgpg-error libgssglue libksba libldap libsasl libssh2 libtirpc linux-api-headers ncurses openssl pacman pacman-mirrorlist pam pambase perl pinentry pth readline run-parts sed shadow tzdata util-linux xz zlib"
 		REPO="${MIRROR%/}/$ARCH/core"
 		CACHE_DIR="$MNT_TARGET/var/cache/pacman/pkg"
 		
-		msg "[PRINT]" "Retrieving packages list ... "
+		msg -n "Retrieving packages list ... "
 		PKG_LIST=`wget -q -O - "$REPO/" | sed -n '/<a / s/^.*<a [^>]*href="\([^\"]*\)".*$/\1/p' | awk -F'/' '{print $NF}' | sort -rn`
-		[ $? -eq 0 ] && msg "[RESULT_LN]" "done" || { msg "[RESULT_LN]" "fail"; return 1; }
+		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 
-		msg "[PRINT_LN]" "Retrieving base packages: "
+		msg "Retrieving base packages: "
 		mkdir -p $CACHE_DIR
 		for PACKAGE in $BASIC_PACKAGES; do
-			msg "[PRINT]" "$PACKAGE ... "
+			msg -n "$PACKAGE ... "
     		FILE=`echo "$PKG_LIST" | grep -m1 -e "^$PACKAGE-[[:digit:]].*\.xz$" -e "^$PACKAGE-[[:digit:]].*\.gz$"`
-    		test "$FILE" || { msg "[RESULT_LN]" "fail"; return 1; }
+    		test "$FILE" || { msg "fail"; return 1; }
     		#echo "downloading ${FILE}... "
     		for i in 1 2 3
     		do
@@ -800,36 +806,36 @@ install_system()
 			case "$FILE" in
     		*.gz) tar xzf $CACHE_DIR/$FILE -C $MNT_TARGET;;
     		*.xz) xz -dc $CACHE_DIR/$FILE | tar x -C $MNT_TARGET;;
-    		*) msg "[RESULT_LN]" "fail"; return 1;;
+    		*) msg "fail"; return 1;;
 			esac
-			[ $? -eq 0 ] && msg "[RESULT_LN]" "done" || { msg "[RESULT_LN]" "fail"; return 1; }
+			[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 		done
 		
-		msg "[PRINT_LN]" "Preconfigure system: "
+		msg "Preconfigure system: "
 		configure_system dns mtab repository
 		
-		msg "[PRINT_ALL]" "Installing base packages: "
+		msg "Installing base packages: "
 		(set -e
 			chroot $MNT_TARGET /usr/bin/pacman --noconfirm -Sy
 			EXTRA_PACKAGES=`chroot $MNT_TARGET /usr/bin/pacman --noconfirm -Sg base | awk '{print $2}' | grep -v -e 'linux' -e 'kernel'`
 			chroot $MNT_TARGET /usr/bin/pacman --noconfirm -Sqf $BASIC_PACKAGES $EXTRA_PACKAGES initscripts sudo openssh
 		exit 0) 1>&3 2>&4
-		[ $? -ne 0 ] && { msg "[RESULT_ALL]"; return 1; } || msg "[RESULT_ALL]"
+		[ $? -ne 0 ] && return 1
 		
-		msg "[PRINT]" "Clearing cache ... "
+		msg -n "Clearing cache ... "
 		(set -e
 			rm -f $CACHE_DIR/* `find $MNT_TARGET -type f -name "*.pacorig"`
 		exit 0)
-		[ $? -eq 0 ] && msg "[RESULT_LN]" "done" || msg "[RESULT_LN]" "fail"
+		[ $? -eq 0 ] && msg "done" || msg "fail"
 	;;
 	fedora)
-		msg "[PRINT_LN]" "Installing GNU/Linux system: "
+		msg "Installing GNU/Linux system: "
 		
 		BASIC_PACKAGES="acl attr audit audit-libs authconfig avahi-autoipd basesystem bash bind-libs bind-libs-lite bind-license bind-utils bzip2 bzip2-libs ca-certificates checkpolicy chkconfig coreutils cpio cracklib cracklib-dicts crda cronie cronie-anacron crontabs cryptsetup-libs curl cyrus-sasl-lib db4 dbus dbus-glib dbus-libs device-mapper device-mapper-libs dhclient dhcp-common dhcp-libs diffutils dnsmasq dosfstools dracut e2fsprogs e2fsprogs-libs elfutils-libelf ethtool expat fedora-release fedora-release-notes file file-libs filesystem findutils fipscheck fipscheck-lib gamin gawk gdbm glib2 glibc glibc-common gmp gnupg2 gpgme grep groff groff-base gzip hardlink hostname hwdata info initscripts iproute iptables iputils iw kbd kbd-misc keyutils keyutils-libs kmod kmod-libs krb5-libs less libacl libassuan libattr libblkid libcap libcap-ng libcom_err libcurl libdaemon libdb libdb-utils libedit libevent libffi libgcc libgcrypt libgpg-error libgssglue libgudev1 libidn libmount libnfsidmap libnl libnl3 libpcap libpipeline libpwquality libselinux libselinux-utils libsemanage libsepol libss libssh2 libsss_sudo libstdc++ libtirpc libudev libusb1 libuser libutempter libuuid libxml2 linux-atm-libs logrotate lua m4 man-db man-pages mingetty mobile-broadband-provider-info ncurses ncurses-base ncurses-libs net-tools newt newt-python nfs-utils nspr nss nss-myhostname nss-softokn nss-softokn-freebl nss-sysinit nss-tools nss-util ntpdate openldap openssh openssh-clients openssh-server openssl pam parted passwd pciutils-libs pcre pinentry pkgconfig policycoreutils polkit popt ppp procps psmisc pth pygpgme python python-chardet python-iniparse python-kitchen python-libs python-pycurl python-urlgrabber readline rootfiles rootfs-resize rpcbind rpm rpm-build-libs rpm-libs rpm-python rsyslog sed selinux-policy selinux-policy-targeted setserial setup shadow-utils shared-mime-info slang sqlite sudo systemd systemd-sysv sysvinit-tools tar tcp_wrappers-libs tzdata udev usbutils ustr util-linux vim-minimal wget wireless-tools wpa_supplicant xz xz-libs yum yum-metadata-parser yum-utils zlib"
 		REPO="${MIRROR%/}/${SUITE}/Everything/${ARCH}/os"
 		PKG_LIST="$MNT_TARGET/tmp/packages.list"
 
-		msg "[PRINT]" "Preparing for deployment ... "
+		msg -n "Preparing for deployment ... "
 		(set -e
 			cd $MNT_TARGET
 			mkdir etc
@@ -840,20 +846,20 @@ install_system()
 			ln -sf usr/bin; ln -sf usr/sbin; ln -sf usr/lib
 			mkdir tmp; chmod 01777 tmp
 		exit 0)
-		[ $? -eq 0 ] && msg "[RESULT_LN]" "done" || { msg "[RESULT_LN]" "fail"; return 1; }
+		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 		
-		msg "[PRINT]" "Retrieving packages list ... "
+		msg -n "Retrieving packages list ... "
 		(set -e
 			REPODATA_FILE=`wget -q -O - $REPO/repodata | sed -n '/<a / s/^.*<a [^>]*href="\([^\"]*\-primary\.xml\.gz\)".*$/\1/p'`
 			wget -q -O - $REPO/repodata/$REPODATA_FILE | gzip -dc | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\)".*$/\1/p' > $PKG_LIST
 		exit 0)
-		[ $? -eq 0 ] && msg "[RESULT_LN]" "done" || { msg "[RESULT_LN]" "fail"; return 1; }
+		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 		
-		msg "[PRINT_LN]" "Retrieving base packages: "
+		msg "Retrieving base packages: "
 		for PACKAGE in $BASIC_PACKAGES; do
-			msg "[PRINT]" "$PACKAGE ... "
+			msg -n "$PACKAGE ... "
     		PKG_URL=`cat $PKG_LIST | grep -m1 -e "^.*/$PACKAGE-[0-9][0-9\.\-].*\.rpm$"`
-    		test "$PKG_URL" || { msg "[RESULT_LN]" "fail"; return 1; }
+    		test "$PKG_URL" || { msg "fail"; return 1; }
     		FILE=`basename $PKG_URL`
     		#echo "downloading ${FILE}... "
     		for i in 1 2 3
@@ -864,10 +870,10 @@ install_system()
     		done
     		#echo "unpacking ${FILE}... "
     		(cd $MNT_TARGET; rpm2cpio $MNT_TARGET/tmp/$FILE | cpio -idmu)
-    		[ $? -eq 0 ] && msg "[RESULT_LN]" "done" || { msg "[RESULT_LN]" "fail"; return 1; }
+    		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 		done
 
-		msg "[PRINT_ALL]" "Installing base packages: "
+		msg "Installing base packages: "
 		chroot $MNT_TARGET /bin/rpm -iv --force --nosignature --nodeps /tmp/*.rpm 1>&3 2>&4
 		# to fix cap_set_file failed
 		chroot $MNT_TARGET /bin/rpm -i --nosignature --justdb /tmp/glibc-common-*.rpm /tmp/iputils-*.rpm
@@ -876,33 +882,32 @@ install_system()
 		chmod 04755 $MNT_TARGET/usr/bin/ping
 		# clean cache
 		rm -rf $MNT_TARGET/tmp/*
-		msg "[RESULT_ALL]"
 		
-		#msg "[PRINT_LN]" "Installing base packages: "
+		#msg "Installing base packages: "
 		#for FILE in `cd $CACHE_DIR && ls *.rpm`; do
-		#	msg "[PRINT]" "$FILE ... "
+		#	msg -n "$FILE ... "
 		#	chroot $MNT_TARGET /bin/rpm -i --nodeps --force /tmp/$FILE
-		#	[ $? -eq 0 ] && msg "[RESULT_LN]" "done" || msg "[RESULT_LN]" "fail"
+		#	[ $? -eq 0 ] && msg "done" || msg "fail"
 		#done
 		
-		#msg "[PRINT_LN]" "Preconfigure system: "
+		#msg "Preconfigure system: "
 		#configure_system dns mtab repository
 		
-		#msg "[PRINT_ALL]" "Installing base system: "
+		#msg "Installing base system: "
 		#chroot $MNT_TARGET /usr/bin/yum groupinstall "Base" --nogpgcheck --skip-broken -y 1>&3 2>&4
 		
-		#msg "[PRINT]" "Clearing cache ... "
+		#msg -n "Clearing cache ... "
 		#chroot $MNT_TARGET /usr/bin/yum clean all
-    	#[ $? -eq 0 ] && msg "[RESULT_LN]" "done" || msg "[RESULT_LN]" "fail"
+    	#[ $? -eq 0 ] && msg "done" || msg "fail"
 	;;
 	opensuse)
-		msg "[PRINT_LN]" "Installing GNU/Linux system: "
+		msg "Installing GNU/Linux system: "
 		
 		BASIC_PACKAGES="aaa_base aaa_base-extras autoyast2-installation bash bind-libs bind-utils branding-openSUSE bridge-utils bzip2 coreutils cpio cracklib cracklib-dict-full cron cronie cryptsetup curl cyrus-sasl dbus-1 dbus-1-x11 device-mapper dhcpcd diffutils dirmngr dmraid e2fsprogs elfutils file filesystem fillup findutils fontconfig gawk gio-branding-openSUSE glib2-tools glibc glibc-extra glibc-i18ndata glibc-locale gnu-unifont-bitmap-fonts gpg2 grep groff gzip hwinfo ifplugd info initviocons insserv iproute2 iputils kbd kpartx krb5 less libX11-6 libX11-data libXau6 libXext6 libXft2 libXrender1 libacl1 libadns1 libaio1 libasm1 libassuan0 libattr1 libaudit1 libaugeas0 libblkid1 libblocxx6 libbz2-1 libcairo2 libcap-ng0 libcap2 libcom_err2 libcrack2 libcryptsetup4 libcurl4 libdaemon0 libdb-4_8 libdbus-1-3 libdrm2 libdw1 libedit0 libelf0 libelf1 libestr0 libexpat1 libext2fs2 libffi4 libfreetype6 libgcc_s1 libgcrypt11 libgdbm4 libgio-2_0-0 libglib-2_0-0 libgmodule-2_0-0 libgmp10 libgnutls28 libgobject-2_0-0 libgpg-error0 libgssglue1 libharfbuzz0 libhogweed2 libicu49 libidn11 libiw30 libjson0 libkeyutils1 libkmod2 libksba8 libldap-2_4-2 liblua5_1 liblzma5 libmagic-data libmagic1 libmicrohttpd10 libmodman1 libmount1 libncurses5 libncurses6 libnettle4 libnl-1_1 libopenssl1_0_0 libp11-kit0 libpango-1_0-0 libparted0 libpci3 libpcre1 libpipeline1 libpixman-1-0 libply-boot-client2 libply-splash-core2 libply-splash-graphics2 libply2 libpng15-15 libpolkit0 libpopt0 libprocps1 libproxy1 libpth20 libpython2_7-1_0 libqrencode3 libreadline6 libreiserfs-0_3-0 libselinux1 libsemanage1 libsepol1 libsolv-tools libssh2-1 libstdc++6 libstorage4 libtasn1 libtasn1-6 libtirpc1 libudev1 libusb-0_1-4 libusb-1_0-0 libustr-1_0-1 libuuid1 libxcb-render0 libxcb-shm0 libxcb1 libxml2-2 libxtables9 libyui-ncurses-pkg4 libyui-ncurses4 libyui4 libz1 libzio1 libzypp limal limal-perl logrotate lsscsi lvm2 man man-pages mdadm mkinitrd module-init-tools multipath-tools ncurses-utils net-tools netcfg openSUSE-build-key openSUSE-release openSUSE-release-ftp openslp openssh openssl pam pam-config pango-tools parted pciutils pciutils-ids perl perl-Bootloader perl-Config-Crontab perl-XML-Parser perl-XML-Simple perl-base perl-gettext permissions pinentry pkg-config plymouth plymouth-branding-openSUSE plymouth-plugin-label plymouth-plugin-script plymouth-scripts polkit procps python-base rpcbind rpm rsyslog sed shadow shared-mime-info sudo suse-module-tools sysconfig sysfsutils syslog-service systemd systemd-presets-branding-openSUSE systemd-sysvinit sysvinit-tools tar tcpd terminfo-base timezone tunctl u-boot-tools udev unzip update-alternatives util-linux vim vim-base vlan wallpaper-branding-openSUSE wireless-tools wpa_supplicant xz yast2 yast2-bootloader yast2-core yast2-country yast2-country-data yast2-dbus-client yast2-firstboot yast2-hardware-detection yast2-installation yast2-mouse yast2-packager yast2-perl-bindings yast2-pkg-bindings yast2-proxy yast2-slp yast2-storage yast2-trans-stats yast2-transfer yast2-update yast2-xml yast2-ycp-ui-bindings zypper"
 		REPO="${MIRROR%/}/${SUITE%:}:/ARM/${ARCH}"
 		PKG_LIST="$MNT_TARGET/tmp/packages.list"
 
-		msg "[PRINT]" "Preparing for deployment ... "
+		msg -n "Preparing for deployment ... "
 		(set -e
 			cd $MNT_TARGET
 			mkdir etc
@@ -911,20 +916,20 @@ install_system()
 			touch etc/fstab
 			mkdir tmp; chmod 01777 tmp
 		exit 0)
-		[ $? -eq 0 ] && msg "[RESULT_LN]" "done" || { msg "[RESULT_LN]" "fail"; return 1; }
+		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 		
-		msg "[PRINT]" "Retrieving packages list ... "
+		msg -n "Retrieving packages list ... "
 		(set -e
 			REPODATA_FILE=`wget -q -O - $REPO/repodata | sed -n '/<a / s/^.*<a [^>]*href="\([^\"]*\-primary\.xml\.gz\)".*$/\1/p'`
 			wget -q -O - $REPO/repodata/$REPODATA_FILE | gzip -dc | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\)".*$/\1/p' > $PKG_LIST
 		exit 0)
-		[ $? -eq 0 ] && msg "[RESULT_LN]" "done" || { msg "[RESULT_LN]" "fail"; return 1; }
+		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 		
-		msg "[PRINT_LN]" "Retrieving base packages: "
+		msg "Retrieving base packages: "
 		for PACKAGE in $BASIC_PACKAGES; do
-			msg "[PRINT]" "$PACKAGE ... "
+			msg -n "$PACKAGE ... "
     		PKG_URL=`cat $PKG_LIST | grep -e "^arm" -e "^noarch" | grep -m1 -e "^.*/$PACKAGE-[0-9s][0-9\.].*\.rpm$"`
-    		test "$PKG_URL" || { msg "[RESULT_LN]" "fail"; return 1; }
+    		test "$PKG_URL" || { msg "fail"; return 1; }
     		FILE=`basename $PKG_URL`
     		#echo "downloading ${FILE}... "
     		for i in 1 2 3
@@ -935,14 +940,13 @@ install_system()
     		done
     		#echo "unpacking ${FILE}... "
     		(cd $MNT_TARGET; rpm2cpio $MNT_TARGET/tmp/$FILE | cpio -idmu)
-    		[ $? -eq 0 ] && msg "[RESULT_LN]" "done" || { msg "[RESULT_LN]" "fail"; return 1; }
+    		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 		done
 
-		msg "[PRINT_ALL]" "Installing base packages: "
+		msg "Installing base packages: "
 		chroot $MNT_TARGET /bin/rpm -iv --force --nosignature --nodeps /tmp/*.rpm 1>&3 2>&4
 		# clean cache
 		rm -rf $MNT_TARGET/tmp/*
-		msg "[RESULT_ALL]"
 	;;
 	esac
 
@@ -957,28 +961,28 @@ uninstall_system()
 	umount_system
 	[ $? -ne 0 ] && return 1
 	
-	#msg "[PRINT]" "Removing disk image ... "
+	#msg -n "Removing disk image ... "
 	#(set -e
 	#	[ -f "$IMG_TARGET" ] && rm $IMG_TARGET
 	#	[ -d "$MNT_TARGET" ] && rmdir $MNT_TARGET
 	#exit 0)
-	#[ $? -eq 0 ] && msg "[RESULT_LN]" "done" || msg "[RESULT_LN]" "fail"
+	#[ $? -eq 0 ] && msg "done" || msg "fail"
 	
-	msg "[PRINT]" "Removing symlink ... "
+	msg -n "Removing symlink ... "
 	(set -e
 		if [ -e "/system/bin/linuxdeploy" ]; then
 			rm -f /system/bin/linuxdeploy || 
 				{ mount -o rw,remount /system;	rm -f /system/bin/linuxdeploy; mount -o ro,remount /system;	}
 		fi
 	exit 0)
-	[ $? -eq 0 ] && msg "[RESULT_LN]" "done" || msg "[RESULT_LN]" "fail"
+	[ $? -eq 0 ] && msg "done" || msg "fail"
 			
-	msg "[PRINT]" "Removing environment ... "
+	msg -n "Removing environment ... "
 	(set -e
 		rm -rf ${ENV_DIR%/}/mnt ${ENV_DIR%/}/deploy ${ENV_DIR%/}/etc ${ENV_DIR%/}/bin
 		[ -d "$ENV_DIR" ] && rmdir $ENV_DIR
 	exit 0)
-	[ $? -eq 0 ] && msg "[RESULT_LN]" "done" || msg "[RESULT_LN]" "fail"
+	[ $? -eq 0 ] && msg "done" || msg "fail"
 	
 	return 0
 }
@@ -987,31 +991,107 @@ uninstall_system()
 
 case "$1" in
 mount)
+	msg ">>> begin: mount"
 	mount_system
+	msg "<<< end: mount"
 ;;
 umount)
+	msg ">>> begin: umount"
 	umount_system
+	msg "<<< end: umount"
 ;;
 install)
+	msg ">>> begin: install"
 	install_system
+	msg "<<< end: install"
 ;;
 configure)
+	msg ">>> begin: configure"
 	mount_system
 	[ $? -eq 0 ] && configure_system
+	msg "<<< end: configure"
 ;;
 uninstall)
+	msg ">>> begin: uninstall"
 	uninstall_system
+	msg "<<< end: uninstall"
 ;;
 start)
+	msg ">>> begin: start"
 	start_system
+	msg "<<< end: start"
 ;;
 stop)
+	msg ">>> begin: stop"
 	stop_system
+	msg "<<< end: stop"
 ;;
 shell)
+	msg ">>> begin: shell"
 	chroot_system
+	msg "<<< end: shell"
+;;
+status)
+	msg ">>> begin: status"
+	msg "Linux Deploy version: $(cat $ENV_DIR/etc/version)"
+	msg "Android version: $(getprop ro.build.version.release)"
+	msg "Device: $(getprop ro.product.brand) $(getprop ro.product.device)"
+	msg "CPU: $(cat /proc/cpuinfo | grep ^Processor | awk -F': ' '{print $2}')"
+	msg "$(cat /proc/meminfo | grep ^MemTotal)"
+	msg "$(cat /proc/meminfo | grep ^SwapTotal)"
+	msg -n "Support loop device: "
+	[ -n "`ls /dev/block/loop0`" ] && msg "yes" || msg "no"
+	msg "Supported file systems: $(cat /proc/filesystems | grep -v nodev | sort | xargs)"
+	LINUX_VERSION=`[ -r "$MNT_TARGET/etc/os-release" ] && . "$MNT_TARGET/etc/os-release"; [ -n "$PRETTY_NAME" ] && echo "$PRETTY_NAME" || echo "unknown"`
+	msg "Active Linux system: $LINUX_VERSION"
+	msg "Running services: "
+	msg -n "* SSH: "
+	[ -n "`ps | grep '/usr/sbin/sshd' | grep -v grep`" ] && msg "yes" || msg "no"
+	msg -n "* VNC: "
+	[ -n "`ps | grep 'X*vnc' | grep -v grep`" ] && msg "yes" || msg "no"
+	msg "Mounted parts on Linux: "
+	for i in `cat /proc/mounts | grep $MNT_TARGET | awk '{print $2}' | sed "s|$MNT_TARGET/*|/|g"`
+	do
+		msg "* $i"
+		is_mounted=1
+	done
+	[ -z "$is_mounted" ] && msg " ...not mounted anything"
+	msg "Available mount points: "
+	for p in `cat /proc/mounts | grep ^/dev/ | grep -v $MNT_TARGET | grep -v ' /mnt/asec/' | grep -v ' /mnt/secure/' | awk '{print $2":"$3}'`
+	do
+		PART=`echo $p | awk -F: '{print $1}'`
+		FSTYPE=`echo $p | awk -F: '{print $2}'`
+		BLOCK_SIZE=`stat -c '%s' -f $PART`
+		AVAILABLE=`stat -c '%a' -f $PART | awk '{printf("%.1f",$1*'$BLOCK_SIZE'/1024/1024/1024)}'`
+		TOTAL=`stat -c '%b' -f $PART | awk '{printf("%.1f",$1*'$BLOCK_SIZE'/1024/1024/1024)}'`
+		msg "* $PART: $AVAILABLE/$TOTAL GB ($FSTYPE)"
+	done
+	msg "Available partitions: "
+	for i in /sys/block/*/dev
+	do
+		if [ -f $i ]; then
+			DEVNAME=$(echo $i | sed -e 's@/dev@@' -e 's@.*/@@')
+			[ -e "/dev/$DEVNAME" ] && DEVPATH=/dev/$DEVNAME
+			[ -e "/dev/block/$DEVNAME" ] && DEVPATH=/dev/block/$DEVNAME
+			[ -n "$DEVPATH" ] && PARTS=`fdisk -l $DEVPATH | grep ^/dev/ | awk '{print $1}'`
+			for PART in $PARTS
+			do
+				SIZE=`fdisk -l $PART | grep 'Disk.*bytes' | awk '{ sub(/,/,""); print $3" "$4}'`
+				BOOT=`fdisk -l $DEVPATH | grep ^$PART | awk '{print $2}'`
+				if [ "$BOOT" = "*" ]; then
+					TYPE=`fdisk -l $DEVPATH | grep ^$PART | awk '{str=$7; for (i=8;i<=11;i++) if ($i!="") str=str" "$i; print str}'`
+				else
+					TYPE=`fdisk -l $DEVPATH | grep ^$PART | awk '{str=$6; for (i=7;i<=10;i++) if ($i!="") str=str" "$i; print str}'`
+				fi
+				msg "* $PART: $SIZE ($TYPE)"
+				is_partitions=1
+			done
+		fi
+	done
+	[ -z "$is_partitions" ] && msg " ...no available partitions"
+	msg "<<< end: status"
 ;;
 *)
-	msg "[PRINT_LN]" "Usage: $0 <mount|umount|install|configure|uninstall|start|stop|shell>"
+	msg "Usage: $0 <mount|umount|install|configure|uninstall|start|stop|shell|status>"
 ;;
 esac
