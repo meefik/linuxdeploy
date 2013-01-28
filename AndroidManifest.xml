@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ru.meefik.linuxdeploy"
-    android:versionCode="48"
-    android:versionName="1.3.3" >
+    android:versionCode="49"
+    android:versionName="1.3.4" >
 
     <uses-sdk
         android:minSdkVersion="8"
@@ -9,6 +9,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:icon="@drawable/ic_launcher"
@@ -41,6 +42,12 @@
             android:icon="@drawable/ic_launcher_profiles"
             android:label="@string/title_activity_profiles" >
         </activity>
+
+        <receiver android:name=".BootUpReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

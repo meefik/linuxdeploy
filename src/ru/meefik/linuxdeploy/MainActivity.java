@@ -1,7 +1,5 @@
 package ru.meefik.linuxdeploy;
 
-//import android.support.v4.*;
-
 import java.io.FileOutputStream;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -9,6 +7,7 @@ import java.net.SocketException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.Locale;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -31,47 +30,31 @@ public class MainActivity extends Activity implements OnClickListener {
 
 	private static TextView logView;
 	private static ScrollView logScroll;
-	private static Boolean fullLogFlag = false;
 	static Handler handler;
+	private static boolean newLine = false;
+
+	private static String getTimeStamp() {
+		return "["
+				+ new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH)
+						.format(new Date()) + "] ";
+	}
 
 	public static void printLogMsg(String msg) {
-		if (msg.length() <= 0)
-			return;
-		String printMsg = "";
-		String currentTimeString = "["
-				+ new SimpleDateFormat("HH:mm:ss").format(new Date()) + "] ";
-		if (PrefStore.DEBUG_MODE.equals("y")) {
-			printMsg = currentTimeString + msg + "\n";
-		} else {
-			if (fullLogFlag) {
-				printMsg = currentTimeString + msg + "\n";
+		if (msg.length() > 0) {
+			if (logView.length() == 0) {
+				msg = getTimeStamp() + msg;
+				newLine = false;
 			}
-			if (msg.matches("^\\[RESULT\\].*$")) {
-				printMsg = msg.replaceFirst("\\[RESULT\\] ", "");
+			if (newLine) {
+				msg = "\n" + msg;
+				newLine = false;
 			}
-			if (msg.matches("^\\[RESULT_LN\\].*$")) {
-				printMsg = msg.replaceFirst("\\[RESULT_LN\\] ", "") + "\n";
+			if (msg.charAt(msg.length() - 1) == '\n') {
+				msg = msg.substring(0, msg.length() - 1);
+				newLine = true;
 			}
-			if (msg.matches("^\\[RESULT_ALL\\].*$")) {
-				// printMsg = msg.replaceFirst("\\[RESULT_ALL\\] ", "") + "\n";
-				fullLogFlag = false;
-			}
-			if (msg.matches("^\\[PRINT\\].*$")) {
-				printMsg = currentTimeString
-						+ msg.replaceFirst("\\[PRINT\\] ", "");
-			}
-			if (msg.matches("^\\[PRINT_LN\\].*$")) {
-				printMsg = currentTimeString
-						+ msg.replaceFirst("\\[PRINT_LN\\] ", "") + "\n";
-			}
-			if (msg.matches("^\\[PRINT_ALL\\].*$")) {
-				printMsg = currentTimeString
-						+ msg.replaceFirst("\\[PRINT_ALL\\] ", "") + "\n";
-				fullLogFlag = true;
-			}
-		}
-		if (printMsg.length() > 0) {
-			logView.append(printMsg);
+			msg = msg.replaceAll("\\n", "\n" + getTimeStamp());
+			logView.append(msg);
 			logView.scrollTo(0, logView.getBottom());
 			logScroll.post(new Runnable() {
 				@Override
@@ -80,7 +63,7 @@ public class MainActivity extends Activity implements OnClickListener {
 				}
 			});
 			if (PrefStore.LOGGING) {
-				saveLogs(printMsg);
+				saveLogs(msg);
 			}
 		}
 	}
@@ -304,10 +287,10 @@ public class MainActivity extends Activity implements OnClickListener {
 			startActivity(intent_about);
 			break;
 		case R.id.menu_status:
-			new Thread(new Runnable() {
+			(new Thread() {
 				@Override
 				public void run() {
-					new ShellEnv(getApplicationContext()).sysInfo();
+					new ShellEnv(getApplicationContext()).deployCmd("status");
 				}
 			}).start();
 			break;
@@ -364,7 +347,7 @@ public class MainActivity extends Activity implements OnClickListener {
 
 		// update configuration file
 		if (PrefStore.PREF_CHANGE) {
-			new Thread(new Runnable() {
+			(new Thread() {
 				@Override
 				public void run() {
 					new ShellEnv(getApplicationContext()).updateConfig();
