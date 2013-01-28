@@ -987,52 +987,8 @@ uninstall_system()
 	return 0
 }
 
-#################################################
-
-case "$1" in
-mount)
-	msg ">>> begin: mount"
-	mount_system
-	msg "<<< end: mount"
-;;
-umount)
-	msg ">>> begin: umount"
-	umount_system
-	msg "<<< end: umount"
-;;
-install)
-	msg ">>> begin: install"
-	install_system
-	msg "<<< end: install"
-;;
-configure)
-	msg ">>> begin: configure"
-	mount_system
-	[ $? -eq 0 ] && configure_system
-	msg "<<< end: configure"
-;;
-uninstall)
-	msg ">>> begin: uninstall"
-	uninstall_system
-	msg "<<< end: uninstall"
-;;
-start)
-	msg ">>> begin: start"
-	start_system
-	msg "<<< end: start"
-;;
-stop)
-	msg ">>> begin: stop"
-	stop_system
-	msg "<<< end: stop"
-;;
-shell)
-	msg ">>> begin: shell"
-	chroot_system
-	msg "<<< end: shell"
-;;
-status)
-	msg ">>> begin: status"
+status_system()
+{
 	msg "Linux Deploy version: $(cat $ENV_DIR/etc/version)"
 	msg "Android version: $(getprop ro.build.version.release)"
 	msg "Device: $(getprop ro.product.brand) $(getprop ro.product.device)"
@@ -1089,6 +1045,55 @@ status)
 		fi
 	done
 	[ -z "$is_partitions" ] && msg " ...no available partitions"
+}
+
+#################################################
+
+case "$1" in
+mount)
+	msg ">>> begin: mount"
+	mount_system
+	msg "<<< end: mount"
+;;
+umount)
+	msg ">>> begin: umount"
+	umount_system
+	msg "<<< end: umount"
+;;
+install)
+	msg ">>> begin: install"
+	install_system
+	msg "<<< end: install"
+;;
+configure)
+	msg ">>> begin: configure"
+	mount_system
+	[ $? -eq 0 ] && configure_system
+	msg "<<< end: configure"
+;;
+uninstall)
+	msg ">>> begin: uninstall"
+	uninstall_system
+	msg "<<< end: uninstall"
+;;
+start)
+	msg ">>> begin: start"
+	start_system
+	msg "<<< end: start"
+;;
+stop)
+	msg ">>> begin: stop"
+	stop_system
+	msg "<<< end: stop"
+;;
+shell)
+	msg ">>> begin: shell"
+	chroot_system
+	msg "<<< end: shell"
+;;
+status)
+	msg ">>> begin: status"
+	status_system
 	msg "<<< end: status"
 ;;
 *)
