@@ -65,6 +65,6 @@
     <!-- openSUSE -->
     <string name="opensuse_suite" translatable="false">Factory</string>
     <string name="opensuse_mirror" translatable="false">http://download.opensuse.org/repositories/openSUSE:/</string>
-    <string name="opensuse_architecture" translatable="false">standard</string>
+    <string name="opensuse_architecture" translatable="false">armv5el</string>
     
 </resources>

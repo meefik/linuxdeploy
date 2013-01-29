@@ -4,6 +4,7 @@ Changelog (English)
 1.3.4
 Added command status to linuxdeploy script
 Added function startup GNU/Linux when running Android (Settings -> Autostart)
+Excluded lost package insserv form openSUSE installation
 
 1.3.3
 Added xorg-fonts-misc package in Arch Linux GUI installation
@@ -162,6 +163,7 @@ Updated list packages of base system installation
 1.3.4
 Добавлена команда status в скрипт linuxdeploy
 Добавлена функция запуска GNU/Linux при загрузке Android (Настройки -> Автозапуск)
+Из базовой установки openSUSE исключен потерянный пакет insserv
 
 1.3.3
 Добавлен пакет xorg-fonts-misc к установке GUI в Arch Linux
