@@ -36,6 +36,7 @@
     <string name="vncstartup" translatable="false">true</string>
     <string name="vncdisplay" translatable="false">0</string>
     <string name="vncdepth" translatable="false">16</string>
+    <string name="vncdpi" translatable="false">75</string>
     <string name="vncwidth" translatable="false">800</string>
     <string name="vncheight" translatable="false">400</string>
     <string name="xstartup" translatable="false">false</string>

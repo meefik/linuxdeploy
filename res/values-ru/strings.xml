@@ -161,6 +161,9 @@
     <string name="title_vncdepth_preference">Глубина цвета (бит)</string>
     <string name="dialog_title_vncdepth_preference">VNC: глубина цвета (бит)</string>
     
+    <string name="title_vncdpi_preference">DPI</string>
+    <string name="dialog_title_vncdpi_preference">VNC: точек на дюйм (DPI)</string>
+    
     <string name="title_vncwidth_preference">Ширина экрана</string>
     <string name="dialog_title_vncwidth_preference">VNC: ширина экрана</string>
     

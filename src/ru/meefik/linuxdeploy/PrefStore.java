@@ -49,6 +49,7 @@ public class PrefStore {
 	public static String VNC_START;
 	public static String VNC_DISPLAY;
 	public static String VNC_DEPTH;
+	public static String VNC_DPI;
 	public static String VNC_GEOMETRY;
 	public static String XSERVER_START;
 	public static String XSERVER_DISPLAY;
@@ -131,6 +132,7 @@ public class PrefStore {
 		VNC_DISPLAY = sp.getString("vncdisplay",
 				c.getString(R.string.vncdisplay));
 		VNC_DEPTH = sp.getString("vncdepth", c.getString(R.string.vncdepth));
+		VNC_DPI = sp.getString("vncdpi", c.getString(R.string.vncdpi));
 		VNC_GEOMETRY = sp.getString("vncwidth", c.getString(R.string.vncwidth))
 				+ "x"
 				+ sp.getString("vncheight", c.getString(R.string.vncheight));
