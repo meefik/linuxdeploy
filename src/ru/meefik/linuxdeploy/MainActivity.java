@@ -45,21 +45,24 @@ public class MainActivity extends Activity implements OnClickListener {
 				msg = getTimeStamp() + msg;
 				newLine = false;
 			}
+			// add '\n' character
 			if (newLine) {
 				msg = "\n" + msg;
 				newLine = false;
 			}
-			if (msg.charAt(msg.length() - 1) == '\n') {
+			// remove all last '\n' characters
+			while (msg.length() > 0 && msg.charAt(msg.length() - 1) == '\n') {
 				msg = msg.substring(0, msg.length() - 1);
 				newLine = true;
 			}
 			msg = msg.replaceAll("\\n", "\n" + getTimeStamp());
 			logView.append(msg);
-			logView.scrollTo(0, logView.getBottom());
+			//logView.scrollTo(logView.getLeft(), logView.getBottom());
 			logScroll.post(new Runnable() {
 				@Override
 				public void run() {
 					logScroll.fullScroll(View.FOCUS_DOWN);
+					logScroll.clearFocus();
 				}
 			});
 			if (PrefStore.LOGGING) {

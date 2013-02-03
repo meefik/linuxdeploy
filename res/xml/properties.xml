@@ -210,7 +210,16 @@
            		android:entries="@array/vncdepth_values"
            		android:entryValues="@array/vncdepth_values"
            		android:dialogTitle="@string/dialog_title_vncdepth_preference" />
-	    		
+
+   		<EditTextPreference
+    		    android:dependency="vncstartup"
+   	        	android:key="vncdpi"
+       	    	android:defaultValue="@string/vncdpi"
+       	    	android:inputType="numberDecimal"
+           		android:title="@string/title_vncdpi_preference"
+           		android:summary="@string/vncdpi"
+           		android:dialogTitle="@string/dialog_title_vncdpi_preference" />
+   		
    		<EditTextPreference
     		    android:dependency="vncstartup"
    	        	android:key="vncwidth"

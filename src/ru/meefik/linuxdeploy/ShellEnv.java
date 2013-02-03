@@ -184,6 +184,8 @@ public class ShellEnv {
 				+ "/etc/deploy.conf");
 		params.add("sed -i 's|^VNC_DEPTH=.*|VNC_DEPTH=\"" + PrefStore.VNC_DEPTH
 				+ "\"|g' " + PrefStore.HOME_DIR + "/etc/deploy.conf");
+		params.add("sed -i 's|^VNC_DPI=.*|VNC_DPI=\"" + PrefStore.VNC_DPI
+				+ "\"|g' " + PrefStore.HOME_DIR + "/etc/deploy.conf");
 		params.add("sed -i 's|^VNC_GEOMETRY=.*|VNC_GEOMETRY=\""
 				+ PrefStore.VNC_GEOMETRY + "\"|g' " + PrefStore.HOME_DIR
 				+ "/etc/deploy.conf");
