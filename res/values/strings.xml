@@ -162,7 +162,7 @@
     <string name="dialog_title_vncdepth_preference">VNC: depth (bits)</string>
     
     <string name="title_vncdpi_preference">DPI</string>
-    <string name="dialog_title_vncdpi_preference">VNC: dots per inch</string>
+    <string name="dialog_title_vncdpi_preference">VNC: dots per inch (DPI)</string>
     
     <string name="title_vncwidth_preference">Width</string>
     <string name="dialog_title_vncwidth_preference">VNC: screen width</string>
