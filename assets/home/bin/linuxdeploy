@@ -331,6 +331,9 @@ configure_system()
 				kde)
 					echo 'startkde &' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
 				;;
+				openbox)
+					echo 'exec openbox-session' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
+				;;
 				esac
 				chmod 755 $MNT_TARGET$USER_HOME/.vnc/xstartup
 				echo "#!/bin/sh" > $MNT_TARGET$USER_HOME/.xsession
@@ -366,6 +369,9 @@ configure_system()
 				;;
 				kde)
 					PKGS="$PKGS kde-standard"
+				;;
+				openbox)
+					PKGS="$PKGS openbox"
 				;;
 				esac
 				chroot $MNT_TARGET apt-get install $PKGS --no-install-recommends -yq
