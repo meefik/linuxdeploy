@@ -4,17 +4,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-import android.app.Activity;
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 
-public class ProfilesActivity extends Activity {
+public class ProfilesActivity extends SherlockActivity {
 
 	private ListView profilesList;
 	private ArrayList<Profile<String, String>> listItems = new ArrayList<Profile<String, String>>();
@@ -26,6 +27,8 @@ public class ProfilesActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		PrefStore.updateLocale(this);
 		setContentView(R.layout.activity_profiles);
+		
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		profilesList = (ListView) findViewById(R.id.profilesView);
 		adapter = new ArrayAdapter<Profile<String, String>>(this,
@@ -36,7 +39,7 @@ public class ProfilesActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		PrefStore.updateLocale(getApplicationContext());
-		getMenuInflater().inflate(R.menu.activity_profiles, menu);
+		getSupportMenuInflater().inflate(R.menu.activity_profiles, menu);
 		return true;
 	}
 
@@ -146,8 +149,8 @@ public class ProfilesActivity extends Activity {
 								}).show();
 			}
 			break;
-		default:
-
+		case android.R.id.home:
+			finish();
 			break;
 		}
 		return false;

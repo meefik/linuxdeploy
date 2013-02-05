@@ -1,5 +1,8 @@
 package ru.meefik.linuxdeploy;
 
+import com.actionbarsherlock.app.SherlockPreferenceActivity;
+import com.actionbarsherlock.view.MenuItem;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -8,12 +11,11 @@ import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
-import android.preference.PreferenceActivity;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 
-public class AppPrefsActivity extends PreferenceActivity implements
+public class AppPrefsActivity extends SherlockPreferenceActivity implements
 		OnSharedPreferenceChangeListener, Preference.OnPreferenceClickListener {
 
 	private void installEnvDialog() {
@@ -54,6 +56,8 @@ public class AppPrefsActivity extends PreferenceActivity implements
 		super.onCreate(savedInstanceState);
 
 		PrefStore.updateLocale(this);
+		
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		PreferenceManager prefMgr = getPreferenceManager();
 		prefMgr.setSharedPreferencesName(PrefStore.APP_PREF_FILE_NAME);
@@ -68,6 +72,16 @@ public class AppPrefsActivity extends PreferenceActivity implements
 
 		getPreferenceScreen().getSharedPreferences()
 				.unregisterOnSharedPreferenceChangeListener(this);
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			finish();
+			break;
+		}
+		return false;
 	}
 
 	@Override
@@ -95,7 +109,8 @@ public class AppPrefsActivity extends PreferenceActivity implements
 			String key) {
 		Preference pref = this.findPreference(key);
 		this.setSummary(pref, true);
-		PrefStore.PREF_CHANGE = true;
+		if (pref.getKey().equals("debug")||pref.getKey().equals("trace"))
+			PrefStore.PREF_CHANGE = true;
 	}
 
 	private void initSummaries(PreferenceGroup pg) {

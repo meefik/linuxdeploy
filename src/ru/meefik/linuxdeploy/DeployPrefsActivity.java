@@ -1,5 +1,8 @@
 package ru.meefik.linuxdeploy;
 
+import com.actionbarsherlock.app.SherlockPreferenceActivity;
+import com.actionbarsherlock.view.MenuItem;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -8,12 +11,11 @@ import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
-import android.preference.PreferenceActivity;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 
-public class DeployPrefsActivity extends PreferenceActivity implements
+public class DeployPrefsActivity extends SherlockPreferenceActivity implements
 		Preference.OnPreferenceClickListener, OnSharedPreferenceChangeListener {
 
 	@Override
@@ -22,6 +24,8 @@ public class DeployPrefsActivity extends PreferenceActivity implements
 		super.onCreate(savedInstanceState);
 
 		PrefStore.updateLocale(this);
+		
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		PreferenceManager prefMgr = this.getPreferenceManager();
 		prefMgr.setSharedPreferencesName(PrefStore.CURRENT_PROFILE);
@@ -38,9 +42,22 @@ public class DeployPrefsActivity extends PreferenceActivity implements
 				.unregisterOnSharedPreferenceChangeListener(this);
 
 	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			finish();
+			break;
+		}
+		return false;
+	}
 
 	@Override
 	public boolean onPreferenceClick(Preference preference) {
+		if (preference.getKey().equals("install")) {
+			installDialog();
+		}
 		if (preference.getKey().equals("reconfigure")) {
 			reconfigureDialog();
 		}
@@ -78,6 +95,38 @@ public class DeployPrefsActivity extends PreferenceActivity implements
 												.updateConfig();
 										new ShellEnv(getApplicationContext())
 												.deployCmd("configure");
+									}
+								}).start();
+								finish();
+							}
+						})
+				.setNegativeButton(android.R.string.no,
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int id) {
+								dialog.cancel();
+							}
+						}).show();
+	}
+	
+	private void installDialog() {
+		new AlertDialog.Builder(this)
+				.setTitle(R.string.title_install_preference)
+				.setMessage(R.string.message_install_confirm_dialog)
+				.setIcon(android.R.drawable.ic_dialog_alert)
+				.setCancelable(false)
+				.setPositiveButton(android.R.string.yes,
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int id) {
+								PrefStore.PREF_CHANGE = false;
+								(new Thread() {
+									@Override
+									public void run() {
+										new ShellEnv(getApplicationContext())
+												.updateConfig();
+										new ShellEnv(getApplicationContext())
+												.deployCmd("install");
 									}
 								}).start();
 								finish();

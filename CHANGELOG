@@ -1,6 +1,9 @@
 Changelog (English)
 ===================
 
+1.3.5
+Redesigned interface (include ActionBarSherlock)
+
 1.3.4
 Added command status to linuxdeploy script
 Added function startup GNU/Linux when running Android (Settings -> Autostart)
@@ -161,6 +164,9 @@ Updated list packages of base system installation
 
 История изменений (Русский)
 ===========================
+
+1.3.5
+Переработан интерфейс (добавлен ActionBarSherlock)
 
 1.3.4
 Добавлена команда status в скрипт linuxdeploy

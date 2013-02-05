@@ -1,65 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <resources>
-    
+
     <string-array name="language_entries" translatable="false">
         <item>English</item>
         <item>Русский</item>
     </string-array>
-    
     <string-array name="language_values" translatable="false">
         <item>en</item>
         <item>ru</item>
     </string-array>
-    
     <string-array name="theme_entries">
         <item>Dark</item>
         <item>Light</item>
     </string-array>
-    
     <string-array name="theme_values" translatable="false">
         <item>dark</item>
         <item>light</item>
     </string-array>
-    
     <string-array name="deploytype_values" translatable="false">
         <item>image</item>
         <item>partition</item>
         <item>directory</item>
     </string-array>
-    
     <string-array name="deploytype_entries">
         <item>Image file</item>
         <item>Disk partition</item>
         <item>Directory</item>
     </string-array>
-        
     <string-array name="fstype_values" translatable="false">
         <item>auto</item>
         <item>ext2</item>
         <item>ext3</item>
         <item>ext4</item>
     </string-array>
-    
     <string-array name="fstype_entries">
         <item>Auto</item>
         <item>ext2</item>
         <item>ext3</item>
         <item>ext4</item>
     </string-array>
-    
     <string-array name="locale_values" translatable="false">
         <item>en_US.UTF-8</item>
         <item>ru_RU.UTF-8</item>
     </string-array>
-    
     <string-array name="vncdepth_values" translatable="false">
         <item>8</item>
         <item>15</item>
         <item>16</item>
         <item>24</item>
     </string-array>
-    
     <string-array name="desktopenv_values" translatable="false">
         <item>xterm</item>
         <item>lxde</item>
@@ -68,7 +57,6 @@
         <item>kde</item>
         <item>other</item>
     </string-array>
-    
     <string-array name="desktopenv_entries">
         <item>XTerm</item>
         <item>LXDE</item>
@@ -77,7 +65,6 @@
         <item>KDE</item>
         <item>Other</item>
     </string-array>
-    
     <string-array name="distribution_values" translatable="false">
         <item>debian</item>
         <item>ubuntu</item>
@@ -85,7 +72,6 @@
         <item>fedora</item>
         <item>opensuse</item>
     </string-array>
-    
     <string-array name="distribution_entries" translatable="false">
         <item>Debian</item>
         <item>Ubuntu</item>
@@ -93,7 +79,7 @@
         <item>Fedora</item>
         <item>openSUSE</item>
     </string-array>
-    
+
     <!-- Debian -->
 
     <string-array name="debian_suite_values" translatable="false">
@@ -104,21 +90,19 @@
         <item>wheezy</item>
         <item>sid</item>
     </string-array>
-    
     <string-array name="debian_architecture_values" translatable="false">
         <item>armel</item>
         <item>armhf</item>
     </string-array>
-    
+
     <!-- Ubuntu -->
-    
+
     <string-array name="ubuntu_suite_values" translatable="false">
         <item>quantal</item>
         <item>precise</item>
         <item>oneiric</item>
         <item>lucid</item>
     </string-array>
-
     <string-array name="ubuntu_architecture_values" translatable="false">
         <item>armel</item>
         <item>armhf</item>
@@ -129,33 +113,30 @@
     <string-array name="archlinux_suite_values" translatable="false">
         <item>latest</item>
     </string-array>
-
     <string-array name="archlinux_architecture_values" translatable="false">
         <item>arm</item>
         <item>armv6h</item>
         <item>armv7h</item>
     </string-array>
-    
+
     <!-- Fedora -->
 
     <string-array name="fedora_suite_values" translatable="false">
         <item>17</item>
     </string-array>
-
     <string-array name="fedora_architecture_values" translatable="false">
         <item>arm</item>
         <item>armhfp</item>
     </string-array>
-    
+
     <!-- openSUSE -->
 
     <string-array name="opensuse_suite_values" translatable="false">
         <item>Factory</item>
     </string-array>
-
     <string-array name="opensuse_architecture_values" translatable="false">
         <item>armv5el</item>
         <item>standard</item>
     </string-array>
-    
+
 </resources>
