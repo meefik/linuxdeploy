@@ -58,7 +58,7 @@
     <string name="title_logfile_preference">Файл журнала</string>
     <string name="dialog_title_logfile_preference">Файл журнала</string>
     <string name="title_install_preference">Установить</string>
-    <string name="summary_install_preference">Запустить установку GNU/Linux</string>
+    <string name="summary_install_preference">Запустить установку GNU/Linux системы</string>
     <string name="message_install_confirm_dialog">Запустить установку GNU/Linux системы?</string>
     <string name="title_reconfigure_preference">Переконфигурация</string>
     <string name="summary_reconfigure_preference">Выполнить переконфигурацию системы</string>
