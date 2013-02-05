@@ -1,11 +1,11 @@
 package ru.meefik.linuxdeploy;
 
-import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.view.MenuItem;
-
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
 import android.widget.TextView;
+
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.MenuItem;
 
 public class AboutActivity extends SherlockActivity {
 
@@ -25,7 +25,7 @@ public class AboutActivity extends SherlockActivity {
 		super.onResume();
 		this.setTitle(R.string.title_activity_about);
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {

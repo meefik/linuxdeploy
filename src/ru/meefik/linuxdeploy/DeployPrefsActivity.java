@@ -1,8 +1,5 @@
 package ru.meefik.linuxdeploy;
 
-import com.actionbarsherlock.app.SherlockPreferenceActivity;
-import com.actionbarsherlock.view.MenuItem;
-
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -15,6 +12,9 @@ import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 
+import com.actionbarsherlock.app.SherlockPreferenceActivity;
+import com.actionbarsherlock.view.MenuItem;
+
 public class DeployPrefsActivity extends SherlockPreferenceActivity implements
 		Preference.OnPreferenceClickListener, OnSharedPreferenceChangeListener {
 
@@ -24,7 +24,7 @@ public class DeployPrefsActivity extends SherlockPreferenceActivity implements
 		super.onCreate(savedInstanceState);
 
 		PrefStore.updateLocale(this);
-		
+
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		PreferenceManager prefMgr = this.getPreferenceManager();
@@ -42,7 +42,7 @@ public class DeployPrefsActivity extends SherlockPreferenceActivity implements
 				.unregisterOnSharedPreferenceChangeListener(this);
 
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
@@ -108,7 +108,7 @@ public class DeployPrefsActivity extends SherlockPreferenceActivity implements
 							}
 						}).show();
 	}
-	
+
 	private void installDialog() {
 		new AlertDialog.Builder(this)
 				.setTitle(R.string.title_install_preference)

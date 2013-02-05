@@ -12,7 +12,6 @@ import java.util.Locale;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.TypedValue;
@@ -56,7 +55,7 @@ public class MainActivity extends SherlockActivity {
 			}
 			msg = msg.replaceAll("\\n", "\n" + getTimeStamp());
 			logView.append(msg);
-			//logView.scrollTo(logView.getLeft(), logView.getBottom());
+			// logView.scrollTo(logView.getLeft(), logView.getBottom());
 			logScroll.post(new Runnable() {
 				@Override
 				public void run() {
@@ -131,22 +130,27 @@ public class MainActivity extends SherlockActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		PrefStore.updateLocale(getApplicationContext());
 		getSupportMenuInflater().inflate(R.menu.activity_main, menu);
-		
+
 		boolean isLight = PrefStore.THEME.equals("light");
-		
-	    menu.findItem(R.id.menu_profiles)
-	    .setIcon(isLight ? R.drawable.ic_action_profiles_light : R.drawable.ic_action_profiles_dark);
-	    menu.findItem(R.id.menu_start)
-	    .setIcon(isLight ? R.drawable.ic_action_start_light : R.drawable.ic_action_start_dark);
-	    menu.findItem(R.id.menu_stop)
-	    .setIcon(isLight ? R.drawable.ic_action_stop_light : R.drawable.ic_action_stop_dark);
-	    menu.findItem(R.id.menu_properties)
-	    .setIcon(isLight ? R.drawable.ic_action_properties_light : R.drawable.ic_action_properties_dark);
-	    /*
-	    menu.add("info")
-	    .setIcon(isLight ? R.drawable.ic_action_properties_light : R.drawable.ic_action_properties_dark)
-	    .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-  		*/
+
+		menu.findItem(R.id.menu_profiles).setIcon(
+				isLight ? R.drawable.ic_action_profiles_light
+						: R.drawable.ic_action_profiles_dark);
+		menu.findItem(R.id.menu_start).setIcon(
+				isLight ? R.drawable.ic_action_start_light
+						: R.drawable.ic_action_start_dark);
+		menu.findItem(R.id.menu_stop).setIcon(
+				isLight ? R.drawable.ic_action_stop_light
+						: R.drawable.ic_action_stop_dark);
+		menu.findItem(R.id.menu_properties).setIcon(
+				isLight ? R.drawable.ic_action_properties_light
+						: R.drawable.ic_action_properties_dark);
+		/*
+		 * menu.add("info") .setIcon(isLight ?
+		 * R.drawable.ic_action_properties_light :
+		 * R.drawable.ic_action_properties_dark)
+		 * .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		 */
 		return true;
 	}
 
@@ -155,63 +159,63 @@ public class MainActivity extends SherlockActivity {
 		switch (item.getItemId()) {
 		case R.id.menu_start:
 			new AlertDialog.Builder(this)
-			.setTitle(R.string.confirm_start_title)
-			.setMessage(R.string.confirm_start_message)
-			.setIcon(android.R.drawable.ic_dialog_alert)
-			.setCancelable(false)
-			.setPositiveButton(android.R.string.yes,
-					new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog,
-								int id) {
-							(new Thread() {
+					.setTitle(R.string.confirm_start_title)
+					.setMessage(R.string.confirm_start_message)
+					.setIcon(android.R.drawable.ic_dialog_alert)
+					.setCancelable(false)
+					.setPositiveButton(android.R.string.yes,
+							new DialogInterface.OnClickListener() {
 								@Override
-								public void run() {
-									new ShellEnv(
-											getApplicationContext())
-											.deployCmd("start");
+								public void onClick(DialogInterface dialog,
+										int id) {
+									(new Thread() {
+										@Override
+										public void run() {
+											new ShellEnv(
+													getApplicationContext())
+													.deployCmd("start");
+										}
+									}).start();
 								}
-							}).start();
-						}
-					})
-			.setNegativeButton(android.R.string.no,
-					new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog,
-								int id) {
-							dialog.cancel();
-						}
-					}).show();
+							})
+					.setNegativeButton(android.R.string.no,
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int id) {
+									dialog.cancel();
+								}
+							}).show();
 			break;
 		case R.id.menu_stop:
 			new AlertDialog.Builder(this)
-			.setTitle(R.string.confirm_stop_title)
-			.setMessage(R.string.confirm_stop_message)
-			.setIcon(android.R.drawable.ic_dialog_alert)
-			.setCancelable(false)
-			.setPositiveButton(android.R.string.yes,
-					new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog,
-								int id) {
-							(new Thread() {
+					.setTitle(R.string.confirm_stop_title)
+					.setMessage(R.string.confirm_stop_message)
+					.setIcon(android.R.drawable.ic_dialog_alert)
+					.setCancelable(false)
+					.setPositiveButton(android.R.string.yes,
+							new DialogInterface.OnClickListener() {
 								@Override
-								public void run() {
-									new ShellEnv(
-											getApplicationContext())
-											.deployCmd("stop");
+								public void onClick(DialogInterface dialog,
+										int id) {
+									(new Thread() {
+										@Override
+										public void run() {
+											new ShellEnv(
+													getApplicationContext())
+													.deployCmd("stop");
+										}
+									}).start();
 								}
-							}).start();
-						}
-					})
-			.setNegativeButton(android.R.string.no,
-					new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog,
-								int id) {
-							dialog.cancel();
-						}
-					}).show();
+							})
+					.setNegativeButton(android.R.string.no,
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int id) {
+									dialog.cancel();
+								}
+							}).show();
 			break;
 		case R.id.menu_status:
 			(new Thread() {
@@ -226,7 +230,8 @@ public class MainActivity extends SherlockActivity {
 			startActivity(intent_profiles);
 			break;
 		case R.id.menu_properties:
-			Intent intent_properties = new Intent(this, DeployPrefsActivity.class);
+			Intent intent_properties = new Intent(this,
+					DeployPrefsActivity.class);
 			startActivity(intent_properties);
 			break;
 		case R.id.menu_settings:
@@ -255,24 +260,16 @@ public class MainActivity extends SherlockActivity {
 
 		String titleMsg = PrefStore.getCurrentProfile(getApplicationContext());
 		/*
-		String myIP = getLocalIpAddress();
-		String ssh = "";
-		String vnc = "";
-
-		int ot = getResources().getConfiguration().orientation;
-		if (ot == Configuration.ORIENTATION_LANDSCAPE) {
-			if (myIP == null)
-				myIP = "127.0.0.1";
-			myIP = "IP: " + myIP;
-			if (PrefStore.SSH_START == "y")
-				ssh = "  SSH: " + PrefStore.SSH_PORT;
-			if (PrefStore.VNC_START == "y")
-				vnc = "  VNC: "
-						+ String.valueOf(5900 + (int) Double
-								.parseDouble(PrefStore.VNC_DISPLAY));
-			titleMsg += "  [ " + myIP + ssh + vnc + " ]";
-		}
-		*/
+		 * String myIP = getLocalIpAddress(); String ssh = ""; String vnc = "";
+		 * 
+		 * int ot = getResources().getConfiguration().orientation; if (ot ==
+		 * Configuration.ORIENTATION_LANDSCAPE) { if (myIP == null) myIP =
+		 * "127.0.0.1"; myIP = "IP: " + myIP; if (PrefStore.SSH_START == "y")
+		 * ssh = "  SSH: " + PrefStore.SSH_PORT; if (PrefStore.VNC_START == "y")
+		 * vnc = "  VNC: " + String.valueOf(5900 + (int) Double
+		 * .parseDouble(PrefStore.VNC_DISPLAY)); titleMsg += "  [ " + myIP + ssh
+		 * + vnc + " ]"; }
+		 */
 		this.setTitle(titleMsg);
 
 		// Restore text

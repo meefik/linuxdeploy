@@ -3,6 +3,7 @@ Changelog (English)
 
 1.3.5
 Redesigned interface (include ActionBarSherlock)
+Improved autostart feature
 
 1.3.4
 Added command status to linuxdeploy script
@@ -167,6 +168,7 @@ Updated list packages of base system installation
 
 1.3.5
 Переработан интерфейс (добавлен ActionBarSherlock)
+Доработана функция автозапуска
 
 1.3.4
 Добавлена команда status в скрипт linuxdeploy
