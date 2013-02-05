@@ -999,11 +999,12 @@ status_system()
 	[ -n "`ls /dev/block/loop0`" ] && msg "yes" || msg "no"
 	msg "Supported file systems: $(cat /proc/filesystems | grep -v nodev | sort | xargs)"
 	LINUX_VERSION=`[ -r "$MNT_TARGET/etc/os-release" ] && . "$MNT_TARGET/etc/os-release"; [ -n "$PRETTY_NAME" ] && echo "$PRETTY_NAME" || echo "unknown"`
-	msg "Active Linux system: $LINUX_VERSION"
+	msg "Active system: $LINUX_VERSION"
 	msg "Running services: "
-	msg -n "* SSH: "
+	msg -n "* SSH [$SSH_PORT]: "
 	[ -n "`ps | grep '/usr/sbin/sshd' | grep -v grep`" ] && msg "yes" || msg "no"
-	msg -n "* VNC: "
+	let vncport=5900+$VNC_DISPLAY
+	msg -n "* VNC [$vncport]: "
 	[ -n "`ps | grep 'X*vnc' | grep -v grep`" ] && msg "yes" || msg "no"
 	msg "Mounted parts on Linux: "
 	for i in `cat /proc/mounts | grep $MNT_TARGET | awk '{print $2}' | sed "s|$MNT_TARGET/*|/|g"`

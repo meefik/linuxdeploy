@@ -258,19 +258,9 @@ public class MainActivity extends SherlockActivity {
 
 		PrefStore.get(getApplicationContext());
 
-		String titleMsg = PrefStore.getCurrentProfile(getApplicationContext());
-		/*
-		 * String myIP = getLocalIpAddress(); String ssh = ""; String vnc = "";
-		 * 
-		 * int ot = getResources().getConfiguration().orientation; if (ot ==
-		 * Configuration.ORIENTATION_LANDSCAPE) { if (myIP == null) myIP =
-		 * "127.0.0.1"; myIP = "IP: " + myIP; if (PrefStore.SSH_START == "y")
-		 * ssh = "  SSH: " + PrefStore.SSH_PORT; if (PrefStore.VNC_START == "y")
-		 * vnc = "  VNC: " + String.valueOf(5900 + (int) Double
-		 * .parseDouble(PrefStore.VNC_DISPLAY)); titleMsg += "  [ " + myIP + ssh
-		 * + vnc + " ]"; }
-		 */
-		this.setTitle(titleMsg);
+		String profileName = PrefStore.getCurrentProfile(getApplicationContext());
+		String myIP = getLocalIpAddress();
+		this.setTitle(profileName+" [ "+myIP+" ]");
 
 		// Restore text
 		logView.setTextSize(TypedValue.COMPLEX_UNIT_SP, PrefStore.FONT_SIZE);
