@@ -165,7 +165,7 @@ configure_system()
 		motd)
 			#LINUX_VERSION=`chroot $MNT_TARGET lsb_release -d | sed 's|Description:[[:space:]]*||' || true`
 			LINUX_VERSION=`(. $MNT_TARGET/etc/os-release && echo $PRETTY_NAME) || true`
-			[ -z "$LINUX_VERSION" ] && LINUX_VERSION="GNU/Linux"
+			[ -z "$LINUX_VERSION" ] && LINUX_VERSION="GNU/Linux ($DISTRIB)"
 			MOTD="$LINUX_VERSION [running on Android via Linux Deploy]"
 			rm -f $MNT_TARGET/etc/motd || true
 			echo $MOTD > $MNT_TARGET/etc/motd
@@ -598,11 +598,15 @@ start_system()
 {
 	mount_system
 	[ $? -ne 0 ] && return 1
+	
+	LINUX_VERSION=`(. $MNT_TARGET/etc/os-release && echo $PRETTY_NAME) || true`
+	[ -z "$LINUX_VERSION" ] && LINUX_VERSION="GNU/Linux ($DISTRIB)"
+	msg "OS: $LINUX_VERSION"
 
 	update_system
 
 	msg "Starting services: "
-	msg -n "SSH ... "
+	msg -n "SSH :$SSH_PORT ... "
 	if [ "$SSH_START" == "y" ]; then
 		(set -e
 			sed -i "s|^Port .*|Port $SSH_PORT|g" $MNT_TARGET/etc/ssh/sshd_config
@@ -630,7 +634,8 @@ start_system()
 		msg "skip"
 	fi
 
-	msg -n "VNC ... "	
+	let vncport=5900+$VNC_DISPLAY
+	msg -n "VNC :$vncport ... "	
 	if [ "$VNC_START" == "y" ]; then
 		(set -e
 			case "$DISTRIB" in
@@ -1001,10 +1006,9 @@ status_system()
 	LINUX_VERSION=`[ -r "$MNT_TARGET/etc/os-release" ] && . "$MNT_TARGET/etc/os-release"; [ -n "$PRETTY_NAME" ] && echo "$PRETTY_NAME" || echo "unknown"`
 	msg "Active system: $LINUX_VERSION"
 	msg "Running services: "
-	msg -n "* SSH [$SSH_PORT]: "
+	msg -n "* SSH: "
 	[ -n "`ps | grep '/usr/sbin/sshd' | grep -v grep`" ] && msg "yes" || msg "no"
-	let vncport=5900+$VNC_DISPLAY
-	msg -n "* VNC [$vncport]: "
+	msg -n "* VNC: "
 	[ -n "`ps | grep 'X*vnc' | grep -v grep`" ] && msg "yes" || msg "no"
 	msg "Mounted parts on Linux: "
 	for i in `cat /proc/mounts | grep $MNT_TARGET | awk '{print $2}' | sed "s|$MNT_TARGET/*|/|g"`
