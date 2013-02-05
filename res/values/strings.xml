@@ -2,7 +2,6 @@
 <resources>
 
     <string name="app_name">Linux Deploy</string>
-    <string name="menu_profiles">Profiles</string>
     <string name="menu_start">Start</string>
     <string name="menu_stop">Stop</string>
     <string name="menu_properties">Properties</string>
@@ -87,11 +86,11 @@
     <string name="dialog_title_desktopenv_preference">Desktop environment</string>
     <string name="title_installgui_preference">Install GUI</string>
     <string name="summary_installgui_preference">Include installation of desktop environment and VNC server</string>
-    <string name="title_install_preference">New installation</string>
-    <string name="summary_install_preference">Start new GNU/Linux installation</string>
-    <string name="message_install_confirm_dialog">Start new installation of GNU/Linux system?</string>
+    <string name="title_install_preference">Install</string>
+    <string name="summary_install_preference">Start GNU/Linux installation</string>
+    <string name="message_install_confirm_dialog">Start installation of GNU/Linux system?</string>
     <string name="title_reconfigure_preference">Reconfigure</string>
-    <string name="summary_reconfigure_preference">Start the system reconfiguration</string>
+    <string name="summary_reconfigure_preference">Start system reconfiguration</string>
     <string name="message_reconfigure_confirm_dialog">Start reconfiguration of the system?</string>
     <string name="startup_preferences">Startup</string>
     <string name="title_sshstartup_preference">SSH</string>

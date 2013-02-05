@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
+    <PreferenceScreen
+        android:key="install"
+        android:summary="@string/summary_install_preference"
+        android:title="@string/title_install_preference" />
+    <PreferenceScreen
+        android:key="reconfigure"
+        android:summary="@string/summary_reconfigure_preference"
+        android:title="@string/title_reconfigure_preference" />
+
     <PreferenceCategory android:title="@string/deploy_preferences" >
         <ListPreference
             android:defaultValue="@string/distribution"
@@ -101,17 +110,6 @@
             android:key="installgui"
             android:summary="@string/summary_installgui_preference"
             android:title="@string/title_installgui_preference" />
-        
-	    <PreferenceScreen
-	        	android:key="install"
-                android:title="@string/title_install_preference"
-                android:summary="@string/summary_install_preference" />
-
-        <PreferenceScreen
-            android:key="reconfigure"
-            android:summary="@string/summary_reconfigure_preference"
-            android:title="@string/title_reconfigure_preference" />
-
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/startup_preferences" >
         <CheckBoxPreference
