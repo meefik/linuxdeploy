@@ -1,12 +1,12 @@
 package ru.meefik.linuxdeploy;
 
-import com.actionbarsherlock.app.SherlockPreferenceActivity;
-import com.actionbarsherlock.view.MenuItem;
-
 import android.app.AlertDialog;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
@@ -14,6 +14,9 @@ import android.preference.Preference;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
+
+import com.actionbarsherlock.app.SherlockPreferenceActivity;
+import com.actionbarsherlock.view.MenuItem;
 
 public class AppPrefsActivity extends SherlockPreferenceActivity implements
 		OnSharedPreferenceChangeListener, Preference.OnPreferenceClickListener {
@@ -56,7 +59,7 @@ public class AppPrefsActivity extends SherlockPreferenceActivity implements
 		super.onCreate(savedInstanceState);
 
 		PrefStore.updateLocale(this);
-		
+
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		PreferenceManager prefMgr = getPreferenceManager();
@@ -69,11 +72,22 @@ public class AppPrefsActivity extends SherlockPreferenceActivity implements
 	@Override
 	public void onPause() {
 		super.onPause();
+		
+		// set autostart settings
+		SharedPreferences sp = this.getSharedPreferences(
+				PrefStore.APP_PREF_FILE_NAME, Context.MODE_PRIVATE);
+		boolean isAutostart = sp.getBoolean("autostart",
+				this.getString(R.string.autostart) == "true" ? true : false);
+		int flag = (isAutostart ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+				: PackageManager.COMPONENT_ENABLED_STATE_DISABLED);
+		ComponentName component = new ComponentName(this, BootUpReceiver.class);
+		getPackageManager().setComponentEnabledSetting(component, flag,
+				PackageManager.DONT_KILL_APP);
 
 		getPreferenceScreen().getSharedPreferences()
 				.unregisterOnSharedPreferenceChangeListener(this);
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
@@ -109,7 +123,7 @@ public class AppPrefsActivity extends SherlockPreferenceActivity implements
 			String key) {
 		Preference pref = this.findPreference(key);
 		this.setSummary(pref, true);
-		if (pref.getKey().equals("debug")||pref.getKey().equals("trace"))
+		if (pref.getKey().equals("debug") || pref.getKey().equals("trace"))
 			PrefStore.PREF_CHANGE = true;
 	}
 

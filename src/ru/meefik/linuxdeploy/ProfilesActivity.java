@@ -4,16 +4,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 
 public class ProfilesActivity extends SherlockActivity {
 
@@ -27,7 +27,7 @@ public class ProfilesActivity extends SherlockActivity {
 		super.onCreate(savedInstanceState);
 		PrefStore.updateLocale(this);
 		setContentView(R.layout.activity_profiles);
-		
+
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		profilesList = (ListView) findViewById(R.id.profilesView);

@@ -44,7 +44,10 @@
             android:label="@string/title_activity_profiles" >
         </activity>
 
-        <receiver android:name=".BootUpReceiver" >
+        <receiver
+            android:name=".BootUpReceiver"
+            android:enabled="false"
+            android:exported="false" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
