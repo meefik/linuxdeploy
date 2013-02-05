@@ -17,7 +17,7 @@
         android:theme="@style/BlackTheme" >
         <activity
             android:name=".MainActivity"
-            android:label="@string/title_activity_main" 
+            android:label="@string/title_activity_main"
             android:uiOptions="splitActionBarWhenNarrow" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
