@@ -12,7 +12,7 @@ public class ExecCmd implements Runnable {
 
 	private List<String> params;
 	public boolean status;
-	
+
 	public ExecCmd(List<String> params) {
 		this.params = params;
 		status = true;
@@ -31,7 +31,7 @@ public class ExecCmd implements Runnable {
 			}
 			os.flush();
 			os.close();
-			
+
 			final InputStream stdout = process.getInputStream();
 			final InputStream stderr = process.getErrorStream();
 
@@ -41,7 +41,7 @@ public class ExecCmd implements Runnable {
 					sendLogs(stdout);
 				}
 			}).start();
-			
+
 			if (PrefStore.DEBUG_MODE.equals("y")) {
 				(new Thread() {
 					@Override
@@ -50,7 +50,7 @@ public class ExecCmd implements Runnable {
 					}
 				}).start();
 			}
-			
+
 			process.waitFor();
 			if (process.exitValue() != 0)
 				status = false;

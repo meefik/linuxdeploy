@@ -17,8 +17,8 @@
             android:id="@+id/imageView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:scaleType="fitXY"
             android:gravity="center"
+            android:scaleType="fitXY"
             android:src="@raw/tux_about" />
 
         <TextView
@@ -29,7 +29,6 @@
             android:clickable="true"
             android:gravity="center"
             android:text="@string/about_text" />
-
     </LinearLayout>
 
 </RelativeLayout>

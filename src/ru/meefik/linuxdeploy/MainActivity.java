@@ -9,7 +9,6 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Locale;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,16 +16,16 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.TypedValue;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.WindowManager;
-import android.widget.ImageButton;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-public class MainActivity extends Activity implements OnClickListener {
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+
+public class MainActivity extends SherlockActivity {
 
 	private static TextView logView;
 	private static ScrollView logScroll;
@@ -105,117 +104,6 @@ public class MainActivity extends Activity implements OnClickListener {
 	}
 
 	@Override
-	public void onClick(View v) {
-		switch (v.getId()) {
-		case R.id.installBtn: {
-			new AlertDialog.Builder(this)
-					.setTitle(R.string.confirm_install_title)
-					.setMessage(R.string.confirm_install_message)
-					.setIcon(android.R.drawable.ic_dialog_alert)
-					.setCancelable(false)
-					.setPositiveButton(android.R.string.yes,
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog,
-										int id) {
-									(new Thread() {
-										@Override
-										public void run() {
-											new ShellEnv(
-													getApplicationContext())
-													.deployCmd("install");
-										}
-									}).start();
-								}
-							})
-					.setNegativeButton(android.R.string.no,
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog,
-										int id) {
-									dialog.cancel();
-								}
-							}).show();
-			break;
-		}
-
-		case R.id.startBtn: {
-			new AlertDialog.Builder(this)
-					.setTitle(R.string.confirm_start_title)
-					.setMessage(R.string.confirm_start_message)
-					.setIcon(android.R.drawable.ic_dialog_alert)
-					.setCancelable(false)
-					.setPositiveButton(android.R.string.yes,
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog,
-										int id) {
-									(new Thread() {
-										@Override
-										public void run() {
-											new ShellEnv(
-													getApplicationContext())
-													.deployCmd("start");
-										}
-									}).start();
-								}
-							})
-					.setNegativeButton(android.R.string.no,
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog,
-										int id) {
-									dialog.cancel();
-								}
-							}).show();
-			break;
-		}
-
-		case R.id.stopBtn: {
-			new AlertDialog.Builder(this)
-					.setTitle(R.string.confirm_stop_title)
-					.setMessage(R.string.confirm_stop_message)
-					.setIcon(android.R.drawable.ic_dialog_alert)
-					.setCancelable(false)
-					.setPositiveButton(android.R.string.yes,
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog,
-										int id) {
-									(new Thread() {
-										@Override
-										public void run() {
-											new ShellEnv(
-													getApplicationContext())
-													.deployCmd("stop");
-										}
-									}).start();
-								}
-							})
-					.setNegativeButton(android.R.string.no,
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog,
-										int id) {
-									dialog.cancel();
-								}
-							}).show();
-			break;
-		}
-
-		case R.id.propertiesBtn: {
-			Intent intent_properties = new Intent(this,
-					DeployPrefsActivity.class);
-			startActivity(intent_properties);
-			break;
-		}
-
-		default:
-			break;
-		}
-	}
-
-	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		PrefStore.updateTheme(this);
 		super.onCreate(savedInstanceState);
@@ -225,34 +113,6 @@ public class MainActivity extends Activity implements OnClickListener {
 		logView = (TextView) findViewById(R.id.LogView);
 		logScroll = (ScrollView) findViewById(R.id.LogScrollView);
 		handler = new Handler();
-
-		ImageButton installButton = (ImageButton) findViewById(R.id.installBtn);
-		installButton.setOnClickListener(this);
-		if (PrefStore.THEME.equals("light"))
-			installButton.setImageResource(R.raw.installbtn_dark);
-		if (PrefStore.THEME.equals("dark"))
-			installButton.setImageResource(R.raw.installbtn_light);
-
-		ImageButton startButton = (ImageButton) findViewById(R.id.startBtn);
-		startButton.setOnClickListener(this);
-		if (PrefStore.THEME.equals("light"))
-			startButton.setImageResource(R.raw.startbtn_dark);
-		if (PrefStore.THEME.equals("dark"))
-			startButton.setImageResource(R.raw.startbtn_light);
-
-		ImageButton stopButton = (ImageButton) findViewById(R.id.stopBtn);
-		stopButton.setOnClickListener(this);
-		if (PrefStore.THEME.equals("light"))
-			stopButton.setImageResource(R.raw.stopbtn_dark);
-		if (PrefStore.THEME.equals("dark"))
-			stopButton.setImageResource(R.raw.stopbtn_light);
-
-		ImageButton uninstallButton = (ImageButton) findViewById(R.id.propertiesBtn);
-		uninstallButton.setOnClickListener(this);
-		if (PrefStore.THEME.equals("light"))
-			uninstallButton.setImageResource(R.raw.propertiesbtn_dark);
-		if (PrefStore.THEME.equals("dark"))
-			uninstallButton.setImageResource(R.raw.propertiesbtn_light);
 
 		// ok we back, load the saved text
 		if (savedInstanceState != null) {
@@ -270,24 +130,88 @@ public class MainActivity extends Activity implements OnClickListener {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		PrefStore.updateLocale(getApplicationContext());
-		getMenuInflater().inflate(R.menu.activity_main, menu);
+		getSupportMenuInflater().inflate(R.menu.activity_main, menu);
+		
+		boolean isLight = PrefStore.THEME.equals("light");
+		
+	    menu.findItem(R.id.menu_profiles)
+	    .setIcon(isLight ? R.drawable.ic_action_profiles_light : R.drawable.ic_action_profiles_dark);
+	    menu.findItem(R.id.menu_start)
+	    .setIcon(isLight ? R.drawable.ic_action_start_light : R.drawable.ic_action_start_dark);
+	    menu.findItem(R.id.menu_stop)
+	    .setIcon(isLight ? R.drawable.ic_action_stop_light : R.drawable.ic_action_stop_dark);
+	    menu.findItem(R.id.menu_properties)
+	    .setIcon(isLight ? R.drawable.ic_action_properties_light : R.drawable.ic_action_properties_dark);
+	    /*
+	    menu.add("info")
+	    .setIcon(isLight ? R.drawable.ic_action_properties_light : R.drawable.ic_action_properties_dark)
+	    .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+  		*/
 		return true;
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.menu_profiles:
-			Intent intent_profiles = new Intent(this, ProfilesActivity.class);
-			startActivity(intent_profiles);
+		case R.id.menu_start:
+			new AlertDialog.Builder(this)
+			.setTitle(R.string.confirm_start_title)
+			.setMessage(R.string.confirm_start_message)
+			.setIcon(android.R.drawable.ic_dialog_alert)
+			.setCancelable(false)
+			.setPositiveButton(android.R.string.yes,
+					new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog,
+								int id) {
+							(new Thread() {
+								@Override
+								public void run() {
+									new ShellEnv(
+											getApplicationContext())
+											.deployCmd("start");
+								}
+							}).start();
+						}
+					})
+			.setNegativeButton(android.R.string.no,
+					new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog,
+								int id) {
+							dialog.cancel();
+						}
+					}).show();
 			break;
-		case R.id.menu_settings:
-			Intent intent_settings = new Intent(this, AppPrefsActivity.class);
-			startActivity(intent_settings);
-			break;
-		case R.id.menu_about:
-			Intent intent_about = new Intent(this, AboutActivity.class);
-			startActivity(intent_about);
+		case R.id.menu_stop:
+			new AlertDialog.Builder(this)
+			.setTitle(R.string.confirm_stop_title)
+			.setMessage(R.string.confirm_stop_message)
+			.setIcon(android.R.drawable.ic_dialog_alert)
+			.setCancelable(false)
+			.setPositiveButton(android.R.string.yes,
+					new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog,
+								int id) {
+							(new Thread() {
+								@Override
+								public void run() {
+									new ShellEnv(
+											getApplicationContext())
+											.deployCmd("stop");
+								}
+							}).start();
+						}
+					})
+			.setNegativeButton(android.R.string.no,
+					new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog,
+								int id) {
+							dialog.cancel();
+						}
+					}).show();
 			break;
 		case R.id.menu_status:
 			(new Thread() {
@@ -297,14 +221,27 @@ public class MainActivity extends Activity implements OnClickListener {
 				}
 			}).start();
 			break;
+		case R.id.menu_profiles:
+			Intent intent_profiles = new Intent(this, ProfilesActivity.class);
+			startActivity(intent_profiles);
+			break;
+		case R.id.menu_properties:
+			Intent intent_properties = new Intent(this, DeployPrefsActivity.class);
+			startActivity(intent_properties);
+			break;
+		case R.id.menu_settings:
+			Intent intent_settings = new Intent(this, AppPrefsActivity.class);
+			startActivity(intent_settings);
+			break;
+		case R.id.menu_about:
+			Intent intent_about = new Intent(this, AboutActivity.class);
+			startActivity(intent_about);
+			break;
 		case R.id.menu_clear:
 			logView.setText("");
 			break;
 		case R.id.menu_exit:
 			finish();
-			break;
-		default:
-
 			break;
 		}
 		return false;
@@ -317,6 +254,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		PrefStore.get(getApplicationContext());
 
 		String titleMsg = PrefStore.getCurrentProfile(getApplicationContext());
+		/*
 		String myIP = getLocalIpAddress();
 		String ssh = "";
 		String vnc = "";
@@ -334,7 +272,7 @@ public class MainActivity extends Activity implements OnClickListener {
 								.parseDouble(PrefStore.VNC_DISPLAY));
 			titleMsg += "  [ " + myIP + ssh + vnc + " ]";
 		}
-
+		*/
 		this.setTitle(titleMsg);
 
 		// Restore text

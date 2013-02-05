@@ -1,109 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
-<PreferenceScreen
-        xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/app_preferences" >
+        <CheckBoxPreference
+            android:defaultValue="@string/screenlock"
+            android:key="screenlock"
+            android:summary="@string/summary_screenlock_preference"
+            android:title="@string/title_screenlock_preference" />
 
-    <PreferenceCategory
-            android:title="@string/app_preferences">
-            
-	    <CheckBoxPreference
-    	        android:key="screenlock"
-        	    android:defaultValue="@string/screenlock"
-            	android:title="@string/title_screenlock_preference"
-	            android:summary="@string/summary_screenlock_preference" />
-    
-	    <ListPreference
-    	        android:key="language"
-        	    android:defaultValue="@string/language"
-            	android:title="@string/title_language_preference"
-            	android:summary="@string/language"
-            	android:entries="@array/language_entries"
-            	android:entryValues="@array/language_values"
-            	android:dialogTitle="@string/dialog_title_language_preference" />
-	    
-	    <EditTextPreference
-    	        android:key="fontsize"
-        	    android:defaultValue="@string/fontsize"
-        	    android:inputType="numberDecimal"
-            	android:title="@string/title_fontsize_preference"
-            	android:summary="@string/fontsize"
-            	android:dialogTitle="@string/dialog_title_fontsize_preference" />
+        <ListPreference
+            android:defaultValue="@string/language"
+            android:dialogTitle="@string/dialog_title_language_preference"
+            android:entries="@array/language_entries"
+            android:entryValues="@array/language_values"
+            android:key="language"
+            android:summary="@string/language"
+            android:title="@string/title_language_preference" />
 
-	    <ListPreference
-    	        android:key="theme"
-        	    android:defaultValue="@string/theme"
-            	android:title="@string/title_theme_preference"
-            	android:summary="@string/theme"
-            	android:entries="@array/theme_entries"
-            	android:entryValues="@array/theme_values"
-            	android:dialogTitle="@string/dialog_title_theme_preference" />
-	    
-	    <CheckBoxPreference
-    	        android:key="autostart"
-        	    android:defaultValue="@string/autostart"
-            	android:title="@string/title_autostart_preference"
-	            android:summary="@string/summary_autostart_preference" />
+        <EditTextPreference
+            android:defaultValue="@string/fontsize"
+            android:dialogTitle="@string/dialog_title_fontsize_preference"
+            android:inputType="numberDecimal"
+            android:key="fontsize"
+            android:summary="@string/fontsize"
+            android:title="@string/title_fontsize_preference" />
 
-	</PreferenceCategory>
-    
-    <PreferenceCategory
-            android:title="@string/env_preferences">
-            
-	    <EditTextPreference
-    	        android:key="installdir"
-        	    android:defaultValue="@string/installdir"
-            	android:title="@string/title_installdir_preference"
-	            android:summary="@string/installdir"
-	            android:dialogTitle="@string/dialog_title_installdir_preference" />
-	    
-	    <CheckBoxPreference
-    	        android:key="symlink"
-        	    android:defaultValue="@string/symlink"
-            	android:title="@string/title_symlink_preference"
-	            android:summary="@string/summary_symlink_preference" />
+        <ListPreference
+            android:defaultValue="@string/theme"
+            android:dialogTitle="@string/dialog_title_theme_preference"
+            android:entries="@array/theme_entries"
+            android:entryValues="@array/theme_values"
+            android:key="theme"
+            android:summary="@string/theme"
+            android:title="@string/title_theme_preference" />
 
-	    <PreferenceScreen
-	        	android:key="installenv"
-                android:title="@string/title_installenv_preference"
-                android:summary="@string/summary_installenv_preference"/>
-	    
-	    <PreferenceScreen
-	        	android:key="removeenv"
-                android:title="@string/title_removeenv_preference"
-                android:summary="@string/summary_removeenv_preference"/>
-
+        <CheckBoxPreference
+            android:defaultValue="@string/autostart"
+            android:key="autostart"
+            android:summary="@string/summary_autostart_preference"
+            android:title="@string/title_autostart_preference" />
     </PreferenceCategory>
-    
-    <PreferenceCategory
-            android:title="@string/debug_preferences">
-	    
-	    <CheckBoxPreference
-    	        android:key="debug"
-        	    android:defaultValue="@string/debug"
-            	android:title="@string/title_debug_preference"
-            	android:summary="@string/summary_debug_preference" />
-	    
-	    <CheckBoxPreference
-	        	android:dependency="debug"
-    	        android:key="trace"
-        	    android:defaultValue="@string/trace"
-            	android:title="@string/title_trace_preference"
-            	android:summary="@string/summary_trace_preference" />
-	    
-	    <CheckBoxPreference
-    	        android:key="logs"
-        	    android:defaultValue="@string/logs"
-            	android:title="@string/title_logs_preference"
-            	android:summary="@string/summary_logs_preference" />
-	    
-   		<EditTextPreference
-    		    android:dependency="logs"
-   	        	android:key="logfile"
-       	    	android:defaultValue="@string/logfile"
-           		android:title="@string/title_logfile_preference"
-           		android:summary="@string/logfile"
-           		android:dialogTitle="@string/dialog_title_logfile_preference" />
-	    
+    <PreferenceCategory android:title="@string/env_preferences" >
+        <EditTextPreference
+            android:defaultValue="@string/installdir"
+            android:dialogTitle="@string/dialog_title_installdir_preference"
+            android:key="installdir"
+            android:summary="@string/installdir"
+            android:title="@string/title_installdir_preference" />
+
+        <CheckBoxPreference
+            android:defaultValue="@string/symlink"
+            android:key="symlink"
+            android:summary="@string/summary_symlink_preference"
+            android:title="@string/title_symlink_preference" />
+
+        <PreferenceScreen
+            android:key="installenv"
+            android:summary="@string/summary_installenv_preference"
+            android:title="@string/title_installenv_preference" />
+        <PreferenceScreen
+            android:key="removeenv"
+            android:summary="@string/summary_removeenv_preference"
+            android:title="@string/title_removeenv_preference" />
     </PreferenceCategory>
-    
+    <PreferenceCategory android:title="@string/debug_preferences" >
+        <CheckBoxPreference
+            android:defaultValue="@string/debug"
+            android:key="debug"
+            android:summary="@string/summary_debug_preference"
+            android:title="@string/title_debug_preference" />
+        <CheckBoxPreference
+            android:defaultValue="@string/trace"
+            android:dependency="debug"
+            android:key="trace"
+            android:summary="@string/summary_trace_preference"
+            android:title="@string/title_trace_preference" />
+        <CheckBoxPreference
+            android:defaultValue="@string/logs"
+            android:key="logs"
+            android:summary="@string/summary_logs_preference"
+            android:title="@string/title_logs_preference" />
+
+        <EditTextPreference
+            android:defaultValue="@string/logfile"
+            android:dependency="logs"
+            android:dialogTitle="@string/dialog_title_logfile_preference"
+            android:key="logfile"
+            android:summary="@string/logfile"
+            android:title="@string/title_logfile_preference" />
+    </PreferenceCategory>
+
 </PreferenceScreen>

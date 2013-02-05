@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <resources>
 
     <string name="screenlock" translatable="false">true</string>
@@ -42,22 +41,22 @@
     <string name="xstartup" translatable="false">false</string>
     <string name="xdisplay" translatable="false">1</string>
     <string name="xhost" translatable="false">127.0.0.1</string>
-    
+
     <!-- Debian -->
     <string name="debian_suite" translatable="false">wheezy</string>
     <string name="debian_mirror" translatable="false">http://mirror.yandex.ru/debian</string>
     <string name="debian_architecture" translatable="false">armel</string>
-    
+
     <!-- Ubuntu -->
     <string name="ubuntu_suite" translatable="false">precise</string>
     <string name="ubuntu_mirror" translatable="false">http://ports.ubuntu.com</string>
     <string name="ubuntu_architecture" translatable="false">armel</string>
-    
+
     <!-- Arch Linux -->
     <string name="archlinux_suite" translatable="false">latest</string>
     <string name="archlinux_mirror" translatable="false">http://mirror.archlinuxarm.org</string>
     <string name="archlinux_architecture" translatable="false">arm</string>
-    
+
     <!-- Fedora -->
     <string name="fedora_suite" translatable="false">17</string>
     <string name="fedora_mirror" translatable="false">http://download.fedoraproject.org/pub/fedora-secondary/releases/</string>
@@ -67,5 +66,5 @@
     <string name="opensuse_suite" translatable="false">Factory</string>
     <string name="opensuse_mirror" translatable="false">http://download.opensuse.org/repositories/openSUSE:/</string>
     <string name="opensuse_architecture" translatable="false">armv5el</string>
-    
+
 </resources>
