@@ -1,7 +1,11 @@
 package ru.meefik.linuxdeploy;
 
 import java.io.File;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Map.Entry;
 
@@ -143,7 +147,7 @@ public class PrefStore {
 		XSERVER_DISPLAY = sp.getString("xdisplay",
 				c.getString(R.string.xdisplay));
 		XSERVER_HOST = sp.getString("xhost", c.getString(R.string.xhost));
-
+		
 		try {
 			VERSION = c.getPackageManager().getPackageInfo(c.getPackageName(),
 					0).versionName
@@ -153,6 +157,28 @@ public class PrefStore {
 		} catch (NameNotFoundException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static String getLocalIpAddress() {
+		String ip = "127.0.0.1";
+		try {
+			for (Enumeration<NetworkInterface> en = NetworkInterface
+					.getNetworkInterfaces(); en.hasMoreElements();) {
+				NetworkInterface intf = en.nextElement();
+				for (Enumeration<InetAddress> enumIpAddr = intf
+						.getInetAddresses(); enumIpAddr.hasMoreElements();) {
+					InetAddress inetAddress = enumIpAddr.nextElement();
+					if (!inetAddress.isLoopbackAddress()
+							&& !inetAddress.isLinkLocalAddress()) {
+						ip = inetAddress.getHostAddress().toString();
+					}
+				}
+			}
+		} catch (SocketException e) {
+			e.printStackTrace();
+		}
+		
+		return ip;
 	}
 
 	// get current profile name
