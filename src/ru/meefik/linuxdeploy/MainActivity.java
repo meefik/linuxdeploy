@@ -12,6 +12,7 @@ import java.util.Locale;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.TypedValue;
@@ -108,6 +109,7 @@ public class MainActivity extends SherlockActivity {
 		super.onCreate(savedInstanceState);
 		PrefStore.updateLocale(this);
 		setContentView(R.layout.activity_main);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		logView = (TextView) findViewById(R.id.LogView);
 		logScroll = (ScrollView) findViewById(R.id.LogScrollView);
@@ -133,18 +135,20 @@ public class MainActivity extends SherlockActivity {
 
 		boolean isLight = PrefStore.THEME.equals("light");
 
-		menu.findItem(R.id.menu_profiles).setIcon(
-				isLight ? R.drawable.ic_action_profiles_light
-						: R.drawable.ic_action_profiles_dark);
-		menu.findItem(R.id.menu_start).setIcon(
-				isLight ? R.drawable.ic_action_start_light
-						: R.drawable.ic_action_start_dark);
-		menu.findItem(R.id.menu_stop).setIcon(
-				isLight ? R.drawable.ic_action_stop_light
-						: R.drawable.ic_action_stop_dark);
 		menu.findItem(R.id.menu_properties).setIcon(
 				isLight ? R.drawable.ic_action_properties_light
 						: R.drawable.ic_action_properties_dark);
+		
+		int ot = getResources().getConfiguration().orientation;
+		if (ot == Configuration.ORIENTATION_LANDSCAPE) {
+			menu.findItem(R.id.menu_start).setIcon(
+					isLight ? R.drawable.ic_action_start_light
+							: R.drawable.ic_action_start_dark);
+			menu.findItem(R.id.menu_stop).setIcon(
+					isLight ? R.drawable.ic_action_stop_light
+							: R.drawable.ic_action_stop_dark);
+		}
+		
 		/*
 		 * menu.add("info") .setIcon(isLight ?
 		 * R.drawable.ic_action_properties_light :
@@ -225,10 +229,6 @@ public class MainActivity extends SherlockActivity {
 				}
 			}).start();
 			break;
-		case R.id.menu_profiles:
-			Intent intent_profiles = new Intent(this, ProfilesActivity.class);
-			startActivity(intent_profiles);
-			break;
 		case R.id.menu_properties:
 			Intent intent_properties = new Intent(this,
 					DeployPrefsActivity.class);
@@ -248,6 +248,10 @@ public class MainActivity extends SherlockActivity {
 		case R.id.menu_exit:
 			finish();
 			break;
+		case android.R.id.home:
+			Intent intent_profiles = new Intent(this, ProfilesActivity.class);
+			startActivity(intent_profiles);
+			break;
 		}
 		return false;
 	}
@@ -260,7 +264,7 @@ public class MainActivity extends SherlockActivity {
 
 		String profileName = PrefStore.getCurrentProfile(getApplicationContext());
 		String myIP = getLocalIpAddress();
-		this.setTitle(profileName+" [ "+myIP+" ]");
+		this.setTitle(profileName+"  [ "+myIP+" ]");
 
 		// Restore text
 		logView.setTextSize(TypedValue.COMPLEX_UNIT_SP, PrefStore.FONT_SIZE);

@@ -2,6 +2,7 @@
 <resources>
 
     <style name="LightTheme" parent="Theme.Sherlock.Light" />
+
     <style name="BlackTheme" parent="Theme.Sherlock" />
 
 </resources>

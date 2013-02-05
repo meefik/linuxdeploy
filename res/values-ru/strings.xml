@@ -2,10 +2,9 @@
 <resources>
 
     <string name="app_name">Linux Deploy</string>
-    <string name="menu_profiles">Профили</string>
-    <string name="menu_start">Запустить</string>
-    <string name="menu_stop">Остановить</string>
-	<string name="menu_properties">Параметры</string>
+    <string name="menu_start">Старт</string>
+    <string name="menu_stop">Стоп</string>
+    <string name="menu_properties">Параметры</string>
     <string name="menu_settings">Настройки</string>
     <string name="menu_about">О программе</string>
     <string name="menu_exit">Выход</string>
@@ -58,6 +57,12 @@
     <string name="summary_logs_preference">Сохранять отчеты в файл</string>
     <string name="title_logfile_preference">Файл журнала</string>
     <string name="dialog_title_logfile_preference">Файл журнала</string>
+    <string name="title_install_preference">Установить</string>
+    <string name="summary_install_preference">Запустить установку GNU/Linux</string>
+    <string name="message_install_confirm_dialog">Запустить установку GNU/Linux системы?</string>
+    <string name="title_reconfigure_preference">Переконфигурация</string>
+    <string name="summary_reconfigure_preference">Выполнить переконфигурацию системы</string>
+    <string name="message_reconfigure_confirm_dialog">Выполнить переконфигурацию системы?</string>
     <string name="deploy_preferences">Развертывание</string>
     <string name="title_distribution_preference">Дистрибутив</string>
     <string name="dialog_title_distribution_preference">Дистрибутив</string>
@@ -87,12 +92,6 @@
     <string name="dialog_title_desktopenv_preference">Окружение рабочего стола</string>
     <string name="title_installgui_preference">Установить GUI</string>
     <string name="summary_installgui_preference">Включить установку окружения рабочего стола и VNC сервера</string>
-    <string name="title_install_preference">Новая установка</string>
-    <string name="summary_install_preference">Запустить новую установку GNU/Linux</string>
-    <string name="message_install_confirm_dialog">Запустить новую установку GNU/Linux?</string>
-    <string name="title_reconfigure_preference">Переконфигурация</string>
-    <string name="summary_reconfigure_preference">Запустить переконфигурацию системы</string>
-    <string name="message_reconfigure_confirm_dialog">Запустить переконфигурацию системы?</string>
     <string name="startup_preferences">Запуск</string>
     <string name="title_sshstartup_preference">SSH</string>
     <string name="summary_sshstartup_preference">Разрешить запуск SSH сервера</string>

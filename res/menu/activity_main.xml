@@ -1,29 +1,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
-        android:id="@+id/menu_profiles"
-        android:icon="@drawable/ic_action_profiles_dark"
-        android:orderInCategory="100"
-        android:showAsAction="always"
-        android:title="@string/menu_profiles">
-    </item>
-    <item
         android:id="@+id/menu_start"
-        android:icon="@drawable/ic_action_start_dark"
         android:orderInCategory="100"
         android:showAsAction="always|withText"
         android:title="@string/menu_start">
     </item>
     <item
         android:id="@+id/menu_stop"
-        android:icon="@drawable/ic_action_stop_dark"
         android:orderInCategory="100"
-        android:showAsAction="always"
+        android:showAsAction="always|withText"
         android:title="@string/menu_stop">
     </item>
     <item
         android:id="@+id/menu_properties"
-        android:icon="@drawable/ic_action_properties_dark"
         android:orderInCategory="100"
         android:showAsAction="always"
         android:title="@string/menu_properties">

@@ -18,7 +18,6 @@
             android:textIsSelectable="true"
             android:textSize="10sp"
             android:typeface="monospace" />
-
     </ScrollView>
 
 </RelativeLayout>
