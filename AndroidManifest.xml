@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ru.meefik.linuxdeploy"
-    android:versionCode="51"
+    android:versionCode="52"
     android:versionName="1.3.5" >
 
     <uses-sdk
