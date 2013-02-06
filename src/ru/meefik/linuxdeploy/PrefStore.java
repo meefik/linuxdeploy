@@ -177,7 +177,6 @@ public class PrefStore {
 		} catch (SocketException e) {
 			e.printStackTrace();
 		}
-		
 		return ip;
 	}
 
