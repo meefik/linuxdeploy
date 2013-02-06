@@ -598,10 +598,6 @@ start_system()
 {
 	mount_system
 	[ $? -ne 0 ] && return 1
-	
-	LINUX_VERSION=`(. $MNT_TARGET/etc/os-release && echo $PRETTY_NAME) || true`
-	[ -z "$LINUX_VERSION" ] && LINUX_VERSION="GNU/Linux ($DISTRIB)"
-	msg "OS: $LINUX_VERSION"
 
 	update_system
 
