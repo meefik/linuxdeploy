@@ -13,6 +13,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
+import android.os.Environment;
 
 public class PrefStore {
 
@@ -69,37 +70,39 @@ public class PrefStore {
 
 	// get preferences
 	public static void get(Context c) {
+		File extStore = Environment.getExternalStorageDirectory();
+		
 		SharedPreferences sp = c.getSharedPreferences(APP_PREF_FILE_NAME,
 				Context.MODE_PRIVATE);
 
 		SCREEN_LOCK = sp.getBoolean("screenlock",
-				c.getString(R.string.screenlock) == "true" ? true : false);
+				c.getString(R.string.screenlock).equals("true") ? true : false);
 		FONT_SIZE = Integer.parseInt(sp.getString("fontsize",
 				c.getString(R.string.fontsize)));
 		LANGUAGE = sp.getString("language", c.getString(R.string.language));
 		THEME = sp.getString("theme", c.getString(R.string.theme));
 		HOME_DIR = sp.getString("installdir", c.getString(R.string.installdir));
 		SYMLINK = sp.getBoolean("symlink",
-				c.getString(R.string.symlink) == "true" ? true : false);
+				c.getString(R.string.symlink).equals("true") ? true : false);
 		CURRENT_PROFILE = sp.getString("profile", null);
 		if (CURRENT_PROFILE == null)
 			setCurrentProfile(c, String.valueOf(System.currentTimeMillis()));
 
 		DEBUG_MODE = sp.getBoolean("debug",
-				c.getString(R.string.debug) == "true" ? true : false) ? "y"
+				c.getString(R.string.debug).equals("true") ? true : false) ? "y"
 				: "n";
 		TRACE_MODE = sp.getBoolean("debug",
-				c.getString(R.string.debug) == "true" ? true : false)
+				c.getString(R.string.debug).equals("true") ? true : false)
 				&& sp.getBoolean("trace",
-						c.getString(R.string.trace) == "true" ? true : false) ? "y"
+						c.getString(R.string.trace).equals("true") ? true : false) ? "y"
 				: "n";
 		LOGGING = sp.getBoolean("logs",
-				c.getString(R.string.logs) == "true" ? true : false);
-		LOG_FILE = sp.getString("logfile", c.getString(R.string.logfile));
+				c.getString(R.string.logs).equals("true") ? true : false);
+		LOG_FILE = sp.getString("logfile", extStore.getAbsolutePath()+"/linuxdeploy.log");
 
 		sp = c.getSharedPreferences(CURRENT_PROFILE, Context.MODE_PRIVATE);
 
-		IMG_TARGET = sp.getString("diskimage", c.getString(R.string.diskimage));
+		IMG_TARGET = sp.getString("diskimage", extStore.getAbsolutePath()+"/linux.img");
 		DEPLOY_TYPE = sp.getString("deploytype",
 				c.getString(R.string.deploytype));
 		IMG_SIZE = sp.getString("disksize", c.getString(R.string.disksize));
@@ -114,24 +117,24 @@ public class PrefStore {
 		SERVER_DNS = sp.getString("serverdns", c.getString(R.string.serverdns));
 		LOCALE = sp.getString("locale", c.getString(R.string.locale));
 		INSTALL_GUI = sp.getBoolean("installgui",
-				c.getString(R.string.installgui) == "true" ? true : false) ? "y"
+				c.getString(R.string.installgui).equals("true") ? true : false) ? "y"
 				: "n";
 		DESKTOP_ENV = sp.getString("desktopenv",
 				c.getString(R.string.desktopenv));
 
 		CUSTOM_STARTUP = sp.getBoolean("customstartup",
-				c.getString(R.string.customstartup) == "true" ? true : false) ? sp
+				c.getString(R.string.customstartup).equals("true") ? true : false) ? sp
 				.getString("customscript", c.getString(R.string.customscript))
 				: "";
 		CUSTOM_MOUNT = sp.getBoolean("mountcustom",
-				c.getString(R.string.mountcustom) == "true" ? true : false) ? sp
-				.getString("mountpath", c.getString(R.string.mountpath)) : "";
+				c.getString(R.string.mountcustom).equals("true") ? true : false) ? sp
+				.getString("mountpath", extStore.getAbsolutePath()) : "";
 		SSH_START = sp.getBoolean("sshstartup",
-				c.getString(R.string.sshstartup) == "true" ? true : false) ? "y"
+				c.getString(R.string.sshstartup).equals("true") ? true : false) ? "y"
 				: "n";
 		SSH_PORT = sp.getString("sshport", c.getString(R.string.sshport));
 		VNC_START = sp.getBoolean("vncstartup",
-				c.getString(R.string.vncstartup) == "true" ? true : false) ? "y"
+				c.getString(R.string.vncstartup).equals("true") ? true : false) ? "y"
 				: "n";
 		VNC_DISPLAY = sp.getString("vncdisplay",
 				c.getString(R.string.vncdisplay));
@@ -142,7 +145,7 @@ public class PrefStore {
 				+ sp.getString("vncheight", c.getString(R.string.vncheight));
 
 		XSERVER_START = sp.getBoolean("xstartup",
-				c.getString(R.string.xstartup) == "true" ? true : false) ? "y"
+				c.getString(R.string.xstartup).equals("true") ? true : false) ? "y"
 				: "n";
 		XSERVER_DISPLAY = sp.getString("xdisplay",
 				c.getString(R.string.xdisplay));

@@ -7,6 +7,7 @@ Improved autostart feature
 Automatic update operating environment
 Added check superuser permissions (root)
 Double tap for select profile
+Bugfix: incorrect use of default parameter
 
 1.3.4
 Added command status to linuxdeploy script
@@ -175,6 +176,7 @@ Updated list packages of base system installation
 Автоматическое обновление рабочего окружения
 Добавлена проверка привилегий суперпользователя (root)
 Двойное нажатие для выбора профиля
+Исправлена ошибка применения некорректных параметров по умолчанию
 
 1.3.4
 Добавлена команда status в скрипт linuxdeploy

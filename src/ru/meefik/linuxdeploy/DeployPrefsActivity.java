@@ -1,10 +1,13 @@
 package ru.meefik.linuxdeploy;
 
+import java.io.File;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -175,6 +178,27 @@ public class DeployPrefsActivity extends SherlockPreferenceActivity implements
 					&& editPref.getText().equals("0")) {
 				pref.setSummary(this
 						.getString(R.string.summary_disksize_preference));
+			}
+			if (editPref.getKey().equals("diskimage")
+					&& editPref.getText().equals("{replace}")) {
+				File extStore = Environment.getExternalStorageDirectory();
+				String imgFile = extStore.getAbsolutePath()+"/linux.img";
+				((EditTextPreference) pref).setText(imgFile);
+				((EditTextPreference) pref).setSummary(imgFile);
+			}
+			if (editPref.getKey().equals("logfile")
+					&& editPref.getText().equals("{replace}")) {
+				File extStore = Environment.getExternalStorageDirectory();
+				String logFile = extStore.getAbsolutePath()+"/linuxdeploy.log";
+				((EditTextPreference) pref).setText(logFile);
+				((EditTextPreference) pref).setSummary(logFile);
+			}
+			if (editPref.getKey().equals("mountpath")
+					&& editPref.getText().equals("{replace}")) {
+				File extStore = Environment.getExternalStorageDirectory();
+				String mntPath = extStore.getAbsolutePath();
+				((EditTextPreference) pref).setText(mntPath);
+				((EditTextPreference) pref).setSummary(mntPath);
 			}
 		}
 
