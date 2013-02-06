@@ -7,6 +7,10 @@ import java.util.Comparator;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnTouchListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -15,11 +19,12 @@ import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
-public class ProfilesActivity extends SherlockActivity {
+public class ProfilesActivity extends SherlockActivity implements OnTouchListener {
 
 	private ListView profilesList;
 	private ArrayList<Profile<String, String>> listItems = new ArrayList<Profile<String, String>>();
 	private ArrayAdapter<Profile<String, String>> adapter;
+	private GestureDetector gd;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -28,12 +33,23 @@ public class ProfilesActivity extends SherlockActivity {
 		PrefStore.updateLocale(this);
 		setContentView(R.layout.activity_profiles);
 
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
 		profilesList = (ListView) findViewById(R.id.profilesView);
 		adapter = new ArrayAdapter<Profile<String, String>>(this,
 				android.R.layout.simple_list_item_single_choice, listItems);
 		profilesList.setAdapter(adapter);
+		
+		profilesList.setOnTouchListener(this);
+		
+        //initialize the Gesture Detector  
+        gd = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener()  
+        {  
+            @Override  
+            public boolean onDoubleTap(MotionEvent e)  
+            {  
+            	finish();
+                return false;  
+            }  
+        });  
 	}
 
 	@Override
@@ -149,9 +165,6 @@ public class ProfilesActivity extends SherlockActivity {
 								}).show();
 			}
 			break;
-		case android.R.id.home:
-			finish();
-			break;
 		}
 		return false;
 	}
@@ -202,6 +215,12 @@ public class ProfilesActivity extends SherlockActivity {
 			pos++;
 		}
 		return -1;
+	}
+
+	@Override
+	public boolean onTouch(View v, MotionEvent event) {
+		gd.onTouchEvent(event);
+		return false;
 	}
 
 }
