@@ -21,38 +21,6 @@ import com.actionbarsherlock.view.MenuItem;
 public class AppPrefsActivity extends SherlockPreferenceActivity implements
 		OnSharedPreferenceChangeListener, Preference.OnPreferenceClickListener {
 
-	private void installEnvDialog() {
-		new AlertDialog.Builder(this)
-				.setTitle(R.string.title_installenv_preference)
-				.setMessage(R.string.message_installenv_confirm_dialog)
-				.setIcon(android.R.drawable.ic_dialog_alert)
-				.setCancelable(false)
-				.setPositiveButton(android.R.string.yes,
-						new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog, int id) {
-								PrefStore.PREF_CHANGE = false;
-								(new Thread() {
-									@Override
-									public void run() {
-										new ShellEnv(getApplicationContext())
-												.updateEnv();
-										new ShellEnv(getApplicationContext())
-												.updateConfig();
-									}
-								}).start();
-								finish();
-							}
-						})
-				.setNegativeButton(android.R.string.no,
-						new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog, int id) {
-								dialog.cancel();
-							}
-						}).show();
-	}
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		PrefStore.updateTheme(this);
@@ -67,6 +35,15 @@ public class AppPrefsActivity extends SherlockPreferenceActivity implements
 		addPreferencesFromResource(R.xml.settings);
 
 		this.initSummaries(this.getPreferenceScreen());
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+
+		this.setTitle(R.string.title_activity_settings);
+		getPreferenceScreen().getSharedPreferences()
+				.registerOnSharedPreferenceChangeListener(this);
 	}
 
 	@Override
@@ -110,15 +87,6 @@ public class AppPrefsActivity extends SherlockPreferenceActivity implements
 	}
 
 	@Override
-	public void onResume() {
-		super.onResume();
-
-		this.setTitle(R.string.title_activity_settings);
-		getPreferenceScreen().getSharedPreferences()
-				.registerOnSharedPreferenceChangeListener(this);
-	}
-
-	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
 			String key) {
 		Preference pref = this.findPreference(key);
@@ -150,6 +118,37 @@ public class AppPrefsActivity extends SherlockPreferenceActivity implements
 			pref.setSummary(listPref.getEntry());
 		}
 	}
+	
+	private void installEnvDialog() {
+		new AlertDialog.Builder(this)
+				.setTitle(R.string.title_installenv_preference)
+				.setMessage(R.string.message_installenv_confirm_dialog)
+				.setIcon(android.R.drawable.ic_dialog_alert)
+				.setCancelable(false)
+				.setPositiveButton(android.R.string.yes,
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int id) {
+								PrefStore.PREF_CHANGE = false;
+								(new Thread() {
+									@Override
+									public void run() {
+										ShellEnv sh = new ShellEnv(getApplicationContext());
+										sh.updateEnv();
+										sh.updateConfig();
+									}
+								}).start();
+								finish();
+							}
+						})
+				.setNegativeButton(android.R.string.no,
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int id) {
+								dialog.cancel();
+							}
+						}).show();
+	}
 
 	private void removeEnvDialog() {
 		new AlertDialog.Builder(this)
@@ -165,8 +164,6 @@ public class AppPrefsActivity extends SherlockPreferenceActivity implements
 								(new Thread() {
 									@Override
 									public void run() {
-										new ShellEnv(getApplicationContext())
-												.updateConfig();
 										new ShellEnv(getApplicationContext())
 												.deployCmd("uninstall");
 									}

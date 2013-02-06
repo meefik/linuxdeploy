@@ -21,6 +21,32 @@ public class ShellEnv {
 		this.c = c;
 		PrefStore.get(c);
 	}
+	
+	private void sendLogs(final String msg) {
+		if (MainActivity.handler != null) {
+			MainActivity.handler.post(new Runnable() {
+				@Override
+				public void run() {
+					MainActivity.printLogMsg(msg);
+				}
+			});
+		}
+	}
+	
+	private boolean isRooted() {
+		// exec linuxdeploy command
+		List<String> params = new ArrayList<String>();
+		params.add("su");
+		params.add("ls /data/local 1>/dev/null");
+		ExecCmd ex = new ExecCmd(params);
+		ex.run();
+		if (ex.status) {
+			return true;
+		} else {
+			sendLogs("Require superuser privileges (root)!\n");
+			return false;
+		}
+	}
 
 	private boolean copyFile(String homeDir, String filename) {
 		boolean result = true;
@@ -97,19 +123,88 @@ public class ShellEnv {
 		return true;
 	}
 
-	private void sendLogs(final String msg) {
-		if (MainActivity.handler != null) {
-			MainActivity.handler.post(new Runnable() {
-				@Override
-				public void run() {
-					MainActivity.printLogMsg(msg);
-				}
-			});
+	public void updateEnv() {
+		if (!isRooted()) return;
+		
+		sendLogs("Updating environment ... ");
+
+		if (PrefStore.HOME_DIR.length() == 0) {
+			sendLogs("fail\n");
+			return;
 		}
+
+		List<String> params = new ArrayList<String>();
+		params.add("su");
+		if (PrefStore.TRACE_MODE.equals("y"))
+			params.add("set -x");
+		if (!PrefStore.DEBUG_MODE.equals("y")) {
+			params.add("exec 1>/dev/null");
+			params.add("exec 2>/dev/null");
+		}
+		params.add("mkdir " + PrefStore.HOME_DIR);
+		params.add("rm -R " + PrefStore.HOME_DIR + "/bin");
+		params.add("rm -R " + PrefStore.HOME_DIR + "/etc");
+		params.add("rm -R " + PrefStore.HOME_DIR + "/deploy");
+		params.add("chmod 777 " + PrefStore.HOME_DIR);
+		params.add("exit");
+		ExecCmd ex = new ExecCmd(params);
+		ex.run();
+		if (!ex.status) {
+			sendLogs("fail\n");
+			return;
+		}
+
+		boolean copyResult = copyFileOrDir(PrefStore.HOME_DIR,
+				PrefStore.ROOT_ASSETS);
+		if (!copyResult) {
+			sendLogs("fail\n");
+			return;
+		}
+
+		params.clear();
+		params.add("su");
+		if (PrefStore.TRACE_MODE.equals("y"))
+			params.add("set -x");
+		if (!PrefStore.DEBUG_MODE.equals("y")) {
+			params.add("exec 1>/dev/null");
+			params.add("exec 2>/dev/null");
+		}
+		params.add("chmod 755 " + PrefStore.HOME_DIR);
+		params.add("chmod 755 " + PrefStore.HOME_DIR + "/bin");
+		params.add("chmod 755 " + PrefStore.HOME_DIR + "/bin/busybox");
+		params.add(PrefStore.HOME_DIR + "/bin/busybox --install -s "
+				+ PrefStore.HOME_DIR + "/bin");
+		params.add("PATH=" + PrefStore.HOME_DIR + "/bin:$PATH; export PATH");
+		params.add("chmod -R 755 " + PrefStore.HOME_DIR + "/bin");
+		params.add("chmod -R a+rX " + PrefStore.HOME_DIR + "/etc "
+				+ PrefStore.HOME_DIR + "/deploy");
+		params.add("chmod 755 " + PrefStore.HOME_DIR
+				+ "/deploy/debootstrap/pkgdetails");
+		params.add("chown -R root:root " + PrefStore.HOME_DIR + "/bin "
+				+ PrefStore.HOME_DIR + "/etc " + PrefStore.HOME_DIR + "/deploy");
+		if (PrefStore.SYMLINK) {
+			params.add("rm -f /system/bin/linuxdeploy");
+			params.add("ln -s "
+					+ PrefStore.HOME_DIR
+					+ "/bin/linuxdeploy /system/bin/linuxdeploy || "
+					+ "{ mount -o rw,remount /system; rm -f /system/bin/linuxdeploy; ln -s "
+					+ PrefStore.HOME_DIR
+					+ "/bin/linuxdeploy /system/bin/linuxdeploy; mount -o ro,remount /system; }");
+		}
+		params.add("echo '" + PrefStore.VERSION + "' > " + PrefStore.HOME_DIR
+				+ "/etc/version");
+		params.add("chmod 644 " + PrefStore.HOME_DIR + "/etc/version");
+		params.add("exit");
+		ex = new ExecCmd(params);
+		ex.run();
+		if (!ex.status) {
+			sendLogs("fail\n");
+			return;
+		}
+		sendLogs("done\n");
 	}
 
 	public void updateConfig() {
-
 		File f = new File(PrefStore.HOME_DIR + "/etc/deploy.conf");
 		if (!f.exists())
 			return;
@@ -209,108 +304,32 @@ public class ShellEnv {
 		sendLogs("done\n");
 	}
 
-	public void updateEnv() {
-		sendLogs("Updating environment ... ");
-
-		if (PrefStore.HOME_DIR.length() == 0) {
-			sendLogs("fail\n");
-			return;
-		}
-
-		List<String> params = new ArrayList<String>();
-		params.add("su");
-		if (PrefStore.TRACE_MODE.equals("y"))
-			params.add("set -x");
-		if (!PrefStore.DEBUG_MODE.equals("y")) {
-			params.add("exec 1>/dev/null");
-			params.add("exec 2>/dev/null");
-		}
-		params.add("mkdir " + PrefStore.HOME_DIR);
-		params.add("rm -R " + PrefStore.HOME_DIR + "/bin");
-		params.add("rm -R " + PrefStore.HOME_DIR + "/etc");
-		params.add("rm -R " + PrefStore.HOME_DIR + "/deploy");
-		params.add("chmod 777 " + PrefStore.HOME_DIR);
-		params.add("exit");
-		ExecCmd ex = new ExecCmd(params);
-		ex.run();
-		if (!ex.status) {
-			sendLogs("fail\n");
-			return;
-		}
-
-		boolean copyResult = copyFileOrDir(PrefStore.HOME_DIR,
-				PrefStore.ROOT_ASSETS);
-		if (!copyResult) {
-			sendLogs("fail\n");
-			return;
-		}
-
-		params.clear();
-		params.add("su");
-		if (PrefStore.TRACE_MODE.equals("y"))
-			params.add("set -x");
-		if (!PrefStore.DEBUG_MODE.equals("y")) {
-			params.add("exec 1>/dev/null");
-			params.add("exec 2>/dev/null");
-		}
-		params.add("chmod 755 " + PrefStore.HOME_DIR);
-		params.add("chmod 755 " + PrefStore.HOME_DIR + "/bin");
-		params.add("chmod 755 " + PrefStore.HOME_DIR + "/bin/busybox");
-		params.add(PrefStore.HOME_DIR + "/bin/busybox --install -s "
-				+ PrefStore.HOME_DIR + "/bin");
-		params.add("PATH=" + PrefStore.HOME_DIR + "/bin:$PATH; export PATH");
-		params.add("chmod -R 755 " + PrefStore.HOME_DIR + "/bin");
-		params.add("chmod -R a+rX " + PrefStore.HOME_DIR + "/etc "
-				+ PrefStore.HOME_DIR + "/deploy");
-		params.add("chmod 755 " + PrefStore.HOME_DIR
-				+ "/deploy/debootstrap/pkgdetails");
-		params.add("chown -R root:root " + PrefStore.HOME_DIR + "/bin "
-				+ PrefStore.HOME_DIR + "/etc " + PrefStore.HOME_DIR + "/deploy");
-		if (PrefStore.SYMLINK) {
-			params.add("rm -f /system/bin/linuxdeploy");
-			params.add("ln -s "
-					+ PrefStore.HOME_DIR
-					+ "/bin/linuxdeploy /system/bin/linuxdeploy || "
-					+ "{ mount -o rw,remount /system; rm -f /system/bin/linuxdeploy; ln -s "
-					+ PrefStore.HOME_DIR
-					+ "/bin/linuxdeploy /system/bin/linuxdeploy; mount -o ro,remount /system; }");
-		}
-		params.add("echo '" + PrefStore.VERSION + "' > " + PrefStore.HOME_DIR
-				+ "/etc/version");
-		params.add("chmod 644 " + PrefStore.HOME_DIR + "/etc/version");
-		params.add("exit");
-		ex = new ExecCmd(params);
-		ex.run();
-		if (!ex.status) {
-			sendLogs("fail\n");
-			return;
-		}
-		sendLogs("done\n");
-	}
-
 	public void deployCmd(String cmd) {
+		if (!isRooted()) return;
+		// check for update env
 		boolean update = true;
 		File f = new File(PrefStore.HOME_DIR + "/etc/version");
-		try {
-			BufferedReader br = new BufferedReader(new FileReader(f));
+		if (f.exists()) {
 			try {
-				String line = br.readLine();
-				if (PrefStore.VERSION.equals(line))
-					update = false;
-			} finally {
-				br.close();
+				BufferedReader br = new BufferedReader(new FileReader(f));
+				try {
+					String line = br.readLine();
+					if (PrefStore.VERSION.equals(line))
+						update = false;
+				} finally {
+					br.close();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
-
 		if (update) {
-			// new ShellEnv(c).updateEnv();
-			sendLogs("Need to update the operating environment!\nTry Menu -> Settings -> Update ENV\n");
-			return;
+			updateEnv();
+			updateConfig();
+			//sendLogs("Need to update the operating environment!\nTry Menu -> Settings -> Update ENV\n");
+			//return;
 		}
-
-		// new ShellEnv(c).updateConfig();
+		// exec linuxdeploy command
 		List<String> params = new ArrayList<String>();
 		params.add("su");
 		if (PrefStore.TRACE_MODE.equals("y"))
