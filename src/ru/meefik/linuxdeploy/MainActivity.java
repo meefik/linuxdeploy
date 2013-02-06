@@ -83,26 +83,6 @@ public class MainActivity extends SherlockActivity {
 		}
 	}
 
-	public String getLocalIpAddress() {
-		try {
-			for (Enumeration<NetworkInterface> en = NetworkInterface
-					.getNetworkInterfaces(); en.hasMoreElements();) {
-				NetworkInterface intf = en.nextElement();
-				for (Enumeration<InetAddress> enumIpAddr = intf
-						.getInetAddresses(); enumIpAddr.hasMoreElements();) {
-					InetAddress inetAddress = enumIpAddr.nextElement();
-					if (!inetAddress.isLoopbackAddress()
-							&& !inetAddress.isLinkLocalAddress()) {
-						return inetAddress.getHostAddress().toString();
-					}
-				}
-			}
-		} catch (SocketException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		PrefStore.updateTheme(this);
@@ -263,7 +243,7 @@ public class MainActivity extends SherlockActivity {
 		PrefStore.get(getApplicationContext());
 
 		String profileName = PrefStore.getCurrentProfile(getApplicationContext());
-		String myIP = getLocalIpAddress();
+		String myIP = PrefStore.getLocalIpAddress();
 		this.setTitle(profileName+"  [ "+myIP+" ]");
 
 		// Restore text
