@@ -6,6 +6,7 @@ Redesigned interface (include ActionBarSherlock)
 Improved autostart feature
 Automatic update operating environment
 Added check superuser permissions (root)
+Added support Fedora 18
 Double tap for select profile
 Bugfix: incorrect use of default parameter
 
@@ -175,6 +176,7 @@ Updated list packages of base system installation
 Доработана функция автозапуска
 Автоматическое обновление рабочего окружения
 Добавлена проверка привилегий суперпользователя (root)
+Добавлена поддержка Fedora 18
 Двойное нажатие для выбора профиля
 Исправлена ошибка применения некорректных параметров по умолчанию
 
