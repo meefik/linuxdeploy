@@ -123,6 +123,7 @@
 
     <string-array name="fedora_suite_values" translatable="false">
         <item>17</item>
+        <item>18</item>
     </string-array>
     <string-array name="fedora_architecture_values" translatable="false">
         <item>arm</item>

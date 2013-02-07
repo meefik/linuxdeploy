@@ -2,8 +2,8 @@
 <resources>
 
     <string name="app_name">Linux Deploy</string>
-    <string name="menu_start">Start</string>
-    <string name="menu_stop">Stop</string>
+    <string name="menu_start">START</string>
+    <string name="menu_stop">STOP</string>
     <string name="menu_properties">Properties</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_about">About</string>
