@@ -1,12 +1,14 @@
 Changelog (English)
 ===================
 
+1.3.6
+Added support Fedora 18
+
 1.3.5
 Redesigned interface (include ActionBarSherlock)
 Improved autostart feature
 Automatic update operating environment
 Added check superuser permissions (root)
-Added support Fedora 18
 Double tap for select profile
 Bugfix: incorrect use of default parameter
 
