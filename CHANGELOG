@@ -3,6 +3,7 @@ Changelog (English)
 
 1.3.6
 Added support Fedora 18
+Bugfix: dbus error in Arch Linux and Fedora
 
 1.3.5
 Redesigned interface (include ActionBarSherlock)
@@ -21,7 +22,7 @@ Improved algorithm displaying reports
 
 1.3.3
 Added xorg-fonts-misc package in Arch Linux GUI installation
-Bugfix: dbus error for Debian/Ubuntu
+Bugfix: dbus error in Debian/Ubuntu
 Bugfix: update configuration file after change profile
 
 1.3.2
@@ -172,6 +173,10 @@ Updated list packages of base system installation
 
 История изменений (Русский)
 ===========================
+
+1.3.6
+Добавлена поддержка Fedora 18
+Исправлена ошибка dbus в Arch Linux и Fedora
 
 1.3.5
 Переработан интерфейс (добавлен ActionBarSherlock)

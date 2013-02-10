@@ -295,10 +295,19 @@ configure_system()
 					sed -i "s|^\(aid_inet:.*\)|\1,messagebus|g" $MNT_TARGET/etc/group
 				fi
 			;;
+			archlinux)
+				if [ -z "`grep '^aid_inet:.*,dbus' $MNT_TARGET/etc/group`" ]; then
+					sed -i "s|^\(aid_inet:.*\)|\1,dbus|g" $MNT_TARGET/etc/group
+				fi
+				mkdir $MNT_TARGET/run/dbus
+				chmod 755 $MNT_TARGET/run/dbus
+			;;
 			fedora)
 				if [ -z "`grep '^aid_inet:.*,dbus' $MNT_TARGET/etc/group`" ]; then
 					sed -i "s|^\(aid_inet:.*\)|\1,dbus|g" $MNT_TARGET/etc/group
 				fi
+				mkdir $MNT_TARGET/var/run/dbus
+				chmod 755 $MNT_TARGET/var/run/dbus
 				chroot $MNT_TARGET sh -c "dbus-uuidgen > /etc/machine-id"
 			;;
 			esac
@@ -640,7 +649,7 @@ start_system()
 	msg -n "VNC :$vncport ... "	
 	if [ "$VNC_START" == "y" ]; then
 		(set -e
-			# dbus (Debian/Ubuntu)
+			# dbus (Debian/Ubuntu/Arch Linux)
 			[ -e "$MNT_TARGET/run/dbus/pid" ] && rm $MNT_TARGET/run/dbus/pid
 			# dbus (Fedora)
 			[ -e "$MNT_TARGET/var/run/messagebus.pid" ] && rm $MNT_TARGET/var/run/messagebus.pid
