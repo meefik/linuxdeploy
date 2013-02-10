@@ -295,6 +295,12 @@ configure_system()
 					sed -i "s|^\(aid_inet:.*\)|\1,messagebus|g" $MNT_TARGET/etc/group
 				fi
 			;;
+			fedora)
+				if [ -z "`grep '^aid_inet:.*,dbus' $MNT_TARGET/etc/group`" ]; then
+					sed -i "s|^\(aid_inet:.*\)|\1,dbus|g" $MNT_TARGET/etc/group
+				fi
+				chroot $MNT_TARGET sh -c "dbus-uuidgen > /etc/machine-id"
+			;;
 			esac
 		;;
 		gui)
@@ -634,12 +640,12 @@ start_system()
 	msg -n "VNC :$vncport ... "	
 	if [ "$VNC_START" == "y" ]; then
 		(set -e
-			case "$DISTRIB" in
-			debian|ubuntu)
-				[ -e "$MNT_TARGET/run/dbus/pid" ] && rm $MNT_TARGET/run/dbus/pid
-				chroot $MNT_TARGET dbus-daemon --system --fork || true
-			;;
-			esac
+			# dbus (Debian/Ubuntu)
+			[ -e "$MNT_TARGET/run/dbus/pid" ] && rm $MNT_TARGET/run/dbus/pid
+			# dbus (Fedora)
+			[ -e "$MNT_TARGET/var/run/messagebus.pid" ] && rm $MNT_TARGET/var/run/messagebus.pid
+			chroot $MNT_TARGET dbus-daemon --system --fork || true
+			# TightVNC Server
 			[ -e "$MNT_TARGET/tmp/.X$VNC_DISPLAY-lock" ] && rm $MNT_TARGET/tmp/.X$VNC_DISPLAY-lock
 			[ -e "$MNT_TARGET/tmp/.X11-unix/X$VNC_DISPLAY" ] && rm $MNT_TARGET/tmp/.X11-unix/X$VNC_DISPLAY
 			chroot $MNT_TARGET su - $USER_NAME -c "vncserver :$VNC_DISPLAY -depth $VNC_DEPTH -geometry $VNC_GEOMETRY -dpi $VNC_DPI"
@@ -832,7 +838,14 @@ install_system()
 	fedora)
 		msg "Installing GNU/Linux system: "
 		
-		BASIC_PACKAGES="acl attr audit audit-libs authconfig avahi-autoipd basesystem bash bind-libs bind-libs-lite bind-license bind-utils bzip2 bzip2-libs ca-certificates checkpolicy chkconfig coreutils cpio cracklib cracklib-dicts crda cronie cronie-anacron crontabs cryptsetup-libs curl cyrus-sasl-lib db4 dbus dbus-glib dbus-libs device-mapper device-mapper-libs dhclient dhcp-common dhcp-libs diffutils dnsmasq dosfstools dracut e2fsprogs e2fsprogs-libs elfutils-libelf ethtool expat fedora-release fedora-release-notes file file-libs filesystem findutils fipscheck fipscheck-lib gamin gawk gdbm glib2 glibc glibc-common gmp gnupg2 gpgme grep groff groff-base gzip hardlink hostname hwdata info initscripts iproute iptables iputils iw kbd kbd-misc keyutils keyutils-libs kmod kmod-libs krb5-libs less libacl libassuan libattr libblkid libcap libcap-ng libcom_err libcurl libdaemon libdb libdb-utils libedit libevent libffi libgcc libgcrypt libgpg-error libgssglue libgudev1 libidn libmount libnfsidmap libnl libnl3 libpcap libpipeline libpwquality libselinux libselinux-utils libsemanage libsepol libss libssh2 libsss_sudo libstdc++ libtirpc libudev libusb1 libuser libutempter libuuid libxml2 linux-atm-libs logrotate lua m4 man-db man-pages mingetty mobile-broadband-provider-info ncurses ncurses-base ncurses-libs net-tools newt newt-python nfs-utils nspr nss nss-myhostname nss-softokn nss-softokn-freebl nss-sysinit nss-tools nss-util ntpdate openldap openssh openssh-clients openssh-server openssl pam parted passwd pciutils-libs pcre pinentry pkgconfig policycoreutils polkit popt ppp procps psmisc pth pygpgme python python-chardet python-iniparse python-kitchen python-libs python-pycurl python-urlgrabber readline rootfiles rootfs-resize rpcbind rpm rpm-build-libs rpm-libs rpm-python rsyslog sed selinux-policy selinux-policy-targeted setserial setup shadow-utils shared-mime-info slang sqlite sudo systemd systemd-sysv sysvinit-tools tar tcp_wrappers-libs tzdata udev usbutils ustr util-linux vim-minimal wget wireless-tools wpa_supplicant xz xz-libs yum yum-metadata-parser yum-utils zlib"
+		case "$SUITE" in
+		17)
+			BASIC_PACKAGES="acl attr audit audit-libs avahi-autoipd basesystem bash bind-libs bind-libs-lite bind-license bind-utils bzip2 bzip2-libs ca-certificates checkpolicy chkconfig coreutils cpio cracklib cracklib-dicts crda cronie cronie-anacron crontabs cryptsetup-libs curl cyrus-sasl-lib db4 dbus dbus-glib dbus-libs device-mapper device-mapper-libs dhclient dhcp-common dhcp-libs diffutils dnsmasq dosfstools dracut e2fsprogs e2fsprogs-libs elfutils-libelf ethtool expat fedora-release fedora-release-notes file file-libs filesystem findutils fipscheck fipscheck-lib gamin gawk gdbm glib2 glibc glibc-common gmp gnupg2 gpgme grep groff groff-base gzip hardlink hostname hwdata info initscripts iproute iptables iputils iw kbd kbd-misc keyutils keyutils-libs kmod kmod-libs krb5-libs less libacl libassuan libattr libblkid libcap libcap-ng libcom_err libcurl libdaemon libdb libdb-utils libedit libevent libffi libgcc libgcrypt libgpg-error libgssglue libgudev1 libidn libmount libnfsidmap libnl libnl3 libpcap libpipeline libpwquality libselinux libselinux-utils libsemanage libsepol libss libssh2 libsss_sudo libstdc++ libtirpc libudev libusb1 libuser libutempter libuuid libxml2 linux-atm-libs logrotate lua m4 man-db man-pages mingetty mobile-broadband-provider-info ncurses ncurses-base ncurses-libs net-tools newt newt-python nfs-utils nspr nss nss-myhostname nss-softokn nss-softokn-freebl nss-sysinit nss-tools nss-util ntpdate openldap openssh openssh-clients openssh-server openssl pam parted passwd pciutils-libs pcre pinentry pkgconfig policycoreutils popt ppp procps psmisc pth pygpgme python python-chardet python-iniparse python-kitchen python-libs python-pycurl python-urlgrabber readline rootfiles rootfs-resize rpcbind rpm rpm-build-libs rpm-libs rpm-python rsyslog sed selinux-policy selinux-policy-targeted setserial setup shadow-utils shared-mime-info slang sqlite sudo systemd systemd-sysv sysvinit-tools tar tcp_wrappers-libs tzdata udev usbutils ustr util-linux vim-minimal wget wireless-tools wpa_supplicant xz xz-libs yum yum-metadata-parser yum-utils zlib"
+		;;
+		18)
+			BASIC_PACKAGES="acl attr audit audit-libs avahi-autoipd avahi-libs basesystem bash bind-libs bind-libs-lite bind-license bind-utils bzip2 bzip2-libs c-ares ca-certificates checkpolicy chkconfig coreutils cpio cracklib cracklib-dicts crda cronie cronie-anacron crontabs cryptsetup-libs cups-libs curl cyrus-sasl-gssapi cyrus-sasl-lib dbus dbus-glib dbus-libs device-mapper device-mapper-libs dhclient dhcp-common dhcp-libs diffutils dnsmasq dosfstools dracut e2fsprogs e2fsprogs-libs elfutils-libelf ethtool expat fedora-release fedora-release-notes file file-libs filesystem findutils fipscheck fipscheck-lib gamin gawk gdbm glib2 glibc glibc-common gmp gnupg2 gnutls gpgme grep groff groff-base gzip hardlink hostname hwdata info initscripts iproute iptables iputils iw jbigkit-libs json-c kbd kbd-misc keyutils keyutils-libs kmod kmod-libs kpartx krb5-libs less libacl libassuan libattr libbasicobjects libblkid libbsd libcap libcap-ng libcollection libcom_err libcurl libdaemon libdb libdb-utils libdb4 libdhash libedit libee libestr libevent libffi libgcc libgcrypt libgpg-error libgssglue libgudev1 libidn libini_config libipa_hbac libjpeg-turbo libldb liblognorm libmicrohttpd libmount libnfsidmap libnl libnl3 libpath_utils libpcap libpipeline libpng libpwquality libref_array libselinux libselinux-utils libsemanage libsepol libss libssh2 libsss_idmap libsss_sudo libstdc++ libtalloc libtasn1 libtdb libtevent libtiff libtirpc libusbx libuser libutempter libuuid libwbclient libxml2 linux-atm-libs logrotate lua m4 man-db man-pages mingetty mobile-broadband-provider-info ncurses ncurses-base ncurses-libs net-tools newt newt-python nfs-utils nspr nss nss-myhostname nss-softokn nss-softokn-freebl nss-sysinit nss-tools nss-util ntpdate openldap openssh openssh-clients openssh-server openssl-libs p11-kit pam parted passwd pciutils-libs pcre pinentry pkgconfig policycoreutils popt procps-ng psmisc pth pygpgme pyliblzma pyparted pytalloc python python-chardet python-iniparse python-kitchen python-libs python-psutil python-pycurl python-urlgrabber qrencode-libs quota quota-nls readline rootfiles rootfs-resize rpcbind rpm rpm-build-libs rpm-libs rpm-python rsyslog samba-libs sed selinux-policy selinux-policy-targeted setserial setup shadow-utils shared-mime-info slang sqlite sssd sssd-client sudo systemd systemd-libs systemd-sysv sysvinit-tools tar tcp_wrappers tcp_wrappers-libs tzdata usbutils ustr util-linux vim-minimal wget wireless-tools wpa_supplicant xz xz-libs yum yum-metadata-parser yum-utils zlib"
+		;;
+		esac
 		REPO="${MIRROR%/}/${SUITE}/Everything/${ARCH}/os"
 		PKG_LIST="$MNT_TARGET/tmp/packages.list"
 
@@ -859,28 +872,32 @@ install_system()
 		msg "Retrieving base packages: "
 		for PACKAGE in $BASIC_PACKAGES; do
 			msg -n "$PACKAGE ... "
-    		PKG_URL=`cat $PKG_LIST | grep -m1 -e "^.*/$PACKAGE-[0-9][0-9\.\-].*\.rpm$"`
-    		test "$PKG_URL" || { msg "fail"; return 1; }
-    		FILE=`basename $PKG_URL`
-    		#echo "downloading ${FILE}... "
-    		for i in 1 2 3
-    		do
-    			wget -q -c -O $MNT_TARGET/tmp/$FILE $REPO/$PKG_URL
-    			[ $? -eq 0 ] && break
-    			sleep 30s
-    		done
-    		#echo "unpacking ${FILE}... "
-    		(cd $MNT_TARGET; rpm2cpio $MNT_TARGET/tmp/$FILE | cpio -idmu)
-    		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
+			PKG_URL=`cat $PKG_LIST | grep -m1 -e "^.*/$PACKAGE-[0-9][0-9\.\-].*\.rpm$"`
+			#test "$PKG_URL" || { msg "fail"; return 1; }
+			FILE=`basename $PKG_URL`
+			#echo "downloading ${FILE}... "
+			for i in 1 2 3
+			do
+				wget -q -c -O $MNT_TARGET/tmp/$FILE $REPO/$PKG_URL
+				[ $? -eq 0 ] && break
+				sleep 30s
+			done
+			#echo "unpacking ${FILE}... "
+			(cd $MNT_TARGET; rpm2cpio $MNT_TARGET/tmp/$FILE | cpio -idmu)
+			[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 		done
 
 		msg "Installing base packages: "
 		chroot $MNT_TARGET /bin/rpm -iv --force --nosignature --nodeps /tmp/*.rpm 1>&3 2>&3
+		msg -n "Updating packages database ... "
+		chroot $MNT_TARGET /bin/rpm -i --force --nosignature --nodeps --justdb /tmp/*.rpm
+		[ $? -eq 0 ] && msg "done" || msg "fail"
 		# to fix cap_set_file failed
-		chroot $MNT_TARGET /bin/rpm -i --nosignature --justdb /tmp/glibc-common-*.rpm /tmp/iputils-*.rpm
+		#chroot $MNT_TARGET /bin/rpm -i --nosignature --justdb /tmp/glibc-common-*.rpm /tmp/iputils-*.rpm /tmp/systemd-*.rpm
 		# to fix chown32(/dev/pts/*) operation not permitted
 		chmod 04755 $MNT_TARGET/usr/libexec/pt_chown
 		chmod 04755 $MNT_TARGET/usr/bin/ping
+		chmod 04755 $MNT_TARGET/usr/bin/systemd-detect-virt
 		# clean cache
 		rm -rf $MNT_TARGET/tmp/*
 		
