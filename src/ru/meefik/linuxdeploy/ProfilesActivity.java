@@ -171,6 +171,7 @@ public class ProfilesActivity extends SherlockActivity implements OnTouchListene
 
 	@Override
 	public void onPause() {
+		super.onPause();
 		PrefStore.setProfiles(getApplicationContext(), listItems);
 		int pos = profilesList.getCheckedItemPosition();
 		int last = listItems.size() - 1;
@@ -181,7 +182,6 @@ public class ProfilesActivity extends SherlockActivity implements OnTouchListene
 				PrefStore.PREF_CHANGE = true;
 			}
 		}
-		super.onPause();
 	}
 
 	@Override

@@ -38,6 +38,19 @@ public class DeployPrefsActivity extends SherlockPreferenceActivity implements
 	}
 
 	@Override
+	public void onResume() {
+		super.onResume();
+
+		String titleMsg = this.getString(R.string.title_activity_properties)
+				+ ": " + PrefStore.getCurrentProfile(getApplicationContext());
+		this.setTitle(titleMsg);
+
+		getPreferenceScreen().getSharedPreferences()
+				.registerOnSharedPreferenceChangeListener(this);
+
+	}
+	
+	@Override
 	public void onPause() {
 		super.onPause();
 
@@ -65,19 +78,6 @@ public class DeployPrefsActivity extends SherlockPreferenceActivity implements
 			reconfigureDialog();
 		}
 		return true;
-	}
-
-	@Override
-	public void onResume() {
-		super.onResume();
-
-		String titleMsg = this.getString(R.string.title_activity_properties)
-				+ ": " + PrefStore.getCurrentProfile(getApplicationContext());
-		this.setTitle(titleMsg);
-
-		getPreferenceScreen().getSharedPreferences()
-				.registerOnSharedPreferenceChangeListener(this);
-
 	}
 
 	private void reconfigureDialog() {
