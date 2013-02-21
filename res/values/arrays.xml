@@ -133,11 +133,10 @@
     <!-- openSUSE -->
 
     <string-array name="opensuse_suite_values" translatable="false">
-        <item>Factory</item>
+        <item>factory</item>
     </string-array>
     <string-array name="opensuse_architecture_values" translatable="false">
-        <item>armv5el</item>
-        <item>standard</item>
+        <item>armv7hl</item>
     </string-array>
 
 </resources>

@@ -63,8 +63,8 @@
     <string name="fedora_architecture" translatable="false">arm</string>
 
     <!-- openSUSE -->
-    <string name="opensuse_suite" translatable="false">Factory</string>
-    <string name="opensuse_mirror" translatable="false">http://download.opensuse.org/repositories/openSUSE:/</string>
-    <string name="opensuse_architecture" translatable="false">armv5el</string>
+    <string name="opensuse_suite" translatable="false">factory</string>
+    <string name="opensuse_mirror" translatable="false">http://download.opensuse.org/ports/</string>
+    <string name="opensuse_architecture" translatable="false">armv7hl</string>
 
 </resources>
