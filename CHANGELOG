@@ -4,7 +4,9 @@ Changelog (English)
 1.3.6
 Added support Fedora 18
 Takes into account changes in openSUSE repository
+Takes into account changes in Arch Linux packages
 Bugfix: dbus error in Arch Linux and Fedora
+Bugfix: /dev/pts wrong mount mode
 
 1.3.5
 Redesigned interface (include ActionBarSherlock)
@@ -177,8 +179,10 @@ Updated list packages of base system installation
 
 1.3.6
 Добавлена поддержка Fedora 18
-Учтены изменения в репозитории в openSUSE
+Учтены изменения в репозитории openSUSE
+Учтены изменения в пакетах Arch Linux
 Исправлена ошибка dbus в Arch Linux и Fedora
+Исправлен режим монтирования /dev/pts
 
 1.3.5
 Переработан интерфейс (добавлен ActionBarSherlock)

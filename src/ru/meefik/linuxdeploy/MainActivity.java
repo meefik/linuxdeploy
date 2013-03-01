@@ -125,12 +125,6 @@ public class MainActivity extends SherlockActivity {
 							: R.drawable.ic_action_stop_dark);
 		}
 		
-		/*
-		 * menu.add("info") .setIcon(isLight ?
-		 * R.drawable.ic_action_properties_light :
-		 * R.drawable.ic_action_properties_dark)
-		 * .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-		 */
 		return true;
 	}
 
