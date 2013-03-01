@@ -539,7 +539,7 @@ mount_system()
 	tg=$MNT_TARGET/dev/pts; is_mnt=`cat /proc/mounts | grep " $tg "`
 	if [ -z "$is_mnt" ]; then
 		[ ! -d "$tg" ] && mkdir -p $tg
-		mount -t devpts devpts $tg
+		mount -o "mode=0622" -t devpts devpts $tg
 		[ $? -eq 0 ] && msg "done" || msg "fail"
 	else
 		msg "skip"
@@ -806,12 +806,24 @@ install_system()
 		REPO="${MIRROR%/}/$ARCH/core"
 		CACHE_DIR="$MNT_TARGET/var/cache/pacman/pkg"
 		
+		msg -n "Preparing for deployment ... "
+		(set -e
+			cd $MNT_TARGET
+			mkdir etc
+			echo "root:x:0:0:root:/root:/bin/bash" > etc/passwd
+			echo "root:x:0:" > etc/group
+			touch etc/fstab
+			mkdir tmp; chmod 01777 tmp
+			ln -s usr/lib lib
+			mkdir -p $CACHE_DIR
+		exit 0)
+		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
+		
 		msg -n "Retrieving packages list ... "
 		PKG_LIST=`wget -q -O - "$REPO/" | sed -n '/<a / s/^.*<a [^>]*href="\([^\"]*\)".*$/\1/p' | awk -F'/' '{print $NF}' | sort -rn`
 		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 
 		msg "Retrieving base packages: "
-		mkdir -p $CACHE_DIR
 		for PACKAGE in $BASIC_PACKAGES; do
 			msg -n "$PACKAGE ... "
     		FILE=`echo "$PKG_LIST" | grep -m1 -e "^$PACKAGE-[[:digit:]].*\.xz$" -e "^$PACKAGE-[[:digit:]].*\.gz$"`
