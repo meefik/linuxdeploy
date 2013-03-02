@@ -51,11 +51,7 @@ public class AppPrefsActivity extends SherlockPreferenceActivity implements
 		super.onPause();
 		
 		// set autostart settings
-		SharedPreferences sp = this.getSharedPreferences(
-				PrefStore.APP_PREF_FILE_NAME, Context.MODE_PRIVATE);
-		boolean isAutostart = sp.getBoolean("autostart",
-				this.getString(R.string.autostart) == "true" ? true : false);
-		int flag = (isAutostart ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+		int flag = (PrefStore.isAutostart(getApplicationContext()) ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED
 				: PackageManager.COMPONENT_ENABLED_STATE_DISABLED);
 		ComponentName component = new ComponentName(this, BootUpReceiver.class);
 		getPackageManager().setComponentEnabledSetting(component, flag,

@@ -6,11 +6,17 @@ import java.util.Date;
 import java.util.Locale;
 
 import android.app.AlertDialog;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.WindowManager;
@@ -25,8 +31,8 @@ public class MainActivity extends SherlockActivity {
 
 	private static TextView logView;
 	private static ScrollView logScroll;
-	static Handler handler;
 	private static boolean newLine = false;
+	static Handler handler;
 
 	private static String getTimeStamp() {
 		return "["
@@ -233,9 +239,25 @@ public class MainActivity extends SherlockActivity {
 		PrefStore.get(getApplicationContext());
 
 		String profileName = PrefStore.getCurrentProfile(getApplicationContext());
-		String myIP = PrefStore.getLocalIpAddress();
-		this.setTitle(profileName+"  [ "+myIP+" ]");
-
+		String ipaddress = PrefStore.getLocalIpAddress();
+		/*
+		String ports = "";
+		if (PrefStore.SSH_START != null && PrefStore.SSH_START.equals("y")) {
+			ports = ", SSH: " + PrefStore.SSH_PORT;
+		}
+		if (PrefStore.VNC_START != null && PrefStore.VNC_START.equals("y")) {
+			try {
+				ports += ", VNC: " + String.valueOf(Double.valueOf(PrefStore.VNC_DISPLAY).intValue()+5900);
+			} catch (NumberFormatException ex) {
+				// ignore
+			}
+		}
+		*/
+		this.setTitle(profileName+"  [ "+ipaddress+" ]");
+		
+		// show icon
+		notification(getApplicationContext());
+		
 		// Restore text
 		logView.setTextSize(TypedValue.COMPLEX_UNIT_SP, PrefStore.FONT_SIZE);
 
@@ -264,5 +286,34 @@ public class MainActivity extends SherlockActivity {
 		// now, save the text if something overlaps this Activity
 		savedInstanceState.putString("textlog", logView.getText().toString());
 	}
+	
+	public static void notification(Context c) {
+		final int NOTIFY_ID = 1;
+		NotificationManager mNotificationManager =
+			    (NotificationManager) c.getSystemService(Context.NOTIFICATION_SERVICE);
+		if (PrefStore.isShowIcon(c)) {
+			PrefStore.updateLocale(c);
+			NotificationCompat.Builder mBuilder =
+			        new NotificationCompat.Builder(c)
+			        .setSmallIcon(R.drawable.ic_launcher)
+			        .setContentTitle(c.getString(R.string.app_name))
+			        .setContentText(c.getString(R.string.notification_current_profile)+": "+PrefStore.getCurrentProfile(c));
+			Intent resultIntent = new Intent(c, MainActivity.class);
+			TaskStackBuilder stackBuilder = TaskStackBuilder.create(c);
+			stackBuilder.addParentStack(MainActivity.class);
+			stackBuilder.addNextIntent(resultIntent);
+			PendingIntent resultPendingIntent =
+			        stackBuilder.getPendingIntent(
+			            0,
+			            PendingIntent.FLAG_UPDATE_CURRENT
+			        );
+			mBuilder.setContentIntent(resultPendingIntent);
+			mBuilder.setOngoing(true);
+			mBuilder.setWhen(0);
+			mNotificationManager.notify(NOTIFY_ID, mBuilder.build());
+		} else {
+			mNotificationManager.cancel(NOTIFY_ID);
+		}
+    }
 
 }

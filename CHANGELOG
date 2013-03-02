@@ -5,6 +5,7 @@ Changelog (English)
 Added support Fedora 18
 Takes into account changes in openSUSE repository
 Takes into account changes in Arch Linux packages
+Added application icon in notification bar
 Bugfix: dbus error in Arch Linux and Fedora
 Bugfix: /dev/pts wrong mount mode
 
@@ -181,6 +182,7 @@ Updated list packages of base system installation
 Добавлена поддержка Fedora 18
 Учтены изменения в репозитории openSUSE
 Учтены изменения в пакетах Arch Linux
+Добавлен значок в панели уведомлений
 Исправлена ошибка dbus в Arch Linux и Fedora
 Исправлен режим монтирования /dev/pts
 

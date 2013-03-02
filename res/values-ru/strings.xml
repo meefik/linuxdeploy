@@ -13,6 +13,7 @@
     <string name="menu_new">Добавить</string>
     <string name="menu_edit">Изменить</string>
     <string name="menu_discard">Удалить</string>
+    <string name="notification_current_profile">Текущий профиль</string>
     <string name="title_activity_main">Linux Deploy</string>
     <string name="title_activity_about">О программе</string>
     <string name="title_activity_settings">Настройки</string>
@@ -35,6 +36,8 @@
     <string name="dialog_title_fontsize_preference">Размер шрифта</string>
     <string name="title_theme_preference">Тема интерфейса</string>
     <string name="dialog_title_theme_preference">Выберите тему</string>
+    <string name="title_appicon_preference">Показывать иконку</string>
+    <string name="summary_appicon_preference">Отображать значок в панели уведомлений</string>
     <string name="title_autostart_preference">Автозапуск</string>
     <string name="summary_autostart_preference">Автоматически запускать GNU/Linux при загрузке Android</string>
     <string name="env_preferences">Рабочее окружение</string>
