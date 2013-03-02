@@ -14,7 +14,7 @@ public class BootUpReceiver extends BroadcastReceiver {
 				new ShellEnv(context).deployCmd("start");
 			}
 		}).start();
-		MainActivity.notification(context);
+		MainActivity.notification(context, null);
 	}
 
 }

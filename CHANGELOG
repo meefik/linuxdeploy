@@ -182,7 +182,7 @@ Updated list packages of base system installation
 Добавлена поддержка Fedora 18
 Учтены изменения в репозитории openSUSE
 Учтены изменения в пакетах Arch Linux
-Добавлен значок в панели уведомлений
+Добавлен значок на панель уведомлений
 Исправлена ошибка dbus в Arch Linux и Fedora
 Исправлен режим монтирования /dev/pts
 
