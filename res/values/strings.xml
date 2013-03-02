@@ -13,6 +13,7 @@
     <string name="menu_new">New</string>
     <string name="menu_edit">Edit</string>
     <string name="menu_discard">Delete</string>
+    <string name="notification_current_profile">Current profile</string>
     <string name="title_activity_main">Linux Deploy</string>
     <string name="title_activity_about">About</string>
     <string name="title_activity_settings">Settings</string>
@@ -35,6 +36,8 @@
     <string name="dialog_title_fontsize_preference">Font size</string>
     <string name="title_theme_preference">Theme</string>
     <string name="dialog_title_theme_preference">Choose theme</string>
+    <string name="title_appicon_preference">Show icon</string>
+    <string name="summary_appicon_preference">Display icon in notification bar</string>
     <string name="title_autostart_preference">Autostart</string>
     <string name="summary_autostart_preference">Automatically start GNU/Linux when running Android</string>
     <string name="env_preferences">Operating environment</string>

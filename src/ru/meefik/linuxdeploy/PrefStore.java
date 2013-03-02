@@ -182,6 +182,22 @@ public class PrefStore {
 		}
 		return ip;
 	}
+	
+	public static boolean isAutostart(Context c) {
+		SharedPreferences sp = c.getSharedPreferences(
+				PrefStore.APP_PREF_FILE_NAME, Context.MODE_PRIVATE);
+		boolean isAutostart = sp.getBoolean("autostart",
+				c.getString(R.string.autostart).equals("true") ? true : false);
+		return isAutostart;
+	}
+	
+	public static boolean isShowIcon(Context c) {
+		SharedPreferences sp = c.getSharedPreferences(
+				PrefStore.APP_PREF_FILE_NAME, Context.MODE_PRIVATE);
+		boolean isAutostart = sp.getBoolean("appicon",
+				c.getString(R.string.appicon).equals("true") ? true : false);
+		return isAutostart;
+	}
 
 	// get current profile name
 	public static String getCurrentProfile(Context c) {

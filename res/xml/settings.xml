@@ -33,6 +33,12 @@
             android:key="theme"
             android:summary="@string/theme"
             android:title="@string/title_theme_preference" />
+        
+        <CheckBoxPreference
+            android:defaultValue="@string/appicon"
+            android:key="appicon"
+            android:summary="@string/summary_appicon_preference"
+            android:title="@string/title_appicon_preference" />
 
         <CheckBoxPreference
             android:defaultValue="@string/autostart"
