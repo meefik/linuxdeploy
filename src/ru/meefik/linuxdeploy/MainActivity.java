@@ -256,7 +256,7 @@ public class MainActivity extends SherlockActivity {
 		this.setTitle(profileName+"  [ "+ipaddress+" ]");
 		
 		// show icon
-		notification(getApplicationContext());
+		notification(getApplicationContext(), this.getIntent());
 		
 		// Restore text
 		logView.setTextSize(TypedValue.COMPLEX_UNIT_SP, PrefStore.FONT_SIZE);
@@ -287,19 +287,21 @@ public class MainActivity extends SherlockActivity {
 		savedInstanceState.putString("textlog", logView.getText().toString());
 	}
 	
-	public static void notification(Context c) {
+	public static void notification(Context context, Intent intent) {
 		final int NOTIFY_ID = 1;
 		NotificationManager mNotificationManager =
-			    (NotificationManager) c.getSystemService(Context.NOTIFICATION_SERVICE);
-		if (PrefStore.isShowIcon(c)) {
-			PrefStore.updateLocale(c);
+			    (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+		if (PrefStore.isShowIcon(context)) {
+			PrefStore.updateLocale(context);
 			NotificationCompat.Builder mBuilder =
-			        new NotificationCompat.Builder(c)
+			        new NotificationCompat.Builder(context)
 			        .setSmallIcon(R.drawable.ic_launcher)
-			        .setContentTitle(c.getString(R.string.app_name))
-			        .setContentText(c.getString(R.string.notification_current_profile)+": "+PrefStore.getCurrentProfile(c));
-			Intent resultIntent = new Intent(c, MainActivity.class);
-			TaskStackBuilder stackBuilder = TaskStackBuilder.create(c);
+			        .setContentTitle(context.getString(R.string.app_name))
+			        .setContentText(context.getString(R.string.notification_current_profile)+": "+PrefStore.getCurrentProfile(context));
+			Intent resultIntent = intent;
+			if (resultIntent == null)
+				resultIntent = new Intent(context, MainActivity.class);
+			TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
 			stackBuilder.addParentStack(MainActivity.class);
 			stackBuilder.addNextIntent(resultIntent);
 			PendingIntent resultPendingIntent =
