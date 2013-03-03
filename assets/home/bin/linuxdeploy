@@ -539,7 +539,7 @@ mount_system()
 	tg=$MNT_TARGET/dev/pts; is_mnt=`cat /proc/mounts | grep " $tg "`
 	if [ -z "$is_mnt" ]; then
 		[ ! -d "$tg" ] && mkdir -p $tg
-		mount -o "mode=0622" -t devpts devpts $tg
+		mount -o "mode=0620,gid=5" -t devpts devpts $tg
 		[ $? -eq 0 ] && msg "done" || msg "fail"
 	else
 		msg "skip"
