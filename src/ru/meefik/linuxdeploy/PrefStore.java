@@ -22,7 +22,7 @@ public class PrefStore {
 	public static String LANGUAGE;
 	public static Integer FONT_SIZE;
 	public static String THEME;
-	public static String HOME_DIR;
+	public static String ENV_DIR;
 	public static Boolean SYMLINK;
 
 	// to debug
@@ -81,7 +81,7 @@ public class PrefStore {
 				c.getString(R.string.fontsize)));
 		LANGUAGE = sp.getString("language", c.getString(R.string.language));
 		THEME = sp.getString("theme", c.getString(R.string.theme));
-		HOME_DIR = sp.getString("installdir", c.getString(R.string.installdir));
+		ENV_DIR = sp.getString("installdir", c.getString(R.string.envdir));
 		SYMLINK = sp.getBoolean("symlink",
 				c.getString(R.string.symlink).equals("true") ? true : false);
 		CURRENT_PROFILE = sp.getString("profile", null);

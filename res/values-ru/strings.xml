@@ -41,8 +41,8 @@
     <string name="title_autostart_preference">Автозапуск</string>
     <string name="summary_autostart_preference">Автоматически запускать GNU/Linux при загрузке Android</string>
     <string name="env_preferences">Рабочее окружение</string>
-    <string name="title_installdir_preference">Директория установки</string>
-    <string name="dialog_title_installdir_preference">Директория установки</string>
+    <string name="title_installdir_preference">Директория окружения</string>
+    <string name="dialog_title_installdir_preference">Директория окружения</string>
     <string name="title_symlink_preference">Создать симлинк</string>
     <string name="summary_symlink_preference">Создать в системе символьную ссылку</string>
     <string name="title_installenv_preference">Обновить окружение</string>
@@ -77,8 +77,8 @@
     <string name="dialog_title_architecture_preference">Архитектура</string>
     <string name="title_deploytype_preference">Тип установки</string>
     <string name="dialog_title_deploytype_preference">Тип установки</string>
-    <string name="title_diskimage_preference">Путь назначения</string>
-    <string name="dialog_title_diskimage_preference">Путь назначения</string>
+    <string name="title_diskimage_preference">Путь установки</string>
+    <string name="dialog_title_diskimage_preference">Путь установки</string>
     <string name="title_disksize_preference">Размер образа (МБ)</string>
     <string name="dialog_title_disksize_preference">Размер образа (МБ)</string>
     <string name="summary_disksize_preference">Вычисляется автоматически</string>
