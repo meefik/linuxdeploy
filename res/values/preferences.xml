@@ -7,7 +7,7 @@
     <string name="theme" translatable="false">dark</string>
     <string name="autostart" translatable="false">false</string>
     <string name="appicon" translatable="false">false</string>
-    <string name="installdir" translatable="false">/data/local/linux</string>
+    <string name="envdir" translatable="false">/data/local/linux</string>
     <string name="symlink" translatable="false">false</string>
     <string name="profile" translatable="false">Linux</string>
     <string name="debug" translatable="false">false</string>
