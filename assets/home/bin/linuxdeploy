@@ -790,7 +790,7 @@ install_system()
 		PACKAGES="locales,openssh-server,sudo,man-db"
 		case "$DISTRIB" in
 		kali)
-			PACKAGES="$PACKAGES,kali-defaults,kali-menu,nmap,wpasupplicant"
+			PACKAGES="$PACKAGES,kali-linux"
 		;;
 		esac
 		
