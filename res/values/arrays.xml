@@ -71,6 +71,7 @@
         <item>archlinux</item>
         <item>fedora</item>
         <item>opensuse</item>
+        <item>kali</item>
     </string-array>
     <string-array name="distribution_entries" translatable="false">
         <item>Debian</item>
@@ -78,6 +79,7 @@
         <item>Arch Linux</item>
         <item>Fedora</item>
         <item>openSUSE</item>
+        <item>Kali Linux</item>
     </string-array>
 
     <!-- Debian -->
@@ -107,7 +109,7 @@
         <item>armel</item>
         <item>armhf</item>
     </string-array>
-
+    
     <!-- Arch Linux -->
 
     <string-array name="archlinux_suite_values" translatable="false">
@@ -137,6 +139,16 @@
     </string-array>
     <string-array name="opensuse_architecture_values" translatable="false">
         <item>armv7hl</item>
+    </string-array>
+    
+    <!-- Kali Linux -->
+
+    <string-array name="kali_suite_values" translatable="false">
+        <item>kali</item>
+    </string-array>
+    <string-array name="kali_architecture_values" translatable="false">
+        <item>armel</item>
+        <item>armhf</item>
     </string-array>
 
 </resources>
