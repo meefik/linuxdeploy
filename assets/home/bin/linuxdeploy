@@ -198,7 +198,7 @@ configure_system()
 			charmapfile=`echo $LOCALE | awk -F. '{print $2}'`
 			chroot $MNT_TARGET localedef -i $inputfile -c -f $charmapfile $LOCALE
 			case "$DISTRIB" in
-			debian|ubuntu)
+			debian|ubuntu|kali)
 				echo "LANG=$LOCALE" > $MNT_TARGET/etc/default/locale
 			;;
 			archlinux)
@@ -214,7 +214,7 @@ configure_system()
 		;;
 		repository)
 			case "$DISTRIB" in
-			debian|ubuntu)
+			debian|ubuntu|kali)
 				if [ -e "$MNT_TARGET/etc/apt/sources.list" ]; then
 					cp $MNT_TARGET/etc/apt/sources.list $MNT_TARGET/etc/apt/sources.list.bak
 				else
@@ -222,7 +222,7 @@ configure_system()
 				fi
 				if [ -z "`grep "$MIRROR.*$SUITE" $MNT_TARGET/etc/apt/sources.list`" ]; then
 					case "$DISTRIB" in
-					debian)
+					debian|kali)
 						echo "deb $MIRROR $SUITE main contrib non-free" >> $MNT_TARGET/etc/apt/sources.list
 						echo "deb-src $MIRROR $SUITE main contrib non-free" >> $MNT_TARGET/etc/apt/sources.list
 					;;
@@ -295,7 +295,7 @@ configure_system()
 		;;
 		dbus)
 			case "$DISTRIB" in
-			debian|ubuntu)
+			debian|ubuntu|kali)
 				if [ -z "`grep '^aid_inet:.*,messagebus' $MNT_TARGET/etc/group`" ]; then
 					sed -i "s|^\(aid_inet:.*\)|\1,messagebus|g" $MNT_TARGET/etc/group
 				fi
@@ -368,7 +368,7 @@ configure_system()
 		msg "Installing GUI packages: "
 		(set -e
 			case "$DISTRIB" in
-			debian|ubuntu)
+			debian|ubuntu|kali)
 				chroot $MNT_TARGET apt-get update -yq
 				PKGS="tightvncserver x11-xserver-utils xfonts-base"
 				case "$DESKTOP_ENV" in
@@ -627,7 +627,7 @@ start_system()
 		(set -e
 			sed -i "s|^Port .*|Port $SSH_PORT|g" $MNT_TARGET/etc/ssh/sshd_config
 			case "$DISTRIB" in
-			debian|ubuntu)
+			debian|ubuntu|kali)
 				chroot $MNT_TARGET su - root -c "/etc/init.d/ssh start"
 			;;
 			archlinux)
@@ -654,7 +654,7 @@ start_system()
 	msg -n "VNC :$vncport ... "	
 	if [ "$VNC_START" == "y" ]; then
 		(set -e
-			# dbus (Debian/Ubuntu/Arch Linux)
+			# dbus (Debian/Ubuntu/Arch Linux/Kali Linux)
 			[ -e "$MNT_TARGET/run/dbus/pid" ] && rm $MNT_TARGET/run/dbus/pid
 			# dbus (Fedora)
 			[ -e "$MNT_TARGET/var/run/messagebus.pid" ] && rm $MNT_TARGET/var/run/messagebus.pid
@@ -700,7 +700,7 @@ stop_system()
 	if [ "$SSH_START" == "y" ]; then
 		(set -e
 			case "$DISTRIB" in
-			debian|ubuntu)
+			debian|ubuntu|kali)
 				chroot $MNT_TARGET su - root -c "/etc/init.d/ssh stop"
 			;;
 			archlinux)
@@ -784,12 +784,19 @@ install_system()
 	[ $? -ne 0 ] && return 1
 
 	case "$DISTRIB" in
-	debian|ubuntu)
+	debian|ubuntu|kali)
 		msg "Installing GNU/Linux system: "
+		
+		PACKAGES="locales,openssh-server,sudo,man-db"
+		case "$DISTRIB" in
+		kali)
+			PACKAGES="$PACKAGES,kali-defaults,kali-menu,nmap,wpasupplicant"
+		;;
+		esac
 		
 		[ -z "$DEBOOTSTRAP_DIR" ] && DEBOOTSTRAP_DIR=${ENV_DIR%/}/deploy/debootstrap
 		export DEBOOTSTRAP_DIR
-		debootstrap --no-check-gpg --arch $ARCH --foreign --extractor=ar --include=locales,openssh-server,sudo,man-db $SUITE $MNT_TARGET $MIRROR 1>&3 2>&3
+		debootstrap --no-check-gpg --arch $ARCH --foreign --extractor=ar --include=$PACKAGES $SUITE $MNT_TARGET $MIRROR 1>&3 2>&3
 		[ $? -ne 0 ] && return 1
 
 		unset DEBOOTSTRAP_DIR

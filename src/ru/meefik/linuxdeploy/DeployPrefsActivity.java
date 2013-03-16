@@ -339,6 +339,32 @@ public class DeployPrefsActivity extends SherlockPreferenceActivity implements
 						mirror.setText(getString(R.string.opensuse_mirror));
 					mirror.setSummary(mirror.getText());
 				}
+				if (listPref.getValue().equals("kali")) {
+					// suite
+					ListPreference suite = (ListPreference) this
+							.findPreference("suite");
+					suite.setEntries(R.array.kali_suite_values);
+					suite.setEntryValues(R.array.kali_suite_values);
+					if (init)
+						suite.setValue(getString(R.string.kali_suite));
+					suite.setSummary(suite.getEntry());
+					// architecture
+					ListPreference architecture = (ListPreference) this
+							.findPreference("architecture");
+					architecture.setEntries(R.array.kali_architecture_values);
+					architecture
+							.setEntryValues(R.array.kali_architecture_values);
+					if (init)
+						architecture
+								.setValue(getString(R.string.kali_architecture));
+					architecture.setSummary(architecture.getEntry());
+					// mirror
+					EditTextPreference mirror = (EditTextPreference) this
+							.findPreference("mirror");
+					if (init)
+						mirror.setText(getString(R.string.kali_mirror));
+					mirror.setSummary(mirror.getText());
+				}
 			}
 			if (listPref.getKey().equals("deploytype")) {
 				EditTextPreference disksize = (EditTextPreference) this
