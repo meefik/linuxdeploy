@@ -60,6 +60,9 @@ public class PrefStore {
 	public static String XSERVER_DISPLAY;
 	public static String XSERVER_HOST;
 	public static String FB_START;
+	public static String FB_DISPLAY;
+	public static String FB_DEV;
+	public static String FB_INPUT;
 
 	// miscellaneous
 	public static String CURRENT_PROFILE;
@@ -155,6 +158,10 @@ public class PrefStore {
 		FB_START = sp.getBoolean("fbstartup",
 				c.getString(R.string.fbstartup).equals("true") ? true : false) ? "y"
 				: "n";
+		FB_DISPLAY = sp.getString("fbdisplay",
+				c.getString(R.string.fbdisplay));
+		FB_DEV = sp.getString("fbdev", c.getString(R.string.fbdev));
+		FB_INPUT = sp.getString("fbinput", c.getString(R.string.fbinput));
 		
 		try {
 			VERSION = c.getPackageManager().getPackageInfo(c.getPackageName(),

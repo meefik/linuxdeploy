@@ -43,6 +43,9 @@
     <string name="xdisplay" translatable="false">1</string>
     <string name="xhost" translatable="false">127.0.0.1</string>
     <string name="fbstartup" translatable="false">false</string>
+    <string name="fbdisplay" translatable="false">2</string>
+    <string name="fbdev" translatable="false">/dev/graphics/fb0</string>
+    <string name="fbinput" translatable="false">/dev/input/event2</string>
 
     <!-- Debian -->
     <string name="debian_suite" translatable="false">wheezy</string>

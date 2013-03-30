@@ -128,7 +128,7 @@ configure_system()
 {
 	if [ "$#" -eq 0 ]; then
 		msg "Configuring GNU/Linux system: "
-		configure_system dns mtab motd hosts hostname timezone sudo locales repository users profile upstart dbus gui
+		configure_system dns mtab motd hosts hostname timezone sudo locales repository users profile upstart dbus xorg
 		return 0
 	fi
 	if [ "$#" -gt 1 ]; then
@@ -252,7 +252,7 @@ configure_system()
 			;;
 			esac
 		;;
-		users)
+		groups)
 			AIDS=`cat ${ENV_DIR%/}/deploy/android-groups`
 			for AID in $AIDS
 			do
@@ -285,6 +285,45 @@ configure_system()
 			PROFILE_STR='PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
 			 is_str=`cat $MNT_TARGET$USER_HOME/.profile | grep "$PROFILE_STR" || true`
 			[ -z "$is_str" ] && echo $PROFILE_STR >> $MNT_TARGET$USER_HOME/.profile
+			# gui
+			mkdir $MNT_TARGET$USER_HOME/.vnc || true
+			echo "MPTcXfgXGiY=" | base64 -d > $MNT_TARGET$USER_HOME/.vnc/passwd
+			chmod 600 $MNT_TARGET$USER_HOME/.vnc/passwd
+			if [ "$DESKTOP_ENV" != "other" ]; then
+				echo 'XAUTHORITY=$HOME/.Xauthority' > $MNT_TARGET$USER_HOME/.vnc/xstartup
+				echo 'export XAUTHORITY' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
+				echo "LANG=$LOCALE" >> $MNT_TARGET$USER_HOME/.vnc/xstartup
+				echo 'export LANG' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
+				#echo '(sleep 5 && xrefresh)&' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
+				echo 'echo $$ > /tmp/xsession.pid' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
+				case "$DESKTOP_ENV" in
+				xterm)
+					echo 'xterm -max' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
+				;;
+				lxde)
+					echo 'startlxde' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
+				;;
+				xfce)
+					echo 'startxfce4' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
+				;;
+				gnome)
+					echo 'XKL_XMODMAP_DISABLE=1' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
+					echo 'export XKL_XMODMAP_DISABLE' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
+					echo 'if [ -n "`gnome-session -h | grep "\-\-session"`" ]; then' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
+					echo '   gnome-session --session=gnome' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
+					echo 'else' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
+					echo '   gnome-session' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
+					echo 'fi' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
+				;;
+				kde)
+					echo 'startkde' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
+				;;
+				esac
+				chmod 755 $MNT_TARGET$USER_HOME/.vnc/xstartup
+				#echo "#!/bin/sh" > $MNT_TARGET$USER_HOME/.xsession
+				#cat $MNT_TARGET$USER_HOME/.vnc/xstartup > $MNT_TARGET$USER_HOME/.xsession
+				cp $MNT_TARGET$USER_HOME/.vnc/xstartup $MNT_TARGET$USER_HOME/.xsession
+			fi
 			chown -R $USER_ID:$GROUP_ID $MNT_TARGET$USER_HOME || true
 		;;
 		upstart)
@@ -317,48 +356,18 @@ configure_system()
 			;;
 			esac
 		;;
-		gui)
-			USER_HOME=`cat $MNT_TARGET/etc/passwd | grep -m1 "^$USER_NAME:" | awk -F: '{print $6}'`
-			USER_ID=`cat $MNT_TARGET/etc/passwd | grep -m1 "^$USER_NAME:" | awk -F: '{print $3}'`
-			GROUP_ID=`cat $MNT_TARGET/etc/passwd | grep -m1 "^$USER_NAME:" | awk -F: '{print $4}'`
-			mkdir $MNT_TARGET$USER_HOME/.vnc || true
-			echo "MPTcXfgXGiY=" | base64 -d > $MNT_TARGET$USER_HOME/.vnc/passwd
-			chmod 600 $MNT_TARGET$USER_HOME/.vnc/passwd
-			if [ "$DESKTOP_ENV" != "other" ]; then
-				echo 'XAUTHORITY=$HOME/.Xauthority' > $MNT_TARGET$USER_HOME/.vnc/xstartup
-				echo 'export XAUTHORITY' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
-				echo "LANG=$LOCALE" >> $MNT_TARGET$USER_HOME/.vnc/xstartup
-				echo "export LANG" >> $MNT_TARGET$USER_HOME/.vnc/xstartup
-				case "$DESKTOP_ENV" in
-				xterm)
-					echo 'xterm -max &' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
-				;;
-				lxde)
-					echo 'startlxde &' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
-				;;
-				xfce)
-					echo 'startxfce4 &' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
-				;;
-				gnome)
-					echo 'XKL_XMODMAP_DISABLE=1' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
-					echo 'export XKL_XMODMAP_DISABLE' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
-					echo 'if [ -n "`gnome-session -h | grep "\-\-session"`" ]; then' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
-					echo '   gnome-session --session=gnome &' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
-					echo 'else' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
-					echo '   gnome-session &' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
-					echo 'fi' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
-				;;
-				kde)
-					echo 'startkde &' >> $MNT_TARGET$USER_HOME/.vnc/xstartup
-				;;
-				esac
-				chmod 755 $MNT_TARGET$USER_HOME/.vnc/xstartup
-				echo "#!/bin/sh" > $MNT_TARGET$USER_HOME/.xsession
-				cat $MNT_TARGET$USER_HOME/.vnc/xstartup >> $MNT_TARGET$USER_HOME/.xsession
-				chmod 755 $MNT_TARGET$USER_HOME/.xsession
-				chown $USER_ID:$GROUP_ID $MNT_TARGET$USER_HOME/.xsession
+		xorg)
+			# Xwrapper.config
+			mkdir -p $MNT_TARGET/etc/X11
+			xwrapper=`grep -e "^allowed_users" $MNT_TARGET/etc/X11/Xwrapper.config || true`
+			if [ -n "$xwrapper" ]; then
+				sed -i 's/^allowed_users=.*/allowed_users=anybody/g' $MNT_TARGET/etc/X11/Xwrapper.config
+			else
+				echo "allowed_users=anybody" >> $MNT_TARGET/etc/X11/Xwrapper.config
 			fi
-			chown -R $USER_ID:$GROUP_ID $MNT_TARGET$USER_HOME/.vnc
+			# xorg.conf
+			cp $ENV_DIR/deploy/xorg.conf $MNT_TARGET/etc/X11/
+			chmod 644 $MNT_TARGET/etc/X11/xorg.conf
 		;;
 		esac
 	exit 0)
@@ -390,8 +399,6 @@ configure_system()
 				esac
 				chroot $MNT_TARGET apt-get install $PKGS --no-install-recommends -yq
 				chroot $MNT_TARGET apt-get clean
-				# postconfigure
-				sed -i 's/^allowed_users=.*/allowed_users=anybody/g' $MNT_TARGET/etc/X11/Xwrapper.config
 			;;
 			archlinux)
 				PKGS="tightvnc xorg-utils xorg-fonts-misc ttf-dejavu"
@@ -625,7 +632,7 @@ start_system()
 
 	msg "Starting services: "
 	msg -n "SSH :$SSH_PORT ... "
-	if [ "$SSH_START" == "y" ]; then
+	if [ "$SSH_START" == "y" -a -z "`ps | grep sshd | grep -v grep`" ]; then
 		(set -e
 			sed -i "s|^Port .*|Port $SSH_PORT|g" $MNT_TARGET/etc/ssh/sshd_config
 			case "$DISTRIB" in
@@ -652,9 +659,11 @@ start_system()
 		msg "skip"
 	fi
 
+	XSESSION=`ps | grep $(cat $MNT_TARGET/tmp/xsession.pid) | grep -v grep`
 	let vncport=5900+$VNC_DISPLAY
 	msg -n "VNC :$vncport ... "	
-	if [ "$VNC_START" == "y" ]; then
+	if [ "$VNC_START" == "y" -a -z "$XSESSION" ]; then
+		XSESSION="busy"
 		(set -e
 			# dbus (Debian/Ubuntu/Arch Linux/Kali Linux)
 			[ -e "$MNT_TARGET/run/dbus/pid" ] && rm $MNT_TARGET/run/dbus/pid
@@ -671,10 +680,24 @@ start_system()
 		msg "skip"
 	fi
 	
-	msg -n "X Window System ... "	
-	if [ "$XSERVER_START" == "y" ]; then
+	msg -n "X Window System ... "
+	if [ "$XSERVER_START" == "y" -a -z "$XSESSION" ]; then
+		XSESSION="busy"
 		(set -e
-			chroot $MNT_TARGET su - $USER_NAME -c "export DISPLAY=$XSERVER_HOST:$XSERVER_DISPLAY; cut -d ' ' -f 6 /proc/self/stat > ~/.xsession.pid; ~/.xsession"
+			chroot $MNT_TARGET su - $USER_NAME -c "export DISPLAY=$XSERVER_HOST:$XSERVER_DISPLAY; ~/.xsession &"
+		exit 0)
+		[ $? -eq 0 ] && msg "done" || msg "fail"
+	else
+		msg "skip"
+	fi
+	
+	msg -n "Frame Buffer ... "
+	if [ "$FB_START" == "y" -a -z "$XSESSION" ]; then
+		XSESSION="busy"
+		(set -e
+			sed -i "s|Option.*\"fbdev\".*|Option \"fbdev\" \"$FB_DEV\"|g" $MNT_TARGET/etc/X11/xorg.conf
+			sed -i "s|Option.*\"Device\".*|Option \"Device\" \"$FB_INPUT\"|g" $MNT_TARGET/etc/X11/xorg.conf
+			chroot $MNT_TARGET su - $USER_NAME -c "startx -- :$FB_DISPLAY &"
 		exit 0)
 		[ $? -eq 0 ] && msg "done" || msg "fail"
 	else
@@ -690,14 +713,6 @@ start_system()
 		exit 0)
 		[ $? -eq 0 ] && msg "done" || msg "fail"
 	done
-	
-	msg -n "Frame Buffer ... "
-	if [ "$FB_START" == "y" ]; then
-		chroot / $0 framebuffer </dev/null 2>&1 1>/dev/null &
-		[ $? -eq 0 ] && msg "done" || msg "fail"
-	else
-		msg "skip"
-	fi
 	
 	return 0
 }
@@ -746,7 +761,17 @@ stop_system()
 	msg -n "X Window System ... "	
 	if [ "$XSERVER_START" == "y" ]; then
 		(set -e
-			chroot $MNT_TARGET su - $USER_NAME -c 'kill -9 -$(cat ~/.xsession.pid)'
+			chroot $MNT_TARGET su - $USER_NAME -c 'kill -9 -$(cat /tmp/xsession.pid)'
+		exit 0)
+		[ $? -eq 0 ] && msg "done" || msg "fail"
+	else
+		msg "skip"
+	fi
+	
+	msg -n "Frame Buffer ... "
+	if [ "$FB_START" == "y" ]; then
+		(set -e
+			chroot $MNT_TARGET su - $USER_NAME -c 'kill -9 -$(cat /tmp/xsession.pid)'
 		exit 0)
 		[ $? -eq 0 ] && msg "done" || msg "fail"
 	else
@@ -767,28 +792,6 @@ stop_system()
 	[ $? -ne 0 ] && return 1
 	
 	return 0
-}
-
-framebuffer()
-{
-	setprop ctl.stop zygote
-	setprop ctl.stop media
-	#setprop ctl.stop runtime
-	i=0
-	while [ $i -lt 10 ]; do
-		let i=i+1
-		if [ -n "`ps | grep bootanimation | grep -v grep`" ]; then
-			setprop ctl.stop bootanim
-			#killall bootanimation || true
-			break
-		else
-			sleep 1
-		fi
-	done
-	chroot $MNT_TARGET su - $USER_NAME -c "startx"
-	setprop ctl.start bootanim
-	setprop ctl.start media
-	setprop ctl.start zygote
 }
 
 chroot_system()
@@ -1136,53 +1139,50 @@ status_system()
 
 case "$1" in
 mount)
-	msg ">>> begin: mount"
+	msg ">>> begin: $1"
 	mount_system
-	msg "<<< end: mount"
+	msg "<<< end: $1"
 ;;
 umount)
-	msg ">>> begin: umount"
+	msg ">>> begin: $1"
 	umount_system
-	msg "<<< end: umount"
+	msg "<<< end: $1"
 ;;
 install)
-	msg ">>> begin: install"
+	msg ">>> begin: $1"
 	install_system
-	msg "<<< end: install"
+	msg "<<< end: $1"
 ;;
 configure)
-	msg ">>> begin: configure"
+	msg ">>> begin: $1"
 	mount_system
 	[ $? -eq 0 ] && configure_system
-	msg "<<< end: configure"
+	msg "<<< end: $1"
 ;;
 uninstall)
-	msg ">>> begin: uninstall"
+	msg ">>> begin: $1"
 	uninstall_system
-	msg "<<< end: uninstall"
+	msg "<<< end: $1"
 ;;
 start)
-	msg ">>> begin: start"
+	msg ">>> begin: $1"
 	start_system
-	msg "<<< end: start"
+	msg "<<< end: $1"
 ;;
 stop)
-	msg ">>> begin: stop"
+	msg ">>> begin: $1"
 	stop_system
-	msg "<<< end: stop"
+	msg "<<< end: $1"
 ;;
 shell)
-	msg ">>> begin: shell"
+	msg ">>> begin: $1"
 	chroot_system
-	msg "<<< end: shell"
+	msg "<<< end: $1"
 ;;
 status)
-	msg ">>> begin: status"
+	msg ">>> begin: $1"
 	status_system
-	msg "<<< end: status"
-;;
-framebuffer)
-	framebuffer
+	msg "<<< end: $1"
 ;;
 *)
 	msg "Usage: $0 <mount|umount|install|configure|uninstall|start|stop|shell|status>"

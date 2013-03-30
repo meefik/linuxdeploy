@@ -155,6 +155,10 @@ public class MainActivity extends SherlockActivity {
 													.deployCmd("start");
 										}
 									}).start();
+									if (PrefStore.FB_START.equals("y")) {
+										Intent intent_fb = new Intent(getApplicationContext(), FullscreenActivity.class);
+										startActivity(intent_fb);
+									}
 								}
 							})
 					.setNegativeButton(android.R.string.no,
@@ -218,10 +222,13 @@ public class MainActivity extends SherlockActivity {
 			startActivity(intent_about);
 			break;
 		case R.id.menu_clear:
+			
 			logView.setText("");
 			break;
 		case R.id.menu_exit:
-			finish();
+			Intent intent_fb = new Intent(this, FullscreenActivity.class);
+			startActivity(intent_fb);
+			//finish();
 			break;
 		case android.R.id.home:
 			Intent intent_profiles = new Intent(this, ProfilesActivity.class);

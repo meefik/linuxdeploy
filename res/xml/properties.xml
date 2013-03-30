@@ -233,5 +233,29 @@
             android:summary="@string/xhost"
             android:title="@string/title_xhost_preference" />
     </PreferenceCategory>
+    <PreferenceCategory android:title="@string/fb_preferences" >
+        <EditTextPreference
+            android:defaultValue="@string/fbdisplay"
+            android:dependency="fbstartup"
+            android:dialogTitle="@string/dialog_title_fbdisplay_preference"
+            android:inputType="numberDecimal"
+            android:key="fbdisplay"
+            android:summary="@string/fbdisplay"
+            android:title="@string/title_fbdisplay_preference" />
+        <EditTextPreference
+            android:defaultValue="@string/fbdev"
+            android:dependency="fbstartup"
+            android:dialogTitle="@string/dialog_title_fbdev_preference"
+            android:key="fbdev"
+            android:summary="@string/fbdev"
+            android:title="@string/title_fbdev_preference" />
+        <EditTextPreference
+            android:defaultValue="@string/fbinput"
+            android:dependency="fbstartup"
+            android:dialogTitle="@string/dialog_title_fbinput_preference"
+            android:key="fbinput"
+            android:summary="@string/fbinput"
+            android:title="@string/title_fbinput_preference" />
+    </PreferenceCategory>
 
 </PreferenceScreen>
