@@ -102,6 +102,8 @@
     <string name="summary_vncstartup_preference">Разрешить запуск VNC сервера</string>
     <string name="title_xstartup_preference">X Window System</string>
     <string name="summary_xstartup_preference">Разрешить запуск GUI через X-сервер</string>
+    <string name="title_fbstartup_preference">Frame Buffer</string>
+    <string name="summary_fbstartup_preference">Разрешить запуск GUI через framebuffer</string>
     <string name="title_customstartup_preference">Cценарий</string>
     <string name="summary_customstartup_preference">Разрешить запуск сценария</string>
     <string name="title_customscript_preference">Файл сценария</string>

@@ -102,6 +102,8 @@
     <string name="summary_vncstartup_preference">Enable VNC server startup</string>
     <string name="title_xstartup_preference">X Window System</string>
     <string name="summary_xstartup_preference">Enable startup GUI over X server</string>
+    <string name="title_fbstartup_preference">Frame Buffer</string>
+    <string name="summary_fbstartup_preference">Enable startup GUI over framebuffer</string>
     <string name="title_customstartup_preference">Custom startup</string>
     <string name="summary_customstartup_preference">Allow a custom script</string>
     <string name="title_customscript_preference">Script file</string>

@@ -390,6 +390,8 @@ configure_system()
 				esac
 				chroot $MNT_TARGET apt-get install $PKGS --no-install-recommends -yq
 				chroot $MNT_TARGET apt-get clean
+				# postconfigure
+				sed -i 's/^allowed_users=.*/allowed_users=anybody/g' $MNT_TARGET/etc/X11/Xwrapper.config
 			;;
 			archlinux)
 				PKGS="tightvnc xorg-utils xorg-fonts-misc ttf-dejavu"
@@ -672,7 +674,7 @@ start_system()
 	msg -n "X Window System ... "	
 	if [ "$XSERVER_START" == "y" ]; then
 		(set -e
-			chroot $MNT_TARGET su - $USER_NAME -c "export DISPLAY=$XSERVER_HOST:$XSERVER_DISPLAY; cut -d ' ' -f 6 /proc/self/stat > ~/.xsessionid; ~/.xsession"
+			chroot $MNT_TARGET su - $USER_NAME -c "export DISPLAY=$XSERVER_HOST:$XSERVER_DISPLAY; cut -d ' ' -f 6 /proc/self/stat > ~/.xsession.pid; ~/.xsession"
 		exit 0)
 		[ $? -eq 0 ] && msg "done" || msg "fail"
 	else
@@ -688,6 +690,14 @@ start_system()
 		exit 0)
 		[ $? -eq 0 ] && msg "done" || msg "fail"
 	done
+	
+	msg -n "Frame Buffer ... "
+	if [ "$FB_START" == "y" ]; then
+		chroot / $0 framebuffer </dev/null 2>&1 1>/dev/null &
+		[ $? -eq 0 ] && msg "done" || msg "fail"
+	else
+		msg "skip"
+	fi
 	
 	return 0
 }
@@ -736,7 +746,7 @@ stop_system()
 	msg -n "X Window System ... "	
 	if [ "$XSERVER_START" == "y" ]; then
 		(set -e
-			chroot $MNT_TARGET su - $USER_NAME -c 'kill -9 -$(cat ~/.xsessionid)'
+			chroot $MNT_TARGET su - $USER_NAME -c 'kill -9 -$(cat ~/.xsession.pid)'
 		exit 0)
 		[ $? -eq 0 ] && msg "done" || msg "fail"
 	else
@@ -757,6 +767,28 @@ stop_system()
 	[ $? -ne 0 ] && return 1
 	
 	return 0
+}
+
+framebuffer()
+{
+	setprop ctl.stop zygote
+	setprop ctl.stop media
+	#setprop ctl.stop runtime
+	i=0
+	while [ $i -lt 10 ]; do
+		let i=i+1
+		if [ -n "`ps | grep bootanimation | grep -v grep`" ]; then
+			setprop ctl.stop bootanim
+			#killall bootanimation || true
+			break
+		else
+			sleep 1
+		fi
+	done
+	chroot $MNT_TARGET su - $USER_NAME -c "startx"
+	setprop ctl.start bootanim
+	setprop ctl.start media
+	setprop ctl.start zygote
 }
 
 chroot_system()
@@ -1148,6 +1180,9 @@ status)
 	msg ">>> begin: status"
 	status_system
 	msg "<<< end: status"
+;;
+framebuffer)
+	framebuffer
 ;;
 *)
 	msg "Usage: $0 <mount|umount|install|configure|uninstall|start|stop|shell|status>"

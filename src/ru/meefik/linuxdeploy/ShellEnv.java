@@ -293,6 +293,9 @@ public class ShellEnv {
 		params.add("sed -i 's|^XSERVER_HOST=.*|XSERVER_HOST=\""
 				+ PrefStore.XSERVER_HOST + "\"|g' " + PrefStore.ENV_DIR
 				+ "/etc/deploy.conf");
+		params.add("sed -i 's|^FB_START=.*|FB_START=\""
+				+ PrefStore.FB_START + "\"|g' " + PrefStore.ENV_DIR
+				+ "/etc/deploy.conf");
 		params.add("[ $? -eq 0 ] && exit 0 || exit 1");
 
 		ExecCmd ex = new ExecCmd(params);
