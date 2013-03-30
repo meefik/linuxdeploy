@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ru.meefik.linuxdeploy"
     android:versionCode="59"
@@ -16,7 +17,7 @@
         android:label="@string/app_name"
         android:theme="@style/BlackTheme" >
         <activity
-            android:name=".MainActivity"
+            android:name="ru.meefik.linuxdeploy.MainActivity"
             android:label="@string/title_activity_main"
             android:uiOptions="splitActionBarWhenNarrow" >
             <intent-filter>
@@ -26,32 +27,36 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".AppPrefsActivity"
+            android:name="ru.meefik.linuxdeploy.AppPrefsActivity"
             android:label="@string/title_activity_settings" >
         </activity>
         <activity
-            android:name=".DeployPrefsActivity"
+            android:name="ru.meefik.linuxdeploy.DeployPrefsActivity"
             android:icon="@drawable/ic_launcher_properties"
             android:label="@string/title_activity_properties" >
         </activity>
         <activity
-            android:name=".AboutActivity"
+            android:name="ru.meefik.linuxdeploy.AboutActivity"
             android:label="@string/title_activity_about" >
         </activity>
         <activity
-            android:name=".ProfilesActivity"
+            android:name="ru.meefik.linuxdeploy.ProfilesActivity"
             android:icon="@drawable/ic_launcher_profiles"
             android:label="@string/title_activity_profiles" >
         </activity>
 
         <receiver
-            android:name=".BootUpReceiver"
+            android:name="ru.meefik.linuxdeploy.BootUpReceiver"
             android:enabled="false"
             android:exported="false" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
+        <activity
+            android:name="ru.meefik.linuxdeploy.FullscreenActivity" >
+        </activity>
     </application>
 
 </manifest>

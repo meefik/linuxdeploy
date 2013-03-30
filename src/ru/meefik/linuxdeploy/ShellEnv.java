@@ -296,6 +296,15 @@ public class ShellEnv {
 		params.add("sed -i 's|^FB_START=.*|FB_START=\""
 				+ PrefStore.FB_START + "\"|g' " + PrefStore.ENV_DIR
 				+ "/etc/deploy.conf");
+		params.add("sed -i 's|^FB_DISPLAY=.*|FB_DISPLAY=\""
+				+ PrefStore.FB_DISPLAY + "\"|g' " + PrefStore.ENV_DIR
+				+ "/etc/deploy.conf");
+		params.add("sed -i 's|^FB_DEV=.*|FB_DEV=\""
+				+ PrefStore.FB_DEV + "\"|g' " + PrefStore.ENV_DIR
+				+ "/etc/deploy.conf");
+		params.add("sed -i 's|^FB_INPUT=.*|FB_INPUT=\""
+				+ PrefStore.FB_INPUT + "\"|g' " + PrefStore.ENV_DIR
+				+ "/etc/deploy.conf");
 		params.add("[ $? -eq 0 ] && exit 0 || exit 1");
 
 		ExecCmd ex = new ExecCmd(params);
