@@ -3,6 +3,7 @@ Changelog (English)
 
 1.3.7
 Added support Kali Linux
+Added ability to display GUI through framebuffer.
 
 1.3.6
 Added support Fedora 18
@@ -183,6 +184,7 @@ Updated list packages of base system installation
 
 1.3.7
 Добавлена поддержка Kali Linux
+Добавлена ​​возможность отображения графического интерфейса через фрейм-буфер.
 
 1.3.6
 Добавлена поддержка Fedora 18
