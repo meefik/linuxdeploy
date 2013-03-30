@@ -222,13 +222,10 @@ public class MainActivity extends SherlockActivity {
 			startActivity(intent_about);
 			break;
 		case R.id.menu_clear:
-			
 			logView.setText("");
 			break;
 		case R.id.menu_exit:
-			Intent intent_fb = new Intent(this, FullscreenActivity.class);
-			startActivity(intent_fb);
-			//finish();
+			finish();
 			break;
 		case android.R.id.home:
 			Intent intent_profiles = new Intent(this, ProfilesActivity.class);
