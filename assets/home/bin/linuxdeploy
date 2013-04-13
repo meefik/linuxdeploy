@@ -128,7 +128,7 @@ configure_system()
 {
 	if [ "$#" -eq 0 ]; then
 		msg "Configuring GNU/Linux system: "
-		configure_system dns mtab motd hosts hostname timezone sudo locales repository users profile upstart dbus xorg
+		configure_system dns mtab motd hosts hostname timezone sudo locales repository users profile upstart dbus xorg gui
 		return 0
 	fi
 	if [ "$#" -gt 1 ]; then
@@ -379,7 +379,7 @@ configure_system()
 			case "$DISTRIB" in
 			debian|ubuntu|kali)
 				chroot $MNT_TARGET apt-get update -yq
-				PKGS="tightvncserver x11-xserver-utils xfonts-base desktop-base"
+				PKGS="tightvncserver x11-xserver-utils xfonts-base desktop-base xinit xserver-xorg xserver-xorg-core xserver-xorg-video-fbdev xserver-xorg-input-evdev"
 				case "$DESKTOP_ENV" in
 				xterm)
 					PKGS="$PKGS xterm"
