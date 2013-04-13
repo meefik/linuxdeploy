@@ -379,7 +379,7 @@ configure_system()
 			case "$DISTRIB" in
 			debian|ubuntu|kali)
 				chroot $MNT_TARGET apt-get update -yq
-				PKGS="tightvncserver x11-xserver-utils xfonts-base desktop-base xinit xserver-xorg xserver-xorg-core xserver-xorg-video-fbdev xserver-xorg-input-evdev"
+				PKGS="tightvncserver x11-xserver-utils xfonts-base desktop-base xinit xserver-xorg xserver-xorg-video-fbdev xserver-xorg-input-evdev"
 				case "$DESKTOP_ENV" in
 				xterm)
 					PKGS="$PKGS xterm"
@@ -397,6 +397,7 @@ configure_system()
 					PKGS="$PKGS kde-standard"
 				;;
 				esac
+				export DEBIAN_FRONTEND=noninteractive
 				chroot $MNT_TARGET apt-get install $PKGS --no-install-recommends -yq
 				chroot $MNT_TARGET apt-get clean
 			;;
