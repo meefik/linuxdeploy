@@ -128,7 +128,7 @@ configure_system()
 {
 	if [ "$#" -eq 0 ]; then
 		msg "Configuring GNU/Linux system: "
-		configure_system dns mtab motd hosts hostname timezone sudo locales repository users profile upstart dbus xorg gui
+		configure_system dns mtab motd hosts hostname timezone sudo locales repository groups profile upstart dbus xorg gui
 		return 0
 	fi
 	if [ "$#" -gt 1 ]; then
