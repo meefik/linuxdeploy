@@ -17,7 +17,7 @@ Installing a new operating system takes about 30 minutes. The recommended minimu
 * Supported distributions: Debian, Ubuntu, Arch Linux, Fedora, openSUSE, Kali Linux
 * Installation type: image file, disk partition, directory
 * Supported file systems: ext2, ext3, ext4
-* Control interface: SSH, VNC, X
+* Control interface: SSH, VNC, X, framebuffer
 * Desktop environment: XTerm, LXDE, Xfce, GNOME, KDE
 * Supported languages: English, Russian
 
@@ -66,7 +66,7 @@ Copyright (C) 2012  Антон Скшидлевский
 * Поддерживаемые дистрибутивы: Debian, Ubuntu, Arch Linux, Fedora, openSUSE, Kali Linux
 * Тип установки: файл образа, раздел диска, директория
 * Поддерживаемые файловые системы: ext2, ext3, ext4
-* Интерфейс управления: SSH, VNC, X
+* Интерфейс управления: SSH, VNC, X, фрейм-буфер
 * Окружение рабочего стола: XTerm, LXDE, Xfce, GNOME, KDE
 * Поддерживаемые языки: русский, английский
 
