@@ -271,7 +271,7 @@ configure_system()
 			reserved=`echo $USER_NAME | grep ^aid_ || true`
 			if [ -n "$reserved" ]; then
 				echo "Username $USER_NAME is reserved!"
-				return 1
+				exit 1
 			fi
 			if [ "$USER_NAME" != "root" ]; then
 				chroot $MNT_TARGET groupadd $USER_NAME || true
