@@ -46,6 +46,7 @@
     <string name="fbdisplay" translatable="false">2</string>
     <string name="fbdev" translatable="false">/dev/graphics/fb0</string>
     <string name="fbinput" translatable="false">/dev/input/event2</string>
+    <string name="fbandroid" translatable="false">true</string>
 
     <!-- Debian -->
     <string name="debian_suite" translatable="false">wheezy</string>
@@ -56,7 +57,7 @@
     <string name="ubuntu_suite" translatable="false">precise</string>
     <string name="ubuntu_mirror" translatable="false">http://ports.ubuntu.com</string>
     <string name="ubuntu_architecture" translatable="false">armel</string>
-    
+
     <!-- Arch Linux -->
     <string name="archlinux_suite" translatable="false">latest</string>
     <string name="archlinux_mirror" translatable="false">http://mirror.archlinuxarm.org</string>
@@ -71,7 +72,7 @@
     <string name="opensuse_suite" translatable="false">factory</string>
     <string name="opensuse_mirror" translatable="false">http://download.opensuse.org/ports/</string>
     <string name="opensuse_architecture" translatable="false">armv7hl</string>
-    
+
     <!-- Kali Linux -->
     <string name="kali_suite" translatable="false">kali</string>
     <string name="kali_mirror" translatable="false">http://http.kali.org</string>
