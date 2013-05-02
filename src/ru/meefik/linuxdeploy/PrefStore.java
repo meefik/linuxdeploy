@@ -63,6 +63,7 @@ public class PrefStore {
 	public static String FB_DISPLAY;
 	public static String FB_DEV;
 	public static String FB_INPUT;
+	public static String FB_ANDROID;
 
 	// miscellaneous
 	public static String CURRENT_PROFILE;
@@ -162,6 +163,9 @@ public class PrefStore {
 				c.getString(R.string.fbdisplay));
 		FB_DEV = sp.getString("fbdev", c.getString(R.string.fbdev));
 		FB_INPUT = sp.getString("fbinput", c.getString(R.string.fbinput));
+		FB_ANDROID = sp.getBoolean("fbandroid",
+				c.getString(R.string.fbandroid).equals("true") ? true : false) ? "y"
+				: "n";
 		
 		try {
 			VERSION = c.getPackageManager().getPackageInfo(c.getPackageName(),
