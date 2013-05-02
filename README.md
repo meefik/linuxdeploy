@@ -46,6 +46,9 @@ Installation time and use space on disk (Debian wheezy/armhf on Samsung Galaxy S
 #### Source code ####
 Source code: <https://github.com/meefik/linuxdeploy>. This source code are written with use Android SDK/NDK and Eclipse ADT plugin.
 
+#### Donation ####
+<http://meefik.github.io/donate.html>
+
 
 Linux Deploy (Русский)
 ======================
@@ -94,3 +97,6 @@ Copyright (C) 2012  Антон Скшидлевский
 
 #### Исходный код ####
 Исходный код доступен по адресу: <https://github.com/meefik/linuxdeploy>. Этот исходный код написан с использованием Android SDK/NDK и Eclipse ADT plugin.
+
+#### Поддержать проект ####
+<http://meefik.github.io/donate.html>
