@@ -660,7 +660,7 @@ start_system()
 		msg "skip"
 	fi
 
-	XSESSION=`ps | grep $(cat $MNT_TARGET/tmp/xsession.pid) | grep -v grep`
+	XSESSION=`ps | grep " $(cat $MNT_TARGET/tmp/xsession.pid) " | grep -v grep`
 	let vncport=5900+$VNC_DISPLAY
 	msg -n "VNC :$vncport ... "	
 	if [ "$VNC_START" == "y" -a -z "$XSESSION" ]; then

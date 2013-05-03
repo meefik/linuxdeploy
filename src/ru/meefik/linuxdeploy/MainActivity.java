@@ -12,6 +12,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.wifi.WifiManager;
+import android.net.wifi.WifiManager.WifiLock;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.NotificationCompat;
@@ -31,6 +33,7 @@ public class MainActivity extends SherlockActivity {
 	private static TextView logView;
 	private static ScrollView logScroll;
 	private static boolean newLine = false;
+	private WifiLock wifiLock;
 	static Handler handler;
 
 	private static String getTimeStamp() {
@@ -95,6 +98,10 @@ public class MainActivity extends SherlockActivity {
 		logView = (TextView) findViewById(R.id.LogView);
 		logScroll = (ScrollView) findViewById(R.id.LogScrollView);
 		handler = new Handler();
+		
+		// WiFi lock init
+		WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+		wifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL, "linuxdeploy");
 
 		// ok we back, load the saved text
 		if (savedInstanceState != null) {
@@ -271,6 +278,12 @@ public class MainActivity extends SherlockActivity {
 		else
 			this.getWindow().clearFlags(
 					WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		
+		// WiFi lock
+		if (PrefStore.WIFI_LOCK)
+			wifiLock.acquire();
+		else if (wifiLock.isHeld())
+			wifiLock.release();
 
 		// update configuration file
 		if (PrefStore.PREF_CHANGE) {
@@ -282,6 +295,15 @@ public class MainActivity extends SherlockActivity {
 			}).start();
 			PrefStore.PREF_CHANGE = false;
 		}
+	}
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		
+		// Unlock wifi
+		if (wifiLock.isHeld())
+			wifiLock.release();
 	}
 
 	@Override

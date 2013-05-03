@@ -4,6 +4,8 @@ Changelog (English)
 1.3.8
 Added support Ubuntu 13.04 Raring Ringtail
 Added option for stop Android UI in framebuffer mode
+Added Wi-Fi lock
+Bugfix: autostart problem
 
 1.3.7
 Added support Kali Linux
@@ -190,7 +192,9 @@ Updated list packages of base system installation
 
 1.3.8
 Добавлена поддержка Ubuntu 13.04 Raring Ringtail
-Добавлена опция, позволяющая отключать графический интерфейс Android в режиме фрейм-буфера
+Добавлена опция отключения графического интерфейса Android в режиме фрейм-буфера
+Добавлена функция блокировки Wi-Fi
+Исправлена проблема с автозапуском
 
 1.3.7
 Добавлена поддержка Kali Linux

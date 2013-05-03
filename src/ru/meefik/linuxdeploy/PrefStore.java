@@ -19,6 +19,7 @@ public class PrefStore {
 
 	// to application
 	public static Boolean SCREEN_LOCK;
+	public static Boolean WIFI_LOCK;
 	public static String LANGUAGE;
 	public static Integer FONT_SIZE;
 	public static String THEME;
@@ -82,6 +83,8 @@ public class PrefStore {
 
 		SCREEN_LOCK = sp.getBoolean("screenlock",
 				c.getString(R.string.screenlock).equals("true") ? true : false);
+		WIFI_LOCK = sp.getBoolean("wifilock",
+				c.getString(R.string.wifilock).equals("true") ? true : false);
 		FONT_SIZE = Integer.parseInt(sp.getString("fontsize",
 				c.getString(R.string.fontsize)));
 		LANGUAGE = sp.getString("language", c.getString(R.string.language));

@@ -30,6 +30,8 @@
     <string name="app_preferences">Application</string>
     <string name="title_screenlock_preference">Lock screen</string>
     <string name="summary_screenlock_preference">Keep screen active while the application is running</string>
+    <string name="title_wifilock_preference">Lock Wi-Fi</string>
+    <string name="summary_wifilock_preference">Keep Wi-Fi active while the application is running</string>
     <string name="title_language_preference">Language</string>
     <string name="dialog_title_language_preference">Choose language</string>
     <string name="title_fontsize_preference">Font size</string>

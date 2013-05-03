@@ -30,6 +30,8 @@
     <string name="app_preferences">Приложение</string>
     <string name="title_screenlock_preference">Не отключать экран</string>
     <string name="summary_screenlock_preference">Оставлять экран включенным пока запущено приложение</string>
+    <string name="title_wifilock_preference">Не отключать Wi-Fi</string>
+    <string name="summary_wifilock_preference">Оставлять Wi-Fi включенным пока запущено приложение</string>
     <string name="title_language_preference">Язык интерфейса</string>
     <string name="dialog_title_language_preference">Выберите язык</string>
     <string name="title_fontsize_preference">Размер шрифта</string>

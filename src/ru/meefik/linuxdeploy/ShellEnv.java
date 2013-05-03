@@ -1,11 +1,13 @@
 package ru.meefik.linuxdeploy;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,10 +18,82 @@ import android.content.res.AssetManager;
 public class ShellEnv {
 
 	private Context c;
+	private boolean rooted;
 
 	public ShellEnv(Context c) {
 		this.c = c;
 		PrefStore.get(c);
+		this.rooted = isRooted();
+	}
+	
+	private boolean execCmd(List<String> params) {
+		boolean result = true;
+		try {
+			Process process = Runtime.getRuntime().exec(params.get(0));
+			params.remove(0);
+
+			OutputStream stdin = process.getOutputStream();
+			DataOutputStream os = new DataOutputStream(stdin);
+			for (String tmpCmd : params) {
+				os.writeBytes(tmpCmd + "\n");
+			}
+			os.flush();
+			os.close();
+
+			final InputStream stdout = process.getInputStream();
+			final InputStream stderr = process.getErrorStream();
+
+			(new Thread() {
+				@Override
+				public void run() {
+					sendLogs(stdout);
+				}
+			}).start();
+
+			if (PrefStore.DEBUG_MODE.equals("y")) {
+				(new Thread() {
+					@Override
+					public void run() {
+						sendLogs(stderr);
+					}
+				}).start();
+			}
+
+			process.waitFor();
+			if (process.exitValue() != 0)
+				result = false;
+
+			stdout.close();
+			stderr.close();
+			stdin.close();
+		} catch (Exception e) {
+			result = false;
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	private void sendLogs(InputStream stdstream) {
+		if (MainActivity.handler != null) {
+			try {
+				BufferedReader reader = new BufferedReader(
+						new InputStreamReader(stdstream));
+				int n;
+				char[] buffer = new char[1024];
+				while ((n = reader.read(buffer)) != -1) {
+					final String logLine = String.valueOf(buffer, 0, n);
+					MainActivity.handler.post(new Runnable() {
+						@Override
+						public void run() {
+							MainActivity.printLogMsg(logLine);
+						}
+					});
+				}
+				reader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	private void sendLogs(final String msg) {
@@ -38,13 +112,11 @@ public class ShellEnv {
 		List<String> params = new ArrayList<String>();
 		params.add("su");
 		params.add("ls /data/local 1>/dev/null");
-		ExecCmd ex = new ExecCmd(params);
-		ex.run();
-		if (ex.status) {
-			return true;
-		} else {
+		if (!execCmd(params)) {
 			sendLogs("Require superuser privileges (root)!\n");
 			return false;
+		} else {
+			return true;
 		}
 	}
 
@@ -124,7 +196,7 @@ public class ShellEnv {
 	}
 
 	public void updateEnv() {
-		if (!isRooted()) return;
+		if (!rooted) return;
 		
 		sendLogs("Updating environment ... ");
 
@@ -147,9 +219,7 @@ public class ShellEnv {
 		params.add("rm -R " + PrefStore.ENV_DIR + "/deploy");
 		params.add("chmod 777 " + PrefStore.ENV_DIR);
 		params.add("exit");
-		ExecCmd ex = new ExecCmd(params);
-		ex.run();
-		if (!ex.status) {
+		if (!execCmd(params)) {
 			sendLogs("fail\n");
 			return;
 		}
@@ -195,9 +265,7 @@ public class ShellEnv {
 				+ "/etc/version");
 		params.add("chmod 644 " + PrefStore.ENV_DIR + "/etc/version");
 		params.add("exit");
-		ex = new ExecCmd(params);
-		ex.run();
-		if (!ex.status) {
+		if (!execCmd(params)) {
 			sendLogs("fail\n");
 			return;
 		}
@@ -205,6 +273,8 @@ public class ShellEnv {
 	}
 
 	public void updateConfig() {
+		if (!rooted) return;
+		
 		File f = new File(PrefStore.ENV_DIR + "/etc/deploy.conf");
 		if (!f.exists())
 			return;
@@ -310,9 +380,7 @@ public class ShellEnv {
 				+ "/etc/deploy.conf");
 		params.add("[ $? -eq 0 ] && exit 0 || exit 1");
 
-		ExecCmd ex = new ExecCmd(params);
-		ex.run();
-		if (!ex.status) {
+		if (!execCmd(params)) {
 			sendLogs("fail\n");
 			return;
 		}
@@ -320,7 +388,8 @@ public class ShellEnv {
 	}
 
 	public void deployCmd(String cmd) {
-		if (!isRooted()) return;
+		if (!rooted) return;
+		
 		// check for update env
 		boolean update = true;
 		File f = new File(PrefStore.ENV_DIR + "/etc/version");
@@ -351,7 +420,7 @@ public class ShellEnv {
 			params.add("set -x");
 		params.add(PrefStore.ENV_DIR + "/bin/linuxdeploy " + cmd);
 		params.add("exit");
-		new ExecCmd(params).run();
+		execCmd(params);
 	}
 	
 }
