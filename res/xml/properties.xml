@@ -258,6 +258,7 @@
             android:title="@string/title_fbinput_preference" />
         <CheckBoxPreference
             android:defaultValue="@string/fbandroid"
+            android:dependency="fbstartup"
             android:key="fbandroid"
             android:summary="@string/summary_fbandroid_preference"
             android:title="@string/title_fbandroid_preference" />
