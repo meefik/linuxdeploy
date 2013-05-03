@@ -2,6 +2,7 @@
 <resources>
 
     <string name="screenlock" translatable="false">true</string>
+    <string name="wifilock" translatable="false">false</string>
     <string name="fontsize" translatable="false">10</string>
     <string name="language" translatable="false">en</string>
     <string name="theme" translatable="false">dark</string>

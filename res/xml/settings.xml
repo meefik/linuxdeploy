@@ -7,6 +7,11 @@
             android:key="screenlock"
             android:summary="@string/summary_screenlock_preference"
             android:title="@string/title_screenlock_preference" />
+        <CheckBoxPreference
+            android:defaultValue="@string/wifilock"
+            android:key="wifilock"
+            android:summary="@string/summary_wifilock_preference"
+            android:title="@string/title_wifilock_preference" />
 
         <ListPreference
             android:defaultValue="@string/language"
@@ -33,13 +38,12 @@
             android:key="theme"
             android:summary="@string/theme"
             android:title="@string/title_theme_preference" />
-        
+
         <CheckBoxPreference
             android:defaultValue="@string/appicon"
             android:key="appicon"
             android:summary="@string/summary_appicon_preference"
             android:title="@string/title_appicon_preference" />
-
         <CheckBoxPreference
             android:defaultValue="@string/autostart"
             android:key="autostart"
