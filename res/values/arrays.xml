@@ -100,6 +100,7 @@
     <!-- Ubuntu -->
 
     <string-array name="ubuntu_suite_values" translatable="false">
+        <item>raring</item>
         <item>quantal</item>
         <item>precise</item>
         <item>oneiric</item>
