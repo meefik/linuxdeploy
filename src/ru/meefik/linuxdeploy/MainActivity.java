@@ -296,15 +296,6 @@ public class MainActivity extends SherlockActivity {
 			PrefStore.PREF_CHANGE = false;
 		}
 	}
-	
-	@Override
-	public void onPause() {
-		super.onPause();
-		
-		// Unlock wifi
-		if (wifiLock.isHeld())
-			wifiLock.release();
-	}
 
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState) {
