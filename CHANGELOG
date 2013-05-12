@@ -5,6 +5,7 @@ Changelog (English)
 Added support Ubuntu 13.04 Raring Ringtail
 Added option for stop Android UI in framebuffer mode
 Added Wi-Fi lock
+Added support armv5tel architecture for openSUSE (VNC now works)
 Bugfix: autostart problem
 
 1.3.7
@@ -194,6 +195,7 @@ Updated list packages of base system installation
 Добавлена поддержка Ubuntu 13.04 Raring Ringtail
 Добавлена опция отключения графического интерфейса Android в режиме фрейм-буфера
 Добавлена функция блокировки Wi-Fi
+Добавлена ​​поддержка архитектуры armv5tel для openSUSE (VNC теперь работает)
 Исправлена проблема с автозапуском
 
 1.3.7
