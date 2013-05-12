@@ -72,7 +72,7 @@
     <!-- openSUSE -->
     <string name="opensuse_suite" translatable="false">factory</string>
     <string name="opensuse_mirror" translatable="false">http://download.opensuse.org/ports/</string>
-    <string name="opensuse_architecture" translatable="false">armv7hl</string>
+    <string name="opensuse_architecture" translatable="false">armv5tel</string>
 
     <!-- Kali Linux -->
     <string name="kali_suite" translatable="false">kali</string>

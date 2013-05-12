@@ -139,6 +139,7 @@
         <item>factory</item>
     </string-array>
     <string-array name="opensuse_architecture_values" translatable="false">
+        <item>armv5tel</item>
         <item>armv7hl</item>
     </string-array>
     
