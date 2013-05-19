@@ -59,7 +59,7 @@ prepare_system()
 	fi
 
 	msg -n "Checking destination path ... "
-	if [ "$DEPLOY_TYPE" == "image" ]; then
+	if [ "$DEPLOY_TYPE" == "file" ]; then
 		if [ -e "$IMG_TARGET" -a ! -f "$IMG_TARGET" ]; then
 			msg "fail"; return 1
 		fi
@@ -76,7 +76,7 @@ prepare_system()
 	fi
 	msg "done"
 	
-	if [ "$DEPLOY_TYPE" == "image" ]; then
+	if [ "$DEPLOY_TYPE" == "file" ]; then
 	    if [ "$IMG_SIZE" -eq 0 ]; then
 	    	[ -f "$IMG_TARGET" ] && FILE_SIZE=`stat -c %s $IMG_TARGET` || FILE_SIZE=0
 	    	DIR_NAME=`dirname $IMG_TARGET`
@@ -100,7 +100,7 @@ prepare_system()
 		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 	fi
 
-	if [ "$DEPLOY_TYPE" == "image" -o "$DEPLOY_TYPE" == "partition" ]; then
+	if [ "$DEPLOY_TYPE" == "file" -o "$DEPLOY_TYPE" == "partition" ]; then
 		if [ "$FS_TYPE" == "auto" ]; then
 			for fs in ext4 ext3 ext2
 			do
@@ -163,8 +163,27 @@ configure_system()
 			cat /proc/mounts | grep $MNT_TARGET | sed "s|$MNT_TARGET/*|/|g" > $MNT_TARGET/etc/mtab
 		;;
 		motd)
+			if [ -f $MNT_TARGET/etc/os-release ]
+			then
+				LINUX_VERSION=`source $MNT_TARGET/etc/os-release; echo $PRETTY_NAME`
+			elif [ -f $MNT_TARGET/etc/arch-release ]
+			then
+				LINUX_VERSION="Arch Linux"
+			elif [ -f $MNT_TARGET/etc/gentoo-release ]
+			then
+				LINUX_VERSION=`cat $MNT_TARGET/etc/gentoo-release`
+			elif [ -f $MNT_TARGET/etc/fedora-release ]
+			then
+				LINUX_VERSION=`cat $MNT_TARGET/etc/fedora-release`
+			elif [ -f $MNT_TARGET/etc/redhat-release ]
+			then
+				LINUX_VERSION=`cat $MNT_TARGET/etc/redhat-release`
+			elif [ -f $MNT_TARGET/etc/debian_version ]
+			then
+				LINUX_VERSION=`printf "Debian GNU/Linux " ; cat $MNT_TARGET/etc/debian_version`
+			fi
 			#LINUX_VERSION=`chroot $MNT_TARGET lsb_release -d | sed 's|Description:[[:space:]]*||' || true`
-			LINUX_VERSION=`(. $MNT_TARGET/etc/os-release && echo $PRETTY_NAME) || true`
+			#LINUX_VERSION=`(. $MNT_TARGET/etc/os-release && echo $PRETTY_NAME) || true`
 			[ -z "$LINUX_VERSION" ] && LINUX_VERSION="GNU/Linux ($DISTRIB)"
 			MOTD="$LINUX_VERSION [running on Android via Linux Deploy]"
 			rm -f $MNT_TARGET/etc/motd || true
@@ -250,6 +269,11 @@ configure_system()
 				echo "type=NONE" >> $REPO_FILE
 				chmod 644 $REPO_FILE
 			;;
+			gentoo)
+				if [ -z "`grep '^aid_inet:.*,portage' $MNT_TARGET/etc/group`" ]; then
+					sed -i "s|^\(aid_inet:.*\)|\1,portage|g" $MNT_TARGET/etc/group
+				fi
+			;;
 			esac
 		;;
 		groups)
@@ -278,7 +302,9 @@ configure_system()
 				chroot $MNT_TARGET useradd -m -g $USER_NAME -s /bin/bash $USER_NAME || true
 				chroot $MNT_TARGET usermod -g $USER_NAME $USER_NAME || true
 			fi
-			chroot $MNT_TARGET sh -c "export $USER_NAME; printf '%s\n' changeme changeme | passwd $USER_NAME"
+			# Set default password for $USER_NAME
+			PASSWORD="changeme"
+			chroot $MNT_TARGET sh -c "printf '%s\n' $PASSWORD $PASSWORD | passwd $USER_NAME"
 			USER_HOME=`cat $MNT_TARGET/etc/passwd | grep -m1 "^$USER_NAME:" | awk -F: '{print $6}'`
 			USER_ID=`cat $MNT_TARGET/etc/passwd | grep -m1 "^$USER_NAME:" | awk -F: '{print $3}'`
 			GROUP_ID=`cat $MNT_TARGET/etc/passwd | grep -m1 "^$USER_NAME:" | awk -F: '{print $4}'`
@@ -334,7 +360,7 @@ configure_system()
 		;;
 		dbus)
 			case "$DISTRIB" in
-			debian|ubuntu|kali)
+			debian|ubuntu|kali|gentoo)
 				if [ -z "`grep '^aid_inet:.*,messagebus' $MNT_TARGET/etc/group`" ]; then
 					sed -i "s|^\(aid_inet:.*\)|\1,messagebus|g" $MNT_TARGET/etc/group
 				fi
@@ -469,6 +495,27 @@ configure_system()
 				chroot $MNT_TARGET zypper --no-gpg-checks --non-interactive install $PKGS 
 				chroot $MNT_TARGET zypper clean
 			;;
+			gentoo)
+				PKGS="tightvnc xauth"
+				case "$DESKTOP_ENV" in
+				xterm)
+					PKGS="$PKGS xterm"
+				;;
+				lxde)
+					PKGS="$PKGS lxde-meta"
+				;;
+				xfce)
+					PKGS="$PKGS xfce4-meta"
+				;;
+				gnome)
+					PKGS="$PKGS gnome"
+				;;
+				kde)
+					PKGS="$PKGS kde-meta"
+				;;
+				esac
+				chroot $MNT_TARGET emerge --tree --autounmask-write $PKGS 
+			;;
 			esac
 		exit 0) 1>&3 2>&3
 		[ $? -ne 0 ] && return 1
@@ -488,94 +535,120 @@ update_system()
 
 mount_system()
 {
-	#msg -n "Checking file system ... "
-	#if [ "$FS_TYPE" != "auto" ]; then
-	#	(set -e
-	#		fsck -t $FS_TYPE $IMG_TARGET
-	#	exit 0)
-	#	[ $? -eq 0 ] && msg "done" || msg "fail"
-	#else
-	#	msg "skip"
-	#fi
-	
-	msg "Mounting partitions: "
-	
-	msg -n "/ ... "
-	is_mnt=`cat /proc/mounts | grep " $MNT_TARGET "`
-	if [ -z "$is_mnt" ]; then
-		[ ! -d "$MNT_TARGET" ] && mkdir -p $MNT_TARGET
-		[ -d "$IMG_TARGET" ] && MNT_OPTS="bind" || MNT_OPTS="rw,relatime"
-		mount -o $MNT_OPTS $IMG_TARGET $MNT_TARGET
-		if [ $? -eq 0 ]; then
-			msg "done"
+	if [ "$#" -eq 0 ]; then
+		msg "Mounting partitions: "
+		mount_system root proc sys dev pts shm custom
+		return 0
+	fi
+	if [ "$#" -gt 1 ]; then
+		for i in $*
+		do
+			mount_system $i
+		done
+		return 0
+	fi
+
+	case "$1" in
+	root)
+		msg -n "/ ... "
+		is_mnt=`cat /proc/mounts | grep " $MNT_TARGET "`
+		if [ -z "$is_mnt" ]; then
+			[ ! -d "$MNT_TARGET" ] && mkdir -p $MNT_TARGET
+			[ -d "$IMG_TARGET" ] && MNT_OPTS="bind" || MNT_OPTS="rw,relatime"
+			mount -o $MNT_OPTS $IMG_TARGET $MNT_TARGET
+			if [ $? -eq 0 ]; then
+				msg "done"
+			else
+				msg "fail"; return 1
+			fi
 		else
-			msg "fail"; return 1
+			msg "skip"
 		fi
-	else
-		msg "skip"
-	fi
-	
-	msg -n "/proc ... "
-	tg=$MNT_TARGET/proc; is_mnt=`cat /proc/mounts | grep " $tg "`
-	if [ -z "$is_mnt" ]; then
-		[ ! -d "$tg" ] && mkdir -p $tg
-		mount -t proc proc $tg
-		[ $? -eq 0 ] && msg "done" || msg "fail"
-	else
-		msg "skip"
-	fi
-	
-	msg -n "/sys ... "
-	tg=$MNT_TARGET/sys; is_mnt=`cat /proc/mounts | grep " $tg "`
-	if [ -z "$is_mnt" ]; then
-		[ ! -d "$tg" ] && mkdir -p $tg
-		mount -t sysfs sys $tg
-		[ $? -eq 0 ] && msg "done" || msg "fail"
-	else
-		msg "skip"
-	fi
-	
-	msg -n "/dev ... "
-	tg=$MNT_TARGET/dev; is_mnt=`cat /proc/mounts | grep " $tg "`
-	if [ -z "$is_mnt" ]; then
-		[ ! -d "$tg" ] && mkdir -p $tg
-		mount -o bind /dev $tg
-		[ $? -eq 0 ] && msg "done" || msg "fail"
-	else
-		msg "skip"
-	fi
-	
-	msg -n "/dev/pts ... "
-	tg=$MNT_TARGET/dev/pts; is_mnt=`cat /proc/mounts | grep " $tg "`
-	if [ -z "$is_mnt" ]; then
-		[ ! -d "$tg" ] && mkdir -p $tg
-		mount -o "mode=0620,gid=5" -t devpts devpts $tg
-		[ $? -eq 0 ] && msg "done" || msg "fail"
-	else
-		msg "skip"
-	fi
-	
-	DISKS=`echo "$CUSTOM_MOUNT" | tr ',;' ' '`
-	for disk in $DISKS
-	do
-		disk_name=`basename /root/$disk`
-		msg -n "/mnt/$disk_name ... "
-		tg=$MNT_TARGET/mnt/$disk_name
-		is_tg=`cat /proc/mounts | grep " $tg "`
-		if [ -z "$is_tg" -a -d "$disk" ]; then
+	;;
+	proc)
+		msg -n "/proc ... "
+		tg=$MNT_TARGET/proc; is_mnt=`cat /proc/mounts | grep " $tg "`
+		if [ -z "$is_mnt" ]; then
 			[ ! -d "$tg" ] && mkdir -p $tg
-			mount -o bind $disk $tg
-			[ $? -eq 0 ] && msg "done" || msg "fail"
-			continue
-		fi
-		if [ -z "$is_tg" -a -e "$disk" ]; then
-			[ ! -d "$tg" ] && mkdir -p $tg
-			mount -o rw,relatime $disk $tg
+			mount -t proc proc $tg
 			[ $? -eq 0 ] && msg "done" || msg "fail"
 		else
 			msg "skip"
 		fi
-	done
+	;;
+	sys)
+		msg -n "/sys ... "
+		tg=$MNT_TARGET/sys; is_mnt=`cat /proc/mounts | grep " $tg "`
+		if [ -z "$is_mnt" ]; then
+			[ ! -d "$tg" ] && mkdir -p $tg
+			mount -t sysfs sys $tg
+			[ $? -eq 0 ] && msg "done" || msg "fail"
+		else
+			msg "skip"
+		fi
+	;;
+	dev)
+		msg -n "/dev ... "
+		tg=$MNT_TARGET/dev; is_mnt=`cat /proc/mounts | grep " $tg "`
+		if [ -z "$is_mnt" ]; then
+			[ ! -d "$tg" ] && mkdir -p $tg
+			mount -o bind /dev $tg
+			[ $? -eq 0 ] && msg "done" || msg "fail"
+			# links
+			ln -s /proc/self/fd $MNT_TARGET/dev/fd
+			ln -s /proc/self/fd/0 $MNT_TARGET/dev/stdin
+			ln -s /proc/self/fd/1 $MNT_TARGET/dev/stdout
+			ln -s /proc/self/fd/2 $MNT_TARGET/dev/stderr
+		else
+			msg "skip"
+		fi
+	;;
+	pts)
+		msg -n "/dev/pts ... "
+		tg=$MNT_TARGET/dev/pts; is_mnt=`cat /proc/mounts | grep " $tg "`
+		if [ -z "$is_mnt" ]; then
+			[ ! -d "$tg" ] && mkdir -p $tg
+			mount -o "mode=0620,gid=5" -t devpts devpts $tg
+			[ $? -eq 0 ] && msg "done" || msg "fail"
+		else
+			msg "skip"
+		fi
+	;;
+	shm)
+		msg -n "/dev/shm ... "
+		tg=$MNT_TARGET/dev/shm; is_mnt=`cat /proc/mounts | grep " $tg "`
+		if [ -z "$is_mnt" ]; then
+			[ ! -d "$tg" ] && mkdir -p $tg
+			mount -t tmpfs tmpfs $tg
+			[ $? -eq 0 ] && msg "done" || msg "fail"
+		else
+			msg "skip"
+		fi
+	;;
+	custom)
+		DISKS=`echo "$CUSTOM_MOUNT" | tr ',;' ' '`
+		for disk in $DISKS
+		do
+			disk_name=`basename /root/$disk`
+			msg -n "/mnt/$disk_name ... "
+			tg=$MNT_TARGET/mnt/$disk_name
+			is_tg=`cat /proc/mounts | grep " $tg "`
+			if [ -z "$is_tg" -a -d "$disk" ]; then
+				[ ! -d "$tg" ] && mkdir -p $tg
+				mount -o bind $disk $tg
+				[ $? -eq 0 ] && msg "done" || msg "fail"
+				continue
+			fi
+			if [ -z "$is_tg" -a -e "$disk" ]; then
+				[ ! -d "$tg" ] && mkdir -p $tg
+				mount -o rw,relatime $disk $tg
+				[ $? -eq 0 ] && msg "done" || msg "fail"
+			else
+				msg "skip"
+			fi
+		done
+	;;
+	esac
 	
 	return 0
 }
@@ -637,13 +710,15 @@ start_system()
 		(set -e
 			sed -i "s|^Port .*|Port $SSH_PORT|g" $MNT_TARGET/etc/ssh/sshd_config
 			case "$DISTRIB" in
-			debian|ubuntu|kali)
+			debian|ubuntu|kali)				if [ -z "`grep '^aid_inet:.*,messagebus' $MNT_TARGET/etc/group`" ]; then
+					sed -i "s|^\(aid_inet:.*\)|\1,messagebus|g" $MNT_TARGET/etc/group
+				fi
 				chroot $MNT_TARGET su - root -c "/etc/init.d/ssh start"
 			;;
 			archlinux)
 				chroot $MNT_TARGET su - root -c "/etc/rc.d/sshd start"
 			;;
-			fedora)
+			fedora|gentoo)
 				if [ -z "`ls $MNT_TARGET/etc/ssh/ | grep key`" ]; then
 					chroot $MNT_TARGET su - root -c "ssh-keygen -A" || true
 					echo
@@ -741,7 +816,7 @@ stop_system()
 			archlinux)
 				chroot $MNT_TARGET su - root -c "/etc/rc.d/sshd stop"
 			;;
-			fedora)
+			fedora|gentoo)
 				chroot $MNT_TARGET su - root -c 'kill -9 `cat /var/run/sshd.pid`'
 			;;
 			opensuse)
@@ -825,12 +900,13 @@ install_system()
 	prepare_system
 	[ $? -ne 0 ] && return 1
 
-	mount_system
+	msg "Mounting partitions: "
+	mount_system root
 	[ $? -ne 0 ] && return 1
 
 	case "$DISTRIB" in
 	debian|ubuntu|kali)
-		msg "Installing GNU/Linux system: "
+		msg "Installing Debian-based distribution: "
 		
 		PACKAGES="locales,openssh-server,sudo,man-db"
 		case "$DISTRIB" in
@@ -847,12 +923,12 @@ install_system()
 		unset DEBOOTSTRAP_DIR
 		chroot $MNT_TARGET /debootstrap/debootstrap --second-stage 1>&3 2>&3
 		[ $? -ne 0 ] && return 1
+		
+		msg "Mounting partitions: "
+		mount_system proc sys dev pts shm
 	;;
 	archlinux)
-		#wget -O - $MIRROR | tar xzf - -C $MNT_TARGET
-		#[ $? -ne 0 ] && return 1
-		
-		msg "Installing GNU/Linux system: "
+		msg "Installing Arch Linux distribution: "
 		
 		BASIC_PACKAGES="acl archlinux-keyring attr bash bzip2 ca-certificates coreutils cracklib curl db dirmngr e2fsprogs expat findutils gawk gcc-libs gdbm glibc gmp gnupg gpgme grep libarchive libassuan libcap libgcrypt libgpg-error libgssglue libksba libldap libsasl libssh2 libtirpc linux-api-headers lzo2 ncurses openssl pacman pacman-mirrorlist pam pambase perl pinentry pth readline run-parts sed shadow tzdata util-linux xz zlib"
 		REPO="${MIRROR%/}/$ARCH/core"
@@ -884,8 +960,7 @@ install_system()
     		for i in 1 2 3
     		do
     			wget -q -c -O $CACHE_DIR/$FILE $REPO/$FILE
-    			[ $? -eq 0 ] && break
-    			sleep 30s
+    			[ $? -eq 0 ] && break || sleep 30s
     		done
     		#echo "unpacking ${FILE}... "
 			case "$FILE" in
@@ -895,6 +970,9 @@ install_system()
 			esac
 			[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 		done
+		
+		msg "Mounting partitions: "
+		mount_system proc sys dev pts shm
 		
 		msg "Preconfigure system: "
 		configure_system dns mtab repository
@@ -914,7 +992,7 @@ install_system()
 		[ $? -eq 0 ] && msg "done" || msg "fail"
 	;;
 	fedora)
-		msg "Installing GNU/Linux system: "
+		msg "Installing Fedora distribution: "
 		
 		case "$SUITE" in
 		17)
@@ -957,13 +1035,15 @@ install_system()
 			for i in 1 2 3
 			do
 				wget -q -c -O $MNT_TARGET/tmp/$FILE $REPO/$PKG_URL
-				[ $? -eq 0 ] && break
-				sleep 30s
+				[ $? -eq 0 ] && break || sleep 30s
 			done
 			#echo "unpacking ${FILE}... "
 			(cd $MNT_TARGET; rpm2cpio $MNT_TARGET/tmp/$FILE | cpio -idmu)
 			[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 		done
+		
+		msg "Mounting partitions: "
+		mount_system proc sys dev pts shm
 
 		msg "Installing base packages: "
 		chroot $MNT_TARGET /bin/rpm -iv --force --nosignature --nodeps /tmp/*.rpm 1>&3 2>&3
@@ -997,7 +1077,7 @@ install_system()
     	#[ $? -eq 0 ] && msg "done" || msg "fail"
 	;;
 	opensuse)
-		msg "Installing GNU/Linux system: "
+		msg "Installing openSUSE distribution: "
 		
 		case "$ARCH" in
 		armv5tel)
@@ -1039,21 +1119,79 @@ install_system()
     		for i in 1 2 3
     		do
     			wget -q -c -O $MNT_TARGET/tmp/$FILE $REPO/$PKG_URL
-    			[ $? -eq 0 ] && break
-    			sleep 30s
+    			[ $? -eq 0 ] && break || sleep 30s
     		done
     		#echo "unpacking ${FILE}... "
     		(cd $MNT_TARGET; rpm2cpio $MNT_TARGET/tmp/$FILE | cpio -idmu)
     		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 		done
+		
+		msg "Mounting partitions: "
+		mount_system proc sys dev pts shm
 
 		msg "Installing base packages: "
 		chroot $MNT_TARGET /bin/rpm -iv --force --nosignature --nodeps /tmp/*.rpm 1>&3 2>&3
 		# clean cache
 		rm -rf $MNT_TARGET/tmp/*
 	;;
+	gentoo)
+		msg "Installing Gentoo distribution: "
+		
+		msg -n "Preparing for deployment ... "
+		(set -e
+			cd $MNT_TARGET
+			mkdir tmp; chmod 01777 tmp
+		exit 0)
+		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
+		
+		msg -n "Getting repository path ... "
+		REPO="${MIRROR%/}/arm/autobuilds"
+		STAGE3="$MNT_TARGET/tmp/latest-stage3.tar.bz2"
+		ARCHIVE=`wget -q -O - "${REPO}/latest-stage3-${ARCH}.txt" | grep -v ^#`
+		[ -n "$ARCHIVE" ]&& msg "done" || { msg "fail"; return 1; }
+		
+		msg -n "Retrieving stage3 archive ... "
+    	for i in 1 2 3
+    	do
+    		wget -q -c -O $STAGE3 $REPO/$ARCHIVE
+    		[ $? -eq 0 ] && { OK=1; break; } || sleep 30s
+    	done
+		[ "$OK" == "1" ] && msg "done" || { msg "fail"; return 1; }
+		
+		msg -n "Unpacking stage3 archive ... "
+		(set -e
+			bzip2-full --decompress --stdout --force $STAGE3 | tar xf - -C $MNT_TARGET
+			rm $STAGE3
+		exit 0)
+		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
+		
+		msg "Mounting partitions: "
+		mount_system proc sys dev pts shm
+		
+		msg "Preconfigure system: "
+		configure_system dns mtab groups repository
+		
+		msg -n "Updating portage tree ... "
+		(set -e
+			chroot $MNT_TARGET sh -c "emerge --sync; eselect profile set 1"
+		exit 0) 1>/dev/null
+		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
+		
+		msg "Updating world: "
+		(set -e
+			chroot $MNT_TARGET emerge --update --deep world
+		exit 0) 1>&3 2>&3
+		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
+		
+		msg "Installing additional packages: "
+		ADDITIONAL_PACKAGES="sudo"
+		(set -e
+			chroot $MNT_TARGET emerge $ADDITIONAL_PACKAGES
+		exit 0) 1>&3 2>&3
+		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }	  
+	;;
 	esac
-
+	
 	configure_system
 	[ $? -ne 0 ] && return 1
 

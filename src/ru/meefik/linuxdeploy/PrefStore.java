@@ -22,6 +22,7 @@ public class PrefStore {
 	public static Boolean WIFI_LOCK;
 	public static String LANGUAGE;
 	public static Integer FONT_SIZE;
+	public static Integer MAX_LINE;
 	public static String THEME;
 	public static String ENV_DIR;
 	public static Boolean SYMLINK;
@@ -87,6 +88,8 @@ public class PrefStore {
 				c.getString(R.string.wifilock).equals("true") ? true : false);
 		FONT_SIZE = Integer.parseInt(sp.getString("fontsize",
 				c.getString(R.string.fontsize)));
+		MAX_LINE = Integer.parseInt(sp.getString("maxline",
+				c.getString(R.string.maxline)));
 		LANGUAGE = sp.getString("language", c.getString(R.string.language));
 		THEME = sp.getString("theme", c.getString(R.string.theme));
 		ENV_DIR = sp.getString("installdir", c.getString(R.string.envdir));

@@ -36,6 +36,8 @@
     <string name="dialog_title_language_preference">Выберите язык</string>
     <string name="title_fontsize_preference">Размер шрифта</string>
     <string name="dialog_title_fontsize_preference">Размер шрифта</string>
+    <string name="title_maxline_preference">Глубина прокрутки</string>
+    <string name="dialog_title_maxline_preference">Глубина прокрутки</string>
     <string name="title_theme_preference">Тема интерфейса</string>
     <string name="dialog_title_theme_preference">Выберите тему</string>
     <string name="title_appicon_preference">Показывать иконку</string>

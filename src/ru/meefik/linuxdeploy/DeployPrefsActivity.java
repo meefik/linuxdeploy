@@ -365,13 +365,44 @@ public class DeployPrefsActivity extends SherlockPreferenceActivity implements
 						mirror.setText(getString(R.string.kali_mirror));
 					mirror.setSummary(mirror.getText());
 				}
+				if (listPref.getValue().equals("gentoo")) {
+					// suite
+					ListPreference suite = (ListPreference) this
+							.findPreference("suite");
+					suite.setEntries(R.array.gentoo_suite_values);
+					suite.setEntryValues(R.array.gentoo_suite_values);
+					if (init)
+						suite.setValue(getString(R.string.gentoo_suite));
+					suite.setSummary(suite.getEntry());
+					// architecture
+					ListPreference architecture = (ListPreference) this
+							.findPreference("architecture");
+					architecture.setEntries(R.array.gentoo_architecture_values);
+					architecture
+							.setEntryValues(R.array.gentoo_architecture_values);
+					if (init)
+						architecture
+								.setValue(getString(R.string.gentoo_architecture));
+					architecture.setSummary(architecture.getEntry());
+					// mirror
+					EditTextPreference mirror = (EditTextPreference) this
+							.findPreference("mirror");
+					if (init)
+						mirror.setText(getString(R.string.gentoo_mirror));
+					mirror.setSummary(mirror.getText());
+				}
 			}
 			if (listPref.getKey().equals("deploytype")) {
 				EditTextPreference disksize = (EditTextPreference) this
 						.findPreference("disksize");
 				ListPreference fstype = (ListPreference) this
 						.findPreference("fstype");
+				
+				// for compatibility with version < 1.3.9
 				if (listPref.getValue().equals("image"))
+					listPref.setValue("file");
+				
+				if (listPref.getValue().equals("file"))
 					disksize.setEnabled(true);
 				else
 					disksize.setEnabled(false);

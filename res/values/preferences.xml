@@ -4,6 +4,7 @@
     <string name="screenlock" translatable="false">true</string>
     <string name="wifilock" translatable="false">false</string>
     <string name="fontsize" translatable="false">10</string>
+    <string name="maxline" translatable="false">100</string>
     <string name="language" translatable="false">en</string>
     <string name="theme" translatable="false">dark</string>
     <string name="autostart" translatable="false">false</string>
@@ -19,7 +20,7 @@
     <string name="suite" translatable="false">@string/debian_suite</string>
     <string name="mirror" translatable="false">@string/debian_mirror</string>
     <string name="architecture" translatable="false">@string/debian_architecture</string>
-    <string name="deploytype" translatable="false">image</string>
+    <string name="deploytype" translatable="false">file</string>
     <string name="diskimage" translatable="false">{replace}</string>
     <string name="disksize" translatable="false">0</string>
     <string name="fstype" translatable="false">auto</string>
@@ -78,5 +79,10 @@
     <string name="kali_suite" translatable="false">kali</string>
     <string name="kali_mirror" translatable="false">http://http.kali.org</string>
     <string name="kali_architecture" translatable="false">armel</string>
-
+    
+    <!-- Gentoo -->
+    <string name="gentoo_suite" translatable="false">latest</string>
+    <string name="gentoo_mirror" translatable="false">http://mirror.yandex.ru/gentoo-distfiles/releases/</string>
+    <string name="gentoo_architecture" translatable="false">armv7a</string>
+    
 </resources>

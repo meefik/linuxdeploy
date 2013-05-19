@@ -2,7 +2,9 @@ package ru.meefik.linuxdeploy;
 
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import android.app.AlertDialog;
@@ -32,8 +34,9 @@ public class MainActivity extends SherlockActivity {
 
 	private static TextView logView;
 	private static ScrollView logScroll;
-	private static boolean newLine = false;
-	private WifiLock wifiLock;
+	private static List<String> logList = new ArrayList<String>();
+	private static boolean fragment = false;
+	private static WifiLock wifiLock;
 	static Handler handler;
 
 	private static String getTimeStamp() {
@@ -41,26 +44,39 @@ public class MainActivity extends SherlockActivity {
 				+ new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH)
 						.format(new Date()) + "] ";
 	}
-
+	
+	private static void clearLog() {
+		logList.clear();
+		fragment = false;
+		logView.setText("");
+	}
+	
 	public static void printLogMsg(String msg) {
 		if (msg.length() > 0) {
-			if (logView.length() == 0) {
-				msg = getTimeStamp() + msg;
-				newLine = false;
+			String[] tokens = msg.split("\\n");
+			for (int i = 0; i < tokens.length; i++) {
+				// update last record from List if fragment
+				if (i == 0 && fragment && logList.size() > 0) {
+					int idx = logList.size()-1;
+					String last = logList.get(idx);
+					logList.set(idx, last + tokens[i]);
+					continue;
+				}
+				// add the message to List
+				logList.add(getTimeStamp() + tokens[i]);
+				// remove first line if overflow
+			    if (logList.size() >= PrefStore.MAX_LINE)
+			    	logList.remove(0);
 			}
-			// add '\n' character
-			if (newLine) {
-				msg = "\n" + msg;
-				newLine = false;
-			}
-			// remove all last '\n' characters
-			while (msg.length() > 0 && msg.charAt(msg.length() - 1) == '\n') {
-				msg = msg.substring(0, msg.length() - 1);
-				newLine = true;
-			}
-			msg = msg.replaceAll("\\n", "\n" + getTimeStamp());
-			logView.append(msg);
-			// logView.scrollTo(logView.getLeft(), logView.getBottom());
+			// set fragment
+			fragment = (msg.charAt(msg.length()-1) != '\n');
+		    // read all logs from List
+		    String log = "";
+		    for (String str:logList)
+		        log += str + "\n";
+		    // show log in TextView
+			logView.setText(log);
+			// scroll TextView to bottom
 			logScroll.post(new Runnable() {
 				@Override
 				public void run() {
@@ -68,6 +84,7 @@ public class MainActivity extends SherlockActivity {
 					logScroll.clearFocus();
 				}
 			});
+			// save the message to file
 			if (PrefStore.LOGGING) {
 				saveLogs(msg);
 			}
@@ -229,7 +246,7 @@ public class MainActivity extends SherlockActivity {
 			startActivity(intent_about);
 			break;
 		case R.id.menu_clear:
-			logView.setText("");
+			clearLog();
 			break;
 		case R.id.menu_exit:
 			finish();

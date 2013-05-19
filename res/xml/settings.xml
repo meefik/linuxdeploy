@@ -29,6 +29,14 @@
             android:key="fontsize"
             android:summary="@string/fontsize"
             android:title="@string/title_fontsize_preference" />
+        
+        <EditTextPreference
+            android:defaultValue="@string/maxline"
+            android:dialogTitle="@string/dialog_title_maxline_preference"
+            android:inputType="numberDecimal"
+            android:key="maxline"
+            android:summary="@string/maxline"
+            android:title="@string/title_maxline_preference" />
 
         <ListPreference
             android:defaultValue="@string/theme"
