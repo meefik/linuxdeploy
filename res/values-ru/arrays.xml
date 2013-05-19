@@ -6,8 +6,8 @@
         <item>Светлая</item>
     </string-array>
     <string-array name="deploytype_entries">
-        <item>Файл образа</item>
-        <item>Раздел диска</item>
+        <item>Файл</item>
+        <item>Раздел</item>
         <item>Директория</item>
     </string-array>
     <string-array name="fstype_entries">

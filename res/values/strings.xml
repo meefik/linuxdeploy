@@ -36,6 +36,8 @@
     <string name="dialog_title_language_preference">Choose language</string>
     <string name="title_fontsize_preference">Font size</string>
     <string name="dialog_title_fontsize_preference">Font size</string>
+    <string name="title_maxline_preference">Scroll size</string>
+    <string name="dialog_title_maxline_preference">Scroll size</string>
     <string name="title_theme_preference">Theme</string>
     <string name="dialog_title_theme_preference">Choose theme</string>
     <string name="title_appicon_preference">Show icon</string>

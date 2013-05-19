@@ -18,13 +18,13 @@
         <item>light</item>
     </string-array>
     <string-array name="deploytype_values" translatable="false">
-        <item>image</item>
+        <item>file</item>
         <item>partition</item>
         <item>directory</item>
     </string-array>
     <string-array name="deploytype_entries">
-        <item>Image file</item>
-        <item>Disk partition</item>
+        <item>File</item>
+        <item>Partition</item>
         <item>Directory</item>
     </string-array>
     <string-array name="fstype_values" translatable="false">
@@ -72,6 +72,7 @@
         <item>fedora</item>
         <item>opensuse</item>
         <item>kali</item>
+        <item>gentoo</item>
     </string-array>
     <string-array name="distribution_entries" translatable="false">
         <item>Debian</item>
@@ -80,6 +81,7 @@
         <item>Fedora</item>
         <item>openSUSE</item>
         <item>Kali Linux</item>
+        <item>Gentoo</item>
     </string-array>
 
     <!-- Debian -->
@@ -151,6 +153,20 @@
     <string-array name="kali_architecture_values" translatable="false">
         <item>armel</item>
         <item>armhf</item>
+    </string-array>
+    
+    <!-- Gentoo -->
+
+    <string-array name="gentoo_suite_values" translatable="false">
+        <item>latest</item>
+    </string-array>
+    <string-array name="gentoo_architecture_values" translatable="false">
+        <item>armv4tl</item>
+        <item>armv5tel</item>
+        <item>armv6j</item>
+        <item>armv6j_hardfp</item>
+        <item>armv7a</item>
+        <item>armv7a_hardfp</item>
     </string-array>
 
 </resources>
