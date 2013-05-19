@@ -1,6 +1,6 @@
-#!./bin/sh
+#!./bin/sh -e
 
-VERSION='1.0.42'
+VERSION='1.0.48'
 
 unset TMP TEMP TMPDIR || true
 
@@ -433,7 +433,7 @@ if [ -z "$ARCH" ] || [ -z "$HOST_OS" ]; then
 fi
 
 if [ "$HOST_OS" = "kfreebsd" ] || [ "$HOST_OS" = "freebsd" ]; then
-	for module in "linprocfs fdescfs tmpfs linsysfs"; do
+	for module in linprocfs fdescfs tmpfs linsysfs; do
 		kldstat -m "$module" > /dev/null 2>&1 || warning SANITYCHECK "Probably required module %s is not loaded" "$module"
 	done
 fi
