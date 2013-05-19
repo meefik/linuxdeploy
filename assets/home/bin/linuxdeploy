@@ -496,13 +496,20 @@ configure_system()
 				chroot $MNT_TARGET zypper clean
 			;;
 			gentoo)
+				# set server USE flag for tightvnc
+				if [ -z "`grep '^net-misc/tightvnc' $MNT_TARGET/etc/portage/package.use`" ]; then
+					echo "net-misc/tightvnc" >> $MNT_TARGET/etc/portage/package.use
+				fi
+				if [ -z "`grep '^net-misc/tightvnc.*server' $MNT_TARGET/etc/portage/package.use`" ]; then
+					sed -i "s|^\(net-misc/tightvnc.*\)|\1 server|g" $MNT_TARGET/etc/portage/package.use
+				fi
 				PKGS="tightvnc xauth"
 				case "$DESKTOP_ENV" in
 				xterm)
 					PKGS="$PKGS xterm"
 				;;
 				lxde)
-					PKGS="$PKGS lxde-meta"
+					PKGS="$PKGS lxde-meta gtk-engines"
 				;;
 				xfce)
 					PKGS="$PKGS xfce4-meta"
@@ -595,7 +602,7 @@ mount_system()
 			mount -o bind /dev $tg
 			[ $? -eq 0 ] && msg "done" || msg "fail"
 			# links
-			ln -s /proc/self/fd $MNT_TARGET/dev/fd
+			ln -s /proc/self/fd $MNT_TARGET/dev/
 			ln -s /proc/self/fd/0 $MNT_TARGET/dev/stdin
 			ln -s /proc/self/fd/1 $MNT_TARGET/dev/stdout
 			ln -s /proc/self/fd/2 $MNT_TARGET/dev/stderr
