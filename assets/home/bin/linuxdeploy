@@ -1179,10 +1179,14 @@ install_system()
 		msg "Updating world: "
 		(set -e
 			chroot $MNT_TARGET emerge --update --deep world
-			sed -i 's/^replace-unmodified=.*/replace-unmodified=yes/g' $MNT_TARGET/etc/dispatch-conf.conf
-			chroot $MNT_TARGET dispatch-conf
 		exit 0) 1>&3 2>&3
 		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
+		
+		msg -n "Updating /etc ... "
+		(set -e
+			find $MNT_TARGET/etc/ -name "._cfg0000_*" | while read f; do mv "$f" "$(echo $f | sed 's/._cfg0000_//g')"; done
+		exit 0)
+		[ $? -eq 0 ] && msg "done" || msg "skip"
 
 		msg "Installing additional packages: "
 		ADDITIONAL_PACKAGES="sudo"
