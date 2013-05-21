@@ -512,7 +512,10 @@ configure_system()
 					PKGS="$PKGS kde-meta"
 				;;
 				esac
-				chroot $MNT_TARGET emerge --tree --autounmask-write $PKGS
+				chroot $MNT_TARGET emerge --autounmask-write $PKGS || {
+					mv $MNT_TARGET/etc/portage/._cfg0000_package.use $MNT_TARGET/etc/portage/package.use
+					chroot $MNT_TARGET emerge $PKGS
+				}
 			;;
 			esac
 		exit 0) 1>&3 2>&3
@@ -1178,22 +1181,13 @@ install_system()
 
 		msg "Updating world: "
 		(set -e
-			chroot $MNT_TARGET emerge --update --deep world
+			chroot $MNT_TARGET emerge --update --deep world sudo
 		exit 0) 1>&3 2>&3
 		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
-		
-		msg -n "Updating /etc ... "
-		(set -e
-			find $MNT_TARGET/etc/ -name "._cfg0000_*" | while read f; do mv "$f" "$(echo $f | sed 's/._cfg0000_//g')"; done
-		exit 0)
-		[ $? -eq 0 ] && msg "done" || msg "skip"
 
-		msg "Installing additional packages: "
-		ADDITIONAL_PACKAGES="sudo"
-		(set -e
-			chroot $MNT_TARGET emerge $ADDITIONAL_PACKAGES
-		exit 0) 1>&3 2>&3
-		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
+		msg -n "Updating configuration ... "
+		find $MNT_TARGET/ -name "._cfg0000_*" | while read f; do mv "$f" "$(echo $f | sed 's/._cfg0000_//g')"; done
+		[ $? -eq 0 ] && msg "done" || msg "skip"
 	;;
 	esac
 
