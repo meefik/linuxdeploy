@@ -6,6 +6,8 @@ Added support Gentoo (installation requires at least 4 GB of free space)
 Limitation of scroll buffer size
 Automatic mount /dev/shm
 Updated debootstrap up to 1.0.48
+Support for multiple input devices in framebuffer mode (in xorg.conf changed lines are marked as #linuxdeploy)
+Optimize of making disk image file
 
 1.3.8
 Added support Ubuntu 13.04 Raring Ringtail
@@ -202,6 +204,8 @@ Updated list packages of base system installation
 Ограничение размера буфера прокрутки
 Автоматическое монтирование /dev/shm
 Обновлен debootstrap до версии 1.0.48
+Поддержка нескольких устройств ввода в режиме фрейм-буфера (в xorg.conf изменяемые строки отмечены как #linuxdeploy)
+Оптимизирован механизм создания файла образа диска
 
 1.3.8
 Добавлена поддержка Ubuntu 13.04 Raring Ringtail

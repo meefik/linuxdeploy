@@ -30,7 +30,7 @@ msg()
 {
 	ECHO_OPT=""
 	ECHO_STR=""
-	
+
 	for i in "$@"
 	do
 		case $i in
@@ -42,9 +42,9 @@ msg()
 		;;
 		esac
 	done
-	
+
 	echo $ECHO_OPT "$ECHO_STR" 1>&3
-	
+
 	return 0
 }
 
@@ -75,29 +75,20 @@ prepare_system()
 		fi
 	fi
 	msg "done"
-	
+
 	if [ "$DEPLOY_TYPE" == "file" ]; then
-	    if [ "$IMG_SIZE" -eq 0 ]; then
-	    	[ -f "$IMG_TARGET" ] && FILE_SIZE=`stat -c %s $IMG_TARGET` || FILE_SIZE=0
-	    	DIR_NAME=`dirname $IMG_TARGET`
-	    	BLOCK_SIZE=`stat -c %s -f $DIR_NAME`
+		if [ "$IMG_SIZE" -eq 0 ]; then
+			[ -f "$IMG_TARGET" ] && FILE_SIZE=`stat -c %s $IMG_TARGET` || FILE_SIZE=0
+			DIR_NAME=`dirname $IMG_TARGET`
+			BLOCK_SIZE=`stat -c %s -f $DIR_NAME`
 			AVAILABLE_SIZE=`stat -c %a -f $DIR_NAME`
 			let AVAILABLE_SIZE="($BLOCK_SIZE*$AVAILABLE_SIZE)+$FILE_SIZE"
 			let IMG_SIZE="($AVAILABLE_SIZE-$AVAILABLE_SIZE/10)/1048576"
 			[ "$IMG_SIZE" -gt 4095 ] && IMG_SIZE=4095
 		fi
 		msg -n "Making new disk image ($IMG_SIZE MB) ... "
-		(set -e
-			if [ "$IMG_SIZE" -ge 2048 ]; then
-				DD_SEEK=2047
-				let DD_COUNT=$IMG_SIZE-2047
-			else
-				DD_SEEK=$IMG_SIZE
-				DD_COUNT=0
-			fi
-			dd if=/dev/zero of=$IMG_TARGET bs=1048576 seek=$DD_SEEK count=$DD_COUNT
-		exit 0)
-		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
+		dd if=/dev/zero of=$IMG_TARGET bs=1M seek=$IMG_SIZE count=0
+		[ -f "$IMG_TARGET" ] && msg "done" || { msg "fail"; return 1; }
 	fi
 
 	if [ "$DEPLOY_TYPE" == "file" -o "$DEPLOY_TYPE" == "partition" ]; then
@@ -120,7 +111,7 @@ prepare_system()
 		exit 0)
 		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 	fi
-	
+
 	return 0
 }
 
@@ -128,7 +119,7 @@ configure_system()
 {
 	if [ "$#" -eq 0 ]; then
 		msg "Configuring GNU/Linux system: "
-		configure_system dns mtab motd hosts hostname timezone sudo locales repository groups profile upstart dbus xorg gui
+		configure_system dns mtab motd hosts hostname timezone sudo groups locales repository profile upstart dbus xorg gui
 		return 0
 	fi
 	if [ "$#" -gt 1 ]; then
@@ -209,6 +200,21 @@ configure_system()
 			[ -z "$is_str" ] && echo $SUDO_STR >> $MNT_TARGET/etc/sudoers
 			chmod 440 $MNT_TARGET/etc/sudoers		
 		;;
+		groups)
+			AIDS=`cat ${ENV_DIR%/}/deploy/android-groups`
+			for AID in $AIDS
+			do
+				XNAME=`echo $AID | awk -F: '{print $1}'`
+				XID=`echo $AID | awk -F: '{print $2}'`
+				sed -i "s|^$XNAME:.*|$XNAME:x:$XID:$USER_NAME|g" $MNT_TARGET/etc/group || true
+				is_str=`cat $MNT_TARGET/etc/group | grep "^$XNAME:" || true`
+				[ -z "$is_str" ] && echo "$XNAME:x:$XID:$USER_NAME" >> $MNT_TARGET/etc/group
+				is_str=`cat $MNT_TARGET/etc/passwd | grep "^$XNAME:" || true`
+				[ -z "$is_str" ] && echo "$XNAME:x:$XID:$XID::/:/bin/false" >> $MNT_TARGET/etc/passwd
+				sed -i 's|^UID_MIN.*|UID_MIN 5000|g' $MNT_TARGET/etc/login.defs
+				sed -i 's|^GID_MIN.*|GID_MIN 5000|g' $MNT_TARGET/etc/login.defs
+			done
+		;;
 		locales)
 			#echo "$LOCALE UTF-8" > $MNT_TARGET/etc/locale.gen
 			#chmod 644 $MNT_TARGET/etc/locale.gen
@@ -275,21 +281,6 @@ configure_system()
 				fi
 			;;
 			esac
-		;;
-		groups)
-			AIDS=`cat ${ENV_DIR%/}/deploy/android-groups`
-			for AID in $AIDS
-			do
-				XNAME=`echo $AID | awk -F: '{print $1}'`
-				XID=`echo $AID | awk -F: '{print $2}'`
-				sed -i "s|^$XNAME:.*|$XNAME:x:$XID:$USER_NAME|g" $MNT_TARGET/etc/group || true
-				is_str=`cat $MNT_TARGET/etc/group | grep "^$XNAME:" || true`
-				[ -z "$is_str" ] && echo "$XNAME:x:$XID:$USER_NAME" >> $MNT_TARGET/etc/group
-				is_str=`cat $MNT_TARGET/etc/passwd | grep "^$XNAME:" || true`
-				[ -z "$is_str" ] && echo "$XNAME:x:$XID:$XID::/:/bin/false" >> $MNT_TARGET/etc/passwd
-				sed -i 's|^UID_MIN.*|UID_MIN 5000|g' $MNT_TARGET/etc/login.defs
-				sed -i 's|^GID_MIN.*|GID_MIN 5000|g' $MNT_TARGET/etc/login.defs
-			done
 		;;
 		profile)
 			reserved=`echo $USER_NAME | grep ^aid_ || true`
@@ -398,7 +389,7 @@ configure_system()
 		esac
 	exit 0)
 	[ $? -eq 0 ] && msg "done" || msg "fail"
-	
+
 	if [ "$1" == "gui" -a "$INSTALL_GUI" == "y" ]; then
 		msg "Installing GUI packages: "
 		(set -e
@@ -492,7 +483,7 @@ configure_system()
 					PKGS="$PKGS patterns-openSUSE-kde"
 				;;
 				esac
-				chroot $MNT_TARGET zypper --no-gpg-checks --non-interactive install $PKGS 
+				chroot $MNT_TARGET zypper --no-gpg-checks --non-interactive install $PKGS
 				chroot $MNT_TARGET zypper clean
 			;;
 			gentoo)
@@ -521,13 +512,13 @@ configure_system()
 					PKGS="$PKGS kde-meta"
 				;;
 				esac
-				chroot $MNT_TARGET emerge --tree --autounmask-write $PKGS 
+				chroot $MNT_TARGET emerge --tree --autounmask-write $PKGS
 			;;
 			esac
 		exit 0) 1>&3 2>&3
 		[ $? -ne 0 ] && return 1
 	fi
-	
+
 	return 0
 }
 
@@ -536,7 +527,7 @@ update_system()
 	msg "Updating configuration: "
 	configure_system dns mtab
 	[ $? -ne 0 ] && return 1
-	
+
 	return 0
 }
 
@@ -656,7 +647,7 @@ mount_system()
 		done
 	;;
 	esac
-	
+
 	return 0
 }
 
@@ -677,7 +668,7 @@ umount_system()
 		done
 	exit 0)
 	[ $? -eq 0 ] && msg "done" || msg "fail"
-	
+
 	msg "Unmounting partitions: "
 	um=0
 	for i in '.*' '*'
@@ -693,14 +684,14 @@ umount_system()
 		done
 	done
 	[ $um -eq 0 ] && msg "...not mounted anything"
-	
+
 	msg -n "Disassociating loop device ... "
 	(set -e
 		loop=`losetup | grep $IMG_TARGET | awk -F: '{print $1}' || true`
 		[ -n "$loop" ] && losetup -d $loop
 	exit 0)
 	[ $? -eq 0 ] && msg "done" || msg "fail"
-	
+
 	return 0
 }
 
@@ -765,7 +756,7 @@ start_system()
 	else
 		msg "skip"
 	fi
-	
+
 	msg -n "X Window System ... "
 	if [ "$XSERVER_START" == "y" -a -z "$XSESSION" ]; then
 		XSESSION="busy"
@@ -776,13 +767,13 @@ start_system()
 	else
 		msg "skip"
 	fi
-	
+
 	msg -n "Frame Buffer ... "
 	if [ "$FB_START" == "y" -a -z "$XSESSION" ]; then
 		XSESSION="busy"
+		sed -i "s|Option.*\"fbdev\".*#linuxdeploy|Option \"fbdev\" \"$FB_DEV\" #linuxdeploy|g" $MNT_TARGET/etc/X11/xorg.conf
+		sed -i "s|Option.*\"Device\".*#linuxdeploy|Option \"Device\" \"$FB_INPUT\" #linuxdeploy|g" $MNT_TARGET/etc/X11/xorg.conf
 		(set -e
-			sed -i "s|Option.*\"fbdev\".*|Option \"fbdev\" \"$FB_DEV\"|g" $MNT_TARGET/etc/X11/xorg.conf
-			sed -i "s|Option.*\"Device\".*|Option \"Device\" \"$FB_INPUT\"|g" $MNT_TARGET/etc/X11/xorg.conf
 			if [ "$FB_ANDROID" == "y" ]; then
 				chroot $MNT_TARGET su - $USER_NAME -c "startx -- :$FB_DISPLAY &"
 			else
@@ -795,7 +786,7 @@ start_system()
 	else
 		msg "skip"
 	fi
-	
+
 	SCRIPTS=`echo "$CUSTOM_STARTUP" | tr ',;' ' '`
 	for script in $SCRIPTS
 	do
@@ -805,14 +796,14 @@ start_system()
 		exit 0)
 		[ $? -eq 0 ] && msg "done" || msg "fail"
 	done
-	
+
 	return 0
 }
 
 stop_system()
 {
 	msg "Stopping services: "
-	
+
 	msg -n "SSH ... "
 	if [ "$SSH_START" == "y" ]; then
 		(set -e
@@ -838,7 +829,7 @@ stop_system()
 		msg "skip"
 	fi
 
-	msg -n "VNC ... "	
+	msg -n "VNC ... "
 	if [ "$VNC_START" == "y" ]; then
 		(set -e
 			chroot $MNT_TARGET su - $USER_NAME -c "vncserver -kill :$VNC_DISPLAY"
@@ -849,8 +840,8 @@ stop_system()
 	else
 		msg "skip"
 	fi
-	
-	msg -n "X Window System ... "	
+
+	msg -n "X Window System ... "
 	if [ "$XSERVER_START" == "y" ]; then
 		(set -e
 			chroot $MNT_TARGET su - $USER_NAME -c 'kill -9 -$(cat /tmp/xsession.pid)'
@@ -859,7 +850,7 @@ stop_system()
 	else
 		msg "skip"
 	fi
-	
+
 	msg -n "Frame Buffer ... "
 	if [ "$FB_START" == "y" ]; then
 		(set -e
@@ -869,7 +860,7 @@ stop_system()
 	else
 		msg "skip"
 	fi
-	
+
 	SCRIPTS=`echo "$CUSTOM_STARTUP" | tr ',;' ' '`
 	for script in $SCRIPTS
 	do
@@ -879,10 +870,10 @@ stop_system()
 		exit 0)
 		[ $? -eq 0 ] && msg "done" || msg "fail"
 	done
-	
+
 	umount_system
 	[ $? -ne 0 ] && return 1
-	
+
 	return 0
 }
 
@@ -893,12 +884,12 @@ chroot_system()
 		mount_system
 		[ $? -ne 0 ] && return 1
 	fi
-	
+
 	update_system
-	
+
 	chroot $MNT_TARGET /bin/bash 1>&3 2>&3
 	[ $? -ne 0 ] && return 1
-	
+
 	return 0
 }
 
@@ -914,14 +905,14 @@ install_system()
 	case "$DISTRIB" in
 	debian|ubuntu|kali)
 		msg "Installing Debian-based distribution: "
-		
+
 		PACKAGES="locales,openssh-server,sudo,man-db"
 		case "$DISTRIB" in
 		kali)
 			PACKAGES="$PACKAGES,kali-defaults,kali-menu,kali-root-login"
 		;;
 		esac
-		
+
 		[ -z "$DEBOOTSTRAP_DIR" ] && DEBOOTSTRAP_DIR=${ENV_DIR%/}/deploy/debootstrap
 		export DEBOOTSTRAP_DIR
 		debootstrap --no-check-gpg --arch $ARCH --foreign --extractor=ar --include=$PACKAGES $SUITE $MNT_TARGET $MIRROR 1>&3 2>&3
@@ -930,17 +921,17 @@ install_system()
 		unset DEBOOTSTRAP_DIR
 		chroot $MNT_TARGET /debootstrap/debootstrap --second-stage 1>&3 2>&3
 		[ $? -ne 0 ] && return 1
-		
+
 		msg "Mounting partitions: "
 		mount_system proc sys dev pts shm
 	;;
 	archlinux)
 		msg "Installing Arch Linux distribution: "
-		
+
 		BASIC_PACKAGES="acl archlinux-keyring attr bash bzip2 ca-certificates coreutils cracklib curl db dirmngr e2fsprogs expat findutils gawk gcc-libs gdbm glibc gmp gnupg gpgme grep libarchive libassuan libcap libgcrypt libgpg-error libgssglue libksba libldap libsasl libssh2 libtirpc linux-api-headers lzo2 ncurses openssl pacman pacman-mirrorlist pam pambase perl pinentry pth readline run-parts sed shadow tzdata util-linux xz zlib"
 		REPO="${MIRROR%/}/$ARCH/core"
 		CACHE_DIR="$MNT_TARGET/var/cache/pacman/pkg"
-		
+
 		msg -n "Preparing for deployment ... "
 		(set -e
 			cd $MNT_TARGET
@@ -953,7 +944,7 @@ install_system()
 			mkdir -p $CACHE_DIR
 		exit 0)
 		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
-		
+
 		msg -n "Retrieving packages list ... "
 		PKG_LIST=`wget -q -O - "$REPO/" | sed -n '/<a / s/^.*<a [^>]*href="\([^\"]*\)".*$/\1/p' | awk -F'/' '{print $NF}' | sort -rn`
 		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
@@ -977,13 +968,13 @@ install_system()
 			esac
 			[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 		done
-		
+
 		msg "Mounting partitions: "
 		mount_system proc sys dev pts shm
-		
+
 		msg "Preconfigure system: "
 		configure_system dns mtab repository
-		
+
 		msg "Installing base packages: "
 		(set -e
 			chroot $MNT_TARGET /usr/bin/pacman --noconfirm -Sy
@@ -991,7 +982,7 @@ install_system()
 			chroot $MNT_TARGET /usr/bin/pacman --noconfirm --force -Sq $BASIC_PACKAGES $EXTRA_PACKAGES initscripts sudo openssh
 		exit 0) 1>&3 2>&3
 		[ $? -ne 0 ] && return 1
-		
+
 		msg -n "Clearing cache ... "
 		(set -e
 			rm -f $CACHE_DIR/* `find $MNT_TARGET -type f -name "*.pacorig"`
@@ -1000,7 +991,7 @@ install_system()
 	;;
 	fedora)
 		msg "Installing Fedora distribution: "
-		
+
 		case "$SUITE" in
 		17)
 			BASIC_PACKAGES="acl attr audit audit-libs avahi-autoipd basesystem bash bind-libs bind-libs-lite bind-license bind-utils bzip2 bzip2-libs ca-certificates checkpolicy chkconfig coreutils cpio cracklib cracklib-dicts crda cronie cronie-anacron crontabs cryptsetup-libs curl cyrus-sasl-lib db4 dbus dbus-glib dbus-libs device-mapper device-mapper-libs dhclient dhcp-common dhcp-libs diffutils dnsmasq dosfstools dracut e2fsprogs e2fsprogs-libs elfutils-libelf ethtool expat fedora-release fedora-release-notes file file-libs filesystem findutils fipscheck fipscheck-lib gamin gawk gdbm glib2 glibc glibc-common gmp gnupg2 gpgme grep groff groff-base gzip hardlink hostname hwdata info initscripts iproute iptables iputils iw kbd kbd-misc keyutils keyutils-libs kmod kmod-libs krb5-libs less libacl libassuan libattr libblkid libcap libcap-ng libcom_err libcurl libdaemon libdb libdb-utils libedit libevent libffi libgcc libgcrypt libgpg-error libgssglue libgudev1 libidn libmount libnfsidmap libnl libnl3 libpcap libpipeline libpwquality libselinux libselinux-utils libsemanage libsepol libss libssh2 libsss_sudo libstdc++ libtirpc libudev libusb1 libuser libutempter libuuid libxml2 linux-atm-libs logrotate lua m4 man-db man-pages mingetty mobile-broadband-provider-info ncurses ncurses-base ncurses-libs net-tools newt newt-python nfs-utils nspr nss nss-myhostname nss-softokn nss-softokn-freebl nss-sysinit nss-tools nss-util ntpdate openldap openssh openssh-clients openssh-server openssl pam parted passwd pciutils-libs pcre pinentry pkgconfig policycoreutils popt ppp procps psmisc pth pygpgme python python-chardet python-iniparse python-kitchen python-libs python-pycurl python-urlgrabber readline rootfiles rootfs-resize rpcbind rpm rpm-build-libs rpm-libs rpm-python rsyslog sed selinux-policy selinux-policy-targeted setserial setup shadow-utils shared-mime-info slang sqlite sudo systemd systemd-sysv sysvinit-tools tar tcp_wrappers-libs tzdata udev usbutils ustr util-linux vim-minimal wget wireless-tools wpa_supplicant xz xz-libs yum yum-metadata-parser yum-utils zlib"
@@ -1024,14 +1015,14 @@ install_system()
 			mkdir tmp; chmod 01777 tmp
 		exit 0)
 		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
-		
+
 		msg -n "Retrieving packages list ... "
 		(set -e
 			REPODATA_FILE=`wget -q -O - $REPO/repodata | sed -n '/<a / s/^.*<a [^>]*href="\([^\"]*\-primary\.xml\.gz\)".*$/\1/p'`
 			wget -q -O - $REPO/repodata/$REPODATA_FILE | gzip -dc | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\)".*$/\1/p' > $PKG_LIST
 		exit 0)
 		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
-		
+
 		msg "Retrieving base packages: "
 		for PACKAGE in $BASIC_PACKAGES; do
 			msg -n "$PACKAGE ... "
@@ -1048,7 +1039,7 @@ install_system()
 			(cd $MNT_TARGET; rpm2cpio $MNT_TARGET/tmp/$FILE | cpio -idmu)
 			[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 		done
-		
+
 		msg "Mounting partitions: "
 		mount_system proc sys dev pts shm
 
@@ -1065,27 +1056,27 @@ install_system()
 		chmod 04755 $MNT_TARGET/usr/bin/systemd-detect-virt
 		# clean cache
 		rm -rf $MNT_TARGET/tmp/*
-		
+
 		#msg "Installing base packages: "
 		#for FILE in `cd $CACHE_DIR && ls *.rpm`; do
 		#	msg -n "$FILE ... "
 		#	chroot $MNT_TARGET /bin/rpm -i --nodeps --force /tmp/$FILE
 		#	[ $? -eq 0 ] && msg "done" || msg "fail"
 		#done
-		
+
 		#msg "Preconfigure system: "
 		#configure_system dns mtab repository
-		
+
 		#msg "Installing base system: "
 		#chroot $MNT_TARGET /usr/bin/yum groupinstall "Base" --nogpgcheck --skip-broken -y 1>&3 2>&3
-		
+
 		#msg -n "Clearing cache ... "
 		#chroot $MNT_TARGET /usr/bin/yum clean all
     	#[ $? -eq 0 ] && msg "done" || msg "fail"
 	;;
 	opensuse)
 		msg "Installing openSUSE distribution: "
-		
+
 		case "$ARCH" in
 		armv5tel)
 			BASIC_PACKAGES="aaa_base aaa_base-extras autoyast2-installation bash bind-libs bind-utils branding-openSUSE bridge-utils bzip2 coreutils cpio cracklib cracklib-dict-full cron cronie cryptsetup curl cyrus-sasl dbus-1 dbus-1-x11 device-mapper dhcpcd diffutils dirmngr dmraid e2fsprogs elfutils file filesystem fillup findutils fontconfig gawk gio-branding-openSUSE glib2-tools glibc glibc-extra glibc-i18ndata glibc-locale gnu-unifont-bitmap-fonts gpg2 grep groff gzip hwinfo ifplugd info initviocons iproute2 iputils kbd kpartx krb5 less libX11-6 libX11-data libXau6 libXext6 libXft2 libXrender1 libacl1 libadns1 libaio1 libasm1 libassuan0 libattr1 libaudit1 libaugeas0 libblkid1 libblocxx6 libbz2-1 libcairo2 libcap-ng0 libcap2 libcom_err2 libcrack2 libcryptsetup4 libcurl4 libdaemon0 libdb-4_8 libdbus-1-3 libdrm2 libdw1 libedit0 libelf0 libelf1 libestr0 libexpat1 libext2fs2 libffi4 libfreetype6 libgcc_s1 libgcrypt11 libgdbm4 libgio-2_0-0 libglib-2_0-0 libgmodule-2_0-0 libgmp10 libgnutls28 libgobject-2_0-0 libgpg-error0 libgssglue1 libharfbuzz0 libhogweed2 libicu49 libidn11 libiw30 libjson0 libkeyutils1 libkmod2 libksba8 libldap-2_4-2 liblua5_1 liblzma5 libmagic1 libmicrohttpd10 libmodman1 libmount1 libncurses5 libncurses6 libnettle4 libnl-1_1 libopenssl1_0_0 libp11-kit0 libpango-1_0-0 libparted0 libpci3 libpcre1 libpipeline1 libpixman-1-0 libply-boot-client2 libply-splash-core2 libply-splash-graphics2 libply2 libpng15-15 libpolkit0 libpopt0 libprocps1 libproxy1 libpth20 libpython2_7-1_0 libqrencode3 libreadline6 libreiserfs-0_3-0 libselinux1 libsemanage1 libsepol1 libsolv-tools libssh2-1 libstdc++6 libstorage4 libtasn1 libtasn1-6 libtirpc1 libudev1 libusb-0_1-4 libusb-1_0-0 libustr-1_0-1 libuuid1 libwrap0 libxcb-render0 libxcb-shm0 libxcb1 libxml2-2 libxtables9 libyui-ncurses-pkg4 libyui-ncurses4 libyui4 libz1 libzio1 libzypp limal limal-perl logrotate lsscsi lvm2 man man-pages mdadm mkinitrd module-init-tools multipath-tools ncurses-utils net-tools netcfg openSUSE-build-key openSUSE-release openSUSE-release-ftp openslp openssh openssl pam pam-config pango-tools parted pciutils pciutils-ids perl perl-Bootloader perl-Config-Crontab perl-XML-Parser perl-XML-Simple perl-base perl-gettext permissions pinentry pkg-config plymouth plymouth-branding-openSUSE plymouth-plugin-label plymouth-plugin-script plymouth-scripts polkit procps python-base rpcbind rpm rsyslog sed shadow shared-mime-info sudo suse-module-tools sysconfig sysfsutils syslog-service systemd systemd-presets-branding-openSUSE systemd-sysvinit sysvinit-tools tar tcpd terminfo-base timezone tunctl u-boot-tools udev unzip update-alternatives util-linux vim vim-base vlan wallpaper-branding-openSUSE wireless-tools wpa_supplicant xz yast2 yast2-bootloader yast2-core yast2-country yast2-country-data yast2-dbus-client yast2-firstboot yast2-hardware-detection yast2-installation yast2-mouse yast2-packager yast2-perl-bindings yast2-pkg-bindings yast2-proxy yast2-slp yast2-storage yast2-trans-stats yast2-transfer yast2-update yast2-xml yast2-ycp-ui-bindings zypper"
@@ -1108,14 +1099,14 @@ install_system()
 			mkdir tmp; chmod 01777 tmp
 		exit 0)
 		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
-		
+
 		msg -n "Retrieving packages list ... "
 		(set -e
 			REPODATA_FILE=`wget -q -O - $REPO/repodata | sed -n '/<a / s/^.*<a [^>]*href="\([^\"]*\-primary\.xml\.gz\)".*$/\1/p'`
 			wget -q -O - $REPO/repodata/$REPODATA_FILE | gzip -dc | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\)".*$/\1/p' > $PKG_LIST
 		exit 0)
 		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
-		
+
 		msg "Retrieving base packages: "
 		for PACKAGE in $BASIC_PACKAGES; do
 			msg -n "$PACKAGE ... "
@@ -1132,7 +1123,7 @@ install_system()
     		(cd $MNT_TARGET; rpm2cpio $MNT_TARGET/tmp/$FILE | cpio -idmu)
     		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 		done
-		
+
 		msg "Mounting partitions: "
 		mount_system proc sys dev pts shm
 
@@ -1143,62 +1134,65 @@ install_system()
 	;;
 	gentoo)
 		msg "Installing Gentoo distribution: "
-		
+
 		msg -n "Preparing for deployment ... "
 		(set -e
 			cd $MNT_TARGET
 			mkdir tmp; chmod 01777 tmp
 		exit 0)
 		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
-		
+
 		msg -n "Getting repository path ... "
 		REPO="${MIRROR%/}/arm/autobuilds"
 		STAGE3="$MNT_TARGET/tmp/latest-stage3.tar.bz2"
 		ARCHIVE=`wget -q -O - "${REPO}/latest-stage3-${ARCH}.txt" | grep -v ^#`
 		[ -n "$ARCHIVE" ]&& msg "done" || { msg "fail"; return 1; }
-		
+
 		msg -n "Retrieving stage3 archive ... "
-    	for i in 1 2 3
-    	do
-    		wget -q -c -O $STAGE3 $REPO/$ARCHIVE
-    		[ $? -eq 0 ] && { OK=1; break; } || sleep 30s
-    	done
+		for i in 1 2 3
+		do
+    			wget -q -c -O $STAGE3 $REPO/$ARCHIVE
+			[ $? -eq 0 ] && { OK=1; break; } || sleep 30s
+		done
 		[ "$OK" == "1" ] && msg "done" || { msg "fail"; return 1; }
-		
+
 		msg -n "Unpacking stage3 archive ... "
 		(set -e
 			bzip2-full --decompress --stdout --force $STAGE3 | tar xf - -C $MNT_TARGET
 			rm $STAGE3
 		exit 0)
 		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
-		
+
 		msg "Mounting partitions: "
 		mount_system proc sys dev pts shm
-		
+
 		msg "Preconfigure system: "
 		configure_system dns mtab groups repository
-		
+
 		msg -n "Updating portage tree ... "
 		(set -e
-			chroot $MNT_TARGET sh -c "emerge --sync; eselect profile set 1"
+			chroot $MNT_TARGET emerge --sync
+			chroot $MNT_TARGET eselect profile set 1
 		exit 0) 1>/dev/null
 		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
-		
+
 		msg "Updating world: "
 		(set -e
 			chroot $MNT_TARGET emerge --update --deep world
+			sed -i 's/^replace-unmodified=.*/replace-unmodified=yes/g' $MNT_TARGET/etc/dispatch-conf.conf
+			chroot $MNT_TARGET dispatch-conf
 		exit 0) 1>&3 2>&3
 		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
-		
+
 		msg "Installing additional packages: "
 		ADDITIONAL_PACKAGES="sudo"
 		(set -e
 			chroot $MNT_TARGET emerge $ADDITIONAL_PACKAGES
 		exit 0) 1>&3 2>&3
-		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }	  
+		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 	;;
 	esac
-	
+
 	configure_system
 	[ $? -ne 0 ] && return 1
 
@@ -1209,14 +1203,14 @@ uninstall_system()
 {
 	umount_system
 	[ $? -ne 0 ] && return 1
-	
+
 	#msg -n "Removing disk image ... "
 	#(set -e
 	#	[ -f "$IMG_TARGET" ] && rm $IMG_TARGET
 	#	[ -d "$MNT_TARGET" ] && rmdir $MNT_TARGET
 	#exit 0)
 	#[ $? -eq 0 ] && msg "done" || msg "fail"
-	
+
 	msg -n "Removing symlink ... "
 	(set -e
 		if [ -e "/system/bin/linuxdeploy" ]; then
@@ -1225,14 +1219,14 @@ uninstall_system()
 		fi
 	exit 0)
 	[ $? -eq 0 ] && msg "done" || msg "fail"
-			
+
 	msg -n "Removing environment ... "
 	(set -e
 		rm -rf ${ENV_DIR%/}/mnt ${ENV_DIR%/}/deploy ${ENV_DIR%/}/etc ${ENV_DIR%/}/bin
 		[ -d "$ENV_DIR" ] && rmdir $ENV_DIR
 	exit 0)
 	[ $? -eq 0 ] && msg "done" || msg "fail"
-	
+
 	return 0
 }
 

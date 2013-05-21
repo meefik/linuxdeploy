@@ -51,6 +51,23 @@ public class MainActivity extends SherlockActivity {
 		logView.setText("");
 	}
 	
+	private static void showLog() {
+	    // read all logs from List
+	    String log = "";
+	    for (String str:logList)
+	        log += str + "\n";
+	    // show log in TextView
+		logView.setText(log);
+		// scroll TextView to bottom
+		logScroll.post(new Runnable() {
+			@Override
+			public void run() {
+				logScroll.fullScroll(View.FOCUS_DOWN);
+				logScroll.clearFocus();
+			}
+		});
+	}
+	
 	public static void printLogMsg(String msg) {
 		if (msg.length() > 0) {
 			String[] tokens = msg.split("\\n");
@@ -70,20 +87,8 @@ public class MainActivity extends SherlockActivity {
 			}
 			// set fragment
 			fragment = (msg.charAt(msg.length()-1) != '\n');
-		    // read all logs from List
-		    String log = "";
-		    for (String str:logList)
-		        log += str + "\n";
-		    // show log in TextView
-			logView.setText(log);
-			// scroll TextView to bottom
-			logScroll.post(new Runnable() {
-				@Override
-				public void run() {
-					logScroll.fullScroll(View.FOCUS_DOWN);
-					logScroll.clearFocus();
-				}
-			});
+			// show log
+			showLog();
 			// save the message to file
 			if (PrefStore.LOGGING) {
 				saveLogs(msg);
@@ -119,18 +124,6 @@ public class MainActivity extends SherlockActivity {
 		// WiFi lock init
 		WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
 		wifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL, "linuxdeploy");
-
-		// ok we back, load the saved text
-		if (savedInstanceState != null) {
-			String savedText = savedInstanceState.getString("textlog");
-			logView.setText(savedText);
-			logScroll.post(new Runnable() {
-				@Override
-				public void run() {
-					logScroll.fullScroll(View.FOCUS_DOWN);
-				}
-			});
-		}
 	}
 
 	@Override
@@ -285,8 +278,8 @@ public class MainActivity extends SherlockActivity {
 		// show icon
 		notification(getApplicationContext(), this.getIntent());
 		
-		// Restore text
-		logView.setTextSize(TypedValue.COMPLEX_UNIT_SP, PrefStore.FONT_SIZE);
+		// Restore log
+		showLog();
 
 		// Screen lock
 		if (PrefStore.SCREEN_LOCK)
@@ -314,12 +307,6 @@ public class MainActivity extends SherlockActivity {
 		}
 	}
 
-	@Override
-	public void onSaveInstanceState(Bundle savedInstanceState) {
-		// now, save the text if something overlaps this Activity
-		savedInstanceState.putString("textlog", logView.getText().toString());
-	}
-	
 	public static void notification(Context context, Intent intent) {
 		final int NOTIFY_ID = 1;
 		NotificationManager mNotificationManager =
