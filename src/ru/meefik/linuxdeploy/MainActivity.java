@@ -20,7 +20,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ScrollView;
@@ -37,6 +36,7 @@ public class MainActivity extends SherlockActivity {
 	private static List<String> logList = new ArrayList<String>();
 	private static boolean fragment = false;
 	private static WifiLock wifiLock;
+	final static int NOTIFY_ID = 1;
 	static Handler handler;
 
 	private static String getTimeStamp() {
@@ -242,6 +242,7 @@ public class MainActivity extends SherlockActivity {
 			clearLog();
 			break;
 		case R.id.menu_exit:
+			notification(getApplicationContext());
 			finish();
 			break;
 		case android.R.id.home:
@@ -308,7 +309,6 @@ public class MainActivity extends SherlockActivity {
 	}
 
 	public static void notification(Context context, Intent intent) {
-		final int NOTIFY_ID = 1;
 		NotificationManager mNotificationManager =
 			    (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 		if (PrefStore.isShowIcon(context)) {
@@ -337,5 +337,11 @@ public class MainActivity extends SherlockActivity {
 			mNotificationManager.cancel(NOTIFY_ID);
 		}
     }
+	
+	public static void notification(Context context) {
+		NotificationManager mNotificationManager =
+			    (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+		mNotificationManager.cancel(NOTIFY_ID);
+	}
 
 }
