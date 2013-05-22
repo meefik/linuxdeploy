@@ -8,6 +8,7 @@ Automatic mount /dev/shm
 Updated debootstrap up to 1.0.48
 Support for multiple input devices in framebuffer mode (in xorg.conf changed lines are marked as #linuxdeploy)
 Optimize of making disk image file
+Hide icon in notification bar after you exit the application
 
 1.3.8
 Added support Ubuntu 13.04 Raring Ringtail
@@ -206,6 +207,7 @@ Updated list packages of base system installation
 Обновлен debootstrap до версии 1.0.48
 Поддержка нескольких устройств ввода в режиме фрейм-буфера (в xorg.conf изменяемые строки отмечены как #linuxdeploy)
 Оптимизирован механизм создания файла образа диска
+Скрытие значка на панель уведомлений после выхода из приложения
 
 1.3.8
 Добавлена поддержка Ubuntu 13.04 Raring Ringtail
