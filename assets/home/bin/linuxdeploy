@@ -714,17 +714,17 @@ start_system()
 			debian|ubuntu|kali)				if [ -z "`grep '^aid_inet:.*,messagebus' $MNT_TARGET/etc/group`" ]; then
 					sed -i "s|^\(aid_inet:.*\)|\1,messagebus|g" $MNT_TARGET/etc/group
 				fi
-				chroot $MNT_TARGET su - root -c "/etc/init.d/ssh start"
+				chroot $MNT_TARGET su - root -c '/etc/init.d/ssh start'
 			;;
 			archlinux|fedora|gentoo)
 				if [ -z "`ls $MNT_TARGET/etc/ssh/ | grep key`" ]; then
-					chroot $MNT_TARGET su - root -c "ssh-keygen -A" || true
+					chroot $MNT_TARGET su - root -c 'ssh-keygen -A' || true
 					echo
 				fi
-				chroot $MNT_TARGET su - root -c "`which sshd`"
+				chroot $MNT_TARGET su - root -c '`which sshd`'
 			;;
 			opensuse)
-				chroot $MNT_TARGET su - root -c "/etc/init.d/sshd start"
+				chroot $MNT_TARGET su - root -c '/etc/init.d/sshd start'
 			;;
 			esac
 		exit 0)
@@ -733,9 +733,9 @@ start_system()
 		msg "skip"
 	fi
 
-	XPID=`$(cat $MNT_TARGET/tmp/xsession.pid)`
+	XPID=`cat $MNT_TARGET/tmp/xsession.pid`
 	if [ -n "$XPID" ]; then
-		XSESSION=`ps | grep " $XPID " | grep -v grep`
+		XSESSION=`ps | grep "^$XPID "`
 	fi
 	let vncport=5900+$VNC_DISPLAY
 	msg -n "VNC :$vncport ... "	
@@ -812,7 +812,7 @@ stop_system()
 				chroot $MNT_TARGET su - root -c "/etc/init.d/ssh stop"
 			;;
 			archlinux|fedora|gentoo)
-				chroot $MNT_TARGET su - root -c 'kill -9 `cat /var/run/sshd.pid`'
+				chroot $MNT_TARGET su - root -c 'kill -9 $(cat /var/run/sshd.pid)'
 			;;
 			opensuse)
 				chroot $MNT_TARGET su - root -c "/etc/init.d/sshd stop"
@@ -841,7 +841,7 @@ stop_system()
 	msg -n "X Window System ... "
 	if [ "$XSERVER_START" == "y" ]; then
 		(set -e
-			chroot $MNT_TARGET su - $USER_NAME -c 'kill -9 -$(cat /tmp/xsession.pid)'
+			chroot  su - $USER_NAME -c 'kill -9 $(cat /tmp/xsession.pid)'
 		exit 0)
 		[ $? -eq 0 ] && msg "done" || msg "fail"
 	else
@@ -851,7 +851,7 @@ stop_system()
 	msg -n "Frame Buffer ... "
 	if [ "$FB_START" == "y" ]; then
 		(set -e
-			chroot $MNT_TARGET su - $USER_NAME -c 'kill -9 -$(cat /tmp/xsession.pid)'
+			chroot $MNT_TARGET su - $USER_NAME -c 'kill -9 $(cat /tmp/xsession.pid)'
 		exit 0)
 		[ $? -eq 0 ] && msg "done" || msg "fail"
 	else
