@@ -716,15 +716,12 @@ start_system()
 				fi
 				chroot $MNT_TARGET su - root -c "/etc/init.d/ssh start"
 			;;
-			archlinux)
-				chroot $MNT_TARGET su - root -c "/etc/rc.d/sshd start"
-			;;
-			fedora|gentoo)
+			archlinux|fedora|gentoo)
 				if [ -z "`ls $MNT_TARGET/etc/ssh/ | grep key`" ]; then
 					chroot $MNT_TARGET su - root -c "ssh-keygen -A" || true
 					echo
 				fi
-				chroot $MNT_TARGET su - root -c "/usr/sbin/sshd -p $SSH_PORT"
+				chroot $MNT_TARGET su - root -c "`which sshd` -p $SSH_PORT"
 			;;
 			opensuse)
 				chroot $MNT_TARGET su - root -c "/etc/init.d/sshd start"
@@ -814,10 +811,7 @@ stop_system()
 			debian|ubuntu|kali)
 				chroot $MNT_TARGET su - root -c "/etc/init.d/ssh stop"
 			;;
-			archlinux)
-				chroot $MNT_TARGET su - root -c "/etc/rc.d/sshd stop"
-			;;
-			fedora|gentoo)
+			archlinux|fedora|gentoo)
 				chroot $MNT_TARGET su - root -c 'kill -9 `cat /var/run/sshd.pid`'
 			;;
 			opensuse)
