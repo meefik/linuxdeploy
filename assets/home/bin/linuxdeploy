@@ -721,7 +721,7 @@ start_system()
 					chroot $MNT_TARGET su - root -c "ssh-keygen -A" || true
 					echo
 				fi
-				chroot $MNT_TARGET su - root -c "`which sshd` -p $SSH_PORT"
+				chroot $MNT_TARGET su - root -c "`which sshd`"
 			;;
 			opensuse)
 				chroot $MNT_TARGET su - root -c "/etc/init.d/sshd start"
