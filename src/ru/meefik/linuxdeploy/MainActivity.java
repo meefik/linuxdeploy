@@ -243,6 +243,8 @@ public class MainActivity extends SherlockActivity {
 			break;
 		case R.id.menu_exit:
 			notification(getApplicationContext());
+			if (wifiLock.isHeld())
+				wifiLock.release();
 			finish();
 			break;
 		case android.R.id.home:
