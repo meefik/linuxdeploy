@@ -716,7 +716,7 @@ start_system()
 
 	msg "Starting services: "
 	msg -n "SSH :$SSH_PORT ... "
-	if [ "$SSH_START" == "y" -a -z "`ps | grep sshd | grep -v grep`" ]; then
+	if [ "$SSH_START" == "y" -a -z "`ps | grep '/sshd$' | grep -v grep`" ]; then
 		(set -e
 			sed -i "s|^Port .*|Port $SSH_PORT|g" $MNT_TARGET/etc/ssh/sshd_config
 			case "$DISTRIB" in
@@ -985,7 +985,7 @@ install_system()
 		(set -e
 			chroot $MNT_TARGET /usr/bin/pacman --noconfirm -Sy
 			EXTRA_PACKAGES=`chroot $MNT_TARGET /usr/bin/pacman --noconfirm -Sg base | awk '{print $2}' | grep -v -e 'linux' -e 'kernel'`
-			chroot $MNT_TARGET /usr/bin/pacman --noconfirm --force -Sq $BASIC_PACKAGES $EXTRA_PACKAGES initscripts sudo openssh
+			chroot $MNT_TARGET /usr/bin/pacman --noconfirm --force -Sq $BASIC_PACKAGES $EXTRA_PACKAGES sudo openssh
 		exit 0) 1>&3 2>&3
 		[ $? -ne 0 ] && return 1
 
@@ -1246,7 +1246,7 @@ status_system()
 	msg "Active system: $LINUX_VERSION"
 	msg "Running services: "
 	msg -n "* SSH: "
-	[ -n "`ps | grep '/usr/sbin/sshd' | grep -v grep`" ] && msg "yes" || msg "no"
+	[ -n "`ps | grep '/sshd$' | grep -v grep`" ] && msg "yes" || msg "no"
 	msg -n "* VNC: "
 	[ -n "`ps | grep 'X*vnc' | grep -v grep`" ] && msg "yes" || msg "no"
 	msg "Mounted parts on Linux: "

@@ -9,6 +9,8 @@ Updated debootstrap up to 1.0.48
 Support for multiple input devices in framebuffer mode (in xorg.conf changed lines are marked as #linuxdeploy)
 Hide icon in notification bar after you exit the application
 Solved problem with running SSH in Arch Linux
+Takes into account changes in Arch Linux packages
+Bugfix: conflict sshd with other SSH applications in Android
 
 1.3.8
 Added support Ubuntu 13.04 Raring Ringtail
@@ -208,6 +210,8 @@ Updated list packages of base system installation
 Поддержка нескольких устройств ввода в режиме фрейм-буфера (в xorg.conf изменяемые строки отмечены как #linuxdeploy)
 Скрытие значка на панели уведомлений после выхода из приложения
 Решена проблема с запуском SSH в Arch Linux
+Учтены изменения в пакетах Arch Linux
+Исправлен конфликт sshd с другими SSH-приложениями в Android
 
 1.3.8
 Добавлена поддержка Ubuntu 13.04 Raring Ringtail
