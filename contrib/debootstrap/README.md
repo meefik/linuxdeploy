@@ -19,5 +19,5 @@ debootstrap - bootstrap a basic Debian system.
 
     cp ./usr/sbin/debootstrap ../linuxdeploy/assets/home/bin/debootstrap
     cp -r ./usr/share/debootstrap ../linuxdeploy/assets/home/deploy/debootstrap
-    mv ../linuxdeploy/assets/home/deploy/debootstrap/devices.tar.gz ../linuxdeploy/assets/home/deploy/debootstrap/devices.tgz
+    cp ../linuxdeploy/assets/home/deploy/debootstrap/devices.tar.gz ../linuxdeploy/assets/home/deploy/debootstrap/devices.tgz
 
