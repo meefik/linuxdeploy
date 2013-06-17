@@ -18,7 +18,7 @@ mke2fs - create an ext2/3 filesystem.
     export CFLAGS=-static
     export LDLAGS=-static
     ./configure
-    cd misc && make mke2fs
+    make
 
 4) Copy mke2fs binary to linuxdeploy directory:
 
