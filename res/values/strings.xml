@@ -13,6 +13,8 @@
     <string name="menu_new">New</string>
     <string name="menu_edit">Edit</string>
     <string name="menu_discard">Delete</string>
+    <string name="menu_import">Import</string>
+	<string name="menu_export">Export</string>
     <string name="notification_current_profile">Current profile</string>
     <string name="title_activity_main">Linux Deploy</string>
     <string name="title_activity_about">About</string>
@@ -25,6 +27,12 @@
     <string name="confirm_stop_message">Stop services and unmount GNU/Linux system?</string>
     <string name="new_profile_title">Profile name</string>
     <string name="edit_profile_title">Profile name</string>
+    <string name="import_profile_title">Import profile</string>
+    <string name="export_profile_title">Export profile</string>
+    <string name="toast_import_profile_success">Profile has been successfully imported.</string>
+    <string name="toast_import_profile_error">Error importing profile!</string>
+    <string name="toast_export_profile_success">Profile has been successfully exported.</string>
+    <string name="toast_export_profile_error">Error exporting profile!</string>
     <string name="confirm_discard_title">Remove profile</string>
     <string name="confirm_discard_message">Remove selected profile?</string>
     <string name="app_preferences">Application</string>

@@ -13,6 +13,8 @@
     <string name="menu_new">Добавить</string>
     <string name="menu_edit">Изменить</string>
     <string name="menu_discard">Удалить</string>
+    <string name="menu_import">Импортировать</string>
+	<string name="menu_export">Экспортировать</string>
     <string name="notification_current_profile">Текущий профиль</string>
     <string name="title_activity_main">Linux Deploy</string>
     <string name="title_activity_about">О программе</string>
@@ -25,6 +27,12 @@
     <string name="confirm_stop_message">Остановить сервисы и размонтировать GNU/Linux?</string>
     <string name="new_profile_title">Имя профиля</string>
     <string name="edit_profile_title">Имя профиля</string>
+    <string name="import_profile_title">Импортировать профиль</string>
+    <string name="export_profile_title">Экспортировать профиль</string>
+    <string name="toast_import_profile_success">Профиль успешно импортирован.</string>
+    <string name="toast_import_profile_error">Ошибка импорта профиля!</string>
+    <string name="toast_export_profile_success">Профиль успешно экспортирован.</string>
+    <string name="toast_export_profile_error">Ошибка экспорта профиля!</string>
     <string name="confirm_discard_title">Удаление профиля</string>
     <string name="confirm_discard_message">Удалить выбранный профиль?</string>
     <string name="app_preferences">Приложение</string>

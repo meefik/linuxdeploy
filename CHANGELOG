@@ -1,6 +1,10 @@
 Changelog (English)
 ===================
 
+1.4.0
+Added function of import/export profiles
+Support Android 2.1 (API 7)
+
 1.3.9
 Added support Gentoo (installation requires at least 4 GB of free space)
 Limitation of scroll buffer size
@@ -201,6 +205,10 @@ Updated list packages of base system installation
 
 История изменений (Русский)
 ===========================
+
+1.4.0
+Добавлена ​​функция импорта/экспорта профилей.
+Поддержка Android 2.1 (API 7)
 
 1.3.9
 Добавлена поддержка Gentoo (для установки необходимо не менее 4 GB свободного места)
