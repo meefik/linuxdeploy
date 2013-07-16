@@ -1,5 +1,6 @@
 package ru.meefik.linuxdeploy;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -7,6 +8,7 @@ import java.util.Comparator;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -14,6 +16,7 @@ import android.view.View.OnTouchListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
@@ -63,6 +66,7 @@ public class ProfilesActivity extends SherlockActivity implements OnTouchListene
 	public boolean onOptionsItemSelected(MenuItem item) {
 		final EditText input = new EditText(this);
 		final int pos = profilesList.getCheckedItemPosition();
+		File extStore = Environment.getExternalStorageDirectory();
 		switch (item.getItemId()) {
 		case R.id.menu_new:
 			new AlertDialog.Builder(this)
@@ -74,8 +78,7 @@ public class ProfilesActivity extends SherlockActivity implements OnTouchListene
 								public void onClick(DialogInterface dialog,
 										int whichButton) {
 									String pName = input.getText().toString();
-									if (pName.length() > 0
-											&& listItems.indexOf(pName) < 0) {
+									if (pName.length() > 0) {
 										listItems
 												.add(new Profile<String, String>(
 														String.valueOf(System
@@ -108,8 +111,7 @@ public class ProfilesActivity extends SherlockActivity implements OnTouchListene
 											int whichButton) {
 										String pName = input.getText()
 												.toString();
-										if (pName.length() > 0
-												&& listItems.indexOf(pName) < 0) {
+										if (pName.length() > 0) {
 											listItems
 													.set(pos,
 															new Profile<String, String>(
@@ -156,6 +158,108 @@ public class ProfilesActivity extends SherlockActivity implements OnTouchListene
 									}
 								})
 						.setNegativeButton(android.R.string.no,
+								new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog,
+											int whichButton) {
+										dialog.cancel();
+									}
+								}).show();
+			}
+			break;
+		case R.id.menu_import:
+			String srcFile = extStore.getAbsolutePath() + "/linux.xml";
+			input.setText(srcFile);
+			input.setSelection(input.getText().length());
+			new AlertDialog.Builder(this)
+					.setTitle(R.string.import_profile_title)
+					.setView(input)
+					.setPositiveButton(android.R.string.ok,
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int whichButton) {
+									String profilePath = input.getText()
+											.toString();
+									String key = String.valueOf(System
+											.currentTimeMillis());
+									if (PrefStore.importProfile(
+											getApplicationContext(), key,
+											profilePath)) {
+										String profileFile = new File(
+												profilePath).getName();
+										String profileName = profileFile
+												.replaceAll("^(.*).xml$", "$1");
+
+										listItems
+												.add(new Profile<String, String>(
+														key, profileName));
+										adapter.notifyDataSetChanged();
+
+										Toast toast = Toast
+												.makeText(
+														getApplicationContext(),
+														getString(R.string.toast_import_profile_success),
+														Toast.LENGTH_SHORT);
+										toast.show();
+									} else {
+										Toast toast = Toast
+												.makeText(
+														getApplicationContext(),
+														getString(R.string.toast_import_profile_error),
+														Toast.LENGTH_SHORT);
+										toast.show();
+									}
+								}
+							})
+					.setNegativeButton(android.R.string.cancel,
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int whichButton) {
+									dialog.cancel();
+								}
+							}).show();
+			break;
+		case R.id.menu_export:
+			if (pos >= 0 && pos < listItems.size()) {
+				String validFileName = listItems.get(pos).getValue()
+						.replaceAll("[^0-9a-zA-Z_-]", "_");
+				String dstFile = extStore.getAbsolutePath() + "/"
+						+ validFileName + ".xml";
+				input.setText(dstFile);
+				input.setSelection(input.getText().length());
+				new AlertDialog.Builder(this)
+						.setTitle(R.string.export_profile_title)
+						.setView(input)
+						.setPositiveButton(android.R.string.ok,
+								new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog,
+											int whichButton) {
+										String pName = input.getText()
+												.toString();
+										if (PrefStore.exportProfile(
+												getApplicationContext(),
+												listItems.get(pos).getKey(),
+												pName)) {
+											Toast toast = Toast
+													.makeText(
+															getApplicationContext(),
+															getString(R.string.toast_export_profile_success),
+															Toast.LENGTH_SHORT);
+											toast.show();
+										} else {
+											Toast toast = Toast
+													.makeText(
+															getApplicationContext(),
+															getString(R.string.toast_export_profile_error),
+															Toast.LENGTH_SHORT);
+											toast.show();
+										}
+									}
+								})
+						.setNegativeButton(android.R.string.cancel,
 								new DialogInterface.OnClickListener() {
 									@Override
 									public void onClick(DialogInterface dialog,

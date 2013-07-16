@@ -1,9 +1,13 @@
 package ru.meefik.linuxdeploy;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Locale;
@@ -14,6 +18,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.os.Environment;
+import android.util.Log;
 
 public class PrefStore {
 
@@ -279,6 +284,61 @@ public class PrefStore {
 		File f = new File(c.getFilesDir(), fPref);
 		if (f.exists())
 			f.delete();
+	}
+	
+	// import profile
+	public static boolean importProfile(Context c, String key, String src) {
+		String fPref = "../shared_prefs/" + key + ".xml";
+		File destFile = new File(c.getFilesDir(), fPref);
+		File sourceFile = new File(src);
+		if (sourceFile.exists()) {
+			try {
+				copyFile(sourceFile, destFile);
+				return true;
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return false;
+	}
+	
+	// export profile
+	public static boolean exportProfile(Context c, String key, String dst) {
+		String fPref = "../shared_prefs/" + key + ".xml";
+		File sourceFile = new File(c.getFilesDir(), fPref);
+		File destFile = new File(dst);
+		if (sourceFile.exists()) {
+			try {
+				copyFile(sourceFile, destFile);
+				return true;
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return false;
+	}
+	
+	public static void copyFile(File sourceFile, File destFile) throws IOException {
+	    if(!destFile.exists()) {
+	        destFile.createNewFile();
+	    }
+
+	    FileChannel source = null;
+	    FileChannel destination = null;
+
+	    try {
+	        source = new FileInputStream(sourceFile).getChannel();
+	        destination = new FileOutputStream(destFile).getChannel();
+	        destination.transferFrom(source, 0, source.size());
+	    }
+	    finally {
+	        if(source != null) {
+	            source.close();
+	        }
+	        if(destination != null) {
+	            destination.close();
+	        }
+	    }
 	}
 
 	// multilanguage support
