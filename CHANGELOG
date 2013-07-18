@@ -4,7 +4,8 @@ Changelog (English)
 1.4.0
 Added function of import/export profiles
 Support Android 2.1 (API 7)
-Updated list of packages openSUSE
+Updated list of packages openSUSE (armv7hl)
+Added support Fedora 19
 
 1.3.9
 Added support Gentoo (installation requires at least 4 GB of free space)
@@ -210,7 +211,8 @@ Updated list packages of base system installation
 1.4.0
 Добавлена ​​функция импорта/экспорта профилей
 Поддержка Android 2.1 (API 7)
-Обновлен список пакетов openSUSE
+Обновлен список пакетов openSUSE (armv7hl)
+Добавлена поддержка Fedora 19
 
 1.3.9
 Добавлена поддержка Gentoo (для установки необходимо не менее 4 GB свободного места)
