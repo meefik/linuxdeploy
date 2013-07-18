@@ -273,6 +273,12 @@ configure_system()
 				sed -i "s|^[[:space:]]*SigLevel[[:space:]]*=.*$|SigLevel = Never|" $MNT_TARGET/etc/pacman.conf
 				sed -i "s|^[[:space:]]*Server[[:space:]]*=.*|Server = $MIRROR/$ARCH/\$repo|" $MNT_TARGET/etc/pacman.d/mirrorlist
 			;;
+			fedora)
+				REPO="${MIRROR%/}/${SUITE}/Everything/${ARCH}/os"
+				sed -i 's/^\(mirrorlist=.*repo=fedora-\$releasever\)/#\1/g' $MNT_TARGET/etc/yum.repos.d/fedora.repo
+				sed -i "s|^#baseurl=.*/\$releasever/Everything/\$basearch/os/|baseurl=$REPO|g" $MNT_TARGET/etc/yum.repos.d/fedora.repo
+				find $MNT_TARGET/etc/yum.repos.d/ -name *.repo ! -name fedora.repo -type f | while read f; do sed 's/^enabled=.*/enabled=0/g' $f; done
+			;;
 			opensuse)
 				REPO_NAME="openSUSE-${SUITE}-${ARCH}-Repo-OSS"
 				REPO_FILE="$MNT_TARGET/etc/zypp/repos.d/${REPO_NAME}.repo"
