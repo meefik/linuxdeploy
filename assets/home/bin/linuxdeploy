@@ -274,10 +274,16 @@ configure_system()
 				sed -i "s|^[[:space:]]*Server[[:space:]]*=.*|Server = $MIRROR/$ARCH/\$repo|" $MNT_TARGET/etc/pacman.d/mirrorlist
 			;;
 			fedora)
-				REPO="${MIRROR%/}/${SUITE}/Everything/${ARCH}/os"
-				sed -i 's/^\(mirrorlist=.*repo=fedora-\$releasever\)/#\1/g' $MNT_TARGET/etc/yum.repos.d/fedora.repo
-				sed -i "s|^#baseurl=.*/\$releasever/Everything/\$basearch/os/|baseurl=$REPO|g" $MNT_TARGET/etc/yum.repos.d/fedora.repo
-				find $MNT_TARGET/etc/yum.repos.d/ -name *.repo ! -name fedora.repo -type f | while read f; do sed 's/^enabled=.*/enabled=0/g' $f; done
+				find $MNT_TARGET/etc/yum.repos.d/ -name *.repo | while read f; do sed -i 's/^enabled=.*/enabled=0/g' $f; done
+				REPO_FILE="$MNT_TARGET/etc/yum.repos.d/fedora-${SUITE}-${ARCH}.repo"
+				echo "[fedora-${SUITE}-${ARCH}]" > $REPO_FILE
+				echo "name=Fedora ${SUITE} - ${ARCH}" >> $REPO_FILE
+				echo "failovermethod=priority" >> $REPO_FILE
+				echo "baseurl=${MIRROR%/}/${SUITE}/Everything/${ARCH}/os/" >> $REPO_FILE
+				echo "enabled=1" >> $REPO_FILE
+				echo "metadata_expire=7d" >> $REPO_FILE
+				echo "gpgcheck=0" >> $REPO_FILE
+				chmod 644 $REPO_FILE
 			;;
 			opensuse)
 				REPO_NAME="openSUSE-${SUITE}-${ARCH}-Repo-OSS"
