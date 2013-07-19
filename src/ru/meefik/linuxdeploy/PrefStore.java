@@ -17,8 +17,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
+import android.graphics.Point;
+import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
+import android.view.Display;
+import android.view.WindowManager;
 
 public class PrefStore {
 
@@ -156,9 +160,9 @@ public class PrefStore {
 				c.getString(R.string.vncdisplay));
 		VNC_DEPTH = sp.getString("vncdepth", c.getString(R.string.vncdepth));
 		VNC_DPI = sp.getString("vncdpi", c.getString(R.string.vncdpi));
-		VNC_GEOMETRY = sp.getString("vncwidth", c.getString(R.string.vncwidth))
+		VNC_GEOMETRY = sp.getString("vncwidth", String.valueOf(getWidth(c)))
 				+ "x"
-				+ sp.getString("vncheight", c.getString(R.string.vncheight));
+				+ sp.getString("vncheight", String.valueOf(getHeight(c)));
 
 		XSERVER_START = sp.getBoolean("xstartup",
 				c.getString(R.string.xstartup).equals("true") ? true : false) ? "y"
@@ -187,6 +191,35 @@ public class PrefStore {
 		} catch (NameNotFoundException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static int getWidth(Context mContext){
+	    int width=0;
+	    WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+	    Display display = wm.getDefaultDisplay();
+	    if(Build.VERSION.SDK_INT>12){                   
+	        Point size = new Point();
+	        display.getSize(size);
+	        width = size.x;
+	    }
+	    else{
+	        width = display.getWidth();  // deprecated
+	    }
+	    return width;
+	}
+	
+	public static int getHeight(Context mContext){
+	    int height=0;
+	    WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+	    Display display = wm.getDefaultDisplay();
+	    if(Build.VERSION.SDK_INT>12){               
+	        Point size = new Point();
+	        display.getSize(size);
+	        height = size.y;
+	    }else{          
+	        height = display.getHeight();  // deprecated
+	    }
+	    return height;      
 	}
 	
 	public static String getLocalIpAddress() {

@@ -200,6 +200,18 @@ public class DeployPrefsActivity extends SherlockPreferenceActivity implements
 				((EditTextPreference) pref).setText(mntPath);
 				((EditTextPreference) pref).setSummary(mntPath);
 			}
+			if (editPref.getKey().equals("vncwidth")
+					&& editPref.getText().equals("{replace}")) {
+				String vncWidth = String.valueOf(PrefStore.getWidth(getApplicationContext()));
+				((EditTextPreference) pref).setText(vncWidth);
+				((EditTextPreference) pref).setSummary(vncWidth);
+			}
+			if (editPref.getKey().equals("vncheight")
+					&& editPref.getText().equals("{replace}")) {
+				String vncHeight = String.valueOf(PrefStore.getHeight(getApplicationContext()));
+				((EditTextPreference) pref).setText(vncHeight);
+				((EditTextPreference) pref).setSummary(vncHeight);
+			}
 		}
 
 		if (pref instanceof ListPreference) {
