@@ -39,8 +39,8 @@
     <string name="vncdisplay" translatable="false">0</string>
     <string name="vncdepth" translatable="false">16</string>
     <string name="vncdpi" translatable="false">75</string>
-    <string name="vncwidth" translatable="false">800</string>
-    <string name="vncheight" translatable="false">400</string>
+    <string name="vncwidth" translatable="false">{replace}</string>
+    <string name="vncheight" translatable="false">{replace}</string>
     <string name="xstartup" translatable="false">false</string>
     <string name="xdisplay" translatable="false">1</string>
     <string name="xhost" translatable="false">127.0.0.1</string>
