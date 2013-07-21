@@ -73,7 +73,6 @@
         <item>opensuse</item>
         <item>kali</item>
         <item>gentoo</item>
-        <item>angstrom</item>
     </string-array>
     <string-array name="distribution_entries" translatable="false">
         <item>Debian</item>
@@ -83,7 +82,6 @@
         <item>openSUSE</item>
         <item>Kali Linux</item>
         <item>Gentoo</item>
-        <item>Ångström</item>
     </string-array>
 
     <!-- Debian -->
@@ -170,17 +168,6 @@
         <item>armv6j_hardfp</item>
         <item>armv7a</item>
         <item>armv7a_hardfp</item>
-    </string-array>
-    
-    <!-- Angstrom -->
-
-    <string-array name="angstrom_suite_values" translatable="false">
-        <item>unstable</item>
-    </string-array>
-    <string-array name="angstrom_architecture_values" translatable="false">
-        <item>armv5te</item>
-        <item>armv6</item>
-        <item>armv7a</item>
     </string-array>
 
 </resources>
