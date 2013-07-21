@@ -301,6 +301,30 @@ configure_system()
 					sed -i "s|^\(aid_inet:.*\)|\1,portage|g" $MNT_TARGET/etc/group
 				fi
 			;;
+			angstrom)
+				mkdir -p $MNT_TARGET/etc/opkg
+				mkdir -p $MNT_TARGET/usr/lib/opkg
+				# wget required
+				if [ ! -e "$MNT_TARGET/usr/bin/wget" ]; then
+					mkdir -p $MNT_TARGET/usr/bin
+					ln -s /bin/busybox $MNT_TARGET/usr/bin/wget
+					#chroot $MNT_TARGET update-alternatives --install /usr/bin/wget wget /bin/busybox 50
+				fi
+				# set repositories
+				echo "src/gz base http://feeds.angstrom-distribution.org/feeds/$SUITE/ipk/glibc/$ARCH/base" > $MNT_TARGET/etc/opkg/base-feed.conf
+				echo "src/gz debug http://feeds.angstrom-distribution.org/feeds/$SUITE/ipk/glibc/$ARCH/debug" > $MNT_TARGET/etc/opkg/debug-feed.conf
+				echo "src/gz gstreamer http://feeds.angstrom-distribution.org/feeds/$SUITE/ipk/glibc/$ARCH/gstreamer" > $MNT_TARGET/etc/opkg/gstreamer-feed.conf
+				echo "src/gz no-arch http://feeds.angstrom-distribution.org/feeds/$SUITE/ipk/glibc/all" > $MNT_TARGET/etc/opkg/noarch-feed.conf
+				echo "src/gz perl http://feeds.angstrom-distribution.org/feeds/$SUITE/ipk/glibc/$ARCH/perl" > $MNT_TARGET/etc/opkg/perl-feed.conf
+				echo "src/gz python http://feeds.angstrom-distribution.org/feeds/$SUITE/ipk/glibc/$ARCH/python" > $MNT_TARGET/etc/opkg/python-feed.conf
+				echo "#src/gz sdk http://feeds.angstrom-distribution.org/feeds/$SUITE/ipk/glibc/sdk" > $MNT_TARGET/etc/opkg/sdk-feed.conf
+				# arch.conf
+				echo "arch all 1" > $MNT_TARGET/etc/opkg/arch.conf
+				echo "arch any 6" >> $MNT_TARGET/etc/opkg/arch.conf
+				echo "arch noarch 11" >> $MNT_TARGET/etc/opkg/arch.conf
+				echo "arch arm 16" >> $MNT_TARGET/etc/opkg/arch.conf
+				echo "arch $ARCH 21" >> $MNT_TARGET/etc/opkg/arch.conf
+			;;
 			esac
 		;;
 		profile)
@@ -538,6 +562,28 @@ configure_system()
 					chroot $MNT_TARGET emerge $PKGS
 				}
 			;;
+			angstrom)
+				PKGS="xserver-xorg-xvfb x11vnc"
+				case "$DESKTOP_ENV" in
+				xterm)
+					PKGS="$PKGS xterm"
+				;;
+				lxde)
+					PKGS="$PKGS task-lxde-apps task-lxde-xserver-base gtk-engines"
+				;;
+				xfce)
+					PKGS="$PKGS task-xfce46-base"
+				;;
+				gnome)
+					PKGS="$PKGS task-gnome"
+				;;
+				kde)
+					msg "KDE not supported!"
+					return 1
+				;;
+				esac
+				chroot $MNT_TARGET opkg-cl install $PKGS
+			;;
 			esac
 		exit 0) 1>&3 2>&3
 		[ $? -ne 0 ] && return 1
@@ -747,6 +793,14 @@ start_system()
 			opensuse)
 				chroot $MNT_TARGET su - root -c '/etc/init.d/sshd start'
 			;;
+			angstrom)
+				if [ -z "`cat $MNT_TARGET/etc/default/dropbear | grep ^DROPBEAR_PORT=`" ]; then
+					echo "DROPBEAR_PORT=$SSH_PORT" >> $MNT_TARGET/etc/default/dropbear
+				else
+					sed -i "s/^DROPBEAR_PORT=.*/DROPBEAR_PORT=$SSH_PORT/g" $MNT_TARGET/etc/default/dropbear
+				fi
+				chroot $MNT_TARGET su - root -c "/etc/init.d/dropbear start"
+			;;
 			esac
 		exit 0)
 		[ $? -eq 0 ] && msg "done" || msg "fail"
@@ -838,6 +892,9 @@ stop_system()
 			opensuse)
 				chroot $MNT_TARGET su - root -c "/etc/init.d/sshd stop"
 			;;
+			angstrom)
+				chroot $MNT_TARGET su - root -c "/etc/init.d/dropbear stop"
+			;;
 			esac
 			sleep 1
 			pkill -9 sshd || true
@@ -904,6 +961,8 @@ chroot_system()
 	fi
 
 	update_system
+	
+	[ -e "$MNT_TARGET/etc/motd" ] && cat $MNT_TARGET/etc/motd
 
 	chroot $MNT_TARGET /bin/bash 1>&3 2>&3
 	[ $? -ne 0 ] && return 1
@@ -1201,11 +1260,60 @@ install_system()
 		(set -e
 			chroot $MNT_TARGET emerge --update --deep world sudo
 		exit 0) 1>&3 2>&3
-		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
+		[ $? -eq 0 ] || return 1
 
 		msg -n "Updating configuration ... "
 		find $MNT_TARGET/ -name "._cfg0000_*" | while read f; do mv "$f" "$(echo $f | sed 's/._cfg0000_//g')"; done
 		[ $? -eq 0 ] && msg "done" || msg "skip"
+	;;
+	angstrom)
+		msg "Installing Angstrom distribution: "
+
+		OPKG_PACKAGES="busybox opkg libopkg0 libc6 libcidn1"
+		BASIC_PACKAGES="alsa-conf-base alsa-state alsa-utils-alsactl alsa-utils-alsamixer angstrom-libc-fixup-hack avahi-autoipd avahi-daemon base-passwd bash blueprobe bluez4 busybox console-tools db dropbear glibc-localedata-en-us glibc-localedata-ru-ru initscripts localedef modutils-initscripts ncurses-terminfo netbase openssh-sftp-server opkg portmap ppp procps shadow strace sudo sysfsutils sysvinit tinylogin tzdata udev usbutils"
+		REPO="${MIRROR%/}/$SUITE/ipk/glibc/$ARCH/base"
+
+		msg -n "Preparing for deployment ... "
+		(set -e
+			cd $MNT_TARGET
+			tar xzf $ENV_DIR/deploy/angstrom_base-files.tgz
+		exit 0)
+		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
+
+		msg -n "Retrieving packages list ... "
+		(set -e
+			wget -q -O $MNT_TARGET/tmp/Packages.gz $REPO/Packages.gz
+			gzip -d $MNT_TARGET/tmp/Packages.gz
+		exit 0)
+		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
+		
+		msg "Retrieving base packages: "
+		for PACKAGE in $OPKG_PACKAGES; do
+			msg -n "$PACKAGE ... "
+    		PKG_FILE=`sed -n "s/^Filename: \(${PACKAGE}_.*\)/\1/p" $MNT_TARGET/tmp/Packages`
+    		test "$PKG_FILE" || { msg "fail"; return 1; }
+    		#echo "downloading ${FILE}... "
+    		for i in 1 2 3
+    		do
+    			wget -q -c -O $MNT_TARGET/tmp/$PKG_FILE $REPO/$PKG_FILE
+    			[ $? -eq 0 ] && break || sleep 30s
+    		done
+    		#echo "unpacking ${FILE}... "
+    		dpkg-deb -x $MNT_TARGET/tmp/$PKG_FILE $MNT_TARGET
+    		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
+		done
+		
+		msg "Mounting partitions: "
+		mount_system proc sys dev pts shm
+		
+		msg "Preconfigure system: "
+		configure_system dns mtab repository
+		
+		msg "Installing base packages: "
+		(set -e
+			chroot $MNT_TARGET opkg-cl update
+			chroot $MNT_TARGET opkg-cl install $BASIC_PACKAGES
+		exit 0) 1>&3 2>&3
 	;;
 	esac
 
