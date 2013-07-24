@@ -905,7 +905,7 @@ chroot_system()
 
 	update_system
 	
-	[ -e "$MNT_TARGET/etc/motd" ] && cat $MNT_TARGET/etc/motd
+	[ -e "$MNT_TARGET/etc/motd" ] && msg "$(cat $MNT_TARGET/etc/motd)"
 
 	chroot $MNT_TARGET /bin/bash 1>&3 2>&3
 	[ $? -ne 0 ] && return 1
