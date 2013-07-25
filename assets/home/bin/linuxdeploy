@@ -50,15 +50,15 @@ msg()
 
 prepare_system()
 {
-	msg -n "Checking mount points ... "
+	msg -n "Checking target path ... "
 	is_mnt=`cat /proc/mounts | grep " $MNT_TARGET "`
 	if [ -n "$is_mnt" ]; then
-		msg "fail"; return 1
+		msg "busy"; return 1
 	else
 		msg "done"
 	fi
 
-	msg -n "Checking destination path ... "
+	msg -n "Checking installation path ... "
 	if [ "$DEPLOY_TYPE" == "file" ]; then
 		if [ -e "$IMG_TARGET" -a ! -f "$IMG_TARGET" ]; then
 			msg "fail"; return 1
@@ -396,14 +396,19 @@ configure_system()
 		;;
 		xorg)
 			# Xwrapper.config
-			mkdir -p $MNT_TARGET/etc/X11
-			xwrapper=`grep -e "^allowed_users" $MNT_TARGET/etc/X11/Xwrapper.config || true`
-			if [ -n "$xwrapper" ]; then
-				sed -i 's/^allowed_users=.*/allowed_users=anybody/g' $MNT_TARGET/etc/X11/Xwrapper.config
-			else
-				echo "allowed_users=anybody" >> $MNT_TARGET/etc/X11/Xwrapper.config
-			fi
+			case "$DISTRIB" in
+			debian|ubuntu|kali)
+				mkdir -p $MNT_TARGET/etc/X11
+				xwrapper=`grep -e "^allowed_users" $MNT_TARGET/etc/X11/Xwrapper.config || true`
+				if [ -n "$xwrapper" ]; then
+					sed -i 's/^allowed_users=.*/allowed_users=anybody/g' $MNT_TARGET/etc/X11/Xwrapper.config
+				else
+					echo "allowed_users=anybody" >> $MNT_TARGET/etc/X11/Xwrapper.config
+				fi
+			;;
+			esac
 			# xorg.conf
+			mkdir -p $MNT_TARGET/etc/X11
 			cp $ENV_DIR/deploy/xorg.conf $MNT_TARGET/etc/X11/
 			chmod 644 $MNT_TARGET/etc/X11/xorg.conf
 		;;
@@ -537,6 +542,9 @@ configure_system()
 					mv $MNT_TARGET/etc/portage/._cfg0000_package.use $MNT_TARGET/etc/portage/package.use
 					chroot $MNT_TARGET emerge $PKGS
 				}
+			;;
+			*)
+				msg " ...not supported."
 			;;
 			esac
 		exit 0) 1>&3 2>&3
@@ -731,23 +739,22 @@ start_system()
 	if [ "$SSH_START" == "y" -a -z "`ps | grep -E '/usr/s?bin/sshd' | grep -v grep`" ]; then
 		(set -e
 			sed -i "s|^Port .*|Port $SSH_PORT|g" $MNT_TARGET/etc/ssh/sshd_config
-			case "$DISTRIB" in
-			debian|ubuntu|kali)				if [ -z "`grep '^aid_inet:.*,messagebus' $MNT_TARGET/etc/group`" ]; then
-					sed -i "s|^\(aid_inet:.*\)|\1,messagebus|g" $MNT_TARGET/etc/group
-				fi
+			# Debian/Ubuntu/Kali Linux
+			if [ -e "$MNT_TARGET/etc/init.d/ssh" ]; then
 				chroot $MNT_TARGET su - root -c '/etc/init.d/ssh start'
-			;;
-			archlinux|fedora|gentoo)
-				if [ -z "`ls $MNT_TARGET/etc/ssh/ | grep key`" ]; then
-					chroot $MNT_TARGET su - root -c 'ssh-keygen -A' || true
-					echo
-				fi
-				chroot $MNT_TARGET su - root -c '`which sshd`'
-			;;
-			opensuse)
+				exit 0
+			fi
+			# openSUSE
+			if [ -e "$MNT_TARGET/etc/init.d/sshd" ]; then
 				chroot $MNT_TARGET su - root -c '/etc/init.d/sshd start'
-			;;
-			esac
+				exit 0
+			fi
+			# Arch Linux/Fedora/Gentoo
+			if [ -z "`ls $MNT_TARGET/etc/ssh/ | grep key`" ]; then
+				chroot $MNT_TARGET su - root -c 'ssh-keygen -A' || true
+				echo
+			fi
+			chroot $MNT_TARGET su - root -c '`which sshd`'
 		exit 0)
 		[ $? -eq 0 ] && msg "done" || msg "fail"
 	else
@@ -828,17 +835,19 @@ stop_system()
 	msg -n "SSH ... "
 	if [ "$SSH_START" == "y" ]; then
 		(set -e
-			case "$DISTRIB" in
-			debian|ubuntu|kali)
+			# Debian/Ubuntu/Kali Linux
+			if [ -e "$MNT_TARGET/etc/init.d/ssh" ]; then
 				chroot $MNT_TARGET su - root -c "/etc/init.d/ssh stop"
-			;;
-			archlinux|fedora|gentoo)
-				chroot $MNT_TARGET su - root -c 'kill -9 $(cat /var/run/sshd.pid)'
-			;;
-			opensuse)
+			fi
+			# openSUSE
+			if [ -e "$MNT_TARGET/etc/init.d/sshd" ]; then
 				chroot $MNT_TARGET su - root -c "/etc/init.d/sshd stop"
-			;;
-			esac
+			fi
+			# Arch Linux/Fedora/Gentoo
+			if [ -e "$MNT_TARGET/var/run/sshd.pid" ]; then
+				chroot $MNT_TARGET su - root -c 'kill -9 $(cat /var/run/sshd.pid)'
+			fi
+			# kill active sessions
 			sleep 1
 			pkill -9 sshd || true
 		exit 0)
@@ -906,8 +915,15 @@ chroot_system()
 	update_system
 	
 	[ -e "$MNT_TARGET/etc/motd" ] && msg "$(cat $MNT_TARGET/etc/motd)"
+	
+	SHELL=$1
+	if [ -z "$SHELL" ]; then
+		[ -e "$MNT_TARGET/bin/sh" ] && SHELL=/bin/sh
+		[ -e "$MNT_TARGET/bin/bash" ] && SHELL=/bin/bash
+	fi
+	[ -z "$SHELL" ] && { msg "Shell not found!"; return 1; }
 
-	chroot $MNT_TARGET /bin/bash 1>&3 2>&3
+	chroot $MNT_TARGET $SHELL 1>&3 2>&3
 	[ $? -ne 0 ] && return 1
 
 	return 0
@@ -1318,9 +1334,9 @@ mount)
 	mount_system
 	msg "<<< end: $1"
 ;;
-umount)
+prepare)
 	msg ">>> begin: $1"
-	umount_system
+	prepare_system
 	msg "<<< end: $1"
 ;;
 install)
@@ -1334,9 +1350,13 @@ configure)
 	[ $? -eq 0 ] && configure_system
 	msg "<<< end: $1"
 ;;
-uninstall)
+generic)
 	msg ">>> begin: $1"
-	uninstall_system
+	mount_system
+	if [ $? -eq 0 ]; then
+		DISTRIB=generic
+		configure_system
+	fi
 	msg "<<< end: $1"
 ;;
 start)
@@ -1349,9 +1369,19 @@ stop)
 	stop_system
 	msg "<<< end: $1"
 ;;
+umount)
+	msg ">>> begin: $1"
+	umount_system
+	msg "<<< end: $1"
+;;
+uninstall)
+	msg ">>> begin: $1"
+	uninstall_system
+	msg "<<< end: $1"
+;;
 shell)
 	msg ">>> begin: $1"
-	chroot_system
+	chroot_system "$2"
 	msg "<<< end: $1"
 ;;
 status)
@@ -1360,6 +1390,6 @@ status)
 	msg "<<< end: $1"
 ;;
 *)
-	msg "Usage: $0 <mount|umount|install|configure|uninstall|start|stop|shell|status>"
+	msg "Usage: $0 <mount|prepare|install|configure|generic|start|stop|umount|uninstall|shell|status>"
 ;;
 esac
