@@ -84,5 +84,5 @@
     <string name="gentoo_suite" translatable="false">latest</string>
     <string name="gentoo_mirror" translatable="false">http://mirror.yandex.ru/gentoo-distfiles/releases/</string>
     <string name="gentoo_architecture" translatable="false">armv7a</string>
-    
+   
 </resources>

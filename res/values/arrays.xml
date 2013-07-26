@@ -73,8 +73,9 @@
         <item>opensuse</item>
         <item>kali</item>
         <item>gentoo</item>
+        <item>custom</item>
     </string-array>
-    <string-array name="distribution_entries" translatable="false">
+    <string-array name="distribution_entries">
         <item>Debian</item>
         <item>Ubuntu</item>
         <item>Arch Linux</item>
@@ -82,6 +83,7 @@
         <item>openSUSE</item>
         <item>Kali Linux</item>
         <item>Gentoo</item>
+        <item>Other</item>
     </string-array>
 
     <!-- Debian -->
