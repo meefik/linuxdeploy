@@ -738,7 +738,7 @@ start_system()
 	msg -n "SSH :$SSH_PORT ... "
 	if [ "$SSH_START" == "y" -a -z "`ps | grep -E '/usr/s?bin/sshd' | grep -v grep`" ]; then
 		(set -e
-			sed -i "s|^Port .*|Port $SSH_PORT|g" $MNT_TARGET/etc/ssh/sshd_config
+			sed -i "s|^Port .*|Port $SSH_PORT|g" $MNT_TARGET/etc/ssh/sshd_config || true
 			# Debian/Ubuntu/Kali Linux
 			if [ -e "$MNT_TARGET/etc/init.d/ssh" ]; then
 				chroot $MNT_TARGET su - root -c '/etc/init.d/ssh start'
