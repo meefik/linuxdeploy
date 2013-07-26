@@ -75,7 +75,7 @@
         <item>gentoo</item>
         <item>custom</item>
     </string-array>
-    <string-array name="distribution_entries">
+    <string-array name="distribution_entries" translatable="false">
         <item>Debian</item>
         <item>Ubuntu</item>
         <item>Arch Linux</item>
@@ -83,7 +83,7 @@
         <item>openSUSE</item>
         <item>Kali Linux</item>
         <item>Gentoo</item>
-        <item>Other</item>
+        <item>RootFS (tar.gz)</item>
     </string-array>
 
     <!-- Debian -->
