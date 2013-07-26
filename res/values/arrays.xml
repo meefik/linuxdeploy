@@ -83,7 +83,7 @@
         <item>openSUSE</item>
         <item>Kali Linux</item>
         <item>Gentoo</item>
-        <item>RootFS (tar.gz)</item>
+        <item>RootFS</item>
     </string-array>
 
     <!-- Debian -->
