@@ -221,6 +221,7 @@ public class DeployPrefsActivity extends SherlockPreferenceActivity implements
 					if (init)
 						suite.setValue(getString(R.string.debian_suite));
 					suite.setSummary(suite.getEntry());
+					suite.setEnabled(true);
 					// architecture
 					ListPreference architecture = (ListPreference) this
 							.findPreference("architecture");
@@ -231,12 +232,14 @@ public class DeployPrefsActivity extends SherlockPreferenceActivity implements
 						architecture
 								.setValue(getString(R.string.debian_architecture));
 					architecture.setSummary(architecture.getEntry());
+					architecture.setEnabled(true);
 					// mirror
 					EditTextPreference mirror = (EditTextPreference) this
 							.findPreference("mirror");
 					if (init)
 						mirror.setText(getString(R.string.debian_mirror));
 					mirror.setSummary(mirror.getText());
+					mirror.setEnabled(true);
 				}
 				if (listPref.getValue().equals("ubuntu")) {
 					// suite
@@ -247,6 +250,7 @@ public class DeployPrefsActivity extends SherlockPreferenceActivity implements
 					if (init)
 						suite.setValue(getString(R.string.ubuntu_suite));
 					suite.setSummary(suite.getEntry());
+					suite.setEnabled(true);
 					// architecture
 					ListPreference architecture = (ListPreference) this
 							.findPreference("architecture");
@@ -257,12 +261,14 @@ public class DeployPrefsActivity extends SherlockPreferenceActivity implements
 						architecture
 								.setValue(getString(R.string.ubuntu_architecture));
 					architecture.setSummary(architecture.getEntry());
+					architecture.setEnabled(true);
 					// mirror
 					EditTextPreference mirror = (EditTextPreference) this
 							.findPreference("mirror");
 					if (init)
 						mirror.setText(getString(R.string.ubuntu_mirror));
 					mirror.setSummary(mirror.getText());
+					mirror.setEnabled(true);
 				}
 				if (listPref.getValue().equals("archlinux")) {
 					// suite
@@ -273,6 +279,7 @@ public class DeployPrefsActivity extends SherlockPreferenceActivity implements
 					if (init)
 						suite.setValue(getString(R.string.archlinux_suite));
 					suite.setSummary(suite.getEntry());
+					suite.setEnabled(true);
 					// architecture
 					ListPreference architecture = (ListPreference) this
 							.findPreference("architecture");
@@ -284,12 +291,14 @@ public class DeployPrefsActivity extends SherlockPreferenceActivity implements
 						architecture
 								.setValue(getString(R.string.archlinux_architecture));
 					architecture.setSummary(architecture.getEntry());
+					architecture.setEnabled(true);
 					// mirror
 					EditTextPreference mirror = (EditTextPreference) this
 							.findPreference("mirror");
 					if (init)
 						mirror.setText(getString(R.string.archlinux_mirror));
 					mirror.setSummary(mirror.getText());
+					mirror.setEnabled(true);
 				}
 				if (listPref.getValue().equals("fedora")) {
 					// suite
@@ -300,6 +309,7 @@ public class DeployPrefsActivity extends SherlockPreferenceActivity implements
 					if (init)
 						suite.setValue(getString(R.string.fedora_suite));
 					suite.setSummary(suite.getEntry());
+					suite.setEnabled(true);
 					// architecture
 					ListPreference architecture = (ListPreference) this
 							.findPreference("architecture");
@@ -310,12 +320,14 @@ public class DeployPrefsActivity extends SherlockPreferenceActivity implements
 						architecture
 								.setValue(getString(R.string.fedora_architecture));
 					architecture.setSummary(architecture.getEntry());
+					architecture.setEnabled(true);
 					// mirror
 					EditTextPreference mirror = (EditTextPreference) this
 							.findPreference("mirror");
 					if (init)
 						mirror.setText(getString(R.string.fedora_mirror));
 					mirror.setSummary(mirror.getText());
+					mirror.setEnabled(true);
 				}
 				if (listPref.getValue().equals("opensuse")) {
 					// suite
@@ -326,6 +338,7 @@ public class DeployPrefsActivity extends SherlockPreferenceActivity implements
 					if (init)
 						suite.setValue(getString(R.string.opensuse_suite));
 					suite.setSummary(suite.getEntry());
+					suite.setEnabled(true);
 					// architecture
 					ListPreference architecture = (ListPreference) this
 							.findPreference("architecture");
@@ -337,12 +350,14 @@ public class DeployPrefsActivity extends SherlockPreferenceActivity implements
 						architecture
 								.setValue(getString(R.string.opensuse_architecture));
 					architecture.setSummary(architecture.getEntry());
+					architecture.setEnabled(true);
 					// mirror
 					EditTextPreference mirror = (EditTextPreference) this
 							.findPreference("mirror");
 					if (init)
 						mirror.setText(getString(R.string.opensuse_mirror));
 					mirror.setSummary(mirror.getText());
+					mirror.setEnabled(true);
 				}
 				if (listPref.getValue().equals("kali")) {
 					// suite
@@ -353,6 +368,7 @@ public class DeployPrefsActivity extends SherlockPreferenceActivity implements
 					if (init)
 						suite.setValue(getString(R.string.kali_suite));
 					suite.setSummary(suite.getEntry());
+					suite.setEnabled(true);
 					// architecture
 					ListPreference architecture = (ListPreference) this
 							.findPreference("architecture");
@@ -363,12 +379,14 @@ public class DeployPrefsActivity extends SherlockPreferenceActivity implements
 						architecture
 								.setValue(getString(R.string.kali_architecture));
 					architecture.setSummary(architecture.getEntry());
+					architecture.setEnabled(true);
 					// mirror
 					EditTextPreference mirror = (EditTextPreference) this
 							.findPreference("mirror");
 					if (init)
 						mirror.setText(getString(R.string.kali_mirror));
 					mirror.setSummary(mirror.getText());
+					mirror.setEnabled(true);
 				}
 				if (listPref.getValue().equals("gentoo")) {
 					// suite
@@ -379,6 +397,7 @@ public class DeployPrefsActivity extends SherlockPreferenceActivity implements
 					if (init)
 						suite.setValue(getString(R.string.gentoo_suite));
 					suite.setSummary(suite.getEntry());
+					suite.setEnabled(true);
 					// architecture
 					ListPreference architecture = (ListPreference) this
 							.findPreference("architecture");
@@ -389,12 +408,42 @@ public class DeployPrefsActivity extends SherlockPreferenceActivity implements
 						architecture
 								.setValue(getString(R.string.gentoo_architecture));
 					architecture.setSummary(architecture.getEntry());
+					architecture.setEnabled(true);
 					// mirror
 					EditTextPreference mirror = (EditTextPreference) this
 							.findPreference("mirror");
 					if (init)
 						mirror.setText(getString(R.string.gentoo_mirror));
 					mirror.setSummary(mirror.getText());
+					mirror.setEnabled(true);
+				}
+				if (listPref.getValue().equals("custom")) {
+					// suite
+					ListPreference suite = (ListPreference) this
+							.findPreference("suite");
+					suite.setEntries(null);
+					suite.setEntryValues(null);
+					suite.setValue("unknown");
+					suite.setSummary(null);
+					suite.setEnabled(false);
+					// architecture
+					ListPreference architecture = (ListPreference) this
+							.findPreference("architecture");
+					architecture.setEntries(null);
+					architecture.setEntryValues(null);
+					architecture.setValue("unknown");
+					architecture.setSummary(null);
+					architecture.setEnabled(false);
+					// mirror
+					EditTextPreference mirror = (EditTextPreference) this
+							.findPreference("mirror");
+					if (init) {
+						File extStore = Environment.getExternalStorageDirectory();
+						String archiveFile = extStore.getAbsolutePath()+"/linux-rootfs.tar.gz";
+						mirror.setText(archiveFile);
+					}
+					mirror.setSummary(mirror.getText());
+					mirror.setEnabled(true);
 				}
 			}
 			if (listPref.getKey().equals("deploytype")) {

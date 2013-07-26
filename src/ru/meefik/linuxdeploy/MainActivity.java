@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ScrollView;
@@ -280,6 +281,9 @@ public class MainActivity extends SherlockActivity {
 		
 		// show icon
 		notification(getApplicationContext(), this.getIntent());
+		
+		// Restore font size
+		logView.setTextSize(TypedValue.COMPLEX_UNIT_SP, PrefStore.FONT_SIZE);
 		
 		// Restore log
 		showLog();

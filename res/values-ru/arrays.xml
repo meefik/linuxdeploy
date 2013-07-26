@@ -24,5 +24,15 @@
         <item>KDE</item>
         <item>Другое</item>
     </string-array>
+    <string-array name="distribution_entries">
+        <item>Debian</item>
+        <item>Ubuntu</item>
+        <item>Arch Linux</item>
+        <item>Fedora</item>
+        <item>openSUSE</item>
+        <item>Kali Linux</item>
+        <item>Gentoo</item>
+        <item>Другой</item>
+    </string-array>
 
 </resources>
