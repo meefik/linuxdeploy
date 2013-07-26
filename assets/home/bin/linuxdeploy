@@ -1227,17 +1227,33 @@ install_system()
 	;;
 	custom)
 		msg "Getting and unpacking rootfs archive: "
-		if [ -e "$MIRROR" ]; then
-			(set -e
-				tar xzpvf "$MIRROR" -C $MNT_TARGET
-			exit 0) 1>&3 2>&3
-			[ $? -eq 0 ] || return 1
+		if [ -n "`echo $MIRROR | grep -i 'gz$'`" ]; then
+			if [ -e "$MIRROR" ]; then
+				(set -e
+					tar xzpvf "$MIRROR" -C $MNT_TARGET
+				exit 0) 1>&3 2>&3
+				[ $? -eq 0 ] || return 1
+			fi
+			if [ -n "`echo $MIRROR | grep -i '^http'`" ]; then
+				(set -e
+					wget -q -O - "$MIRROR" | tar xzpv -C $MNT_TARGET
+				exit 0) 1>&3 2>&3
+				[ $? -eq 0 ] || return 1 
+			fi
 		fi
-		if [ -n "`echo $MIRROR | grep -i ^http`" ]; then
-			(set -e
-				wget -q -O - "$MIRROR" | tar xzpv -C $MNT_TARGET
-			exit 0) 1>&3 2>&3
-			[ $? -eq 0 ] || return 1 
+		if [ -n "`echo $MIRROR | grep -i 'bz2$'`" ]; then
+			if [ -e "$MIRROR" ]; then
+				(set -e
+					bzip2-full --decompress --stdout --force "$MIRROR" | tar xpv -C $MNT_TARGET
+				exit 0) 1>&3 2>&3
+				[ $? -eq 0 ] || return 1
+			fi
+			if [ -n "`echo $MIRROR | grep -i '^http'`" ]; then
+				(set -e
+					wget -q -O - "$MIRROR" | bzip2-full --decompress --stdout --force | tar xpv -C $MNT_TARGET
+				exit 0) 1>&3 2>&3
+				[ $? -eq 0 ] || return 1 
+			fi
 		fi
 		[ "`ls $MNT_TARGET | wc -l`" -le 1 ] && { msg " ...installation failed."; return 1; }
 	;;

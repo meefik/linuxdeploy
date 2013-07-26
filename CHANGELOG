@@ -2,7 +2,7 @@ Changelog (English)
 ===================
 
 1.4.1
-Added support for installation from rootfs archives (tgz)
+Added support for installation from rootfs archives (tgz, tbz2)
 Bugfix: changing font size
 
 1.4.0
@@ -215,8 +215,8 @@ Updated list packages of base system installation
 ===========================
 
 1.4.1
-Добавлена поддержка установки дистрибутивов из rootfs архивов (tgz)
-Исправлено изменение размера шрифта 
+Добавлена поддержка установки дистрибутивов из rootfs архивов (tgz, tbz2)
+Исправлено изменение размера шрифта
 
 1.4.0
 Добавлена ​​функция импорта/экспорта профилей
