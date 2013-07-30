@@ -50,13 +50,9 @@ msg()
 
 prepare_system()
 {
-	msg -n "Checking target mount point ... "
+	msg -n "Checking mount points ... "
 	is_mnt=`cat /proc/mounts | grep " $MNT_TARGET "`
-	if [ -n "$is_mnt" ]; then
-		msg "busy"; return 1
-	else
-		msg "ready"
-	fi
+	[ -z "$is_mnt" ] && msg "done" || { msg "fail"; msg "Press STOP and repeat attempt."; return 1; }
 
 	msg -n "Checking installation path ... "
 	if [ "$DEPLOY_TYPE" == "file" ]; then
