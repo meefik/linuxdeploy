@@ -12,7 +12,7 @@ dd - convert and copy a file.
     apt-get build-dep coreutils
     apt-get source coreutils
 
-3) Build coreutils:
+3) Build dd:
 
     cd ./coreutils
     export CFLAGS=-static
