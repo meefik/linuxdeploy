@@ -22,4 +22,4 @@ bzip2 - a block-sorting file compressor.
 
 4) Copy bzip2 binary to linuxdeploy directory:
 
-    cp ./bzip2 <LinuxDeploy>/assets/home/bin/bzip2-full
+    cp ./bzip2 <LinuxDeploy>/assets/home/bin/bzip2
