@@ -84,7 +84,7 @@ prepare_system()
 		fi
 		msg -n "Making new disk image ($IMG_SIZE MB) ... "
 		(set -e
-			dd if=/dev/zero of=$IMG_TARGET bs=1048576 seek=$IMG_SIZE count=0
+			dd if=/dev/zero of=$IMG_TARGET bs=1048576 seek=$IMG_SIZE count=0 || dd if=/dev/zero of=$IMG_TARGET bs=1048576 count=$IMG_SIZE
 		exit 0)
 		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 	fi
