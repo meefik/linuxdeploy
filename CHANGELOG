@@ -4,6 +4,7 @@ Changelog (English)
 1.4.1
 Added support for installation from rootfs archives (tgz, tbz2)
 Bugfix: changing font size
+Improved mechanism of disk image file creation (fast re-creation)
 
 1.4.0
 Added function of import/export profiles
@@ -217,6 +218,7 @@ Updated list packages of base system installation
 1.4.1
 Добавлена поддержка установки дистрибутивов из rootfs архивов (tgz, tbz2)
 Исправлено изменение размера шрифта
+Улучшен механизм создания файла образа диска (быстрое пересоздание)
 
 1.4.0
 Добавлена ​​функция импорта/экспорта профилей
