@@ -354,10 +354,39 @@ configure_system()
 			chown -R $USER_ID:$GROUP_ID $MNT_TARGET$USER_HOME || true
 		;;
 		upstart)
-			if [ -e "$MNT_TARGET/sbin/initctl" ]; then
-				chroot $MNT_TARGET dpkg-divert --local --rename --add /sbin/initctl
-				chroot $MNT_TARGET ln -s /bin/true /sbin/initctl
-			fi
+                        # sysvinit style script for launching the
+                        # upstart daemon in user session mode
+			cp $ENV_DIR/deploy/myscript-upstart.sh \
+                            $MNT_TARGET/etc/init.d/myscript
+
+                        # Environment variables to make initctl and
+                        # runlevel work
+			cp $ENV_DIR/deploy/profile.upstart.sh \
+                            $MNT_TARGET/etc/profile.upstart
+                        echo >> $MNT_TARGET/etc/bash.bashrc
+                        echo ". /etc/profile.upstart" >> \
+                            $MNT_TARGET/etc/bash.bashrc
+
+                        # Disable all services by default, the user
+                        # can remove the *.override files for the
+                        # services to enable.  For example, remove
+                        # /etc/init/ssh.override to let upstart launch
+                        # sshd instead of the Android app
+                        for service in $MNT_TARGET/etc/init/*.conf
+			do
+                            echo "manual" >> \
+                                $(echo $service | cut -d . -f 1).override
+                        done
+
+                        # use the normal upstart configuration for
+                        # root's user session
+                        if [ -a $MNT_TARGET/root/.config/upstart ]
+                        then
+                            mv -f $MNT_TARGET/root/.config/upstart \
+                                $MNT_TARGET/root/.config/upstart.orig
+                        fi
+                        ln -s $MNT_TARGET/etc/init \
+                            $MNT_TARGET/root/.config/upstart
 		;;
 		dbus)
 			case "$DISTRIB" in
