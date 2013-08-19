@@ -356,12 +356,12 @@ configure_system()
 		upstart)
                         # sysvinit style script for launching the
                         # upstart daemon in user session mode
-			cp $ENV_DIR/deploy/myscript-upstart.sh \
+                        cp $ENV_DIR/deploy/myscript-upstart.sh \
                             $MNT_TARGET/etc/init.d/myscript
 
                         # Environment variables to make initctl and
                         # runlevel work
-			cp $ENV_DIR/deploy/profile.upstart.sh \
+                        cp $ENV_DIR/deploy/profile.upstart.sh \
                             $MNT_TARGET/etc/profile.upstart
                         echo >> $MNT_TARGET/etc/bash.bashrc
                         echo ". /etc/profile.upstart" >> \
@@ -373,7 +373,7 @@ configure_system()
                         # /etc/init/ssh.override to let upstart launch
                         # sshd instead of the Android app
                         for service in $MNT_TARGET/etc/init/*.conf
-			do
+                        do
                             echo "manual" >> \
                                 $(echo $service | cut -d . -f 1).override
                         done
