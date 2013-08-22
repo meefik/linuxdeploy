@@ -150,8 +150,6 @@
     <string name="dialog_title_fbdev_preference">FB: video device path</string>
     <string name="title_fbinput_preference">Input device</string>
     <string name="dialog_title_fbinput_preference">FB: input device path</string>
-    <string name="title_fbandroid_preference">Android UI</string>
-    <string name="summary_fbandroid_preference">Do not stop Android UI</string>
     <string name="about_text"><font size="32"><b>Linux Deploy</b></font>\n\nGPL v3\n\n[ <a href="https://github.com/meefik/linuxdeploy">github.com</a> , <a href="http://4pda.ru/forum/index.php?showtopic=378043">4pda.ru</a> ]\n\nThis program comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions.\n\n&#169; 2012 Anton Skshidlevsky</string>
 
 </resources>

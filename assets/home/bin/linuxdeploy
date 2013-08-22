@@ -558,7 +558,7 @@ mount_system()
 	if [ "$#" -eq 0 ]; then
 		msg "Mounting partitions: "
 		mount_system root proc sys dev pts shm custom
-		return 0
+		return $?
 	fi
 	if [ "$#" -gt 1 ]; then
 		for i in $*
@@ -796,9 +796,13 @@ start_system()
 			if [ "$FB_ANDROID" == "y" ]; then
 				chroot $MNT_TARGET su - $USER_NAME -c "startx -- :$FB_DISPLAY &"
 			else
-				setprop ctl.stop surfaceflinger
+				#setprop ctl.stop surfaceflinger
+				pkill -STOP system_server
+				pkill -STOP surfaceflinger
 				chroot $MNT_TARGET su - $USER_NAME -c "startx -- :$FB_DISPLAY"
-				reboot
+				pkill -CONT surfaceflinger
+				pkill -CONT system_server
+				#reboot
 			fi
 		exit 0)
 		[ $? -eq 0 ] && msg "done" || msg "fail"
@@ -862,7 +866,7 @@ stop_system()
 	msg -n "X Window System ... "
 	if [ "$XSERVER_START" == "y" ]; then
 		(set -e
-			chroot  su - $USER_NAME -c 'kill -9 $(cat /tmp/xsession.pid)'
+			chroot $MNT_TARGET su - $USER_NAME -c 'kill -9 $(cat /tmp/xsession.pid)'
 		exit 0)
 		[ $? -eq 0 ] && msg "done" || msg "fail"
 	else
@@ -872,6 +876,8 @@ stop_system()
 	msg -n "Frame Buffer ... "
 	if [ "$FB_START" == "y" ]; then
 		(set -e
+			pkill -CONT surfaceflinger
+			pkill -CONT system_server
 			chroot $MNT_TARGET su - $USER_NAME -c 'kill -9 $(cat /tmp/xsession.pid)'
 		exit 0)
 		[ $? -eq 0 ] && msg "done" || msg "fail"
