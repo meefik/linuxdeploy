@@ -48,7 +48,6 @@
     <string name="fbdisplay" translatable="false">2</string>
     <string name="fbdev" translatable="false">/dev/graphics/fb0</string>
     <string name="fbinput" translatable="false">/dev/input/event2</string>
-    <string name="fbandroid" translatable="false">true</string>
 
     <!-- Debian -->
     <string name="debian_suite" translatable="false">wheezy</string>

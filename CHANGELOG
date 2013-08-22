@@ -5,6 +5,7 @@ Changelog (English)
 Added support for installation from rootfs archives (tgz, tbz2)
 Bugfix: changing font size
 Improved mechanism of disk image file creation (fast re-creation)
+Improved framebuffer support
 
 1.4.0
 Added function of import/export profiles
@@ -219,6 +220,7 @@ Updated list packages of base system installation
 Добавлена поддержка установки дистрибутивов из rootfs архивов (tgz, tbz2)
 Исправлено изменение размера шрифта
 Улучшен механизм создания файла образа диска (быстрое пересоздание)
+Улучшена поддержка фрейм-буфера
 
 1.4.0
 Добавлена ​​функция импорта/экспорта профилей

@@ -375,9 +375,6 @@ public class ShellEnv {
 		params.add("sed -i 's|^FB_INPUT=.*|FB_INPUT=\""
 				+ PrefStore.FB_INPUT + "\"|g' " + PrefStore.ENV_DIR
 				+ "/etc/deploy.conf");
-		params.add("sed -i 's|^FB_ANDROID=.*|FB_ANDROID=\""
-				+ PrefStore.FB_ANDROID + "\"|g' " + PrefStore.ENV_DIR
-				+ "/etc/deploy.conf");
 		params.add("[ $? -eq 0 ] && exit 0 || exit 1");
 
 		if (!execCmd(params)) {
