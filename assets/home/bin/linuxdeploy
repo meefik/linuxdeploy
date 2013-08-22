@@ -793,17 +793,13 @@ start_system()
 		sed -i "s|Option.*\"fbdev\".*#linuxdeploy|Option \"fbdev\" \"$FB_DEV\" #linuxdeploy|g" $MNT_TARGET/etc/X11/xorg.conf
 		sed -i "s|Option.*\"Device\".*#linuxdeploy|Option \"Device\" \"$FB_INPUT\" #linuxdeploy|g" $MNT_TARGET/etc/X11/xorg.conf
 		(set -e
-			if [ "$FB_ANDROID" == "y" ]; then
-				chroot $MNT_TARGET su - $USER_NAME -c "startx -- :$FB_DISPLAY &"
-			else
-				#setprop ctl.stop surfaceflinger
-				pkill -STOP system_server
-				pkill -STOP surfaceflinger
-				chroot $MNT_TARGET su - $USER_NAME -c "startx -- :$FB_DISPLAY"
-				pkill -CONT surfaceflinger
-				pkill -CONT system_server
-				#reboot
-			fi
+			#setprop ctl.stop surfaceflinger
+			pkill -STOP system_server
+			pkill -STOP surfaceflinger
+			chroot $MNT_TARGET su - $USER_NAME -c "startx -- :$FB_DISPLAY"
+			pkill -CONT surfaceflinger
+			pkill -CONT system_server
+			#reboot
 		exit 0)
 		[ $? -eq 0 ] && msg "done" || msg "fail"
 	else
