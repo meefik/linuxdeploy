@@ -564,6 +564,7 @@ mount_system()
 		for i in $*
 		do
 			mount_system $i
+			[ $? -eq 0 ] || return 1
 		done
 		return 0
 	fi
