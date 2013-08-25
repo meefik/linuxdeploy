@@ -243,6 +243,14 @@
             android:summary="@string/fbdisplay"
             android:title="@string/title_fbdisplay_preference" />
         <EditTextPreference
+            android:defaultValue="@string/fbdpi"
+            android:dependency="fbstartup"
+            android:dialogTitle="@string/dialog_title_fbdpi_preference"
+            android:inputType="numberDecimal"
+            android:key="fbdpi"
+            android:summary="@string/fbdpi"
+            android:title="@string/title_fbdpi_preference" />
+        <EditTextPreference
             android:defaultValue="@string/fbdev"
             android:dependency="fbstartup"
             android:dialogTitle="@string/dialog_title_fbdev_preference"
@@ -256,6 +264,12 @@
             android:key="fbinput"
             android:summary="@string/fbinput"
             android:title="@string/title_fbinput_preference" />
+        <CheckBoxPreference
+            android:defaultValue="@string/fbfreeze"
+            android:dependency="fbstartup"
+            android:key="fbfreeze"
+            android:summary="@string/summary_fbfreeze_preference"
+            android:title="@string/title_fbfreeze_preference" />
     </PreferenceCategory>
 
 </PreferenceScreen>

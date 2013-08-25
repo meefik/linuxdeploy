@@ -24,6 +24,7 @@ aid_media_rw:1023
 aid_mtp:1024
 aid_drmrpc:1026
 aid_nfc:1027
+aid_sdcard_r:1028
 aid_shell:2000
 aid_cache:2001
 aid_diag:2002

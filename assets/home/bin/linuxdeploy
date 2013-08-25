@@ -399,8 +399,10 @@ configure_system()
 			esac
 			# xorg.conf
 			mkdir -p $MNT_TARGET/etc/X11
-			cp $ENV_DIR/deploy/xorg.conf $MNT_TARGET/etc/X11/
-			chmod 644 $MNT_TARGET/etc/X11/xorg.conf
+			XORG_CONF="$MNT_TARGET/etc/X11/xorg.conf"
+			[ -e "$XORG_CONF" ] && cp ${XORG_CONF} ${XORG_CONF}.bak
+			cp $ENV_DIR/deploy/xorg.conf $XORG_CONF
+			chmod 644 $XORG_CONF
 		;;
 		esac
 	exit 0)
@@ -793,13 +795,17 @@ start_system()
 		sed -i "s|Option.*\"fbdev\".*#linuxdeploy|Option \"fbdev\" \"$FB_DEV\" #linuxdeploy|g" $MNT_TARGET/etc/X11/xorg.conf
 		sed -i "s|Option.*\"Device\".*#linuxdeploy|Option \"Device\" \"$FB_INPUT\" #linuxdeploy|g" $MNT_TARGET/etc/X11/xorg.conf
 		(set -e
-			#setprop ctl.stop surfaceflinger
-			pkill -STOP system_server
-			pkill -STOP surfaceflinger
-			chroot $MNT_TARGET su - $USER_NAME -c "startx -- :$FB_DISPLAY"
-			pkill -CONT surfaceflinger
-			pkill -CONT system_server
-			#reboot
+			if [ "$FB_FREEZE" == "y" ]; then
+				#setprop ctl.stop surfaceflinger
+				pkill -STOP system_server
+				pkill -STOP surfaceflinger
+				chroot $MNT_TARGET su - $USER_NAME -c "startx -- :$FB_DISPLAY -dpi $FB_DPI"
+				pkill -CONT surfaceflinger
+				pkill -CONT system_server
+				#reboot
+			else
+				chroot $MNT_TARGET su - $USER_NAME -c "startx -- :$FB_DISPLAY -dpi $FB_DPI &"
+			fi
 		exit 0)
 		[ $? -eq 0 ] && msg "done" || msg "fail"
 	else
