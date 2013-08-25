@@ -20,7 +20,6 @@ import android.content.res.Configuration;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Environment;
-import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
@@ -72,8 +71,10 @@ public class PrefStore {
 	public static String XSERVER_HOST;
 	public static String FB_START;
 	public static String FB_DISPLAY;
+	public static String FB_DPI;
 	public static String FB_DEV;
 	public static String FB_INPUT;
+	public static String FB_FREEZE;
 
 	// miscellaneous
 	public static String CURRENT_PROFILE;
@@ -175,8 +176,12 @@ public class PrefStore {
 				: "n";
 		FB_DISPLAY = sp.getString("fbdisplay",
 				c.getString(R.string.fbdisplay));
+		FB_DPI = sp.getString("fbdpi", c.getString(R.string.fbdpi));
 		FB_DEV = sp.getString("fbdev", c.getString(R.string.fbdev));
 		FB_INPUT = sp.getString("fbinput", c.getString(R.string.fbinput));
+		FB_FREEZE = sp.getBoolean("fbfreeze",
+				c.getString(R.string.fbfreeze).equals("true") ? true : false) ? "y"
+				: "n";
 		
 		try {
 			VERSION = c.getPackageManager().getPackageInfo(c.getPackageName(),
