@@ -3,6 +3,7 @@ Changelog (English)
 
 1.4.1
 Added support for installation from rootfs archives (tgz, tbz2)
+Added custom installation type (install without make new image file and filesystem)
 Bugfix: changing font size
 Improved mechanism of disk image file creation (fast re-creation)
 Improved framebuffer support
@@ -218,6 +219,7 @@ Updated list packages of base system installation
 
 1.4.1
 Добавлена поддержка установки дистрибутивов из rootfs архивов (tgz, tbz2)
+Добавлен пользовательский тип установки (установка без создания файла образа диска и файловой системы)
 Исправлено изменение размера шрифта
 Улучшен механизм создания файла образа диска (быстрое пересоздание)
 Улучшена поддержка фрейм-буфера

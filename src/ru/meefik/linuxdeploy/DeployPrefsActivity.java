@@ -417,7 +417,7 @@ public class DeployPrefsActivity extends SherlockPreferenceActivity implements
 					mirror.setSummary(mirror.getText());
 					mirror.setEnabled(true);
 				}
-				if (listPref.getValue().equals("custom")) {
+				if (listPref.getValue().equals("rootfs")) {
 					// suite
 					ListPreference suite = (ListPreference) this
 							.findPreference("suite");
@@ -460,7 +460,8 @@ public class DeployPrefsActivity extends SherlockPreferenceActivity implements
 					disksize.setEnabled(true);
 				else
 					disksize.setEnabled(false);
-				if (listPref.getValue().equals("directory"))
+				
+				if (listPref.getValue().equals("directory") || listPref.getValue().equals("custom"))
 					fstype.setEnabled(false);
 				else
 					fstype.setEnabled(true);
