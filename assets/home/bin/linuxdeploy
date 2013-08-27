@@ -559,7 +559,7 @@ mount_system()
 {
 	if [ "$#" -eq 0 ]; then
 		msg "Mounting partitions: "
-		mount_system root proc sys dev pts shm custom
+		mount_system root proc sys dev pts shm rootfs
 		return $?
 	fi
 	if [ "$#" -gt 1 ]; then
@@ -648,7 +648,7 @@ mount_system()
 			msg "skip"
 		fi
 	;;
-	custom)
+	rootfs)
 		DISKS=`echo "$CUSTOM_MOUNT" | tr ',;' ' '`
 		for disk in $DISKS
 		do
@@ -1224,7 +1224,7 @@ install_system()
 		find $MNT_TARGET/ -name "._cfg0000_*" | while read f; do mv "$f" "$(echo $f | sed 's/._cfg0000_//g')"; done
 		[ $? -eq 0 ] && msg "done" || msg "skip"
 	;;
-	custom)
+	rootfs)
 		msg "Getting and unpacking rootfs archive: "
 		if [ -n "`echo $MIRROR | grep -i 'gz$'`" ]; then
 			if [ -e "$MIRROR" ]; then

@@ -9,6 +9,7 @@
         <item>Файл</item>
         <item>Раздел</item>
         <item>Директория</item>
+        <item>Пользовательский</item>
     </string-array>
     <string-array name="fstype_entries">
         <item>Автоопределение</item>
