@@ -78,7 +78,7 @@
 
     <!-- Kali Linux -->
     <string name="kali_suite" translatable="false">kali</string>
-    <string name="kali_mirror" translatable="false">http://http.kali.org</string>
+    <string name="kali_mirror" translatable="false">http://http.kali.org/kali</string>
     <string name="kali_architecture" translatable="false">armel</string>
     
     <!-- Gentoo -->
