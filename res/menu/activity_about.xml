@@ -1,0 +1,10 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/menu_donate"
+        android:orderInCategory="100"
+        android:showAsAction="always"
+        android:title="@string/menu_donate">
+    </item>
+
+</menu>

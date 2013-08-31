@@ -7,6 +7,7 @@
     <string name="menu_properties">Параметры</string>
     <string name="menu_settings">Настройки</string>
     <string name="menu_about">О программе</string>
+    <string name="menu_donate">Поддержать</string>
     <string name="menu_exit">Выход</string>
     <string name="menu_status">Состояние</string>
     <string name="menu_clear">Очистить</string>
@@ -154,6 +155,6 @@
     <string name="dialog_title_fbinput_preference">FB: адрес устройства ввода</string>
     <string name="title_fbfreeze_preference">Приостановить Android</string>
     <string name="summary_fbfreeze_preference">Временно приостановить Android UI</string>
-    <string name="about_text"><font size="32"><b>Linux Deploy</b></font>\n\nЛицензия GPL v3\n\n[ <a href="https://github.com/meefik/linuxdeploy">github.com</a> , <a href="http://4pda.ru/forum/index.php?showtopic=378043">4pda.ru</a> ]\n\nЭта программа поставляется БЕЗ ВСЯКИХ ГАРАНТИЙ, а автор не несет ответственности за любые возможные последствия ее использования. Это свободное программное обеспечение, и вы можете распространять его при определенных условиях.\n\n&#169; 2012 Антон Скшидлевский</string>
+    <string name="about_text"><font size="32"><b>Linux Deploy</b></font>\n\nЛицензия GPL v3\n\n[ <a href="https://github.com/meefik/linuxdeploy">github.com</a> , <a href="http://4pda.ru/forum/index.php?showtopic=378043">4pda.ru</a> ]\n\nЭта программа поставляется БЕЗ ВСЯКИХ ГАРАНТИЙ, а автор не несет ответственности за любые возможные последствия ее использования. Это свободное программное обеспечение, и вы можете распространять его при определенных условиях.\n\n&#169; 2012-2013 Антон Скшидлевский</string>
 
 </resources>
