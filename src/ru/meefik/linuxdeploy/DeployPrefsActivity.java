@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -465,6 +466,30 @@ public class DeployPrefsActivity extends SherlockPreferenceActivity implements
 					fstype.setEnabled(false);
 				else
 					fstype.setEnabled(true);
+			}
+		}
+		
+		if (pref instanceof CheckBoxPreference) {
+			CheckBoxPreference cbPref = (CheckBoxPreference) pref;
+			if (cbPref.isChecked()) {
+				CheckBoxPreference vncstartup = (CheckBoxPreference) this
+						.findPreference("vncstartup");
+				CheckBoxPreference xstartup = (CheckBoxPreference) this
+						.findPreference("xstartup");
+				CheckBoxPreference fbstartup = (CheckBoxPreference) this
+						.findPreference("fbstartup");
+				if (cbPref.getKey().equals("vncstartup")) {
+					xstartup.setChecked(false);
+					fbstartup.setChecked(false);
+				}
+				if (cbPref.getKey().equals("xstartup")) {
+					vncstartup.setChecked(false);
+					fbstartup.setChecked(false);
+				}
+				if (cbPref.getKey().equals("fbstartup")) {
+					vncstartup.setChecked(false);
+					xstartup.setChecked(false);
+				}
 			}
 		}
 	}
