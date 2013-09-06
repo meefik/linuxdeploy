@@ -139,14 +139,14 @@ public class MainActivity extends SherlockActivity {
 						: R.drawable.ic_action_properties_dark);
 		
 		int ot = getResources().getConfiguration().orientation;
-		if (ot == Configuration.ORIENTATION_LANDSCAPE) {
+		//if (ot == Configuration.ORIENTATION_LANDSCAPE) {
 			menu.findItem(R.id.menu_start).setIcon(
 					isLight ? R.drawable.ic_action_start_light
 							: R.drawable.ic_action_start_dark);
 			menu.findItem(R.id.menu_stop).setIcon(
 					isLight ? R.drawable.ic_action_stop_light
 							: R.drawable.ic_action_stop_dark);
-		}
+		//}
 		
 		return true;
 	}
