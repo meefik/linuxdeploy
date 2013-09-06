@@ -1,6 +1,9 @@
 Changelog (English)
 ===================
 
+1.4.2
+Added support Debian 8.0 (jessie)
+
 1.4.1
 Added support for installation from rootfs archives (tgz, tbz2)
 Added custom installation type (install without make new image file and filesystem)
@@ -216,6 +219,9 @@ Updated list packages of base system installation
 
 История изменений (Русский)
 ===========================
+
+1.4.2
+Добавлена поддержка Debian 8.0 (jessie)
 
 1.4.1
 Добавлена поддержка установки дистрибутивов из rootfs архивов (tgz, tbz2)

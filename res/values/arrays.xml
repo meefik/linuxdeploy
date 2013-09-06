@@ -96,6 +96,7 @@
         <item>unstable</item>
         <item>squeeze</item>
         <item>wheezy</item>
+        <item>jessie</item>
         <item>sid</item>
     </string-array>
     <string-array name="debian_architecture_values" translatable="false">
