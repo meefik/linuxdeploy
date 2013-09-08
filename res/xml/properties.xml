@@ -104,14 +104,8 @@
             android:entries="@array/desktopenv_entries"
             android:entryValues="@array/desktopenv_values"
             android:key="desktopenv"
-            android:summary="@string/installgui"
+            android:summary="@string/desktopenv"
             android:title="@string/title_desktopenv_preference" />
-
-        <CheckBoxPreference
-            android:defaultValue="@string/installgui"
-            android:key="installgui"
-            android:summary="@string/summary_installgui_preference"
-            android:title="@string/title_installgui_preference" />
 
         <PreferenceScreen
             android:key="packageseditor"

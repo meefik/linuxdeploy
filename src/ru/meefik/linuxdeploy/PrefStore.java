@@ -54,7 +54,6 @@ public class PrefStore {
 	public static String USER_NAME;
 	public static String SERVER_DNS;
 	public static String LOCALE;
-	public static String INSTALL_GUI;
 	public static String DESKTOP_ENV;
 	public static String PACKAGES;
 
@@ -137,9 +136,6 @@ public class PrefStore {
 		LOCALE = sp.getString("locale", c.getString(R.string.locale));
 		DESKTOP_ENV = sp.getString("desktopenv",
 				c.getString(R.string.desktopenv));
-		INSTALL_GUI = sp.getBoolean("installgui",
-				c.getString(R.string.installgui).equals("true") ? true : false) ? "y"
-				: "n";
 		PACKAGES = sp.getString("packages", c.getString(R.string.packages)).trim();
 		String startup_ssh = sp.getBoolean("sshstartup",
 				c.getString(R.string.sshstartup).equals("true") ? true : false) ? "ssh"

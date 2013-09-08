@@ -112,7 +112,7 @@ configure_system()
 {
 	if [ "$#" -eq 0 ]; then
 		msg "Configuring GNU/Linux system: "
-		configure_system dns mtab motd hosts hostname timezone sudo groups locales repository profile upstart dbus xorg gui
+		configure_system dns mtab motd hosts hostname timezone sudo groups locales repository profile upstart dbus xorg packages
 		return 0
 	fi
 	if [ "$#" -gt 1 ]; then
@@ -403,135 +403,220 @@ configure_system()
 	exit 0)
 	[ $? -eq 0 ] && msg "done" || msg "fail"
 
-	if [ "$1" == "gui" -a "$INSTALL_GUI" == "y" ]; then
-		msg "Installing GUI packages: "
+	if [ "$1" == "packages" ]; then
+		msg "Installing additional packages: "
 		(set -e
 			case "$DISTRIB" in
 			debian|ubuntu|kali)
-				chroot $MNT_TARGET apt-get update -yq
-				PKGS="tightvncserver x11-xserver-utils xfonts-base desktop-base xinit xserver-xorg xserver-xorg-video-fbdev xserver-xorg-input-evdev"
-				case "$DESKTOP_ENV" in
-				xterm)
-					PKGS="$PKGS xterm"
-				;;
-				lxde)
-					PKGS="$PKGS lxde menu-xdg hicolor-icon-theme gtk2-engines"
-				;;
-				xfce)
-					PKGS="$PKGS xfce4 tango-icon-theme hicolor-icon-theme"
-				;;
-				gnome)
-					PKGS="$PKGS gnome-core"
-				;;
-				kde)
-					PKGS="$PKGS kde-standard"
-				;;
-				esac
+				PKGS=""
+				for pkg in $PACKAGES
+				do
+					case "$pkg" in
+					desktop)
+						PKGS="$PKGS desktop-base x11-xserver-utils xfonts-base"
+						case "$DESKTOP_ENV" in
+						xterm)
+							PKGS="$PKGS xterm"
+						;;
+						lxde)
+							PKGS="$PKGS lxde menu-xdg hicolor-icon-theme gtk2-engines"
+						;;
+						xfce)
+							PKGS="$PKGS xfce4 tango-icon-theme hicolor-icon-theme"
+						;;
+						gnome)
+							PKGS="$PKGS gnome-core"
+						;;
+						kde)
+							PKGS="$PKGS kde-standard"
+						;;
+						esac
+					;;
+					ssh)
+						PKGS="$PKGS openssh-server"
+					;;
+					vnc)
+						PKGS="$PKGS tightvncserver"
+					;;
+					xserver)
+						PKGS="$PKGS xinit xserver-xorg xserver-xorg-video-fbdev xserver-xorg-input-evdev"
+					;;
+					esac
+				done
 				export DEBIAN_FRONTEND=noninteractive
+				chroot $MNT_TARGET apt-get update -yq
 				chroot $MNT_TARGET apt-get install $PKGS --no-install-recommends -yq
 				chroot $MNT_TARGET apt-get clean
 			;;
 			archlinux)
-				PKGS="tightvnc xorg-utils xorg-fonts-misc ttf-dejavu"
-				case "$DESKTOP_ENV" in
-				xterm)
-					PKGS="$PKGS xterm"
-				;;
-				lxde)
-					PKGS="$PKGS lxde gtk-engines"
-				;;
-				xfce)
-					PKGS="$PKGS xfce4"
-				;;
-				gnome)
-					PKGS="$PKGS gnome"
-				;;
-				kde)
-					PKGS="$PKGS kdebase"
-				;;
-				esac
+				PKGS=""
+				for pkg in $PACKAGES
+				do
+					case "$pkg" in
+					desktop)
+						PKGS="$PKGS xorg-utils xorg-fonts-misc ttf-dejavu"
+						case "$DESKTOP_ENV" in
+						xterm)
+							PKGS="$PKGS xterm"
+						;;
+						lxde)
+							PKGS="$PKGS lxde gtk-engines"
+						;;
+						xfce)
+							PKGS="$PKGS xfce4"
+						;;
+						gnome)
+							PKGS="$PKGS gnome"
+						;;
+						kde)
+							PKGS="$PKGS kdebase"
+						;;
+						esac
+					;;
+					ssh)
+						PKGS="$PKGS openssh"
+					;;
+					vnc)
+						PKGS="$PKGS tightvnc"
+					;;
+					xserver)
+						PKGS="$PKGS xorg-server xorg-xinit"
+					;;
+					esac
+				done
 				#rm -f $MNT_TARGET/var/lib/pacman/db.lck || true
 				chroot $MNT_TARGET pacman -Syq --noconfirm $PKGS
 				rm -f $MNT_TARGET%/}/var/cache/pacman/pkg/* || true
 			;;
 			fedora)
-				PKGS="tigervnc-server xorg-x11-server-utils xorg-x11-fonts-misc dejavu-*"
-				case "$DESKTOP_ENV" in
-				xterm)
-					PKGS="$PKGS xterm"
-				;;
-				lxde)
-					IGRP="LXDE"
-				;;
-				xfce)
-					IGRP="XFCE"
-				;;
-				gnome)
-					IGRP="GNOME Desktop Environment"
-				;;
-				kde)
-					PKGS="$PKGS kde-baseapps kde-workspace ark konsole gwenview"
-				;;
-				esac
+				PKGS=""
+				for pkg in $PACKAGES
+				do
+					case "$pkg" in
+					desktop)
+						PKGS="$PKGS xorg-x11-server-utils xorg-x11-fonts-misc dejavu-*"
+						case "$DESKTOP_ENV" in
+						xterm)
+							PKGS="$PKGS xterm"
+						;;
+						lxde)
+							IGRP="LXDE"
+						;;
+						xfce)
+							IGRP="XFCE"
+						;;
+						gnome)
+							IGRP="GNOME Desktop Environment"
+						;;
+						kde)
+							PKGS="$PKGS kde-baseapps kde-workspace ark konsole gwenview"
+						;;
+						esac
+					;;
+					ssh)
+						PKGS="$PKGS openssh-server"
+					;;
+					vnc)
+						PKGS="$PKGS tigervnc-server"
+					;;
+					xserver)
+						PKGS="$PKGS xorg-x11-server xorg-x11-xinit"
+					;;
+					esac
+				done
 				chroot $MNT_TARGET yum install $PKGS --nogpgcheck --skip-broken -y
 				[ -n "$IGRP" ] && chroot $MNT_TARGET yum groupinstall "$IGRP" --nogpgcheck --skip-broken -y
 				chroot $MNT_TARGET yum clean all
 			;;
 			opensuse)
-				PKGS="tightvnc xorg-x11-fonts-core dejavu-fonts xauth"
-				case "$DESKTOP_ENV" in
-				xterm)
-					PKGS="$PKGS xterm"
-				;;
-				lxde)
-					PKGS="$PKGS patterns-openSUSE-lxde"
-				;;
-				xfce)
-					PKGS="$PKGS patterns-openSUSE-xfce"
-				;;
-				gnome)
-					PKGS="$PKGS patterns-openSUSE-gnome"
-				;;
-				kde)
-					PKGS="$PKGS patterns-openSUSE-kde"
-				;;
-				esac
+				PKGS=""
+				for pkg in $PACKAGES
+				do
+					case "$pkg" in
+					desktop)
+						PKGS="$PKGS xorg-x11-fonts-core dejavu-fonts xauth"
+						case "$DESKTOP_ENV" in
+						xterm)
+							PKGS="$PKGS xterm"
+						;;
+						lxde)
+							PKGS="$PKGS patterns-openSUSE-lxde"
+						;;
+						xfce)
+							PKGS="$PKGS patterns-openSUSE-xfce"
+						;;
+						gnome)
+							PKGS="$PKGS patterns-openSUSE-gnome"
+						;;
+						kde)
+							PKGS="$PKGS patterns-openSUSE-kde"
+						;;
+						esac
+					;;
+					ssh)
+						PKGS="$PKGS openssh"
+					;;
+					vnc)
+						PKGS="$PKGS tightvnc"
+					;;
+					xserver)
+						PKGS="$PKGS xorg-x11-server xinit xf86-video-fbdev xf86-input-evdev"
+					;;
+					esac
+				done
 				chroot $MNT_TARGET zypper --no-gpg-checks --non-interactive install $PKGS
 				chroot $MNT_TARGET zypper clean
 			;;
 			gentoo)
-				# set server USE flag for tightvnc
-				if [ -z "`grep '^net-misc/tightvnc' $MNT_TARGET/etc/portage/package.use`" ]; then
-					echo "net-misc/tightvnc" >> $MNT_TARGET/etc/portage/package.use
-				fi
-				if [ -z "`grep '^net-misc/tightvnc.*server' $MNT_TARGET/etc/portage/package.use`" ]; then
-					sed -i "s|^\(net-misc/tightvnc.*\)|\1 server|g" $MNT_TARGET/etc/portage/package.use
-				fi
-				PKGS="tightvnc xauth"
-				case "$DESKTOP_ENV" in
-				xterm)
-					PKGS="$PKGS xterm"
-				;;
-				lxde)
-					PKGS="$PKGS lxde-meta gtk-engines"
-				;;
-				xfce)
-					PKGS="$PKGS xfce4-meta"
-				;;
-				gnome)
-					PKGS="$PKGS gnome"
-				;;
-				kde)
-					PKGS="$PKGS kde-meta"
-				;;
-				esac
+				PKGS=""
+				for pkg in $PACKAGES
+				do
+					case "$pkg" in
+					desktop)
+						# set server USE flag for tightvnc
+						if [ -z "`grep '^net-misc/tightvnc' $MNT_TARGET/etc/portage/package.use`" ]; then
+							echo "net-misc/tightvnc" >> $MNT_TARGET/etc/portage/package.use
+						fi
+						if [ -z "`grep '^net-misc/tightvnc.*server' $MNT_TARGET/etc/portage/package.use`" ]; then
+							sed -i "s|^\(net-misc/tightvnc.*\)|\1 server|g" $MNT_TARGET/etc/portage/package.use
+						fi
+						PKGS="$PKGS xauth"
+						case "$DESKTOP_ENV" in
+						xterm)
+							PKGS="$PKGS xterm"
+						;;
+						lxde)
+							PKGS="$PKGS lxde-meta gtk-engines"
+						;;
+						xfce)
+							PKGS="$PKGS xfce4-meta"
+						;;
+						gnome)
+							PKGS="$PKGS gnome"
+						;;
+						kde)
+							PKGS="$PKGS kde-meta"
+						;;
+						esac
+					;;
+					ssh)
+						PKGS="$PKGS openssh"
+					;;
+					vnc)
+						PKGS="$PKGS tightvnc"
+					;;
+					xserver)
+						PKGS="$PKGS xinit xorg-server"
+					;;
+					esac
+				done
 				chroot $MNT_TARGET emerge --autounmask-write $PKGS || {
 					mv $MNT_TARGET/etc/portage/._cfg0000_package.use $MNT_TARGET/etc/portage/package.use
 					chroot $MNT_TARGET emerge $PKGS
 				}
 			;;
 			*)
-				msg " ...not supported."
+				msg " ...not supported"
 			;;
 			esac
 		exit 0) 1>&3 2>&3
@@ -955,7 +1040,7 @@ install_system()
 	debian|ubuntu|kali)
 		msg "Installing Debian-based distribution: "
 
-		PACKAGES="locales,openssh-server,sudo,man-db"
+		PACKAGES="locales,sudo,man-db"
 		case "$DISTRIB" in
 		kali)
 			PACKAGES="$PACKAGES,kali-defaults,kali-menu,kali-root-login"
@@ -977,7 +1062,7 @@ install_system()
 	archlinux)
 		msg "Installing Arch Linux distribution: "
 
-		BASIC_PACKAGES="acl archlinux-keyring attr bash bzip2 ca-certificates coreutils cracklib curl db dirmngr e2fsprogs expat findutils gawk gcc-libs gdbm glibc gmp gnupg gpgme grep libarchive libassuan libcap libgcrypt libgpg-error libgssglue libksba libldap libsasl libssh2 libtirpc linux-api-headers lzo2 ncurses openssl pacman pacman-mirrorlist pam pambase perl pinentry pth readline run-parts sed shadow tzdata util-linux xz zlib"
+		BASIC_PACKAGES="acl archlinux-keyring attr bash bzip2 ca-certificates coreutils cracklib curl db dirmngr e2fsprogs expat findutils gawk gcc-libs gdbm glibc gmp gnupg gpgme grep libarchive libassuan libcap libgcrypt libgpg-error libgssglue libksba libldap libsasl libssh2 libtirpc linux-api-headers lzo2 ncurses openssl pacman pacman-mirrorlist pam pambase perl pinentry pth readline run-parts sed shadow sudo tzdata util-linux xz zlib"
 		REPO="${MIRROR%/}/$ARCH/core"
 		CACHE_DIR="$MNT_TARGET/var/cache/pacman/pkg"
 
@@ -1028,7 +1113,7 @@ install_system()
 		(set -e
 			chroot $MNT_TARGET /usr/bin/pacman --noconfirm -Sy
 			EXTRA_PACKAGES=`chroot $MNT_TARGET /usr/bin/pacman --noconfirm -Sg base | awk '{print $2}' | grep -v -e 'linux' -e 'kernel'`
-			chroot $MNT_TARGET /usr/bin/pacman --noconfirm --force -Sq $BASIC_PACKAGES $EXTRA_PACKAGES sudo openssh
+			chroot $MNT_TARGET /usr/bin/pacman --noconfirm --force -Sq $BASIC_PACKAGES $EXTRA_PACKAGES
 		exit 0) 1>&3 2>&3
 		[ $? -ne 0 ] && return 1
 
@@ -1043,13 +1128,13 @@ install_system()
 
 		case "$SUITE" in
 		17)
-			BASIC_PACKAGES="acl attr audit audit-libs avahi-autoipd basesystem bash bind-libs bind-libs-lite bind-license bind-utils bzip2 bzip2-libs ca-certificates checkpolicy chkconfig coreutils cpio cracklib cracklib-dicts crda cronie cronie-anacron crontabs cryptsetup-libs curl cyrus-sasl-lib db4 dbus dbus-glib dbus-libs device-mapper device-mapper-libs dhclient dhcp-common dhcp-libs diffutils dnsmasq dosfstools dracut e2fsprogs e2fsprogs-libs elfutils-libelf ethtool expat fedora-release fedora-release-notes file file-libs filesystem findutils fipscheck fipscheck-lib gamin gawk gdbm glib2 glibc glibc-common gmp gnupg2 gpgme grep groff groff-base gzip hardlink hostname hwdata info initscripts iproute iptables iputils iw kbd kbd-misc keyutils keyutils-libs kmod kmod-libs krb5-libs less libacl libassuan libattr libblkid libcap libcap-ng libcom_err libcurl libdaemon libdb libdb-utils libedit libevent libffi libgcc libgcrypt libgpg-error libgssglue libgudev1 libidn libmount libnfsidmap libnl libnl3 libpcap libpipeline libpwquality libselinux libselinux-utils libsemanage libsepol libss libssh2 libsss_sudo libstdc++ libtirpc libudev libusb1 libuser libutempter libuuid libxml2 linux-atm-libs logrotate lua m4 man-db man-pages mingetty mobile-broadband-provider-info ncurses ncurses-base ncurses-libs net-tools newt newt-python nfs-utils nspr nss nss-myhostname nss-softokn nss-softokn-freebl nss-sysinit nss-tools nss-util ntpdate openldap openssh openssh-clients openssh-server openssl pam parted passwd pciutils-libs pcre pinentry pkgconfig policycoreutils popt ppp procps psmisc pth pygpgme python python-chardet python-iniparse python-kitchen python-libs python-pycurl python-urlgrabber readline rootfiles rootfs-resize rpcbind rpm rpm-build-libs rpm-libs rpm-python rsyslog sed selinux-policy selinux-policy-targeted setserial setup shadow-utils shared-mime-info slang sqlite sudo systemd systemd-sysv sysvinit-tools tar tcp_wrappers-libs tzdata udev usbutils ustr util-linux vim-minimal wget which wireless-tools wpa_supplicant xz xz-libs yum yum-metadata-parser yum-utils zlib"
+			BASIC_PACKAGES="acl attr audit audit-libs avahi-autoipd basesystem bash bind-libs bind-libs-lite bind-license bind-utils bzip2 bzip2-libs ca-certificates checkpolicy chkconfig coreutils cpio cracklib cracklib-dicts crda cronie cronie-anacron crontabs cryptsetup-libs curl cyrus-sasl-lib db4 dbus dbus-glib dbus-libs device-mapper device-mapper-libs dhclient dhcp-common dhcp-libs diffutils dnsmasq dosfstools dracut e2fsprogs e2fsprogs-libs elfutils-libelf ethtool expat fedora-release fedora-release-notes file file-libs filesystem findutils fipscheck fipscheck-lib gamin gawk gdbm glib2 glibc glibc-common gmp gnupg2 gpgme grep groff groff-base gzip hardlink hostname hwdata info initscripts iproute iptables iputils iw kbd kbd-misc keyutils keyutils-libs kmod kmod-libs krb5-libs less libacl libassuan libattr libblkid libcap libcap-ng libcom_err libcurl libdaemon libdb libdb-utils libedit libevent libffi libgcc libgcrypt libgpg-error libgssglue libgudev1 libidn libmount libnfsidmap libnl libnl3 libpcap libpipeline libpwquality libselinux libselinux-utils libsemanage libsepol libss libssh2 libsss_sudo libstdc++ libtirpc libudev libusb1 libuser libutempter libuuid libxml2 linux-atm-libs logrotate lua m4 man-db man-pages mingetty mobile-broadband-provider-info ncurses ncurses-base ncurses-libs net-tools newt newt-python nfs-utils nspr nss nss-myhostname nss-softokn nss-softokn-freebl nss-sysinit nss-tools nss-util ntpdate openldap openssh-clients openssl pam parted passwd pciutils-libs pcre pinentry pkgconfig policycoreutils popt ppp procps psmisc pth pygpgme python python-chardet python-iniparse python-kitchen python-libs python-pycurl python-urlgrabber readline rootfiles rootfs-resize rpcbind rpm rpm-build-libs rpm-libs rpm-python rsyslog sed selinux-policy selinux-policy-targeted setserial setup shadow-utils shared-mime-info slang sqlite sudo systemd systemd-sysv sysvinit-tools tar tcp_wrappers-libs tzdata udev usbutils ustr util-linux vim-minimal wget which wireless-tools wpa_supplicant xz xz-libs yum yum-metadata-parser yum-utils zlib"
 		;;
 		18)
-			BASIC_PACKAGES="acl attr audit audit-libs avahi-autoipd avahi-libs basesystem bash bind-libs bind-libs-lite bind-license bind-utils bzip2 bzip2-libs c-ares ca-certificates checkpolicy chkconfig coreutils cpio cracklib cracklib-dicts crda cronie cronie-anacron crontabs cryptsetup-libs cups-libs curl cyrus-sasl-gssapi cyrus-sasl-lib dbus dbus-glib dbus-libs device-mapper device-mapper-libs dhclient dhcp-common dhcp-libs diffutils dnsmasq dosfstools dracut e2fsprogs e2fsprogs-libs elfutils-libelf ethtool expat fedora-release fedora-release-notes file file-libs filesystem findutils fipscheck fipscheck-lib gamin gawk gdbm glib2 glibc glibc-common gmp gnupg2 gnutls gpgme grep groff groff-base gzip hardlink hostname hwdata info initscripts iproute iptables iputils iw jbigkit-libs json-c kbd kbd-misc keyutils keyutils-libs kmod kmod-libs kpartx krb5-libs less libacl libassuan libattr libbasicobjects libblkid libbsd libcap libcap-ng libcollection libcom_err libcurl libdaemon libdb libdb-utils libdb4 libdhash libedit libee libestr libevent libffi libgcc libgcrypt libgpg-error libgssglue libgudev1 libidn libini_config libipa_hbac libjpeg-turbo libldb liblognorm libmicrohttpd libmount libnfsidmap libnl libnl3 libpath_utils libpcap libpipeline libpng libpwquality libref_array libselinux libselinux-utils libsemanage libsepol libss libssh2 libsss_idmap libsss_sudo libstdc++ libtalloc libtasn1 libtdb libtevent libtiff libtirpc libusbx libuser libutempter libuuid libwbclient libxml2 linux-atm-libs logrotate lua m4 man-db man-pages mingetty mobile-broadband-provider-info ncurses ncurses-base ncurses-libs net-tools newt newt-python nfs-utils nspr nss nss-myhostname nss-softokn nss-softokn-freebl nss-sysinit nss-tools nss-util ntpdate openldap openssh openssh-clients openssh-server openssl-libs p11-kit pam parted passwd pciutils-libs pcre pinentry pkgconfig policycoreutils popt procps-ng psmisc pth pygpgme pyliblzma pyparted pytalloc python python-chardet python-iniparse python-kitchen python-libs python-psutil python-pycurl python-urlgrabber qrencode-libs quota quota-nls readline rootfiles rootfs-resize rpcbind rpm rpm-build-libs rpm-libs rpm-python rsyslog samba-libs sed selinux-policy selinux-policy-targeted setserial setup shadow-utils shared-mime-info slang sqlite sssd sssd-client sudo systemd systemd-libs systemd-sysv sysvinit-tools tar tcp_wrappers tcp_wrappers-libs tzdata usbutils ustr util-linux vim-minimal wget which wireless-tools wpa_supplicant xz xz-libs yum yum-metadata-parser yum-utils zlib"
+			BASIC_PACKAGES="acl attr audit audit-libs avahi-autoipd avahi-libs basesystem bash bind-libs bind-libs-lite bind-license bind-utils bzip2 bzip2-libs c-ares ca-certificates checkpolicy chkconfig coreutils cpio cracklib cracklib-dicts crda cronie cronie-anacron crontabs cryptsetup-libs cups-libs curl cyrus-sasl-gssapi cyrus-sasl-lib dbus dbus-glib dbus-libs device-mapper device-mapper-libs dhclient dhcp-common dhcp-libs diffutils dnsmasq dosfstools dracut e2fsprogs e2fsprogs-libs elfutils-libelf ethtool expat fedora-release fedora-release-notes file file-libs filesystem findutils fipscheck fipscheck-lib gamin gawk gdbm glib2 glibc glibc-common gmp gnupg2 gnutls gpgme grep groff groff-base gzip hardlink hostname hwdata info initscripts iproute iptables iputils iw jbigkit-libs json-c kbd kbd-misc keyutils keyutils-libs kmod kmod-libs kpartx krb5-libs less libacl libassuan libattr libbasicobjects libblkid libbsd libcap libcap-ng libcollection libcom_err libcurl libdaemon libdb libdb-utils libdb4 libdhash libedit libee libestr libevent libffi libgcc libgcrypt libgpg-error libgssglue libgudev1 libidn libini_config libipa_hbac libjpeg-turbo libldb liblognorm libmicrohttpd libmount libnfsidmap libnl libnl3 libpath_utils libpcap libpipeline libpng libpwquality libref_array libselinux libselinux-utils libsemanage libsepol libss libssh2 libsss_idmap libsss_sudo libstdc++ libtalloc libtasn1 libtdb libtevent libtiff libtirpc libusbx libuser libutempter libuuid libwbclient libxml2 linux-atm-libs logrotate lua m4 man-db man-pages mingetty mobile-broadband-provider-info ncurses ncurses-base ncurses-libs net-tools newt newt-python nfs-utils nspr nss nss-myhostname nss-softokn nss-softokn-freebl nss-sysinit nss-tools nss-util ntpdate openldap openssh-clients openssl-libs p11-kit pam parted passwd pciutils-libs pcre pinentry pkgconfig policycoreutils popt procps-ng psmisc pth pygpgme pyliblzma pyparted pytalloc python python-chardet python-iniparse python-kitchen python-libs python-psutil python-pycurl python-urlgrabber qrencode-libs quota quota-nls readline rootfiles rootfs-resize rpcbind rpm rpm-build-libs rpm-libs rpm-python rsyslog samba-libs sed selinux-policy selinux-policy-targeted setserial setup shadow-utils shared-mime-info slang sqlite sssd sssd-client sudo systemd systemd-libs systemd-sysv sysvinit-tools tar tcp_wrappers tcp_wrappers-libs tzdata usbutils ustr util-linux vim-minimal wget which wireless-tools wpa_supplicant xz xz-libs yum yum-metadata-parser yum-utils zlib"
 		;;
 		19)
-			BASIC_PACKAGES="acl attr audit audit-libs avahi-autoipd avahi-libs basesystem bash bind-libs bind-libs-lite bind-license bind-utils bzip2 bzip2-libs c-ares ca-certificates checkpolicy chkconfig coreutils cpio cracklib cracklib-dicts crda cronie cronie-anacron crontabs cryptsetup-libs cups-libs curl cyrus-sasl-gssapi cyrus-sasl-lib dbus dbus-glib dbus-libs device-mapper device-mapper-libs dhclient dhcp-common dhcp-libs diffutils dnsmasq dosfstools dracut e2fsprogs e2fsprogs-libs elfutils-libelf ethtool expat fedora-release fedora-release-notes file file-libs filesystem findutils fipscheck fipscheck-lib gamin gawk gdbm glib2 glibc glibc-common gmp gnupg2 gnutls gpgme grep groff groff-base gzip hardlink hostname hwdata info initscripts iproute iptables iputils iw jbigkit-libs json-c kbd kbd-misc keyutils keyutils-libs kmod kmod-libs kpartx krb5-libs less libacl libassuan libattr libbasicobjects libblkid libbsd libcap libcap-ng libcollection libcom_err libcurl libdaemon libdb libdb-utils libdb4 libdhash libedit libee libestr libevent libffi libgcc libgcrypt libgpg-error libgssglue libgudev1 libidn libini_config libipa_hbac libjpeg-turbo libldb liblognorm libmicrohttpd libmount libnfsidmap libnl libnl3 libpath_utils libpcap libpipeline libpng libpwquality libref_array libselinux libselinux-utils libsemanage libsepol libss libssh2 libsss_idmap libsss_sudo libstdc++ libtalloc libtasn1 libtdb libtevent libtiff libtirpc libusbx libuser libutempter libuuid libwbclient libxml2 linux-atm-libs logrotate lua m4 man-db man-pages mingetty mobile-broadband-provider-info ncurses ncurses-base ncurses-libs net-tools nettle newt newt-python nfs-utils nspr nss nss-myhostname nss-softokn nss-softokn-freebl nss-sysinit nss-tools nss-util ntpdate openldap openssh openssh-clients openssh-server openssl-libs p11-kit pam parted passwd pciutils-libs pcre pinentry pkgconfig policycoreutils popt procps-ng psmisc pth pygpgme pyliblzma pyparted pytalloc python python-chardet python-iniparse python-kitchen python-libs python-psutil python-pycurl python-urlgrabber qrencode-libs quota quota-nls readline rootfiles rootfs-resize rpcbind rpm rpm-build-libs rpm-libs rpm-python rsyslog samba-libs sed selinux-policy selinux-policy-targeted setserial setup shadow-utils shared-mime-info slang sqlite sssd sssd-client sudo systemd systemd-libs systemd-sysv sysvinit-tools tar tcp_wrappers tcp_wrappers-libs tzdata usbutils ustr util-linux vim-minimal wget which wireless-tools wpa_supplicant xz xz-libs yum yum-metadata-parser yum-utils zlib"
+			BASIC_PACKAGES="acl attr audit audit-libs avahi-autoipd avahi-libs basesystem bash bind-libs bind-libs-lite bind-license bind-utils bzip2 bzip2-libs c-ares ca-certificates checkpolicy chkconfig coreutils cpio cracklib cracklib-dicts crda cronie cronie-anacron crontabs cryptsetup-libs cups-libs curl cyrus-sasl-gssapi cyrus-sasl-lib dbus dbus-glib dbus-libs device-mapper device-mapper-libs dhclient dhcp-common dhcp-libs diffutils dnsmasq dosfstools dracut e2fsprogs e2fsprogs-libs elfutils-libelf ethtool expat fedora-release fedora-release-notes file file-libs filesystem findutils fipscheck fipscheck-lib gamin gawk gdbm glib2 glibc glibc-common gmp gnupg2 gnutls gpgme grep groff groff-base gzip hardlink hostname hwdata info initscripts iproute iptables iputils iw jbigkit-libs json-c kbd kbd-misc keyutils keyutils-libs kmod kmod-libs kpartx krb5-libs less libacl libassuan libattr libbasicobjects libblkid libbsd libcap libcap-ng libcollection libcom_err libcurl libdaemon libdb libdb-utils libdb4 libdhash libedit libee libestr libevent libffi libgcc libgcrypt libgpg-error libgssglue libgudev1 libidn libini_config libipa_hbac libjpeg-turbo libldb liblognorm libmicrohttpd libmount libnfsidmap libnl libnl3 libpath_utils libpcap libpipeline libpng libpwquality libref_array libselinux libselinux-utils libsemanage libsepol libss libssh2 libsss_idmap libsss_sudo libstdc++ libtalloc libtasn1 libtdb libtevent libtiff libtirpc libusbx libuser libutempter libuuid libwbclient libxml2 linux-atm-libs logrotate lua m4 man-db man-pages mingetty mobile-broadband-provider-info ncurses ncurses-base ncurses-libs net-tools nettle newt newt-python nfs-utils nspr nss nss-myhostname nss-softokn nss-softokn-freebl nss-sysinit nss-tools nss-util ntpdate openldap openssh-clients openssl-libs p11-kit pam parted passwd pciutils-libs pcre pinentry pkgconfig policycoreutils popt procps-ng psmisc pth pygpgme pyliblzma pyparted pytalloc python python-chardet python-iniparse python-kitchen python-libs python-psutil python-pycurl python-urlgrabber qrencode-libs quota quota-nls readline rootfiles rootfs-resize rpcbind rpm rpm-build-libs rpm-libs rpm-python rsyslog samba-libs sed selinux-policy selinux-policy-targeted setserial setup shadow-utils shared-mime-info slang sqlite sssd sssd-client sudo systemd systemd-libs systemd-sysv sysvinit-tools tar tcp_wrappers tcp_wrappers-libs tzdata usbutils ustr util-linux vim-minimal wget which wireless-tools wpa_supplicant xz xz-libs yum yum-metadata-parser yum-utils zlib"
 		;;
 		esac
 		REPO="${MIRROR%/}/${SUITE}/Everything/${ARCH}/os"
@@ -1131,10 +1216,10 @@ install_system()
 
 		case "$ARCH" in
 		armv5tel)
-			BASIC_PACKAGES="aaa_base aaa_base-extras autoyast2-installation bash bind-libs bind-utils branding-openSUSE bridge-utils bzip2 coreutils cpio cracklib cracklib-dict-full cron cronie cryptsetup curl cyrus-sasl dbus-1 dbus-1-x11 device-mapper dhcpcd diffutils dirmngr dmraid e2fsprogs elfutils file filesystem fillup findutils fontconfig gawk gio-branding-openSUSE glib2-tools glibc glibc-extra glibc-i18ndata glibc-locale gnu-unifont-bitmap-fonts gpg2 grep groff gzip hwinfo ifplugd info initviocons iproute2 iputils kbd kpartx krb5 less libX11-6 libX11-data libXau6 libXext6 libXft2 libXrender1 libacl1 libadns1 libaio1 libasm1 libassuan0 libattr1 libaudit1 libaugeas0 libblkid1 libblocxx6 libbz2-1 libcairo2 libcap-ng0 libcap2 libcom_err2 libcrack2 libcryptsetup4 libcurl4 libdaemon0 libdb-4_8 libdbus-1-3 libdrm2 libdw1 libedit0 libelf0 libelf1 libestr0 libexpat1 libext2fs2 libffi4 libfreetype6 libgcc_s1 libgcrypt11 libgdbm4 libgio-2_0-0 libglib-2_0-0 libgmodule-2_0-0 libgmp10 libgnutls28 libgobject-2_0-0 libgpg-error0 libgssglue1 libharfbuzz0 libhogweed2 libicu49 libidn11 libiw30 libjson0 libkeyutils1 libkmod2 libksba8 libldap-2_4-2 liblua5_1 liblzma5 libmagic1 libmicrohttpd10 libmodman1 libmount1 libncurses5 libncurses6 libnettle4 libnl-1_1 libopenssl1_0_0 libp11-kit0 libpango-1_0-0 libparted0 libpci3 libpcre1 libpipeline1 libpixman-1-0 libply-boot-client2 libply-splash-core2 libply-splash-graphics2 libply2 libpng15-15 libpolkit0 libpopt0 libprocps1 libproxy1 libpth20 libpython2_7-1_0 libqrencode3 libreadline6 libreiserfs-0_3-0 libselinux1 libsemanage1 libsepol1 libsolv-tools libssh2-1 libstdc++6 libstorage4 libtasn1 libtasn1-6 libtirpc1 libudev1 libusb-0_1-4 libusb-1_0-0 libustr-1_0-1 libuuid1 libwrap0 libxcb-render0 libxcb-shm0 libxcb1 libxml2-2 libxtables9 libyui-ncurses-pkg4 libyui-ncurses4 libyui4 libz1 libzio1 libzypp limal limal-perl logrotate lsscsi lvm2 man man-pages mdadm mkinitrd module-init-tools multipath-tools ncurses-utils net-tools netcfg openSUSE-build-key openSUSE-release openSUSE-release-ftp openslp openssh openssl pam pam-config pango-tools parted pciutils pciutils-ids perl perl-Bootloader perl-Config-Crontab perl-XML-Parser perl-XML-Simple perl-base perl-gettext permissions pinentry pkg-config plymouth plymouth-branding-openSUSE plymouth-plugin-label plymouth-plugin-script plymouth-scripts polkit procps python-base rpcbind rpm rsyslog sed shadow shared-mime-info sudo suse-module-tools sysconfig sysfsutils syslog-service systemd systemd-presets-branding-openSUSE systemd-sysvinit sysvinit-tools tar tcpd terminfo-base timezone tunctl u-boot-tools udev unzip update-alternatives util-linux vim vim-base vlan wallpaper-branding-openSUSE wireless-tools wpa_supplicant xz yast2 yast2-bootloader yast2-core yast2-country yast2-country-data yast2-dbus-client yast2-firstboot yast2-hardware-detection yast2-installation yast2-mouse yast2-packager yast2-perl-bindings yast2-pkg-bindings yast2-proxy yast2-slp yast2-storage yast2-trans-stats yast2-transfer yast2-update yast2-xml yast2-ycp-ui-bindings zypper"
+			BASIC_PACKAGES="aaa_base aaa_base-extras autoyast2-installation bash bind-libs bind-utils branding-openSUSE bridge-utils bzip2 coreutils cpio cracklib cracklib-dict-full cron cronie cryptsetup curl cyrus-sasl dbus-1 dbus-1-x11 device-mapper dhcpcd diffutils dirmngr dmraid e2fsprogs elfutils file filesystem fillup findutils fontconfig gawk gio-branding-openSUSE glib2-tools glibc glibc-extra glibc-i18ndata glibc-locale gnu-unifont-bitmap-fonts gpg2 grep groff gzip hwinfo ifplugd info initviocons iproute2 iputils kbd kpartx krb5 less libX11-6 libX11-data libXau6 libXext6 libXft2 libXrender1 libacl1 libadns1 libaio1 libasm1 libassuan0 libattr1 libaudit1 libaugeas0 libblkid1 libblocxx6 libbz2-1 libcairo2 libcap-ng0 libcap2 libcom_err2 libcrack2 libcryptsetup4 libcurl4 libdaemon0 libdb-4_8 libdbus-1-3 libdrm2 libdw1 libedit0 libelf0 libelf1 libestr0 libexpat1 libext2fs2 libffi4 libfreetype6 libgcc_s1 libgcrypt11 libgdbm4 libgio-2_0-0 libglib-2_0-0 libgmodule-2_0-0 libgmp10 libgnutls28 libgobject-2_0-0 libgpg-error0 libgssglue1 libharfbuzz0 libhogweed2 libicu49 libidn11 libiw30 libjson0 libkeyutils1 libkmod2 libksba8 libldap-2_4-2 liblua5_1 liblzma5 libmagic1 libmicrohttpd10 libmodman1 libmount1 libncurses5 libncurses6 libnettle4 libnl-1_1 libopenssl1_0_0 libp11-kit0 libpango-1_0-0 libparted0 libpci3 libpcre1 libpipeline1 libpixman-1-0 libply-boot-client2 libply-splash-core2 libply-splash-graphics2 libply2 libpng15-15 libpolkit0 libpopt0 libprocps1 libproxy1 libpth20 libpython2_7-1_0 libqrencode3 libreadline6 libreiserfs-0_3-0 libselinux1 libsemanage1 libsepol1 libsolv-tools libssh2-1 libstdc++6 libstorage4 libtasn1 libtasn1-6 libtirpc1 libudev1 libusb-0_1-4 libusb-1_0-0 libustr-1_0-1 libuuid1 libwrap0 libxcb-render0 libxcb-shm0 libxcb1 libxml2-2 libxtables9 libyui-ncurses-pkg4 libyui-ncurses4 libyui4 libz1 libzio1 libzypp limal limal-perl logrotate lsscsi lvm2 man man-pages mdadm mkinitrd module-init-tools multipath-tools ncurses-utils net-tools netcfg openSUSE-build-key openSUSE-release openSUSE-release-ftp openslp openssl pam pam-config pango-tools parted pciutils pciutils-ids perl perl-Bootloader perl-Config-Crontab perl-XML-Parser perl-XML-Simple perl-base perl-gettext permissions pinentry pkg-config plymouth plymouth-branding-openSUSE plymouth-plugin-label plymouth-plugin-script plymouth-scripts polkit procps python-base rpcbind rpm rsyslog sed shadow shared-mime-info sudo suse-module-tools sysconfig sysfsutils syslog-service systemd systemd-presets-branding-openSUSE systemd-sysvinit sysvinit-tools tar tcpd terminfo-base timezone tunctl u-boot-tools udev unzip update-alternatives util-linux vim vim-base vlan wallpaper-branding-openSUSE wireless-tools wpa_supplicant xz yast2 yast2-bootloader yast2-core yast2-country yast2-country-data yast2-dbus-client yast2-firstboot yast2-hardware-detection yast2-installation yast2-mouse yast2-packager yast2-perl-bindings yast2-pkg-bindings yast2-proxy yast2-slp yast2-storage yast2-trans-stats yast2-transfer yast2-update yast2-xml yast2-ycp-ui-bindings zypper"
 		;;
 		armv7hl)
-			BASIC_PACKAGES="aaa_base aaa_base-extras autoyast2-installation bash bind-libs bind-utils branding-openSUSE bridge-utils bzip2 coreutils cpio cracklib cracklib-dict-full cron cronie cryptsetup curl cyrus-sasl dbus-1 dbus-1-x11 device-mapper dhcpcd diffutils dirmngr dmraid e2fsprogs elfutils file filesystem fillup findutils fontconfig gawk gio-branding-openSUSE glib2-tools glibc glibc-extra glibc-i18ndata glibc-locale gnu-unifont-bitmap-fonts gpg2 grep groff gzip hwinfo ifplugd info initviocons iproute2 iputils kbd kpartx krb5 less libX11-6 libX11-data libXau6 libXext6 libXft2 libXrender1 libacl1 libadns1 libaio1 libasm1 libassuan0 libattr1 libaudit1 libaugeas0 libblkid1 libbz2-1 libcairo2 libcap-ng0 libcap2 libcom_err2 libcrack2 libcryptsetup4 libcurl4 libdaemon0 libdb-4_8 libdbus-1-3 libdrm2 libdw1 libedit0 libelf0 libelf1 libestr0 libexpat1 libext2fs2 libffi4 libfreetype6 libgcc_s1 libgcrypt11 libgdbm4 libgio-2_0-0 libglib-2_0-0 libgmodule-2_0-0 libgmp10 libgnutls28 libgobject-2_0-0 libgpg-error0 libgssglue1 libharfbuzz0 libhogweed2 libicu51_2 libidn11 libiw30 libjson0 libkeyutils1 libkmod2 libksba8 libldap-2_4-2 liblua5_1 liblzma5 libmagic1 libmicrohttpd10 libmodman1 libmount1 libncurses5 libncurses6 libnettle4 libnl1 libopenssl1_0_0 libp11-kit0 libpango-1_0-0 libparted0 libpci3 libpcre1 libpipeline1 libpixman-1-0 libply-boot-client2 libply-splash-core2 libply-splash-graphics2 libply2 libpng16-16 libpolkit0 libpopt0 libprocps1 libproxy1 libpth20 libpython2_7-1_0 libqrencode3 libreadline6 libreiserfs-0_3-0 libselinux1 libsemanage1 libsepol1 libsolv-tools libssh2-1 libstdc++6 libstorage4 libtasn1 libtasn1-6 libtirpc1 libudev1 libusb-0_1-4 libusb-1_0-0 libustr-1_0-1 libuuid1 libwrap0 libxcb-render0 libxcb-shm0 libxcb1 libxml2-2 libxtables10 libyui-ncurses-pkg5 libyui-ncurses5 libyui5 libz1 libzio1 libzypp logrotate lsscsi lvm2 man man-pages mdadm mkinitrd module-init-tools multipath-tools ncurses-utils net-tools netcfg openSUSE-build-key openSUSE-release-Factory openSUSE-release-ftp-Factory openslp openssh openssl pam pam-config pango-tools parted pciutils pciutils-ids perl perl-Bootloader perl-Config-Crontab perl-XML-Parser perl-XML-Simple perl-base perl-gettext permissions pinentry pkg-config plymouth plymouth-branding-openSUSE plymouth-plugin-label plymouth-plugin-script plymouth-scripts polkit procps python-base rpcbind rpm rsyslog sed shadow shared-mime-info sudo suse-module-tools sysconfig sysfsutils syslog-service systemd systemd-presets-branding-openSUSE systemd-sysvinit sysvinit-tools tar tcpd terminfo-base timezone tunctl u-boot-tools udev unzip update-alternatives util-linux vim vim-base vlan wallpaper-branding-openSUSE wireless-tools wpa_supplicant xz yast2 yast2-bootloader yast2-core yast2-country yast2-country-data yast2-dbus-client yast2-firstboot yast2-hardware-detection yast2-installation yast2-mouse yast2-packager yast2-perl-bindings yast2-pkg-bindings yast2-proxy yast2-slp yast2-storage yast2-trans-stats yast2-transfer yast2-update yast2-xml yast2-ycp-ui-bindings zypper"
+			BASIC_PACKAGES="aaa_base aaa_base-extras autoyast2-installation bash bind-libs bind-utils branding-openSUSE bridge-utils bzip2 coreutils cpio cracklib cracklib-dict-full cron cronie cryptsetup curl cyrus-sasl dbus-1 dbus-1-x11 device-mapper dhcpcd diffutils dirmngr dmraid e2fsprogs elfutils file filesystem fillup findutils fontconfig gawk gio-branding-openSUSE glib2-tools glibc glibc-extra glibc-i18ndata glibc-locale gnu-unifont-bitmap-fonts gpg2 grep groff gzip hwinfo ifplugd info initviocons iproute2 iputils kbd kpartx krb5 less libX11-6 libX11-data libXau6 libXext6 libXft2 libXrender1 libacl1 libadns1 libaio1 libasm1 libassuan0 libattr1 libaudit1 libaugeas0 libblkid1 libbz2-1 libcairo2 libcap-ng0 libcap2 libcom_err2 libcrack2 libcryptsetup4 libcurl4 libdaemon0 libdb-4_8 libdbus-1-3 libdrm2 libdw1 libedit0 libelf0 libelf1 libestr0 libexpat1 libext2fs2 libffi4 libfreetype6 libgcc_s1 libgcrypt11 libgdbm4 libgio-2_0-0 libglib-2_0-0 libgmodule-2_0-0 libgmp10 libgnutls28 libgobject-2_0-0 libgpg-error0 libgssglue1 libharfbuzz0 libhogweed2 libicu51_2 libidn11 libiw30 libjson0 libkeyutils1 libkmod2 libksba8 libldap-2_4-2 liblua5_1 liblzma5 libmagic1 libmicrohttpd10 libmodman1 libmount1 libncurses5 libncurses6 libnettle4 libnl1 libopenssl1_0_0 libp11-kit0 libpango-1_0-0 libparted0 libpci3 libpcre1 libpipeline1 libpixman-1-0 libply-boot-client2 libply-splash-core2 libply-splash-graphics2 libply2 libpng16-16 libpolkit0 libpopt0 libprocps1 libproxy1 libpth20 libpython2_7-1_0 libqrencode3 libreadline6 libreiserfs-0_3-0 libselinux1 libsemanage1 libsepol1 libsolv-tools libssh2-1 libstdc++6 libstorage4 libtasn1 libtasn1-6 libtirpc1 libudev1 libusb-0_1-4 libusb-1_0-0 libustr-1_0-1 libuuid1 libwrap0 libxcb-render0 libxcb-shm0 libxcb1 libxml2-2 libxtables10 libyui-ncurses-pkg5 libyui-ncurses5 libyui5 libz1 libzio1 libzypp logrotate lsscsi lvm2 man man-pages mdadm mkinitrd module-init-tools multipath-tools ncurses-utils net-tools netcfg openSUSE-build-key openSUSE-release-Factory openSUSE-release-ftp-Factory openslp openssl pam pam-config pango-tools parted pciutils pciutils-ids perl perl-Bootloader perl-Config-Crontab perl-XML-Parser perl-XML-Simple perl-base perl-gettext permissions pinentry pkg-config plymouth plymouth-branding-openSUSE plymouth-plugin-label plymouth-plugin-script plymouth-scripts polkit procps python-base rpcbind rpm rsyslog sed shadow shared-mime-info sudo suse-module-tools sysconfig sysfsutils syslog-service systemd systemd-presets-branding-openSUSE systemd-sysvinit sysvinit-tools tar tcpd terminfo-base timezone tunctl u-boot-tools udev unzip update-alternatives util-linux vim vim-base vlan wallpaper-branding-openSUSE wireless-tools wpa_supplicant xz yast2 yast2-bootloader yast2-core yast2-country yast2-country-data yast2-dbus-client yast2-firstboot yast2-hardware-detection yast2-installation yast2-mouse yast2-packager yast2-perl-bindings yast2-pkg-bindings yast2-proxy yast2-slp yast2-storage yast2-trans-stats yast2-transfer yast2-update yast2-xml yast2-ycp-ui-bindings zypper"
 		;;
 		esac
 
