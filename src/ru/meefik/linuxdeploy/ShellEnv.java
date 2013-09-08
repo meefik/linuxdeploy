@@ -332,17 +332,18 @@ public class ShellEnv {
 		params.add("sed -i 's|^DESKTOP_ENV=.*|DESKTOP_ENV=\""
 				+ PrefStore.DESKTOP_ENV + "\"|g' " + PrefStore.ENV_DIR
 				+ "/etc/deploy.conf");
-		params.add("sed -i 's|^CUSTOM_STARTUP=.*|CUSTOM_STARTUP=\""
-				+ PrefStore.CUSTOM_STARTUP + "\"|g' " + PrefStore.ENV_DIR
+		params.add("sed -i 's|^PACKAGES=.*|PACKAGES=\""
+				+ PrefStore.PACKAGES + "\"|g' " + PrefStore.ENV_DIR
 				+ "/etc/deploy.conf");
-		params.add("sed -i 's|^CUSTOM_MOUNT=.*|CUSTOM_MOUNT=\""
-				+ PrefStore.CUSTOM_MOUNT + "\"|g' " + PrefStore.ENV_DIR
-				+ "/etc/deploy.conf");
-		params.add("sed -i 's|^SSH_START=.*|SSH_START=\"" + PrefStore.SSH_START
+		params.add("sed -i 's|^STARTUP=.*|STARTUP=\"" + PrefStore.STARTUP
 				+ "\"|g' " + PrefStore.ENV_DIR + "/etc/deploy.conf");
+		params.add("sed -i 's|^CUSTOM_SCRIPTS=.*|CUSTOM_SCRIPTS=\""
+				+ PrefStore.CUSTOM_SCRIPTS + "\"|g' " + PrefStore.ENV_DIR
+				+ "/etc/deploy.conf");
+		params.add("sed -i 's|^CUSTOM_MOUNTS=.*|CUSTOM_MOUNTS=\""
+				+ PrefStore.CUSTOM_MOUNTS + "\"|g' " + PrefStore.ENV_DIR
+				+ "/etc/deploy.conf");
 		params.add("sed -i 's|^SSH_PORT=.*|SSH_PORT=\"" + PrefStore.SSH_PORT
-				+ "\"|g' " + PrefStore.ENV_DIR + "/etc/deploy.conf");
-		params.add("sed -i 's|^VNC_START=.*|VNC_START=\"" + PrefStore.VNC_START
 				+ "\"|g' " + PrefStore.ENV_DIR + "/etc/deploy.conf");
 		params.add("sed -i 's|^VNC_DISPLAY=.*|VNC_DISPLAY=\""
 				+ PrefStore.VNC_DISPLAY + "\"|g' " + PrefStore.ENV_DIR
@@ -354,17 +355,11 @@ public class ShellEnv {
 		params.add("sed -i 's|^VNC_GEOMETRY=.*|VNC_GEOMETRY=\""
 				+ PrefStore.VNC_GEOMETRY + "\"|g' " + PrefStore.ENV_DIR
 				+ "/etc/deploy.conf");
-		params.add("sed -i 's|^XSERVER_START=.*|XSERVER_START=\""
-				+ PrefStore.XSERVER_START + "\"|g' " + PrefStore.ENV_DIR
-				+ "/etc/deploy.conf");
 		params.add("sed -i 's|^XSERVER_DISPLAY=.*|XSERVER_DISPLAY=\""
 				+ PrefStore.XSERVER_DISPLAY + "\"|g' " + PrefStore.ENV_DIR
 				+ "/etc/deploy.conf");
 		params.add("sed -i 's|^XSERVER_HOST=.*|XSERVER_HOST=\""
 				+ PrefStore.XSERVER_HOST + "\"|g' " + PrefStore.ENV_DIR
-				+ "/etc/deploy.conf");
-		params.add("sed -i 's|^FB_START=.*|FB_START=\""
-				+ PrefStore.FB_START + "\"|g' " + PrefStore.ENV_DIR
 				+ "/etc/deploy.conf");
 		params.add("sed -i 's|^FB_DISPLAY=.*|FB_DISPLAY=\""
 				+ PrefStore.FB_DISPLAY + "\"|g' " + PrefStore.ENV_DIR

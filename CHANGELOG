@@ -3,6 +3,8 @@ Changelog (English)
 
 1.4.2
 Added support Debian 8.0 (jessie)
+Interface improvements
+Added ability to choose components to install
 
 1.4.1
 Added support for installation from rootfs archives (tgz, tbz2)
@@ -222,6 +224,8 @@ Updated list packages of base system installation
 
 1.4.2
 Добавлена поддержка Debian 8.0 (jessie)
+Доработки интерфейса
+Добавлена возможность выбирать компоненты для установки
 
 1.4.1
 Добавлена поддержка установки дистрибутивов из rootfs архивов (tgz, tbz2)

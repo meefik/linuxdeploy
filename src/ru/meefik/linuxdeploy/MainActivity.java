@@ -173,7 +173,7 @@ public class MainActivity extends SherlockActivity {
 													.deployCmd("start");
 										}
 									}).start();
-									if (PrefStore.FB_START.equals("y")) {
+									if (PrefStore.STARTUP.contains("framebuffer")) {
 										Intent intent_fb = new Intent(getApplicationContext(), FullscreenActivity.class);
 										startActivity(intent_fb);
 									}
@@ -228,11 +228,11 @@ public class MainActivity extends SherlockActivity {
 			break;
 		case R.id.menu_properties:
 			Intent intent_properties = new Intent(this,
-					DeployPrefsActivity.class);
+					PropertiesActivity.class);
 			startActivity(intent_properties);
 			break;
 		case R.id.menu_settings:
-			Intent intent_settings = new Intent(this, AppPrefsActivity.class);
+			Intent intent_settings = new Intent(this, SettingsActivity.class);
 			startActivity(intent_settings);
 			break;
 		case R.id.menu_about:

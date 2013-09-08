@@ -1,0 +1,25 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/menu_new"
+        android:icon="@android:drawable/ic_menu_add"
+        android:orderInCategory="100"
+        android:showAsAction="always"
+        android:title="@string/menu_new">
+    </item>
+    <item
+        android:id="@+id/menu_edit"
+        android:icon="@android:drawable/ic_menu_edit"
+        android:orderInCategory="100"
+        android:showAsAction="always"
+        android:title="@string/menu_edit">
+    </item>
+    <item
+        android:id="@+id/menu_discard"
+        android:icon="@android:drawable/ic_menu_delete"
+        android:orderInCategory="100"
+        android:showAsAction="always"
+        android:title="@string/menu_discard">
+    </item>
+
+</menu>

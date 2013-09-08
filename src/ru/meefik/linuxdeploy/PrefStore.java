@@ -10,6 +10,7 @@ import java.net.SocketException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map.Entry;
 
@@ -55,21 +56,19 @@ public class PrefStore {
 	public static String LOCALE;
 	public static String INSTALL_GUI;
 	public static String DESKTOP_ENV;
+	public static String PACKAGES;
 
 	// to startup
-	public static String CUSTOM_STARTUP;
-	public static String CUSTOM_MOUNT;
-	public static String SSH_START;
+	public static String STARTUP;
+	public static String CUSTOM_SCRIPTS;
+	public static String CUSTOM_MOUNTS;
 	public static String SSH_PORT;
-	public static String VNC_START;
 	public static String VNC_DISPLAY;
 	public static String VNC_DEPTH;
 	public static String VNC_DPI;
 	public static String VNC_GEOMETRY;
-	public static String XSERVER_START;
 	public static String XSERVER_DISPLAY;
 	public static String XSERVER_HOST;
-	public static String FB_START;
 	public static String FB_DISPLAY;
 	public static String FB_DPI;
 	public static String FB_DEV;
@@ -136,26 +135,30 @@ public class PrefStore {
 				.toLowerCase(Locale.ENGLISH);
 		SERVER_DNS = sp.getString("serverdns", c.getString(R.string.serverdns));
 		LOCALE = sp.getString("locale", c.getString(R.string.locale));
+		DESKTOP_ENV = sp.getString("desktopenv",
+				c.getString(R.string.desktopenv));
 		INSTALL_GUI = sp.getBoolean("installgui",
 				c.getString(R.string.installgui).equals("true") ? true : false) ? "y"
 				: "n";
-		DESKTOP_ENV = sp.getString("desktopenv",
-				c.getString(R.string.desktopenv));
-
-		CUSTOM_STARTUP = sp.getBoolean("customstartup",
-				c.getString(R.string.customstartup).equals("true") ? true : false) ? sp
-				.getString("customscript", c.getString(R.string.customscript))
+		PACKAGES = sp.getString("packages", c.getString(R.string.packages)).trim();
+		String startup_ssh = sp.getBoolean("sshstartup",
+				c.getString(R.string.sshstartup).equals("true") ? true : false) ? "ssh"
 				: "";
-		CUSTOM_MOUNT = sp.getBoolean("mountcustom",
-				c.getString(R.string.mountcustom).equals("true") ? true : false) ? sp
-				.getString("mountpath", extStore.getAbsolutePath()) : "";
-		SSH_START = sp.getBoolean("sshstartup",
-				c.getString(R.string.sshstartup).equals("true") ? true : false) ? "y"
-				: "n";
+		String startup_gui = sp.getBoolean("guistartup",
+				c.getString(R.string.guistartup).equals("true") ? true : false) ? sp
+				.getString("guitype", c.getString(R.string.guitype)) : "";
+		String startup_custom = sp.getBoolean("customstartup",
+				c.getString(R.string.customstartup).equals("true") ? true : false) ? "custom"
+				: "";
+		STARTUP = (startup_ssh + " " + startup_gui + " " + startup_custom).trim();
+		CUSTOM_SCRIPTS = sp.getBoolean("customstartup",
+				c.getString(R.string.customstartup).equals("true") ? true : false) ? sp
+				.getString("scripts", c.getString(R.string.scripts)).trim()
+				: "";
+		CUSTOM_MOUNTS = sp.getBoolean("custommount",
+				c.getString(R.string.custommount).equals("true") ? true : false) ? sp
+				.getString("mounts", extStore.getAbsolutePath()).trim() : "";
 		SSH_PORT = sp.getString("sshport", c.getString(R.string.sshport));
-		VNC_START = sp.getBoolean("vncstartup",
-				c.getString(R.string.vncstartup).equals("true") ? true : false) ? "y"
-				: "n";
 		VNC_DISPLAY = sp.getString("vncdisplay",
 				c.getString(R.string.vncdisplay));
 		VNC_DEPTH = sp.getString("vncdepth", c.getString(R.string.vncdepth));
@@ -163,17 +166,9 @@ public class PrefStore {
 		VNC_GEOMETRY = sp.getString("vncwidth", String.valueOf(getWidth(c)))
 				+ "x"
 				+ sp.getString("vncheight", String.valueOf(getHeight(c)));
-
-		XSERVER_START = sp.getBoolean("xstartup",
-				c.getString(R.string.xstartup).equals("true") ? true : false) ? "y"
-				: "n";
 		XSERVER_DISPLAY = sp.getString("xdisplay",
 				c.getString(R.string.xdisplay));
 		XSERVER_HOST = sp.getString("xhost", c.getString(R.string.xhost));
-		
-		FB_START = sp.getBoolean("fbstartup",
-				c.getString(R.string.fbstartup).equals("true") ? true : false) ? "y"
-				: "n";
 		FB_DISPLAY = sp.getString("fbdisplay",
 				c.getString(R.string.fbdisplay));
 		FB_DPI = sp.getString("fbdpi", c.getString(R.string.fbdpi));
@@ -278,10 +273,10 @@ public class PrefStore {
 	}
 
 	// get profiles list
-	public static ArrayList<Profile<String, String>> getProfiles(Context c) {
+	public static List<Profile<String, String>> getProfiles(Context c) {
 		SharedPreferences sp = c.getSharedPreferences(PROFILES_FILE_NAME,
 				Context.MODE_PRIVATE);
-		ArrayList<Profile<String, String>> p = new ArrayList<Profile<String, String>>();
+		List<Profile<String, String>> p = new ArrayList<Profile<String, String>>();
 		for (Entry<String, ?> entry : sp.getAll().entrySet()) {
 			String key = entry.getKey();
 			String value = (String) entry.getValue();
@@ -291,8 +286,7 @@ public class PrefStore {
 	}
 
 	// set profiles list
-	public static void setProfiles(Context c,
-			ArrayList<Profile<String, String>> p) {
+	public static void setProfiles(Context c, List<Profile<String, String>> p) {
 		SharedPreferences sp = c.getSharedPreferences(PROFILES_FILE_NAME,
 				Context.MODE_PRIVATE);
 		SharedPreferences.Editor prefEditor = sp.edit();
@@ -350,6 +344,85 @@ public class PrefStore {
 			}
 		}
 		return false;
+	}
+	
+	// Load packages list
+	public static List<String> getPackagesList(Context c) {
+		SharedPreferences sp = c.getSharedPreferences(CURRENT_PROFILE,
+				Context.MODE_PRIVATE);
+		String str = sp.getString("packages", c.getString(R.string.packages));
+		List<String> list = new ArrayList<String>();
+		for (String i: str.split(" ")) {
+			list.add(i);
+		}
+		return list;
+	}
+	
+	// Save packages list
+	public static void setPackagesList(Context c, List<String> list) {
+		SharedPreferences sp = c.getSharedPreferences(CURRENT_PROFILE,
+				Context.MODE_PRIVATE);
+		SharedPreferences.Editor prefEditor = sp.edit();
+		String str = "";
+		for (String i: list) {
+			str += i + " ";
+		}
+		prefEditor.putString("packages", str);
+		prefEditor.commit();
+		PREF_CHANGE = true;
+	}
+	
+	// Load scripts list
+	public static List<String> getScriptsList(Context c) {
+		SharedPreferences sp = c.getSharedPreferences(CURRENT_PROFILE,
+				Context.MODE_PRIVATE);
+		String str = sp.getString("scripts", c.getString(R.string.scripts));
+		List<String> list = new ArrayList<String>();
+		for (String i: str.split(" ")) {
+			list.add(i);
+		}
+		return list;
+	}
+	
+	// Save scripts list
+	public static void setScriptsList(Context c, List<String> list) {
+		SharedPreferences sp = c.getSharedPreferences(CURRENT_PROFILE,
+				Context.MODE_PRIVATE);
+		SharedPreferences.Editor prefEditor = sp.edit();
+		String str = "";
+		for (String i: list) {
+			str += i + " ";
+		}
+		prefEditor.putString("scripts", str);
+		prefEditor.commit();
+		PREF_CHANGE = true;
+	}
+	
+	// Load mounts list
+	public static List<String> getMountsList(Context c) {
+		SharedPreferences sp = c.getSharedPreferences(CURRENT_PROFILE,
+				Context.MODE_PRIVATE);
+		File extStore = Environment.getExternalStorageDirectory();
+		String str = sp.getString("mounts", extStore.getAbsolutePath());
+		List<String> list = new ArrayList<String>();
+		for (String i: str.split(" ")) {
+			list.add(i);
+		}
+		return list;
+	}
+	
+	// Save mounts list
+	public static void setMountsList(Context c, List<String> list) {
+		SharedPreferences sp = c.getSharedPreferences(CURRENT_PROFILE,
+				Context.MODE_PRIVATE);
+		SharedPreferences.Editor prefEditor = sp.edit();
+		String str = "";
+		for (String i: list) {
+			str += i + " ";
+		}
+		prefEditor.putString("mounts", str);
+		prefEditor.commit();
+		PREF_CHANGE = true;
 	}
 	
 	public static void copyFile(File sourceFile, File destFile) throws IOException {
