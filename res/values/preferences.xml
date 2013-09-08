@@ -28,8 +28,7 @@
     <string name="serverdns" translatable="false"></string>
     <string name="locale" translatable="false">en_US.UTF-8</string>
     <string name="desktopenv" translatable="false">lxde</string>
-    <string name="installgui" translatable="false">true</string>
-	<string name="packages" translatable="false"></string>
+	<string name="packages" translatable="false">desktop ssh vnc</string>
     <string name="customstartup" translatable="false">false</string>
     <string name="scripts" translatable="false">/etc/init.d/myscript</string>
     <string name="custommount" translatable="false">false</string>
@@ -42,9 +41,9 @@
     <string name="vncdpi" translatable="false">75</string>
     <string name="vncwidth" translatable="false">{replace}</string>
     <string name="vncheight" translatable="false">{replace}</string>
-    <string name="xdisplay" translatable="false">1</string>
+    <string name="xdisplay" translatable="false">0</string>
     <string name="xhost" translatable="false">127.0.0.1</string>
-    <string name="fbdisplay" translatable="false">2</string>
+    <string name="fbdisplay" translatable="false">0</string>
     <string name="fbdpi" translatable="false">100</string>
     <string name="fbdev" translatable="false">/dev/graphics/fb0</string>
     <string name="fbinput" translatable="false">/dev/input/event2</string>

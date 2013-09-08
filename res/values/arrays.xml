@@ -113,6 +113,10 @@
         <item>armhf</item>
     </string-array>
     <string-array name="debian_packages_values" translatable="false">
+        <item>desktop</item>
+        <item>ssh</item>
+        <item>vnc</item>
+        <item>xserver</item>
     </string-array>
 
     <!-- Ubuntu -->
@@ -129,6 +133,10 @@
         <item>armhf</item>
     </string-array>
     <string-array name="ubuntu_packages_values" translatable="false">
+        <item>desktop</item>
+        <item>ssh</item>
+        <item>vnc</item>
+        <item>xserver</item>
     </string-array>
     
     <!-- Arch Linux -->
@@ -142,6 +150,10 @@
         <item>armv7h</item>
     </string-array>
     <string-array name="archlinux_packages_values" translatable="false">
+        <item>desktop</item>
+        <item>ssh</item>
+        <item>vnc</item>
+        <item>xserver</item>
     </string-array>
 
     <!-- Fedora -->
@@ -156,6 +168,10 @@
         <item>armhfp</item>
     </string-array>
     <string-array name="fedora_packages_values" translatable="false">
+        <item>desktop</item>
+        <item>ssh</item>
+        <item>vnc</item>
+        <item>xserver</item>
     </string-array>
 
     <!-- openSUSE -->
@@ -168,6 +184,10 @@
         <item>armv7hl</item>
     </string-array>
     <string-array name="opensuse_packages_values" translatable="false">
+        <item>desktop</item>
+        <item>ssh</item>
+        <item>vnc</item>
+        <item>xserver</item>
     </string-array>
     
     <!-- Kali Linux -->
@@ -180,6 +200,10 @@
         <item>armhf</item>
     </string-array>
     <string-array name="kali_packages_values" translatable="false">
+        <item>desktop</item>
+        <item>ssh</item>
+        <item>vnc</item>
+        <item>xserver</item>
     </string-array>
     
     <!-- Gentoo -->
@@ -196,6 +220,10 @@
         <item>armv7a_hardfp</item>
     </string-array>
     <string-array name="gentoo_packages_values" translatable="false">
+        <item>desktop</item>
+        <item>ssh</item>
+        <item>vnc</item>
+        <item>xserver</item>
     </string-array>
 
 </resources>

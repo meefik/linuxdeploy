@@ -326,9 +326,6 @@ public class ShellEnv {
 				+ "/etc/deploy.conf");
 		params.add("sed -i 's|^LOCALE=.*|LOCALE=\"" + PrefStore.LOCALE
 				+ "\"|g' " + PrefStore.ENV_DIR + "/etc/deploy.conf");
-		params.add("sed -i 's|^INSTALL_GUI=.*|INSTALL_GUI=\""
-				+ PrefStore.INSTALL_GUI + "\"|g' " + PrefStore.ENV_DIR
-				+ "/etc/deploy.conf");
 		params.add("sed -i 's|^DESKTOP_ENV=.*|DESKTOP_ENV=\""
 				+ PrefStore.DESKTOP_ENV + "\"|g' " + PrefStore.ENV_DIR
 				+ "/etc/deploy.conf");
