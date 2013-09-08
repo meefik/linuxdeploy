@@ -367,7 +367,7 @@ public class PrefStore {
 		for (String i: list) {
 			str += i + " ";
 		}
-		prefEditor.putString("packages", str);
+		prefEditor.putString("packages", str.trim());
 		prefEditor.commit();
 		PREF_CHANGE = true;
 	}
@@ -393,7 +393,7 @@ public class PrefStore {
 		for (String i: list) {
 			str += i + " ";
 		}
-		prefEditor.putString("scripts", str);
+		prefEditor.putString("scripts", str.trim());
 		prefEditor.commit();
 		PREF_CHANGE = true;
 	}
@@ -420,7 +420,7 @@ public class PrefStore {
 		for (String i: list) {
 			str += i + " ";
 		}
-		prefEditor.putString("mounts", str);
+		prefEditor.putString("mounts", str.trim());
 		prefEditor.commit();
 		PREF_CHANGE = true;
 	}
