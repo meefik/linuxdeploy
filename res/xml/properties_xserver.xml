@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory android:title="@string/xserver_preferences" >
+        <EditTextPreference
+            android:defaultValue="@string/xdisplay"
+            android:dialogTitle="@string/dialog_title_xdisplay_preference"
+            android:inputType="numberDecimal"
+            android:key="xdisplay"
+            android:summary="@string/xdisplay"
+            android:title="@string/title_xdisplay_preference" />
+        <EditTextPreference
+            android:defaultValue="@string/xhost"
+            android:dialogTitle="@string/dialog_title_xhost_preference"
+            android:key="xhost"
+            android:summary="@string/xhost"
+            android:title="@string/title_xhost_preference" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

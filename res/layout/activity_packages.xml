@@ -5,14 +5,14 @@
     tools:context=".PackagesActivity" >
 
     <ListView
-        android:id="@+id/profilesView"
+        android:id="@+id/packagesView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="false"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:choiceMode="singleChoice" >
+        android:choiceMode="multipleChoice" >
     </ListView>
 
 </RelativeLayout>

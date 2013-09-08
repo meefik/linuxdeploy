@@ -2,8 +2,10 @@ package ru.meefik.linuxdeploy;
 
 import java.io.File;
 
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
@@ -19,21 +21,38 @@ import android.preference.PreferenceScreen;
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.MenuItem;
 
-public class DeployPrefsActivity extends SherlockPreferenceActivity implements
+public class PropertiesActivity extends SherlockPreferenceActivity implements
 		Preference.OnPreferenceClickListener, OnSharedPreferenceChangeListener {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		PrefStore.updateTheme(this);
 		super.onCreate(savedInstanceState);
-
 		PrefStore.updateLocale(this);
-
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		PreferenceManager prefMgr = this.getPreferenceManager();
 		prefMgr.setSharedPreferencesName(PrefStore.CURRENT_PROFILE);
-		this.addPreferencesFromResource(R.xml.properties);
+		
+		Bundle b = getIntent().getExtras();
+		int pref = 0;
+		if (b != null) pref = b.getInt("pref");
+		switch (pref) {
+		case 1:
+			this.addPreferencesFromResource(R.xml.properties_ssh);
+			break;
+		case 2:
+			this.addPreferencesFromResource(R.xml.properties_vnc);
+			break;
+		case 3:
+			this.addPreferencesFromResource(R.xml.properties_xserver);
+			break;
+		case 4:
+			this.addPreferencesFromResource(R.xml.properties_framebuffer);
+			break;
+		default:
+			this.addPreferencesFromResource(R.xml.properties);
+		}
 
 		this.initSummaries(this.getPreferenceScreen());
 	}
@@ -77,6 +96,50 @@ public class DeployPrefsActivity extends SherlockPreferenceActivity implements
 		}
 		if (preference.getKey().equals("reconfigure")) {
 			reconfigureDialog();
+		}
+		if (preference.getKey().equals("packageseditor")) {
+			Intent intent = new Intent(getApplicationContext(), PackagesActivity.class);
+			startActivity(intent);
+		}
+		if (preference.getKey().equals("sshproperties")) {
+			Intent intent = new Intent(getApplicationContext(), PropertiesActivity.class);
+			Bundle b = new Bundle();
+			b.putInt("pref", 1);
+			intent.putExtras(b);
+			startActivity(intent);
+		}
+		if (preference.getKey().equals("guiproperties")) {
+			ListPreference guitype = (ListPreference) this
+					.findPreference("guitype");
+			if (guitype.getValue().equals("vnc")) {
+				Intent intent = new Intent(getApplicationContext(), PropertiesActivity.class);
+				Bundle b = new Bundle();
+				b.putInt("pref", 2);
+				intent.putExtras(b);
+				startActivity(intent);
+			}
+			if (guitype.getValue().equals("xserver")) {
+				Intent intent = new Intent(getApplicationContext(), PropertiesActivity.class);
+				Bundle b = new Bundle();
+				b.putInt("pref", 3);
+				intent.putExtras(b);
+				startActivity(intent);
+			}
+			if (guitype.getValue().equals("framebuffer")) {
+				Intent intent = new Intent(getApplicationContext(), PropertiesActivity.class);
+				Bundle b = new Bundle();
+				b.putInt("pref", 4);
+				intent.putExtras(b);
+				startActivity(intent);
+			}
+		}
+		if (preference.getKey().equals("scriptseditor")) {
+			Intent intent = new Intent(getApplicationContext(), ScriptsActivity.class);
+			startActivity(intent);
+		}
+		if (preference.getKey().equals("mountseditor")) {
+			Intent intent = new Intent(getApplicationContext(), MountsActivity.class);
+			startActivity(intent);
 		}
 		return true;
 	}
@@ -187,13 +250,6 @@ public class DeployPrefsActivity extends SherlockPreferenceActivity implements
 				((EditTextPreference) pref).setText(imgFile);
 				((EditTextPreference) pref).setSummary(imgFile);
 			}
-			if (editPref.getKey().equals("mountpath")
-					&& editPref.getText().equals("{replace}")) {
-				File extStore = Environment.getExternalStorageDirectory();
-				String mntPath = extStore.getAbsolutePath();
-				((EditTextPreference) pref).setText(mntPath);
-				((EditTextPreference) pref).setSummary(mntPath);
-			}
 			if (editPref.getKey().equals("vncwidth")
 					&& editPref.getText().equals("{replace}")) {
 				String vncWidth = String.valueOf(PrefStore.getWidth(getApplicationContext()));
@@ -241,6 +297,14 @@ public class DeployPrefsActivity extends SherlockPreferenceActivity implements
 						mirror.setText(getString(R.string.debian_mirror));
 					mirror.setSummary(mirror.getText());
 					mirror.setEnabled(true);
+					// components
+					PreferenceScreen comp = (PreferenceScreen) this
+							.findPreference("packageseditor");
+					if (getResources().getStringArray(R.array.debian_packages_values).length > 0) {
+						comp.setEnabled(true);
+					} else {
+						comp.setEnabled(false);
+					}
 				}
 				if (listPref.getValue().equals("ubuntu")) {
 					// suite
@@ -270,6 +334,14 @@ public class DeployPrefsActivity extends SherlockPreferenceActivity implements
 						mirror.setText(getString(R.string.ubuntu_mirror));
 					mirror.setSummary(mirror.getText());
 					mirror.setEnabled(true);
+					// components
+					PreferenceScreen comp = (PreferenceScreen) this
+							.findPreference("packageseditor");
+					if (getResources().getStringArray(R.array.ubuntu_packages_values).length > 0) {
+						comp.setEnabled(true);
+					} else {
+						comp.setEnabled(false);
+					}
 				}
 				if (listPref.getValue().equals("archlinux")) {
 					// suite
@@ -300,6 +372,14 @@ public class DeployPrefsActivity extends SherlockPreferenceActivity implements
 						mirror.setText(getString(R.string.archlinux_mirror));
 					mirror.setSummary(mirror.getText());
 					mirror.setEnabled(true);
+					// components
+					PreferenceScreen comp = (PreferenceScreen) this
+							.findPreference("packageseditor");
+					if (getResources().getStringArray(R.array.archlinux_packages_values).length > 0) {
+						comp.setEnabled(true);
+					} else {
+						comp.setEnabled(false);
+					}
 				}
 				if (listPref.getValue().equals("fedora")) {
 					// suite
@@ -329,6 +409,14 @@ public class DeployPrefsActivity extends SherlockPreferenceActivity implements
 						mirror.setText(getString(R.string.fedora_mirror));
 					mirror.setSummary(mirror.getText());
 					mirror.setEnabled(true);
+					// components
+					PreferenceScreen comp = (PreferenceScreen) this
+							.findPreference("packageseditor");
+					if (getResources().getStringArray(R.array.fedora_packages_values).length > 0) {
+						comp.setEnabled(true);
+					} else {
+						comp.setEnabled(false);
+					}
 				}
 				if (listPref.getValue().equals("opensuse")) {
 					// suite
@@ -359,6 +447,14 @@ public class DeployPrefsActivity extends SherlockPreferenceActivity implements
 						mirror.setText(getString(R.string.opensuse_mirror));
 					mirror.setSummary(mirror.getText());
 					mirror.setEnabled(true);
+					// components
+					PreferenceScreen comp = (PreferenceScreen) this
+							.findPreference("packageseditor");
+					if (getResources().getStringArray(R.array.opensuse_packages_values).length > 0) {
+						comp.setEnabled(true);
+					} else {
+						comp.setEnabled(false);
+					}
 				}
 				if (listPref.getValue().equals("kali")) {
 					// suite
@@ -388,6 +484,14 @@ public class DeployPrefsActivity extends SherlockPreferenceActivity implements
 						mirror.setText(getString(R.string.kali_mirror));
 					mirror.setSummary(mirror.getText());
 					mirror.setEnabled(true);
+					// components
+					PreferenceScreen comp = (PreferenceScreen) this
+							.findPreference("packageseditor");
+					if (getResources().getStringArray(R.array.kali_packages_values).length > 0) {
+						comp.setEnabled(true);
+					} else {
+						comp.setEnabled(false);
+					}
 				}
 				if (listPref.getValue().equals("gentoo")) {
 					// suite
@@ -417,6 +521,14 @@ public class DeployPrefsActivity extends SherlockPreferenceActivity implements
 						mirror.setText(getString(R.string.gentoo_mirror));
 					mirror.setSummary(mirror.getText());
 					mirror.setEnabled(true);
+					// components
+					PreferenceScreen comp = (PreferenceScreen) this
+							.findPreference("packageseditor");
+					if (getResources().getStringArray(R.array.gentoo_packages_values).length > 0) {
+						comp.setEnabled(true);
+					} else {
+						comp.setEnabled(false);
+					}
 				}
 				if (listPref.getValue().equals("rootfs")) {
 					// suite
@@ -445,6 +557,10 @@ public class DeployPrefsActivity extends SherlockPreferenceActivity implements
 					}
 					mirror.setSummary(mirror.getText());
 					mirror.setEnabled(true);
+					// components
+					PreferenceScreen comp = (PreferenceScreen) this
+							.findPreference("packageseditor");
+					comp.setEnabled(false);
 				}
 			}
 			if (listPref.getKey().equals("deploytype")) {
@@ -453,45 +569,18 @@ public class DeployPrefsActivity extends SherlockPreferenceActivity implements
 				ListPreference fstype = (ListPreference) this
 						.findPreference("fstype");
 				
-				// for compatibility with version < 1.3.9
-				if (listPref.getValue().equals("image"))
-					listPref.setValue("file");
-				
 				if (listPref.getValue().equals("file"))
 					disksize.setEnabled(true);
 				else
 					disksize.setEnabled(false);
 				
-				if (listPref.getValue().equals("directory") || listPref.getValue().equals("custom"))
+				if (listPref.getValue().equals("custom"))
 					fstype.setEnabled(false);
 				else
 					fstype.setEnabled(true);
 			}
 		}
-		
-		if (pref instanceof CheckBoxPreference) {
-			CheckBoxPreference cbPref = (CheckBoxPreference) pref;
-			if (cbPref.isChecked()) {
-				CheckBoxPreference vncstartup = (CheckBoxPreference) this
-						.findPreference("vncstartup");
-				CheckBoxPreference xstartup = (CheckBoxPreference) this
-						.findPreference("xstartup");
-				CheckBoxPreference fbstartup = (CheckBoxPreference) this
-						.findPreference("fbstartup");
-				if (cbPref.getKey().equals("vncstartup")) {
-					xstartup.setChecked(false);
-					fbstartup.setChecked(false);
-				}
-				if (cbPref.getKey().equals("xstartup")) {
-					vncstartup.setChecked(false);
-					fbstartup.setChecked(false);
-				}
-				if (cbPref.getKey().equals("fbstartup")) {
-					vncstartup.setChecked(false);
-					xstartup.setChecked(false);
-				}
-			}
-		}
+
 	}
 
 }

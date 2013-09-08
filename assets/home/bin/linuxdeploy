@@ -65,11 +65,6 @@ prepare_system()
 			msg "fail"; return 1
 		fi
 	fi
-	if [ "$DEPLOY_TYPE" == "directory" ]; then
-		if [ ! -d "$IMG_TARGET" ]; then
-			msg "fail"; return 1
-		fi
-	fi
 	msg "done"
 
 	if [ "$DEPLOY_TYPE" == "file" ]; then
@@ -559,7 +554,7 @@ mount_system()
 {
 	if [ "$#" -eq 0 ]; then
 		msg "Mounting partitions: "
-		mount_system root proc sys dev pts shm rootfs
+		mount_system root proc sys dev pts shm custom
 		return $?
 	fi
 	if [ "$#" -gt 1 ]; then
@@ -648,9 +643,8 @@ mount_system()
 			msg "skip"
 		fi
 	;;
-	rootfs)
-		DISKS=`echo "$CUSTOM_MOUNT" | tr ',;' ' '`
-		for disk in $DISKS
+	custom)
+		for disk in $CUSTOM_MOUNTS
 		do
 			disk_name=`basename /root/$disk`
 			msg -n "/mnt/$disk_name ... "
@@ -722,115 +716,148 @@ umount_system()
 
 start_system()
 {
-	mount_system
-	[ $? -ne 0 ] && return 1
+	if [ "$#" -eq 0 ]; then
+		mount_system
+		[ $? -ne 0 ] && return 1
 
-	update_system
-
-	msg "Starting services: "
-	msg -n "SSH :$SSH_PORT ... "
-	if [ "$SSH_START" == "y" -a -z "`ps | grep -E '/usr/s?bin/sshd' | grep -v grep`" ]; then
-		sed -i "s|^Port .*|Port $SSH_PORT|g" $MNT_TARGET/etc/ssh/sshd_config
-		(set -e
-			# Debian/Ubuntu/Kali Linux
-			if [ -e "$MNT_TARGET/etc/init.d/ssh" ]; then
-				chroot $MNT_TARGET su - root -c '/etc/init.d/ssh start'
-				exit 0
-			fi
-			# openSUSE
-			if [ -e "$MNT_TARGET/etc/init.d/sshd" ]; then
-				chroot $MNT_TARGET su - root -c '/etc/init.d/sshd start'
-				exit 0
-			fi
-			# Arch Linux/Fedora/Gentoo
-			if [ -z "`ls $MNT_TARGET/etc/ssh/ | grep key`" ]; then
-				chroot $MNT_TARGET su - root -c 'ssh-keygen -A' || true
-				echo
-			fi
-			chroot $MNT_TARGET su - root -c '`which sshd`'
-		exit 0)
-		[ $? -eq 0 ] && msg "done" || msg "fail"
-	else
-		msg "skip"
+		update_system
+	
+		msg "Starting services: "
+		
+		for i in $STARTUP
+		do
+			start_system $i
+			[ $? -eq 0 ] || return 1
+		done
+		
+		[ -z "$STARTUP" ] && msg "...no active services"
+		
+		return 0
 	fi
-
-	XPID=`cat $MNT_TARGET/tmp/xsession.pid`
-	if [ -n "$XPID" ]; then
-		XSESSION=`ps | grep "^$XPID "`
-	fi
-	let vncport=5900+$VNC_DISPLAY
-	msg -n "VNC :$vncport ... "	
-	if [ "$VNC_START" == "y" -a -z "$XSESSION" ]; then
-		XSESSION="busy"
-		(set -e
-			# dbus (Debian/Ubuntu/Arch Linux/Kali Linux)
-			[ -e "$MNT_TARGET/run/dbus/pid" ] && rm $MNT_TARGET/run/dbus/pid
-			# dbus (Fedora)
-			[ -e "$MNT_TARGET/var/run/messagebus.pid" ] && rm $MNT_TARGET/var/run/messagebus.pid
-			chroot $MNT_TARGET dbus-daemon --system --fork || true
-			# TightVNC Server
-			[ -e "$MNT_TARGET/tmp/.X$VNC_DISPLAY-lock" ] && rm $MNT_TARGET/tmp/.X$VNC_DISPLAY-lock
-			[ -e "$MNT_TARGET/tmp/.X11-unix/X$VNC_DISPLAY" ] && rm $MNT_TARGET/tmp/.X11-unix/X$VNC_DISPLAY
-			chroot $MNT_TARGET su - $USER_NAME -c "vncserver :$VNC_DISPLAY -depth $VNC_DEPTH -geometry $VNC_GEOMETRY -dpi $VNC_DPI"
-		exit 0)
-		[ $? -eq 0 ] && msg "done" || msg "fail"
-	else
-		msg "skip"
-	fi
-
-	msg -n "X Window System ... "
-	if [ "$XSERVER_START" == "y" -a -z "$XSESSION" ]; then
-		XSESSION="busy"
-		(set -e
-			chroot $MNT_TARGET su - $USER_NAME -c "export DISPLAY=$XSERVER_HOST:$XSERVER_DISPLAY; ~/.xsession &"
-		exit 0)
-		[ $? -eq 0 ] && msg "done" || msg "fail"
-	else
-		msg "skip"
-	fi
-
-	msg -n "Frame Buffer ... "
-	if [ "$FB_START" == "y" -a -z "$XSESSION" ]; then
-		XSESSION="busy"
-		sed -i "s|Option.*\"fbdev\".*#linuxdeploy|Option \"fbdev\" \"$FB_DEV\" #linuxdeploy|g" $MNT_TARGET/etc/X11/xorg.conf
-		sed -i "s|Option.*\"Device\".*#linuxdeploy|Option \"Device\" \"$FB_INPUT\" #linuxdeploy|g" $MNT_TARGET/etc/X11/xorg.conf
-		(set -e
-			if [ "$FB_FREEZE" == "y" ]; then
-				#setprop ctl.stop surfaceflinger
-				pkill -STOP system_server
-				pkill -STOP surfaceflinger
-				chroot $MNT_TARGET su - $USER_NAME -c "startx -- :$FB_DISPLAY -dpi $FB_DPI"
-				pkill -CONT surfaceflinger
-				pkill -CONT system_server
-				#reboot
-			else
-				chroot $MNT_TARGET su - $USER_NAME -c "startx -- :$FB_DISPLAY -dpi $FB_DPI &"
-			fi
-		exit 0)
-		[ $? -eq 0 ] && msg "done" || msg "fail"
-	else
-		msg "skip"
-	fi
-
-	SCRIPTS=`echo "$CUSTOM_STARTUP" | tr ',;' ' '`
-	for script in $SCRIPTS
-	do
-		msg -n "$script ... "
-		(set -e
-			chroot $MNT_TARGET su - root -c "$script start"
-		exit 0)
-		[ $? -eq 0 ] && msg "done" || msg "fail"
-	done
+	
+	case "$1" in
+	ssh)
+		msg -n "SSH :$SSH_PORT ... "
+		if [ -z "`ps | grep -E '/usr/s?bin/sshd' | grep -v grep`" ]; then
+			sed -i "s|^Port .*|Port $SSH_PORT|g" $MNT_TARGET/etc/ssh/sshd_config
+			(set -e
+				# Debian/Ubuntu/Kali Linux
+				if [ -e "$MNT_TARGET/etc/init.d/ssh" ]; then
+					chroot $MNT_TARGET su - root -c '/etc/init.d/ssh start'
+					exit 0
+				fi
+				# openSUSE
+				if [ -e "$MNT_TARGET/etc/init.d/sshd" ]; then
+					chroot $MNT_TARGET su - root -c '/etc/init.d/sshd start'
+					exit 0
+				fi
+				# Arch Linux/Fedora/Gentoo
+				if [ -z "`ls $MNT_TARGET/etc/ssh/ | grep key`" ]; then
+					chroot $MNT_TARGET su - root -c 'ssh-keygen -A' || true
+					echo
+				fi
+				chroot $MNT_TARGET su - root -c '`which sshd`'
+			exit 0)
+			[ $? -eq 0 ] && msg "done" || msg "fail"
+		else
+			msg "skip"
+		fi
+	;;
+	vnc)
+		let vncport=5900+$VNC_DISPLAY
+		msg -n "VNC :$vncport ... "
+		XPID=`cat $MNT_TARGET/tmp/xsession.pid`
+		[ -n "$XPID" ] && XSESSION=`ps | grep "^$XPID "`
+		if [ -z "$XSESSION" ]; then
+			(set -e
+				# dbus (Debian/Ubuntu/Arch Linux/Kali Linux)
+				[ -e "$MNT_TARGET/run/dbus/pid" ] && rm $MNT_TARGET/run/dbus/pid
+				# dbus (Fedora)
+				[ -e "$MNT_TARGET/var/run/messagebus.pid" ] && rm $MNT_TARGET/var/run/messagebus.pid
+				chroot $MNT_TARGET dbus-daemon --system --fork || true
+				# TightVNC Server
+				[ -e "$MNT_TARGET/tmp/.X$VNC_DISPLAY-lock" ] && rm $MNT_TARGET/tmp/.X$VNC_DISPLAY-lock
+				[ -e "$MNT_TARGET/tmp/.X11-unix/X$VNC_DISPLAY" ] && rm $MNT_TARGET/tmp/.X11-unix/X$VNC_DISPLAY
+				chroot $MNT_TARGET su - $USER_NAME -c "vncserver :$VNC_DISPLAY -depth $VNC_DEPTH -geometry $VNC_GEOMETRY -dpi $VNC_DPI"
+			exit 0)
+			[ $? -eq 0 ] && msg "done" || msg "fail"
+		else
+			msg "skip"
+		fi
+	;;
+	xserver)
+		msg -n "X Window System ... "
+		XPID=`cat $MNT_TARGET/tmp/xsession.pid`
+		[ -n "$XPID" ] && XSESSION=`ps | grep "^$XPID "`
+		if [ -z "$XSESSION" ]; then
+			(set -e
+				chroot $MNT_TARGET su - $USER_NAME -c "export DISPLAY=$XSERVER_HOST:$XSERVER_DISPLAY; ~/.xsession &"
+			exit 0)
+			[ $? -eq 0 ] && msg "done" || msg "fail"
+		else
+			msg "skip"
+		fi	
+	;;
+	framebuffer)
+		msg -n "Frame Buffer ... "
+		XPID=`cat $MNT_TARGET/tmp/xsession.pid`
+		[ -n "$XPID" ] && XSESSION=`ps | grep "^$XPID "`
+		if [ -z "$XSESSION" ]; then
+			sed -i "s|Option.*\"fbdev\".*#linuxdeploy|Option \"fbdev\" \"$FB_DEV\" #linuxdeploy|g" $MNT_TARGET/etc/X11/xorg.conf
+			sed -i "s|Option.*\"Device\".*#linuxdeploy|Option \"Device\" \"$FB_INPUT\" #linuxdeploy|g" $MNT_TARGET/etc/X11/xorg.conf
+			(set -e
+				if [ "$FB_FREEZE" == "y" ]; then
+					#setprop ctl.stop surfaceflinger
+					pkill -STOP system_server
+					pkill -STOP surfaceflinger
+					chroot $MNT_TARGET su - $USER_NAME -c "startx -- :$FB_DISPLAY -dpi $FB_DPI"
+					pkill -CONT surfaceflinger
+					pkill -CONT system_server
+					#reboot
+				else
+					chroot $MNT_TARGET su - $USER_NAME -c "startx -- :$FB_DISPLAY -dpi $FB_DPI &"
+				fi
+			exit 0)
+			[ $? -eq 0 ] && msg "done" || msg "fail"
+		else
+			msg "skip"
+		fi	
+	;;
+	custom)
+		for script in $CUSTOM_SCRIPTS
+		do
+			msg -n "$script ... "
+			(set -e
+				chroot $MNT_TARGET su - root -c "$script start"
+			exit 0)
+			[ $? -eq 0 ] && msg "done" || msg "fail"
+		done	
+	;;
+	esac
 
 	return 0
 }
 
 stop_system()
 {
-	msg "Stopping services: "
+	if [ "$#" -eq 0 ]; then
+		msg "Stopping services: "
+		
+		for i in $STARTUP
+		do
+			stop_system $i
+			[ $? -eq 0 ] || return 1
+		done
+		
+		[ -z "$STARTUP" ] && msg "...no active services"
+		
+		umount_system
+		[ $? -ne 0 ] && return 1 || return 0
+	fi
 
-	msg -n "SSH ... "
-	if [ "$SSH_START" == "y" ]; then
+	case "$1" in
+	ssh)
+		msg -n "SSH ... "
 		(set -e
 			# Debian/Ubuntu/Kali Linux
 			if [ -e "$MNT_TARGET/etc/init.d/ssh" ]; then
@@ -849,56 +876,43 @@ stop_system()
 			pkill -9 sshd || true
 		exit 0)
 		[ $? -eq 0 ] && msg "done" || msg "fail"
-	else
-		msg "skip"
-	fi
-
-	msg -n "VNC ... "
-	if [ "$VNC_START" == "y" ]; then
+	;;
+	vnc)
+		msg -n "VNC ... "
 		(set -e
 			chroot $MNT_TARGET su - $USER_NAME -c "vncserver -kill :$VNC_DISPLAY"
 			sleep 1
 			pkill -9 X*vnc || true
 		exit 0)
 		[ $? -eq 0 ] && msg "done" || msg "fail"
-	else
-		msg "skip"
-	fi
-
-	msg -n "X Window System ... "
-	if [ "$XSERVER_START" == "y" ]; then
+	;;
+	xserver)
+		msg -n "X Window System ... "
 		(set -e
 			chroot $MNT_TARGET su - $USER_NAME -c 'kill -9 $(cat /tmp/xsession.pid)'
 		exit 0)
 		[ $? -eq 0 ] && msg "done" || msg "fail"
-	else
-		msg "skip"
-	fi
-
-	msg -n "Frame Buffer ... "
-	if [ "$FB_START" == "y" ]; then
+	;;
+	framebuffer)
+		msg -n "Frame Buffer ... "
 		(set -e
 			pkill -CONT surfaceflinger
 			pkill -CONT system_server
 			chroot $MNT_TARGET su - $USER_NAME -c 'kill -9 $(cat /tmp/xsession.pid)'
 		exit 0)
 		[ $? -eq 0 ] && msg "done" || msg "fail"
-	else
-		msg "skip"
-	fi
-
-	SCRIPTS=`echo "$CUSTOM_STARTUP" | tr ',;' ' '`
-	for script in $SCRIPTS
-	do
-		msg -n "$script ... "
-		(set -e
-			chroot $MNT_TARGET su - root -c "$script stop"
-		exit 0)
-		[ $? -eq 0 ] && msg "done" || msg "fail"
-	done
-
-	umount_system
-	[ $? -ne 0 ] && return 1
+	;;
+	custom)
+		for script in $CUSTOM_SCRIPTS
+		do
+			msg -n "$script ... "
+			(set -e
+				chroot $MNT_TARGET su - root -c "$script stop"
+			exit 0)
+			[ $? -eq 0 ] && msg "done" || msg "fail"
+		done	
+	;;
+	esac
 
 	return 0
 }

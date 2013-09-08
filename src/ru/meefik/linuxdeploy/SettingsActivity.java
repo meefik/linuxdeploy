@@ -20,14 +20,13 @@ import android.preference.PreferenceScreen;
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.MenuItem;
 
-public class AppPrefsActivity extends SherlockPreferenceActivity implements
+public class SettingsActivity extends SherlockPreferenceActivity implements
 		OnSharedPreferenceChangeListener, Preference.OnPreferenceClickListener {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		PrefStore.updateTheme(this);
 		super.onCreate(savedInstanceState);
-
 		PrefStore.updateLocale(this);
 
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);

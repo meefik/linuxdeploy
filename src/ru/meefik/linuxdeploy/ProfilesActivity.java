@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -22,10 +23,11 @@ import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
-public class ProfilesActivity extends SherlockActivity implements OnTouchListener {
+public class ProfilesActivity extends SherlockActivity implements
+		OnTouchListener {
 
-	private ListView profilesList;
-	private ArrayList<Profile<String, String>> listItems = new ArrayList<Profile<String, String>>();
+	private ListView listView;
+	private List<Profile<String, String>> listItems = new ArrayList<Profile<String, String>>();
 	private ArrayAdapter<Profile<String, String>> adapter;
 	private GestureDetector gd;
 
@@ -36,23 +38,22 @@ public class ProfilesActivity extends SherlockActivity implements OnTouchListene
 		PrefStore.updateLocale(this);
 		setContentView(R.layout.activity_profiles);
 
-		profilesList = (ListView) findViewById(R.id.profilesView);
+		listView = (ListView) findViewById(R.id.profilesView);
 		adapter = new ArrayAdapter<Profile<String, String>>(this,
 				android.R.layout.simple_list_item_single_choice, listItems);
-		profilesList.setAdapter(adapter);
-		
-		profilesList.setOnTouchListener(this);
-		
-        //initialize the Gesture Detector  
-        gd = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener()  
-        {  
-            @Override  
-            public boolean onDoubleTap(MotionEvent e)  
-            {  
-            	finish();
-                return false;  
-            }  
-        });  
+		listView.setAdapter(adapter);
+
+		listView.setOnTouchListener(this);
+
+		// initialize the Gesture Detector
+		gd = new GestureDetector(this,
+				new GestureDetector.SimpleOnGestureListener() {
+					@Override
+					public boolean onDoubleTap(MotionEvent e) {
+						finish();
+						return false;
+					}
+				});
 	}
 
 	@Override
@@ -65,7 +66,7 @@ public class ProfilesActivity extends SherlockActivity implements OnTouchListene
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		final EditText input = new EditText(this);
-		final int pos = profilesList.getCheckedItemPosition();
+		final int pos = listView.getCheckedItemPosition();
 		File extStore = Environment.getExternalStorageDirectory();
 		switch (item.getItemId()) {
 		case R.id.menu_new:
@@ -77,13 +78,13 @@ public class ProfilesActivity extends SherlockActivity implements OnTouchListene
 								@Override
 								public void onClick(DialogInterface dialog,
 										int whichButton) {
-									String pName = input.getText().toString();
-									if (pName.length() > 0) {
+									String text = input.getText().toString();
+									if (text.length() > 0) {
 										listItems
 												.add(new Profile<String, String>(
 														String.valueOf(System
 																.currentTimeMillis()),
-														pName));
+														text));
 										adapter.notifyDataSetChanged();
 									}
 								}
@@ -109,16 +110,16 @@ public class ProfilesActivity extends SherlockActivity implements OnTouchListene
 									@Override
 									public void onClick(DialogInterface dialog,
 											int whichButton) {
-										String pName = input.getText()
+										String text = input.getText()
 												.toString();
-										if (pName.length() > 0) {
+										if (text.length() > 0) {
 											listItems
 													.set(pos,
 															new Profile<String, String>(
 																	listItems
 																			.get(pos)
 																			.getKey(),
-																	pName));
+																	text));
 											adapter.notifyDataSetChanged();
 										}
 									}
@@ -136,8 +137,8 @@ public class ProfilesActivity extends SherlockActivity implements OnTouchListene
 		case R.id.menu_discard:
 			if (pos >= 0 && pos < listItems.size()) {
 				new AlertDialog.Builder(this)
-						.setTitle(R.string.confirm_discard_title)
-						.setMessage(R.string.confirm_discard_message)
+						.setTitle(R.string.confirm_profile_discard_title)
+						.setMessage(R.string.confirm_profile_discard_message)
 						.setIcon(android.R.drawable.ic_dialog_alert)
 						.setCancelable(false)
 						.setPositiveButton(android.R.string.yes,
@@ -145,16 +146,15 @@ public class ProfilesActivity extends SherlockActivity implements OnTouchListene
 									@Override
 									public void onClick(DialogInterface dialog,
 											int whichButton) {
-										String fName = listItems.get(pos)
+										String key = listItems.get(pos)
 												.getKey();
 										listItems.remove(pos);
 										int last = listItems.size() - 1;
 										if (last >= 0 && pos > last)
-											profilesList.setItemChecked(last,
-													true);
+											listView.setItemChecked(last, true);
 										adapter.notifyDataSetChanged();
 										PrefStore.deleteProfile(
-												getApplicationContext(), fName);
+												getApplicationContext(), key);
 									}
 								})
 						.setNegativeButton(android.R.string.no,
@@ -277,7 +277,7 @@ public class ProfilesActivity extends SherlockActivity implements OnTouchListene
 	public void onPause() {
 		super.onPause();
 		PrefStore.setProfiles(getApplicationContext(), listItems);
-		int pos = profilesList.getCheckedItemPosition();
+		int pos = listView.getCheckedItemPosition();
 		int last = listItems.size() - 1;
 		if (pos >= 0 && pos <= last) {
 			String profile = listItems.get(pos).getKey();
@@ -306,8 +306,7 @@ public class ProfilesActivity extends SherlockActivity implements OnTouchListene
 			listItems.add(new Profile<String, String>(
 					PrefStore.CURRENT_PROFILE, getString(R.string.profile)));
 		adapter.notifyDataSetChanged();
-		profilesList.setItemChecked(getPosition(PrefStore.CURRENT_PROFILE),
-				true);
+		listView.setItemChecked(getPosition(PrefStore.CURRENT_PROFILE), true);
 	}
 
 	private int getPosition(String key) {

@@ -27,24 +27,23 @@
     <string name="username" translatable="false">android</string>
     <string name="serverdns" translatable="false"></string>
     <string name="locale" translatable="false">en_US.UTF-8</string>
-    <string name="installgui" translatable="false">true</string>
     <string name="desktopenv" translatable="false">lxde</string>
+    <string name="installgui" translatable="false">true</string>
+	<string name="packages" translatable="false"></string>
     <string name="customstartup" translatable="false">false</string>
-    <string name="customscript" translatable="false">/etc/init.d/myscript</string>
-    <string name="mountcustom" translatable="false">false</string>
-    <string name="mountpath" translatable="false">{replace}</string>
+    <string name="scripts" translatable="false">/etc/init.d/myscript</string>
+    <string name="custommount" translatable="false">false</string>
+    <string name="guistartup" translatable="false">true</string>
+    <string name="guitype" translatable="false">vnc</string>
     <string name="sshstartup" translatable="false">true</string>
     <string name="sshport" translatable="false">22</string>
-    <string name="vncstartup" translatable="false">true</string>
     <string name="vncdisplay" translatable="false">0</string>
     <string name="vncdepth" translatable="false">16</string>
     <string name="vncdpi" translatable="false">75</string>
     <string name="vncwidth" translatable="false">{replace}</string>
     <string name="vncheight" translatable="false">{replace}</string>
-    <string name="xstartup" translatable="false">false</string>
     <string name="xdisplay" translatable="false">1</string>
     <string name="xhost" translatable="false">127.0.0.1</string>
-    <string name="fbstartup" translatable="false">false</string>
     <string name="fbdisplay" translatable="false">2</string>
     <string name="fbdpi" translatable="false">100</string>
     <string name="fbdev" translatable="false">/dev/graphics/fb0</string>

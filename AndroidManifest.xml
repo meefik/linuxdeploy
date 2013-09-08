@@ -5,7 +5,8 @@
     android:versionName="1.4.2" >
 
     <uses-sdk
-        android:minSdkVersion="7" android:targetSdkVersion="17"/>
+        android:minSdkVersion="7"
+        android:targetSdkVersion="17" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -13,10 +14,10 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
+        android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/BlackTheme"
-        android:allowBackup="true" >
+        android:theme="@style/BlackTheme" >
         <activity
             android:name="ru.meefik.linuxdeploy.MainActivity"
             android:label="@string/title_activity_main"
@@ -28,11 +29,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="ru.meefik.linuxdeploy.AppPrefsActivity"
+            android:name="ru.meefik.linuxdeploy.SettingsActivity"
             android:label="@string/title_activity_settings" >
         </activity>
         <activity
-            android:name="ru.meefik.linuxdeploy.DeployPrefsActivity"
+            android:name="ru.meefik.linuxdeploy.PropertiesActivity"
             android:icon="@drawable/ic_launcher_properties"
             android:label="@string/title_activity_properties" >
         </activity>
@@ -46,6 +47,18 @@
             android:label="@string/title_activity_profiles" >
         </activity>
         <activity android:name="ru.meefik.linuxdeploy.FullscreenActivity" >
+        </activity>
+        <activity
+            android:name="ru.meefik.linuxdeploy.PackagesActivity"
+            android:label="@string/title_activity_packages" >
+        </activity>
+        <activity
+            android:name="ru.meefik.linuxdeploy.ScriptsActivity"
+            android:label="@string/title_activity_scripts" >
+        </activity>
+        <activity
+            android:name="ru.meefik.linuxdeploy.MountsActivity"
+            android:label="@string/title_activity_scripts" >
         </activity>
 
         <receiver

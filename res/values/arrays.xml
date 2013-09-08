@@ -20,13 +20,11 @@
     <string-array name="deploytype_values" translatable="false">
         <item>file</item>
         <item>partition</item>
-        <item>directory</item>
         <item>custom</item>
     </string-array>
     <string-array name="deploytype_entries">
         <item>File</item>
         <item>Partition</item>
-        <item>Directory</item>
         <item>Custom</item>
     </string-array>
     <string-array name="fstype_values" translatable="false">
@@ -87,6 +85,17 @@
         <item>Gentoo</item>
         <item>RootFS</item>
     </string-array>
+    <string-array name="guitype_values" translatable="false">
+        <item>vnc</item>
+        <item>xserver</item>
+        <item>framebuffer</item>
+    </string-array>
+    <string-array name="guitype_entries" translatable="false">
+        <item>VNC</item>
+        <item>X Window System</item>
+        <item>Frame Buffer</item>
+    </string-array>
+    
 
     <!-- Debian -->
 
@@ -103,6 +112,8 @@
         <item>armel</item>
         <item>armhf</item>
     </string-array>
+    <string-array name="debian_packages_values" translatable="false">
+    </string-array>
 
     <!-- Ubuntu -->
 
@@ -117,6 +128,8 @@
         <item>armel</item>
         <item>armhf</item>
     </string-array>
+    <string-array name="ubuntu_packages_values" translatable="false">
+    </string-array>
     
     <!-- Arch Linux -->
 
@@ -127,6 +140,8 @@
         <item>arm</item>
         <item>armv6h</item>
         <item>armv7h</item>
+    </string-array>
+    <string-array name="archlinux_packages_values" translatable="false">
     </string-array>
 
     <!-- Fedora -->
@@ -140,6 +155,8 @@
         <item>arm</item>
         <item>armhfp</item>
     </string-array>
+    <string-array name="fedora_packages_values" translatable="false">
+    </string-array>
 
     <!-- openSUSE -->
 
@@ -150,6 +167,8 @@
         <item>armv5tel</item>
         <item>armv7hl</item>
     </string-array>
+    <string-array name="opensuse_packages_values" translatable="false">
+    </string-array>
     
     <!-- Kali Linux -->
 
@@ -159,6 +178,8 @@
     <string-array name="kali_architecture_values" translatable="false">
         <item>armel</item>
         <item>armhf</item>
+    </string-array>
+    <string-array name="kali_packages_values" translatable="false">
     </string-array>
     
     <!-- Gentoo -->
@@ -173,6 +194,8 @@
         <item>armv6j_hardfp</item>
         <item>armv7a</item>
         <item>armv7a_hardfp</item>
+    </string-array>
+    <string-array name="gentoo_packages_values" translatable="false">
     </string-array>
 
 </resources>

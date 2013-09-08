@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory android:title="@string/vnc_preferences" >
+        <EditTextPreference
+            android:defaultValue="@string/vncdisplay"
+            android:dialogTitle="@string/dialog_title_vncdisplay_preference"
+            android:inputType="numberDecimal"
+            android:key="vncdisplay"
+            android:summary="@string/vncdisplay"
+            android:title="@string/title_vncdisplay_preference" />
+
+        <ListPreference
+            android:defaultValue="@string/vncdepth"
+            android:dialogTitle="@string/dialog_title_vncdepth_preference"
+            android:entries="@array/vncdepth_values"
+            android:entryValues="@array/vncdepth_values"
+            android:inputType="numberDecimal"
+            android:key="vncdepth"
+            android:summary="@string/vncdepth"
+            android:title="@string/title_vncdepth_preference" />
+
+        <EditTextPreference
+            android:defaultValue="@string/vncdpi"
+            android:dialogTitle="@string/dialog_title_vncdpi_preference"
+            android:inputType="numberDecimal"
+            android:key="vncdpi"
+            android:summary="@string/vncdpi"
+            android:title="@string/title_vncdpi_preference" />
+        <EditTextPreference
+            android:defaultValue="@string/vncwidth"
+            android:dialogTitle="@string/dialog_title_vncwidth_preference"
+            android:inputType="numberDecimal"
+            android:key="vncwidth"
+            android:summary="@string/vncwidth"
+            android:title="@string/title_vncwidth_preference" />
+        <EditTextPreference
+            android:defaultValue="@string/vncheight"
+            android:dialogTitle="@string/dialog_title_vncheight_preference"
+            android:inputType="numberDecimal"
+            android:key="vncheight"
+            android:summary="@string/vncheight"
+            android:title="@string/title_vncheight_preference" />
+    </PreferenceCategory>
+
+</PreferenceScreen>
