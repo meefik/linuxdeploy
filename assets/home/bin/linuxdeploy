@@ -190,6 +190,31 @@ configure_system()
 				sed -i 's|^UID_MIN.*|UID_MIN 5000|g' $MNT_TARGET/etc/login.defs
 				sed -i 's|^GID_MIN.*|GID_MIN 5000|g' $MNT_TARGET/etc/login.defs
 			done
+			
+			# Add users in aid_inet group
+			case "$DISTRIB" in
+			debian|ubuntu|kali)
+				INET_USERS="messagebus www-data mysql postgres"
+			;;
+			archlinux)
+				INET_USERS="dbus"
+			;;
+			fedora)
+				INET_USERS="dbus"
+			;;
+			opensuse)
+				INET_USERS="messagebus"
+			;;			
+			gentoo)
+				INET_USERS="messagebus"
+			;;
+			esac
+			for UID in $INET_USERS
+			do
+				if [ -z "`grep \"^aid_inet:.*$UID\" $MNT_TARGET/etc/group`" ]; then
+					sed -i "s|^\(aid_inet:.*\)|\1,$UID|g" $MNT_TARGET/etc/group
+				fi			
+			done
 		;;
 		locales)
 			#echo "$LOCALE UTF-8" > $MNT_TARGET/etc/locale.gen
@@ -345,22 +370,11 @@ configure_system()
 		;;
 		dbus)
 			case "$DISTRIB" in
-			debian|ubuntu|kali|opensuse|gentoo)
-				if [ -z "`grep '^aid_inet:.*,messagebus' $MNT_TARGET/etc/group`" ]; then
-					sed -i "s|^\(aid_inet:.*\)|\1,messagebus|g" $MNT_TARGET/etc/group
-				fi
-			;;
 			archlinux)
-				if [ -z "`grep '^aid_inet:.*,dbus' $MNT_TARGET/etc/group`" ]; then
-					sed -i "s|^\(aid_inet:.*\)|\1,dbus|g" $MNT_TARGET/etc/group
-				fi
 				mkdir $MNT_TARGET/run/dbus
 				chmod 755 $MNT_TARGET/run/dbus
 			;;
 			fedora)
-				if [ -z "`grep '^aid_inet:.*,dbus' $MNT_TARGET/etc/group`" ]; then
-					sed -i "s|^\(aid_inet:.*\)|\1,dbus|g" $MNT_TARGET/etc/group
-				fi
 				mkdir $MNT_TARGET/var/run/dbus
 				chmod 755 $MNT_TARGET/var/run/dbus
 				chroot $MNT_TARGET sh -c "dbus-uuidgen > /etc/machine-id"
