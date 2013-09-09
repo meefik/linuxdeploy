@@ -112,7 +112,7 @@
         <item>armel</item>
         <item>armhf</item>
     </string-array>
-    <string-array name="debian_packages_values" translatable="false">
+    <string-array name="debian_components_values" translatable="false">
         <item>desktop</item>
         <item>ssh</item>
         <item>vnc</item>
@@ -132,7 +132,7 @@
         <item>armel</item>
         <item>armhf</item>
     </string-array>
-    <string-array name="ubuntu_packages_values" translatable="false">
+    <string-array name="ubuntu_components_values" translatable="false">
         <item>desktop</item>
         <item>ssh</item>
         <item>vnc</item>
@@ -149,7 +149,7 @@
         <item>armv6h</item>
         <item>armv7h</item>
     </string-array>
-    <string-array name="archlinux_packages_values" translatable="false">
+    <string-array name="archlinux_components_values" translatable="false">
         <item>desktop</item>
         <item>ssh</item>
         <item>vnc</item>
@@ -167,7 +167,7 @@
         <item>arm</item>
         <item>armhfp</item>
     </string-array>
-    <string-array name="fedora_packages_values" translatable="false">
+    <string-array name="fedora_components_values" translatable="false">
         <item>desktop</item>
         <item>ssh</item>
         <item>vnc</item>
@@ -180,10 +180,10 @@
         <item>factory</item>
     </string-array>
     <string-array name="opensuse_architecture_values" translatable="false">
-        <item>armv5tel</item>
+        <item>armv6hl</item>
         <item>armv7hl</item>
     </string-array>
-    <string-array name="opensuse_packages_values" translatable="false">
+    <string-array name="opensuse_components_values" translatable="false">
         <item>desktop</item>
         <item>ssh</item>
         <item>vnc</item>
@@ -199,7 +199,7 @@
         <item>armel</item>
         <item>armhf</item>
     </string-array>
-    <string-array name="kali_packages_values" translatable="false">
+    <string-array name="kali_components_values" translatable="false">
         <item>desktop</item>
         <item>ssh</item>
         <item>vnc</item>
@@ -219,7 +219,7 @@
         <item>armv7a</item>
         <item>armv7a_hardfp</item>
     </string-array>
-    <string-array name="gentoo_packages_values" translatable="false">
+    <string-array name="gentoo_components_values" translatable="false">
         <item>desktop</item>
         <item>ssh</item>
         <item>vnc</item>

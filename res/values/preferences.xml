@@ -28,7 +28,7 @@
     <string name="serverdns" translatable="false"></string>
     <string name="locale" translatable="false">en_US.UTF-8</string>
     <string name="desktopenv" translatable="false">lxde</string>
-	<string name="packages" translatable="false">desktop ssh vnc</string>
+	<string name="components" translatable="false">desktop ssh vnc</string>
     <string name="customstartup" translatable="false">false</string>
     <string name="scripts" translatable="false">/etc/init.d/myscript</string>
     <string name="custommount" translatable="false">false</string>
@@ -72,7 +72,7 @@
     <!-- openSUSE -->
     <string name="opensuse_suite" translatable="false">factory</string>
     <string name="opensuse_mirror" translatable="false">http://download.opensuse.org/ports/</string>
-    <string name="opensuse_architecture" translatable="false">armv5tel</string>
+    <string name="opensuse_architecture" translatable="false">armv7hl</string>
 
     <!-- Kali Linux -->
     <string name="kali_suite" translatable="false">kali</string>

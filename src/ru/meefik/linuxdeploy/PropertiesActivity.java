@@ -97,8 +97,8 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 		if (preference.getKey().equals("reconfigure")) {
 			reconfigureDialog();
 		}
-		if (preference.getKey().equals("packageseditor")) {
-			Intent intent = new Intent(getApplicationContext(), PackagesActivity.class);
+		if (preference.getKey().equals("componentseditor")) {
+			Intent intent = new Intent(getApplicationContext(), ComponentsActivity.class);
 			startActivity(intent);
 		}
 		if (preference.getKey().equals("sshproperties")) {
@@ -299,8 +299,8 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 					mirror.setEnabled(true);
 					// components
 					PreferenceScreen comp = (PreferenceScreen) this
-							.findPreference("packageseditor");
-					if (getResources().getStringArray(R.array.debian_packages_values).length > 0) {
+							.findPreference("componentseditor");
+					if (getResources().getStringArray(R.array.debian_components_values).length > 0) {
 						comp.setEnabled(true);
 					} else {
 						comp.setEnabled(false);
@@ -336,8 +336,8 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 					mirror.setEnabled(true);
 					// components
 					PreferenceScreen comp = (PreferenceScreen) this
-							.findPreference("packageseditor");
-					if (getResources().getStringArray(R.array.ubuntu_packages_values).length > 0) {
+							.findPreference("componentseditor");
+					if (getResources().getStringArray(R.array.ubuntu_components_values).length > 0) {
 						comp.setEnabled(true);
 					} else {
 						comp.setEnabled(false);
@@ -374,8 +374,8 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 					mirror.setEnabled(true);
 					// components
 					PreferenceScreen comp = (PreferenceScreen) this
-							.findPreference("packageseditor");
-					if (getResources().getStringArray(R.array.archlinux_packages_values).length > 0) {
+							.findPreference("componentseditor");
+					if (getResources().getStringArray(R.array.archlinux_components_values).length > 0) {
 						comp.setEnabled(true);
 					} else {
 						comp.setEnabled(false);
@@ -411,8 +411,8 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 					mirror.setEnabled(true);
 					// components
 					PreferenceScreen comp = (PreferenceScreen) this
-							.findPreference("packageseditor");
-					if (getResources().getStringArray(R.array.fedora_packages_values).length > 0) {
+							.findPreference("componentseditor");
+					if (getResources().getStringArray(R.array.fedora_components_values).length > 0) {
 						comp.setEnabled(true);
 					} else {
 						comp.setEnabled(false);
@@ -449,8 +449,8 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 					mirror.setEnabled(true);
 					// components
 					PreferenceScreen comp = (PreferenceScreen) this
-							.findPreference("packageseditor");
-					if (getResources().getStringArray(R.array.opensuse_packages_values).length > 0) {
+							.findPreference("componentseditor");
+					if (getResources().getStringArray(R.array.opensuse_components_values).length > 0) {
 						comp.setEnabled(true);
 					} else {
 						comp.setEnabled(false);
@@ -486,8 +486,8 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 					mirror.setEnabled(true);
 					// components
 					PreferenceScreen comp = (PreferenceScreen) this
-							.findPreference("packageseditor");
-					if (getResources().getStringArray(R.array.kali_packages_values).length > 0) {
+							.findPreference("componentseditor");
+					if (getResources().getStringArray(R.array.kali_components_values).length > 0) {
 						comp.setEnabled(true);
 					} else {
 						comp.setEnabled(false);
@@ -523,8 +523,8 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 					mirror.setEnabled(true);
 					// components
 					PreferenceScreen comp = (PreferenceScreen) this
-							.findPreference("packageseditor");
-					if (getResources().getStringArray(R.array.gentoo_packages_values).length > 0) {
+							.findPreference("componentseditor");
+					if (getResources().getStringArray(R.array.gentoo_components_values).length > 0) {
 						comp.setEnabled(true);
 					} else {
 						comp.setEnabled(false);
@@ -559,7 +559,7 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 					mirror.setEnabled(true);
 					// components
 					PreferenceScreen comp = (PreferenceScreen) this
-							.findPreference("packageseditor");
+							.findPreference("componentseditor");
 					comp.setEnabled(false);
 				}
 			}

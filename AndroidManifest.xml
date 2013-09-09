@@ -49,8 +49,8 @@
         <activity android:name="ru.meefik.linuxdeploy.FullscreenActivity" >
         </activity>
         <activity
-            android:name="ru.meefik.linuxdeploy.PackagesActivity"
-            android:label="@string/title_activity_packages" >
+            android:name="ru.meefik.linuxdeploy.ComponentsActivity"
+            android:label="@string/title_activity_components" >
         </activity>
         <activity
             android:name="ru.meefik.linuxdeploy.ScriptsActivity"

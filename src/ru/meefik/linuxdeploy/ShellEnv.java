@@ -329,8 +329,8 @@ public class ShellEnv {
 		params.add("sed -i 's|^DESKTOP_ENV=.*|DESKTOP_ENV=\""
 				+ PrefStore.DESKTOP_ENV + "\"|g' " + PrefStore.ENV_DIR
 				+ "/etc/deploy.conf");
-		params.add("sed -i 's|^PACKAGES=.*|PACKAGES=\""
-				+ PrefStore.PACKAGES + "\"|g' " + PrefStore.ENV_DIR
+		params.add("sed -i 's|^COMPONENTS=.*|COMPONENTS=\""
+				+ PrefStore.COMPONENTS + "\"|g' " + PrefStore.ENV_DIR
 				+ "/etc/deploy.conf");
 		params.add("sed -i 's|^STARTUP=.*|STARTUP=\"" + PrefStore.STARTUP
 				+ "\"|g' " + PrefStore.ENV_DIR + "/etc/deploy.conf");
