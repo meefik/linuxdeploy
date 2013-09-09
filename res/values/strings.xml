@@ -91,8 +91,8 @@
     <string name="summary_install_preference">Start GNU/Linux installation</string>
     <string name="message_install_confirm_dialog">Start installation of GNU/Linux system?</string>
     <string name="title_reconfigure_preference">Reconfigure</string>
-    <string name="summary_reconfigure_preference">Start system reconfiguration</string>
-    <string name="message_reconfigure_confirm_dialog">Start reconfiguration of the system?</string>
+    <string name="summary_reconfigure_preference">Start GNU/Linux reconfiguration</string>
+    <string name="message_reconfigure_confirm_dialog">Start reconfiguration of GNU/Linux system?</string>
     <string name="deploy_preferences">Deploy</string>
     <string name="title_distribution_preference">Distribution</string>
     <string name="dialog_title_distribution_preference">Distribution</string>
