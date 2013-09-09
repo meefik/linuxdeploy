@@ -619,7 +619,7 @@ configure_system()
 					vnc)
 						# set server USE flag for tightvnc
 						if [ -z "`grep '^net-misc/tightvnc' $MNT_TARGET/etc/portage/package.use`" ]; then
-							echo "net-misc/tightvnc" >> $MNT_TARGET/etc/portage/package.use
+							echo "net-misc/tightvnc server" >> $MNT_TARGET/etc/portage/package.use
 						fi
 						if [ -z "`grep '^net-misc/tightvnc.*server' $MNT_TARGET/etc/portage/package.use`" ]; then
 							sed -i "s|^\(net-misc/tightvnc.*\)|\1 server|g" $MNT_TARGET/etc/portage/package.use
@@ -633,7 +633,7 @@ configure_system()
 				done
 				chroot $MNT_TARGET emerge --autounmask-write $PKGS || {
 					mv $MNT_TARGET/etc/portage/._cfg0000_package.use $MNT_TARGET/etc/portage/package.use
-					chroot $MNT_TARGET emerge $PKGS
+					chroot $MNT_TARGET emerge --update --deep --newuse $PKGS
 				}
 			;;
 			*)
@@ -852,12 +852,7 @@ start_system()
 					chroot $MNT_TARGET su - root -c '/etc/init.d/ssh start'
 					exit 0
 				fi
-				# openSUSE
-				if [ -e "$MNT_TARGET/etc/init.d/sshd" ]; then
-					chroot $MNT_TARGET su - root -c '/etc/init.d/sshd start'
-					exit 0
-				fi
-				# Arch Linux/Fedora/Gentoo
+				# Arch Linux/Fedora/openSUSE/Gentoo
 				if [ -z "`ls $MNT_TARGET/etc/ssh/ | grep key`" ]; then
 					chroot $MNT_TARGET su - root -c 'ssh-keygen -A' || true
 					echo
@@ -969,11 +964,7 @@ stop_system()
 			if [ -e "$MNT_TARGET/etc/init.d/ssh" ]; then
 				chroot $MNT_TARGET su - root -c "/etc/init.d/ssh stop"
 			fi
-			# openSUSE
-			if [ -e "$MNT_TARGET/etc/init.d/sshd" ]; then
-				chroot $MNT_TARGET su - root -c "/etc/init.d/sshd stop"
-			fi
-			# Arch Linux/Fedora/Gentoo
+			# Arch Linux/Fedora/openSUSE/Gentoo
 			if [ -e "$MNT_TARGET/var/run/sshd.pid" ]; then
 				chroot $MNT_TARGET su - root -c 'kill -9 $(cat /var/run/sshd.pid)'
 			fi
@@ -1323,7 +1314,7 @@ install_system()
 
 		msg "Updating world: "
 		(set -e
-			chroot $MNT_TARGET emerge --update --deep world sudo
+			chroot $MNT_TARGET emerge --update --deep --newuse world sudo
 		exit 0) 1>&3 2>&3
 		[ $? -eq 0 ] || return 1
 
