@@ -138,7 +138,7 @@
     <string name="title_customstartup_preference">Сценарии пользователя</string>
     <string name="summary_customstartup_preference">Разрешить запуск пользовательских сценариев</string>
     <string name="title_scriptseditor_preference">Список сценариев</string>
-    <string name="summary_scriptseditor_preference">Редактировать список сценариев автозапуска</string>
+    <string name="summary_scriptseditor_preference">Редактировать список пользовательских сценариев</string>
     <string name="title_custommount_preference">Монтирование</string>
     <string name="summary_custommount_preference">Разрешить монтирование ресурсов Android</string>
     <string name="title_mountseditor_preference">Точки монтирования</string>
