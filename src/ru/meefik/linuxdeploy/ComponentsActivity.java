@@ -29,8 +29,6 @@ public class ComponentsActivity extends SherlockActivity {
 		adapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_multiple_choice, listItems);
 		listView.setAdapter(adapter);
-		String[] array = getResources().getStringArray(R.array.debian_components_values);
-		listItems.addAll(Arrays.asList(array));
 	}
 	
 	@Override
@@ -67,6 +65,29 @@ public class ComponentsActivity extends SherlockActivity {
 		String titleMsg = this.getString(R.string.title_activity_components)
 				+ ": " + PrefStore.getCurrentProfile(getApplicationContext());
 		this.setTitle(titleMsg);
+		
+		PrefStore.get(getApplicationContext());
+		
+		String[] array = null;
+		if (PrefStore.DISTRIB.equals("debian")) {
+			array = getResources().getStringArray(R.array.debian_components_values);
+		}
+		if (PrefStore.DISTRIB.equals("ubuntu")) {
+			array = getResources().getStringArray(R.array.ubuntu_components_values);
+		}
+		if (PrefStore.DISTRIB.equals("archlinux")) {
+			array = getResources().getStringArray(R.array.archlinux_components_values);
+		}
+		if (PrefStore.DISTRIB.equals("fedora")) {
+			array = getResources().getStringArray(R.array.fedora_components_values);
+		}
+		if (PrefStore.DISTRIB.equals("kali")) {
+			array = getResources().getStringArray(R.array.kali_components_values);
+		}
+		if (PrefStore.DISTRIB.equals("gentoo")) {
+			array = getResources().getStringArray(R.array.gentoo_components_values);
+		}
+		listItems.addAll(Arrays.asList(array));
 		
 		List<String> list = PrefStore.getComponentsList(getApplicationContext());
 		for (int i = 0; i < listItems.size(); i++) {

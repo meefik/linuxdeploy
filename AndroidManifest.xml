@@ -46,8 +46,6 @@
             android:icon="@drawable/ic_launcher_profiles"
             android:label="@string/title_activity_profiles" >
         </activity>
-        <activity android:name="ru.meefik.linuxdeploy.FullscreenActivity" >
-        </activity>
         <activity
             android:name="ru.meefik.linuxdeploy.ComponentsActivity"
             android:label="@string/title_activity_components" >
@@ -58,7 +56,9 @@
         </activity>
         <activity
             android:name="ru.meefik.linuxdeploy.MountsActivity"
-            android:label="@string/title_activity_scripts" >
+            android:label="@string/title_activity_mounts" >
+        </activity>
+        <activity android:name="ru.meefik.linuxdeploy.FullscreenActivity" >
         </activity>
 
         <receiver

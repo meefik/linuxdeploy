@@ -204,6 +204,7 @@
         <item>ssh</item>
         <item>vnc</item>
         <item>xserver</item>
+        <item>kali-linux</item>
     </string-array>
     
     <!-- Gentoo -->

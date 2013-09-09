@@ -270,8 +270,8 @@ configure_system()
 				# set MAKEOPTS
 				NUMBER_OF_CPU=`cat /proc/cpuinfo | grep ^processor | wc -l`
 				let NUMBER_OF_CPU=$NUMBER_OF_CPU+1
-				if [ -z "grep '^MAKEOPTS=' $MNT_TARGET/etc/portage/make.conf" ]; then
-					echo 'MAKEOPTS="-j$NUMBER_OF_CPU"'
+				if [ -z "`grep '^MAKEOPTS=' $MNT_TARGET/etc/portage/make.conf`" ]; then
+					echo "MAKEOPTS=\"-j$NUMBER_OF_CPU\"" >> $MNT_TARGET/etc/portage/make.conf
 				fi
 			;;
 			esac
@@ -378,6 +378,19 @@ configure_system()
 					echo "allowed_users=anybody" >> $MNT_TARGET/etc/X11/Xwrapper.config
 				fi
 			;;
+			gentoo)
+				# set Xorg make configuration
+				if [ -z "`grep '^INPUT_DEVICES=' $MNT_TARGET/etc/portage/make.conf`" ]; then
+					echo 'INPUT_DEVICES="evdev"' >> $MNT_TARGET/etc/portage/make.conf
+				else
+					sed -i 's|^\(INPUT_DEVICES=.*\)|\1"evdev"|g' $MNT_TARGET/etc/portage/make.conf
+				fi
+				if [ -z "`grep '^VIDEO_CARDS=' $MNT_TARGET/etc/portage/make.conf`" ]; then
+					echo 'VIDEO_CARDS="fbdev"' >> $MNT_TARGET/etc/portage/make.conf
+				else
+					sed -i 's|^\(VIDEO_CARDS=.*\)|\1"fbdev"|g' $MNT_TARGET/etc/portage/make.conf
+				fi
+			;;
 			opensuse)
 				chmod +s $MNT_TARGET/usr/bin/Xorg
 			;;
@@ -404,6 +417,7 @@ configure_system()
 					case "$component" in
 					desktop)
 						PKGS="$PKGS desktop-base x11-xserver-utils xfonts-base"
+						[ "$DISTRIB" == "kali" ] && PKGS="$PKGS kali-defaults kali-menu"
 						case "$DESKTOP_ENV" in
 						xterm)
 							PKGS="$PKGS xterm"
@@ -430,6 +444,9 @@ configure_system()
 					;;
 					xserver)
 						PKGS="$PKGS xinit xserver-xorg xserver-xorg-video-fbdev xserver-xorg-input-evdev"
+					;;
+					kali-linux)
+						PKGS="$PKGS kali-linux"
 					;;
 					esac
 				done
@@ -563,13 +580,6 @@ configure_system()
 				do
 					case "$component" in
 					desktop)
-						# set server USE flag for tightvnc
-						if [ -z "`grep '^net-misc/tightvnc' $MNT_TARGET/etc/portage/package.use`" ]; then
-							echo "net-misc/tightvnc" >> $MNT_TARGET/etc/portage/package.use
-						fi
-						if [ -z "`grep '^net-misc/tightvnc.*server' $MNT_TARGET/etc/portage/package.use`" ]; then
-							sed -i "s|^\(net-misc/tightvnc.*\)|\1 server|g" $MNT_TARGET/etc/portage/package.use
-						fi
 						PKGS="$PKGS xauth"
 						case "$DESKTOP_ENV" in
 						xterm)
@@ -593,20 +603,16 @@ configure_system()
 						PKGS="$PKGS openssh"
 					;;
 					vnc)
+						# set server USE flag for tightvnc
+						if [ -z "`grep '^net-misc/tightvnc' $MNT_TARGET/etc/portage/package.use`" ]; then
+							echo "net-misc/tightvnc" >> $MNT_TARGET/etc/portage/package.use
+						fi
+						if [ -z "`grep '^net-misc/tightvnc.*server' $MNT_TARGET/etc/portage/package.use`" ]; then
+							sed -i "s|^\(net-misc/tightvnc.*\)|\1 server|g" $MNT_TARGET/etc/portage/package.use
+						fi
 						PKGS="$PKGS tightvnc"
 					;;
 					xserver)
-						# set Xorg make configuration
-						if [ -z "`grep '^INPUT_DEVICES=' $MNT_TARGET/etc/portage/make.conf`" ]; then
-							echo 'INPUT_DEVICES="evdev"' >> $MNT_TARGET/etc/portage/make.conf
-						else
-							sed -i 's|^\(INPUT_DEVICES=.*\)|\1"evdev"|g' $MNT_TARGET/etc/portage/make.conf
-						fi
-						if [ -z "`grep '^VIDEO_CARDS=' $MNT_TARGET/etc/portage/make.conf`" ]; then
-							echo 'VIDEO_CARDS="fbdev"' >> $MNT_TARGET/etc/portage/make.conf
-						else
-							sed -i 's|^\(VIDEO_CARDS=.*\)|\1"fbdev"|g' $MNT_TARGET/etc/portage/make.conf
-						fi
 						PKGS="$PKGS xinit xorg-server"
 					;;
 					esac
@@ -1042,11 +1048,6 @@ install_system()
 		msg "Installing Debian-based distribution: "
 
 		BASIC_PACKAGES="locales,sudo,man-db"
-		case "$DISTRIB" in
-		kali)
-			BASIC_PACKAGES="$BASIC_PACKAGES,kali-defaults,kali-menu,kali-root-login"
-		;;
-		esac
 
 		[ -z "$DEBOOTSTRAP_DIR" ] && DEBOOTSTRAP_DIR=${ENV_DIR%/}/deploy/debootstrap
 		export DEBOOTSTRAP_DIR
