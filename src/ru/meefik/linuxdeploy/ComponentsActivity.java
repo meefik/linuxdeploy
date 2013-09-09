@@ -81,13 +81,16 @@ public class ComponentsActivity extends SherlockActivity {
 		if (PrefStore.DISTRIB.equals("fedora")) {
 			array = getResources().getStringArray(R.array.fedora_components_values);
 		}
+		if (PrefStore.DISTRIB.equals("opensuse")) {
+			array = getResources().getStringArray(R.array.opensuse_components_values);
+		}
 		if (PrefStore.DISTRIB.equals("kali")) {
 			array = getResources().getStringArray(R.array.kali_components_values);
 		}
 		if (PrefStore.DISTRIB.equals("gentoo")) {
 			array = getResources().getStringArray(R.array.gentoo_components_values);
 		}
-		listItems.addAll(Arrays.asList(array));
+		if (array != null) listItems.addAll(Arrays.asList(array));
 		
 		List<String> list = PrefStore.getComponentsList(getApplicationContext());
 		for (int i = 0; i < listItems.size(); i++) {
