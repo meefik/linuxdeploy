@@ -70,7 +70,7 @@
     <string name="title_installdir_preference">ENV directory</string>
     <string name="dialog_title_installdir_preference">ENV directory</string>
     <string name="title_symlink_preference">Create symlink</string>
-    <string name="summary_symlink_preference">Create symbolic link in the system</string>
+    <string name="summary_symlink_preference">Create a symbolic link in Android on linuxdeploy</string>
     <string name="title_installenv_preference">Update ENV</string>
     <string name="summary_installenv_preference">Update the operating environment</string>
     <string name="message_installenv_confirm_dialog">Update the operating environment?</string>
@@ -91,8 +91,8 @@
     <string name="summary_install_preference">Start GNU/Linux installation</string>
     <string name="message_install_confirm_dialog">Start installation of GNU/Linux system?</string>
     <string name="title_reconfigure_preference">Reconfigure</string>
-    <string name="summary_reconfigure_preference">Start system reconfiguration</string>
-    <string name="message_reconfigure_confirm_dialog">Start reconfiguration of the system?</string>
+    <string name="summary_reconfigure_preference">Start GNU/Linux reconfiguration</string>
+    <string name="message_reconfigure_confirm_dialog">Start reconfiguration of GNU/Linux system?</string>
     <string name="deploy_preferences">Deploy</string>
     <string name="title_distribution_preference">Distribution</string>
     <string name="dialog_title_distribution_preference">Distribution</string>

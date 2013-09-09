@@ -39,7 +39,7 @@
     <string name="toast_import_profile_error">Ошибка импорта профиля!</string>
     <string name="toast_export_profile_success">Профиль успешно экспортирован.</string>
     <string name="toast_export_profile_error">Ошибка экспорта профиля!</string>
-    <string name="confirm_profile_discard_title">Удаление профиля</string>
+    <string name="confirm_profile_discard_title">Удалить профиль</string>
     <string name="confirm_profile_discard_message">Удалить выбранный профиль?</string>
     <string name="new_script_title">Файл сценария</string>
     <string name="edit_script_title">Файл сценария</string>
@@ -70,12 +70,12 @@
     <string name="title_installdir_preference">Директория окружения</string>
     <string name="dialog_title_installdir_preference">Директория окружения</string>
     <string name="title_symlink_preference">Создать симлинк</string>
-    <string name="summary_symlink_preference">Создать в системе символьную ссылку</string>
+    <string name="summary_symlink_preference">Создать в Android символьную ссылку на linuxdeploy</string>
     <string name="title_installenv_preference">Обновить окружение</string>
-    <string name="summary_installenv_preference">Обновить рабочее окружение</string>
+    <string name="summary_installenv_preference">Обновить рабочее окружение программы</string>
     <string name="message_installenv_confirm_dialog">Обновить рабочее окружение программы?</string>
     <string name="title_removeenv_preference">Удалить окружение</string>
-    <string name="summary_removeenv_preference">Удалить рабочее окружение</string>
+    <string name="summary_removeenv_preference">Удалить рабочее окружение программы</string>
     <string name="message_removeenv_confirm_dialog">Удалить рабочее окружение программы?</string>
     <string name="debug_preferences">Отладка</string>
     <string name="title_debug_preference">Режим отладки</string>
@@ -90,9 +90,9 @@
     <string name="title_install_preference">Установить</string>
     <string name="summary_install_preference">Запустить установку GNU/Linux системы</string>
     <string name="message_install_confirm_dialog">Запустить установку GNU/Linux системы?</string>
-    <string name="title_reconfigure_preference">Переконфигурация</string>
-    <string name="summary_reconfigure_preference">Выполнить переконфигурацию системы</string>
-    <string name="message_reconfigure_confirm_dialog">Выполнить переконфигурацию системы?</string>
+    <string name="title_reconfigure_preference">Переконфигурировать</string>
+    <string name="summary_reconfigure_preference">Выполнить переконфигурацию GNU/Linux системы</string>
+    <string name="message_reconfigure_confirm_dialog">Выполнить переконфигурацию GNU/Linux системы?</string>
     <string name="deploy_preferences">Развертывание</string>
     <string name="title_distribution_preference">Дистрибутив</string>
     <string name="dialog_title_distribution_preference">Дистрибутив</string>
