@@ -149,8 +149,7 @@ public class PrefStore {
 		STARTUP = (startup_ssh + " " + startup_gui + " " + startup_custom).trim();
 		CUSTOM_SCRIPTS = sp.getBoolean("customstartup",
 				c.getString(R.string.customstartup).equals("true") ? true : false) ? sp
-				.getString("scripts", c.getString(R.string.scripts)).trim()
-				: "";
+				.getString("scripts", c.getString(R.string.scripts)).trim()	: "";
 		CUSTOM_MOUNTS = sp.getBoolean("custommount",
 				c.getString(R.string.custommount).equals("true") ? true : false) ? sp
 				.getString("mounts", extStore.getAbsolutePath()).trim() : "";
