@@ -55,7 +55,7 @@ public class PrefStore {
 	public static String SERVER_DNS;
 	public static String LOCALE;
 	public static String DESKTOP_ENV;
-	public static String PACKAGES;
+	public static String COMPONENTS;
 
 	// to startup
 	public static String STARTUP;
@@ -136,7 +136,7 @@ public class PrefStore {
 		LOCALE = sp.getString("locale", c.getString(R.string.locale));
 		DESKTOP_ENV = sp.getString("desktopenv",
 				c.getString(R.string.desktopenv));
-		PACKAGES = sp.getString("packages", c.getString(R.string.packages)).trim();
+		COMPONENTS = sp.getString("components", c.getString(R.string.components)).trim();
 		String startup_ssh = sp.getBoolean("sshstartup",
 				c.getString(R.string.sshstartup).equals("true") ? true : false) ? "ssh"
 				: "";
@@ -342,11 +342,11 @@ public class PrefStore {
 		return false;
 	}
 	
-	// Load packages list
-	public static List<String> getPackagesList(Context c) {
+	// Load components list
+	public static List<String> getComponentsList(Context c) {
 		SharedPreferences sp = c.getSharedPreferences(CURRENT_PROFILE,
 				Context.MODE_PRIVATE);
-		String str = sp.getString("packages", c.getString(R.string.packages));
+		String str = sp.getString("components", c.getString(R.string.components));
 		List<String> list = new ArrayList<String>();
 		for (String i: str.split(" ")) {
 			list.add(i);
@@ -354,8 +354,8 @@ public class PrefStore {
 		return list;
 	}
 	
-	// Save packages list
-	public static void setPackagesList(Context c, List<String> list) {
+	// Save components list
+	public static void setComponentsList(Context c, List<String> list) {
 		SharedPreferences sp = c.getSharedPreferences(CURRENT_PROFILE,
 				Context.MODE_PRIVATE);
 		SharedPreferences.Editor prefEditor = sp.edit();
@@ -363,7 +363,7 @@ public class PrefStore {
 		for (String i: list) {
 			str += i + " ";
 		}
-		prefEditor.putString("packages", str.trim());
+		prefEditor.putString("components", str.trim());
 		prefEditor.commit();
 		PREF_CHANGE = true;
 	}

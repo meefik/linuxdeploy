@@ -28,24 +28,7 @@ umask 0022
 
 msg()
 {
-	ECHO_OPT=""
-	ECHO_STR=""
-
-	for i in "$@"
-	do
-		case $i in
-		-n)
-			ECHO_OPT="-n"
-		;;
-		*)
-			ECHO_STR="$i"
-		;;
-		esac
-	done
-
-	echo $ECHO_OPT "$ECHO_STR" 1>&3
-
-	return 0
+	echo "$1" "$2" 1>&3
 }
 
 prepare_system()
@@ -284,6 +267,12 @@ configure_system()
 				if [ -z "`grep '^aid_inet:.*,portage' $MNT_TARGET/etc/group`" ]; then
 					sed -i "s|^\(aid_inet:.*\)|\1,portage|g" $MNT_TARGET/etc/group
 				fi
+				# set MAKEOPTS
+				NUMBER_OF_CPU=`cat /proc/cpuinfo | grep ^processor | wc -l`
+				let NUMBER_OF_CPU=$NUMBER_OF_CPU+1
+				if [ -z "grep '^MAKEOPTS=' $MNT_TARGET/etc/portage/make.conf" ]; then
+					echo 'MAKEOPTS="-j$NUMBER_OF_CPU"'
+				fi
 			;;
 			esac
 		;;
@@ -342,9 +331,8 @@ configure_system()
 				;;
 				esac
 				chmod 755 $MNT_TARGET$USER_HOME/.vnc/xstartup
-				#echo "#!/bin/sh" > $MNT_TARGET$USER_HOME/.xsession
-				#cat $MNT_TARGET$USER_HOME/.vnc/xstartup > $MNT_TARGET$USER_HOME/.xsession
-				cp $MNT_TARGET$USER_HOME/.vnc/xstartup $MNT_TARGET$USER_HOME/.xsession
+				rm $MNT_TARGET$USER_HOME/.xinitrc || true
+				ln -s ./.vnc/xstartup $MNT_TARGET$USER_HOME/.xinitrc
 			fi
 			chown -R $USER_ID:$GROUP_ID $MNT_TARGET$USER_HOME || true
 		;;
@@ -357,7 +345,7 @@ configure_system()
 		;;
 		dbus)
 			case "$DISTRIB" in
-			debian|ubuntu|kali|gentoo)
+			debian|ubuntu|kali|opensuse|gentoo)
 				if [ -z "`grep '^aid_inet:.*,messagebus' $MNT_TARGET/etc/group`" ]; then
 					sed -i "s|^\(aid_inet:.*\)|\1,messagebus|g" $MNT_TARGET/etc/group
 				fi
@@ -384,12 +372,14 @@ configure_system()
 			case "$DISTRIB" in
 			debian|ubuntu|kali)
 				mkdir -p $MNT_TARGET/etc/X11
-				xwrapper=`grep -e "^allowed_users" $MNT_TARGET/etc/X11/Xwrapper.config || true`
-				if [ -n "$xwrapper" ]; then
+				if [ -n "`grep -e '^allowed_users' $MNT_TARGET/etc/X11/Xwrapper.config`" ]; then
 					sed -i 's/^allowed_users=.*/allowed_users=anybody/g' $MNT_TARGET/etc/X11/Xwrapper.config
 				else
 					echo "allowed_users=anybody" >> $MNT_TARGET/etc/X11/Xwrapper.config
 				fi
+			;;
+			opensuse)
+				chmod +s $MNT_TARGET/usr/bin/Xorg
 			;;
 			esac
 			# xorg.conf
@@ -409,9 +399,9 @@ configure_system()
 			case "$DISTRIB" in
 			debian|ubuntu|kali)
 				PKGS=""
-				for pkg in $PACKAGES
+				for component in $COMPONENTS
 				do
-					case "$pkg" in
+					case "$component" in
 					desktop)
 						PKGS="$PKGS desktop-base x11-xserver-utils xfonts-base"
 						case "$DESKTOP_ENV" in
@@ -450,9 +440,9 @@ configure_system()
 			;;
 			archlinux)
 				PKGS=""
-				for pkg in $PACKAGES
+				for component in $COMPONENTS
 				do
-					case "$pkg" in
+					case "$component" in
 					desktop)
 						PKGS="$PKGS xorg-utils xorg-fonts-misc ttf-dejavu"
 						case "$DESKTOP_ENV" in
@@ -480,7 +470,7 @@ configure_system()
 						PKGS="$PKGS tightvnc"
 					;;
 					xserver)
-						PKGS="$PKGS xorg-server xorg-xinit"
+						PKGS="$PKGS xorg-xinit xorg-server xf86-video-fbdev xf86-input-evdev"
 					;;
 					esac
 				done
@@ -490,9 +480,9 @@ configure_system()
 			;;
 			fedora)
 				PKGS=""
-				for pkg in $PACKAGES
+				for component in $COMPONENTS
 				do
-					case "$pkg" in
+					case "$component" in
 					desktop)
 						PKGS="$PKGS xorg-x11-server-utils xorg-x11-fonts-misc dejavu-*"
 						case "$DESKTOP_ENV" in
@@ -520,7 +510,7 @@ configure_system()
 						PKGS="$PKGS tigervnc-server"
 					;;
 					xserver)
-						PKGS="$PKGS xorg-x11-server xorg-x11-xinit"
+						PKGS="$PKGS xorg-x11-xinit xorg-x11-server-Xorg xorg-x11-drv-fbdev xorg-x11-drv-evdev"
 					;;
 					esac
 				done
@@ -530,9 +520,9 @@ configure_system()
 			;;
 			opensuse)
 				PKGS=""
-				for pkg in $PACKAGES
+				for component in $COMPONENTS
 				do
-					case "$pkg" in
+					case "$component" in
 					desktop)
 						PKGS="$PKGS xorg-x11-fonts-core dejavu-fonts xauth"
 						case "$DESKTOP_ENV" in
@@ -560,7 +550,7 @@ configure_system()
 						PKGS="$PKGS tightvnc"
 					;;
 					xserver)
-						PKGS="$PKGS xorg-x11-server xinit xf86-video-fbdev xf86-input-evdev"
+						PKGS="$PKGS xinit xorg-x11-server xf86-video-fbdev xf86-input-evdev"
 					;;
 					esac
 				done
@@ -569,9 +559,9 @@ configure_system()
 			;;
 			gentoo)
 				PKGS=""
-				for pkg in $PACKAGES
+				for component in $COMPONENTS
 				do
-					case "$pkg" in
+					case "$component" in
 					desktop)
 						# set server USE flag for tightvnc
 						if [ -z "`grep '^net-misc/tightvnc' $MNT_TARGET/etc/portage/package.use`" ]; then
@@ -606,6 +596,17 @@ configure_system()
 						PKGS="$PKGS tightvnc"
 					;;
 					xserver)
+						# set Xorg make configuration
+						if [ -z "`grep '^INPUT_DEVICES=' $MNT_TARGET/etc/portage/make.conf`" ]; then
+							echo 'INPUT_DEVICES="evdev"' >> $MNT_TARGET/etc/portage/make.conf
+						else
+							sed -i 's|^\(INPUT_DEVICES=.*\)|\1"evdev"|g' $MNT_TARGET/etc/portage/make.conf
+						fi
+						if [ -z "`grep '^VIDEO_CARDS=' $MNT_TARGET/etc/portage/make.conf`" ]; then
+							echo 'VIDEO_CARDS="fbdev"' >> $MNT_TARGET/etc/portage/make.conf
+						else
+							sed -i 's|^\(VIDEO_CARDS=.*\)|\1"fbdev"|g' $MNT_TARGET/etc/portage/make.conf
+						fi
 						PKGS="$PKGS xinit xorg-server"
 					;;
 					esac
@@ -895,12 +896,12 @@ start_system()
 					#setprop ctl.stop surfaceflinger
 					pkill -STOP system_server
 					pkill -STOP surfaceflinger
-					chroot $MNT_TARGET su - $USER_NAME -c "startx -- :$FB_DISPLAY -dpi $FB_DPI"
+					chroot $MNT_TARGET su - $USER_NAME -c "xinit -- :$FB_DISPLAY -dpi $FB_DPI"
 					pkill -CONT surfaceflinger
 					pkill -CONT system_server
 					#reboot
 				else
-					chroot $MNT_TARGET su - $USER_NAME -c "startx -- :$FB_DISPLAY -dpi $FB_DPI &"
+					chroot $MNT_TARGET su - $USER_NAME -c "xinit -- :$FB_DISPLAY -dpi $FB_DPI &"
 				fi
 			exit 0)
 			[ $? -eq 0 ] && msg "done" || msg "fail"
@@ -1040,16 +1041,16 @@ install_system()
 	debian|ubuntu|kali)
 		msg "Installing Debian-based distribution: "
 
-		PACKAGES="locales,sudo,man-db"
+		BASIC_PACKAGES="locales,sudo,man-db"
 		case "$DISTRIB" in
 		kali)
-			PACKAGES="$PACKAGES,kali-defaults,kali-menu,kali-root-login"
+			BASIC_PACKAGES="$BASIC_PACKAGES,kali-defaults,kali-menu,kali-root-login"
 		;;
 		esac
 
 		[ -z "$DEBOOTSTRAP_DIR" ] && DEBOOTSTRAP_DIR=${ENV_DIR%/}/deploy/debootstrap
 		export DEBOOTSTRAP_DIR
-		debootstrap --no-check-gpg --arch $ARCH --foreign --extractor=ar --include=$PACKAGES $SUITE $MNT_TARGET $MIRROR 1>&3 2>&3
+		debootstrap --no-check-gpg --arch $ARCH --foreign --extractor=ar --include=$BASIC_PACKAGES $SUITE $MNT_TARGET $MIRROR 1>&3 2>&3
 		[ $? -ne 0 ] && return 1
 
 		unset DEBOOTSTRAP_DIR
@@ -1214,15 +1215,7 @@ install_system()
 	opensuse)
 		msg "Installing openSUSE distribution: "
 
-		case "$ARCH" in
-		armv5tel)
-			BASIC_PACKAGES="aaa_base aaa_base-extras autoyast2-installation bash bind-libs bind-utils branding-openSUSE bridge-utils bzip2 coreutils cpio cracklib cracklib-dict-full cron cronie cryptsetup curl cyrus-sasl dbus-1 dbus-1-x11 device-mapper dhcpcd diffutils dirmngr dmraid e2fsprogs elfutils file filesystem fillup findutils fontconfig gawk gio-branding-openSUSE glib2-tools glibc glibc-extra glibc-i18ndata glibc-locale gnu-unifont-bitmap-fonts gpg2 grep groff gzip hwinfo ifplugd info initviocons iproute2 iputils kbd kpartx krb5 less libX11-6 libX11-data libXau6 libXext6 libXft2 libXrender1 libacl1 libadns1 libaio1 libasm1 libassuan0 libattr1 libaudit1 libaugeas0 libblkid1 libblocxx6 libbz2-1 libcairo2 libcap-ng0 libcap2 libcom_err2 libcrack2 libcryptsetup4 libcurl4 libdaemon0 libdb-4_8 libdbus-1-3 libdrm2 libdw1 libedit0 libelf0 libelf1 libestr0 libexpat1 libext2fs2 libffi4 libfreetype6 libgcc_s1 libgcrypt11 libgdbm4 libgio-2_0-0 libglib-2_0-0 libgmodule-2_0-0 libgmp10 libgnutls28 libgobject-2_0-0 libgpg-error0 libgssglue1 libharfbuzz0 libhogweed2 libicu49 libidn11 libiw30 libjson0 libkeyutils1 libkmod2 libksba8 libldap-2_4-2 liblua5_1 liblzma5 libmagic1 libmicrohttpd10 libmodman1 libmount1 libncurses5 libncurses6 libnettle4 libnl-1_1 libopenssl1_0_0 libp11-kit0 libpango-1_0-0 libparted0 libpci3 libpcre1 libpipeline1 libpixman-1-0 libply-boot-client2 libply-splash-core2 libply-splash-graphics2 libply2 libpng15-15 libpolkit0 libpopt0 libprocps1 libproxy1 libpth20 libpython2_7-1_0 libqrencode3 libreadline6 libreiserfs-0_3-0 libselinux1 libsemanage1 libsepol1 libsolv-tools libssh2-1 libstdc++6 libstorage4 libtasn1 libtasn1-6 libtirpc1 libudev1 libusb-0_1-4 libusb-1_0-0 libustr-1_0-1 libuuid1 libwrap0 libxcb-render0 libxcb-shm0 libxcb1 libxml2-2 libxtables9 libyui-ncurses-pkg4 libyui-ncurses4 libyui4 libz1 libzio1 libzypp limal limal-perl logrotate lsscsi lvm2 man man-pages mdadm mkinitrd module-init-tools multipath-tools ncurses-utils net-tools netcfg openSUSE-build-key openSUSE-release openSUSE-release-ftp openslp openssl pam pam-config pango-tools parted pciutils pciutils-ids perl perl-Bootloader perl-Config-Crontab perl-XML-Parser perl-XML-Simple perl-base perl-gettext permissions pinentry pkg-config plymouth plymouth-branding-openSUSE plymouth-plugin-label plymouth-plugin-script plymouth-scripts polkit procps python-base rpcbind rpm rsyslog sed shadow shared-mime-info sudo suse-module-tools sysconfig sysfsutils syslog-service systemd systemd-presets-branding-openSUSE systemd-sysvinit sysvinit-tools tar tcpd terminfo-base timezone tunctl u-boot-tools udev unzip update-alternatives util-linux vim vim-base vlan wallpaper-branding-openSUSE wireless-tools wpa_supplicant xz yast2 yast2-bootloader yast2-core yast2-country yast2-country-data yast2-dbus-client yast2-firstboot yast2-hardware-detection yast2-installation yast2-mouse yast2-packager yast2-perl-bindings yast2-pkg-bindings yast2-proxy yast2-slp yast2-storage yast2-trans-stats yast2-transfer yast2-update yast2-xml yast2-ycp-ui-bindings zypper"
-		;;
-		armv7hl)
-			BASIC_PACKAGES="aaa_base aaa_base-extras autoyast2-installation bash bind-libs bind-utils branding-openSUSE bridge-utils bzip2 coreutils cpio cracklib cracklib-dict-full cron cronie cryptsetup curl cyrus-sasl dbus-1 dbus-1-x11 device-mapper dhcpcd diffutils dirmngr dmraid e2fsprogs elfutils file filesystem fillup findutils fontconfig gawk gio-branding-openSUSE glib2-tools glibc glibc-extra glibc-i18ndata glibc-locale gnu-unifont-bitmap-fonts gpg2 grep groff gzip hwinfo ifplugd info initviocons iproute2 iputils kbd kpartx krb5 less libX11-6 libX11-data libXau6 libXext6 libXft2 libXrender1 libacl1 libadns1 libaio1 libasm1 libassuan0 libattr1 libaudit1 libaugeas0 libblkid1 libbz2-1 libcairo2 libcap-ng0 libcap2 libcom_err2 libcrack2 libcryptsetup4 libcurl4 libdaemon0 libdb-4_8 libdbus-1-3 libdrm2 libdw1 libedit0 libelf0 libelf1 libestr0 libexpat1 libext2fs2 libffi4 libfreetype6 libgcc_s1 libgcrypt11 libgdbm4 libgio-2_0-0 libglib-2_0-0 libgmodule-2_0-0 libgmp10 libgnutls28 libgobject-2_0-0 libgpg-error0 libgssglue1 libharfbuzz0 libhogweed2 libicu51_2 libidn11 libiw30 libjson0 libkeyutils1 libkmod2 libksba8 libldap-2_4-2 liblua5_1 liblzma5 libmagic1 libmicrohttpd10 libmodman1 libmount1 libncurses5 libncurses6 libnettle4 libnl1 libopenssl1_0_0 libp11-kit0 libpango-1_0-0 libparted0 libpci3 libpcre1 libpipeline1 libpixman-1-0 libply-boot-client2 libply-splash-core2 libply-splash-graphics2 libply2 libpng16-16 libpolkit0 libpopt0 libprocps1 libproxy1 libpth20 libpython2_7-1_0 libqrencode3 libreadline6 libreiserfs-0_3-0 libselinux1 libsemanage1 libsepol1 libsolv-tools libssh2-1 libstdc++6 libstorage4 libtasn1 libtasn1-6 libtirpc1 libudev1 libusb-0_1-4 libusb-1_0-0 libustr-1_0-1 libuuid1 libwrap0 libxcb-render0 libxcb-shm0 libxcb1 libxml2-2 libxtables10 libyui-ncurses-pkg5 libyui-ncurses5 libyui5 libz1 libzio1 libzypp logrotate lsscsi lvm2 man man-pages mdadm mkinitrd module-init-tools multipath-tools ncurses-utils net-tools netcfg openSUSE-build-key openSUSE-release-Factory openSUSE-release-ftp-Factory openslp openssl pam pam-config pango-tools parted pciutils pciutils-ids perl perl-Bootloader perl-Config-Crontab perl-XML-Parser perl-XML-Simple perl-base perl-gettext permissions pinentry pkg-config plymouth plymouth-branding-openSUSE plymouth-plugin-label plymouth-plugin-script plymouth-scripts polkit procps python-base rpcbind rpm rsyslog sed shadow shared-mime-info sudo suse-module-tools sysconfig sysfsutils syslog-service systemd systemd-presets-branding-openSUSE systemd-sysvinit sysvinit-tools tar tcpd terminfo-base timezone tunctl u-boot-tools udev unzip update-alternatives util-linux vim vim-base vlan wallpaper-branding-openSUSE wireless-tools wpa_supplicant xz yast2 yast2-bootloader yast2-core yast2-country yast2-country-data yast2-dbus-client yast2-firstboot yast2-hardware-detection yast2-installation yast2-mouse yast2-packager yast2-perl-bindings yast2-pkg-bindings yast2-proxy yast2-slp yast2-storage yast2-trans-stats yast2-transfer yast2-update yast2-xml yast2-ycp-ui-bindings zypper"
-		;;
-		esac
-
+		BASIC_PACKAGES="aaa_base aaa_base-extras autoyast2-installation bash bind-libs bind-utils branding-openSUSE bridge-utils bzip2 coreutils cpio cracklib cracklib-dict-full cron cronie cryptsetup curl cyrus-sasl dbus-1 dbus-1-x11 device-mapper dhcpcd diffutils dirmngr dmraid e2fsprogs elfutils file filesystem fillup findutils fontconfig gawk gio-branding-openSUSE glib2-tools glibc glibc-extra glibc-i18ndata glibc-locale gnu-unifont-bitmap-fonts gpg2 grep groff gzip hwinfo ifplugd info initviocons iproute2 iputils kbd kpartx krb5 less libX11-6 libX11-data libXau6 libXext6 libXft2 libXrender1 libacl1 libadns1 libaio1 libasm1 libassuan0 libattr1 libaudit1 libaugeas0 libblkid1 libbz2-1 libcairo2 libcap-ng0 libcap2 libcom_err2 libcrack2 libcryptsetup4 libcurl4 libdaemon0 libdb-4_8 libdbus-1-3 libdrm2 libdw1 libedit0 libelf0 libelf1 libestr0 libexpat1 libext2fs2 libffi4 libfreetype6 libgcc_s1 libgcrypt11 libgdbm4 libgio-2_0-0 libglib-2_0-0 libgmodule-2_0-0 libgmp10 libgnutls28 libgobject-2_0-0 libgpg-error0 libgssglue1 libharfbuzz0 libhogweed2 libicu51_2 libidn11 libiw30 libjson0 libkeyutils1 libkmod2 libksba8 libldap-2_4-2 liblua5_1 liblzma5 libmagic1 libmicrohttpd10 libmodman1 libmount1 libncurses5 libncurses6 libnettle4 libnl1 libopenssl1_0_0 libp11-kit0 libpango-1_0-0 libparted0 libpci3 libpcre1 libpipeline1 libpixman-1-0 libply-boot-client2 libply-splash-core2 libply-splash-graphics2 libply2 libpng16-16 libpolkit0 libpopt0 libprocps1 libproxy1 libpth20 libpython2_7-1_0 libqrencode3 libreadline6 libreiserfs-0_3-0 libselinux1 libsemanage1 libsepol1 libsolv-tools libssh2-1 libstdc++6 libstorage4 libtasn1 libtasn1-6 libtirpc1 libudev1 libusb-0_1-4 libusb-1_0-0 libustr-1_0-1 libuuid1 libwrap0 libxcb-render0 libxcb-shm0 libxcb1 libxml2-2 libxtables10 libyui-ncurses-pkg5 libyui-ncurses5 libyui5 libz1 libzio1 libzypp logrotate lsscsi lvm2 man man-pages mdadm mkinitrd module-init-tools multipath-tools ncurses-utils net-tools netcfg openSUSE-build-key openSUSE-release-Factory openSUSE-release-ftp-Factory openslp openssl pam pam-config pango-tools parted pciutils pciutils-ids perl perl-Bootloader perl-Config-Crontab perl-XML-Parser perl-XML-Simple perl-base perl-gettext permissions pinentry pkg-config plymouth plymouth-branding-openSUSE plymouth-plugin-label plymouth-plugin-script plymouth-scripts polkit procps python-base rpcbind rpm rsyslog sed shadow shared-mime-info sudo suse-module-tools sysconfig sysfsutils syslog-service systemd systemd-presets-branding-openSUSE systemd-sysvinit sysvinit-tools tar tcpd terminfo-base timezone tunctl u-boot-tools udev unzip update-alternatives util-linux vim vim-base vlan wallpaper-branding-openSUSE wireless-tools wpa_supplicant xz yast2 yast2-bootloader yast2-core yast2-country yast2-country-data yast2-dbus-client yast2-firstboot yast2-hardware-detection yast2-installation yast2-mouse yast2-packager yast2-perl-bindings yast2-pkg-bindings yast2-proxy yast2-slp yast2-storage yast2-trans-stats yast2-transfer yast2-update yast2-xml yast2-ycp-ui-bindings zypper"
 		REPO="${MIRROR%/}/${ARCH}/${SUITE}/repo/oss/suse"
 		PKG_LIST="$MNT_TARGET/tmp/packages.list"
 
@@ -1288,14 +1281,14 @@ install_system()
 		msg -n "Retrieving stage3 archive ... "
 		for i in 1 2 3
 		do
-    			wget -q -c -O $STAGE3 $REPO/$ARCHIVE
+			wget -c -O $STAGE3 $REPO/$ARCHIVE
 			[ $? -eq 0 ] && { OK=1; break; } || sleep 30s
 		done
 		[ "$OK" == "1" ] && msg "done" || { msg "fail"; return 1; }
 
 		msg -n "Unpacking stage3 archive ... "
 		(set -e
-			bzip2 --decompress --stdout --force $STAGE3 | tar xf - -C $MNT_TARGET
+			bzip2 --decompress --stdout --force $STAGE3 | tar x -C $MNT_TARGET
 			rm $STAGE3
 		exit 0)
 		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
@@ -1305,7 +1298,7 @@ install_system()
 
 		msg "Preconfigure system: "
 		configure_system dns mtab groups repository
-
+		
 		msg -n "Updating portage tree ... "
 		(set -e
 			chroot $MNT_TARGET emerge --sync

@@ -24,7 +24,7 @@
     <string name="title_activity_settings">Settings</string>
     <string name="title_activity_properties">Properties</string>
     <string name="title_activity_profiles">Profiles</string>
-	<string name="title_activity_packages">Components</string>
+	<string name="title_activity_components">Components</string>
 	<string name="title_activity_scripts">Scripts</string>
 	<string name="title_activity_mounts">Mounts</string>
     <string name="confirm_start_title">Start</string>
@@ -122,8 +122,8 @@
     <string name="dialog_title_desktopenv_preference">Desktop environment</string>
     <string name="title_installgui_preference">Install GUI</string>
     <string name="summary_installgui_preference">Include installation of desktop environment and VNC server</string>
-    <string name="title_packageseditor_preference">Select components</string>
-    <string name="summary_packageseditor_preference">Select components to install</string>
+    <string name="title_componentseditor_preference">Select components</string>
+    <string name="summary_componentseditor_preference">Select components to install</string>
     <string name="startup_preferences">Startup</string>
     <string name="title_sshstartup_preference">SSH</string>
     <string name="summary_sshstartup_preference">Allow startup a SSH server</string>

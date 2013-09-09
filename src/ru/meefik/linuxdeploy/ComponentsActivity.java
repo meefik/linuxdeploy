@@ -12,7 +12,7 @@ import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
-public class PackagesActivity extends SherlockActivity {
+public class ComponentsActivity extends SherlockActivity {
 	
 	private ListView listView;
 	private ArrayList<String> listItems = new ArrayList<String>();
@@ -23,20 +23,20 @@ public class PackagesActivity extends SherlockActivity {
 		PrefStore.updateTheme(this);
 		super.onCreate(savedInstanceState);
 		PrefStore.updateLocale(this);
-		setContentView(R.layout.activity_packages);
+		setContentView(R.layout.activity_components);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		listView = (ListView) findViewById(R.id.packagesView);
+		listView = (ListView) findViewById(R.id.componentsView);
 		adapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_multiple_choice, listItems);
 		listView.setAdapter(adapter);
-		String[] array = getResources().getStringArray(R.array.debian_packages_values);
+		String[] array = getResources().getStringArray(R.array.debian_components_values);
 		listItems.addAll(Arrays.asList(array));
 	}
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		PrefStore.updateLocale(getApplicationContext());
-		getSupportMenuInflater().inflate(R.menu.activity_packages, menu);
+		getSupportMenuInflater().inflate(R.menu.activity_components, menu);
 		return true;
 	}
 
@@ -64,11 +64,11 @@ public class PackagesActivity extends SherlockActivity {
 	public void onResume() {
 		super.onResume();
 		
-		String titleMsg = this.getString(R.string.title_activity_packages)
+		String titleMsg = this.getString(R.string.title_activity_components)
 				+ ": " + PrefStore.getCurrentProfile(getApplicationContext());
 		this.setTitle(titleMsg);
 		
-		List<String> list = PrefStore.getPackagesList(getApplicationContext());
+		List<String> list = PrefStore.getComponentsList(getApplicationContext());
 		for (int i = 0; i < listItems.size(); i++) {
 			for (String pkg: list) {
 				if (listItems.get(i).equals(pkg)) {
@@ -88,7 +88,7 @@ public class PackagesActivity extends SherlockActivity {
 				list.add(listItems.get(i));
 			}
 		}
-		PrefStore.setPackagesList(getApplicationContext(), list);
+		PrefStore.setComponentsList(getApplicationContext(), list);
 	}
 
 }

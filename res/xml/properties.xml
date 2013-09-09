@@ -108,9 +108,9 @@
             android:title="@string/title_desktopenv_preference" />
 
         <PreferenceScreen
-            android:key="packageseditor"
-            android:summary="@string/summary_packageseditor_preference"
-            android:title="@string/title_packageseditor_preference" />
+            android:key="componentseditor"
+            android:summary="@string/summary_componentseditor_preference"
+            android:title="@string/title_componentseditor_preference" />
     </PreferenceCategory>
     
     <PreferenceCategory android:title="@string/startup_preferences" >
