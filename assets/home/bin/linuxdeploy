@@ -363,9 +363,8 @@ configure_system()
 		;;
 		upstart)
 			if [ -e "$MNT_TARGET/sbin/initctl" ]; then
-				rm $MNT_TARGET/sbin/initctl
-				chroot $MNT_TARGET ln -s /bin/true /sbin/initctl
 				chroot $MNT_TARGET dpkg-divert --local --rename --add /sbin/initctl
+				chroot $MNT_TARGET ln -s /bin/true /sbin/initctl
 			fi
 		;;
 		dbus)
