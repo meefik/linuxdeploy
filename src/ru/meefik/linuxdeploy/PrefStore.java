@@ -9,10 +9,13 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -136,7 +139,13 @@ public class PrefStore {
 		LOCALE = sp.getString("locale", c.getString(R.string.locale));
 		DESKTOP_ENV = sp.getString("desktopenv",
 				c.getString(R.string.desktopenv));
-		COMPONENTS = sp.getString("components", c.getString(R.string.components)).trim();
+		Set<String> defcomp = new HashSet<String>(Arrays.asList(c.getResources().getStringArray(R.array.default_components)));
+		Set<String> comp_set = sp.getStringSet("components", defcomp);
+		String components = "";
+		for (String str: comp_set) {
+			components+=str+" ";
+		}
+		COMPONENTS = components.trim();
 		String startup_ssh = sp.getBoolean("sshstartup",
 				c.getString(R.string.sshstartup).equals("true") ? true : false) ? "ssh"
 				: "";
@@ -339,32 +348,6 @@ public class PrefStore {
 			}
 		}
 		return false;
-	}
-	
-	// Load components list
-	public static List<String> getComponentsList(Context c) {
-		SharedPreferences sp = c.getSharedPreferences(CURRENT_PROFILE,
-				Context.MODE_PRIVATE);
-		String str = sp.getString("components", c.getString(R.string.components));
-		List<String> list = new ArrayList<String>();
-		for (String i: str.split(" ")) {
-			list.add(i);
-		}
-		return list;
-	}
-	
-	// Save components list
-	public static void setComponentsList(Context c, List<String> list) {
-		SharedPreferences sp = c.getSharedPreferences(CURRENT_PROFILE,
-				Context.MODE_PRIVATE);
-		SharedPreferences.Editor prefEditor = sp.edit();
-		String str = "";
-		for (String i: list) {
-			str += i + " ";
-		}
-		prefEditor.putString("components", str.trim());
-		prefEditor.commit();
-		PREF_CHANGE = true;
 	}
 	
 	// Load scripts list

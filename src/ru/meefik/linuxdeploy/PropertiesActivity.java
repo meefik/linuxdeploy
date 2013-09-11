@@ -1,6 +1,8 @@
 package ru.meefik.linuxdeploy;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.HashSet;
 
 
 import android.app.AlertDialog;
@@ -13,6 +15,7 @@ import android.os.Environment;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
+import android.preference.MultiSelectListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
@@ -96,10 +99,6 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 		}
 		if (preference.getKey().equals("reconfigure")) {
 			reconfigureDialog();
-		}
-		if (preference.getKey().equals("componentseditor")) {
-			Intent intent = new Intent(getApplicationContext(), ComponentsActivity.class);
-			startActivity(intent);
 		}
 		if (preference.getKey().equals("sshproperties")) {
 			Intent intent = new Intent(getApplicationContext(), PropertiesActivity.class);
@@ -298,13 +297,13 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 					mirror.setSummary(mirror.getText());
 					mirror.setEnabled(true);
 					// components
-					PreferenceScreen comp = (PreferenceScreen) this
-							.findPreference("componentseditor");
-					if (getResources().getStringArray(R.array.debian_components_values).length > 0) {
-						comp.setEnabled(true);
-					} else {
-						comp.setEnabled(false);
-					}
+					MultiSelectListPreference components = (MultiSelectListPreference) this
+							.findPreference("components");
+					components.setEntries(R.array.debian_components_entries);
+					components.setEntryValues(R.array.debian_components_values);
+					if (init)
+						components.setValues(new HashSet<String>(Arrays.asList(getResources().getStringArray(R.array.default_components))));
+					components.setEnabled(true);
 				}
 				if (listPref.getValue().equals("ubuntu")) {
 					// suite
@@ -335,13 +334,13 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 					mirror.setSummary(mirror.getText());
 					mirror.setEnabled(true);
 					// components
-					PreferenceScreen comp = (PreferenceScreen) this
-							.findPreference("componentseditor");
-					if (getResources().getStringArray(R.array.ubuntu_components_values).length > 0) {
-						comp.setEnabled(true);
-					} else {
-						comp.setEnabled(false);
-					}
+					MultiSelectListPreference components = (MultiSelectListPreference) this
+							.findPreference("components");
+					components.setEntries(R.array.ubuntu_components_entries);
+					components.setEntryValues(R.array.ubuntu_components_values);
+					if (init)
+						components.setValues(new HashSet<String>(Arrays.asList(getResources().getStringArray(R.array.default_components))));
+					components.setEnabled(true);
 				}
 				if (listPref.getValue().equals("archlinux")) {
 					// suite
@@ -373,13 +372,13 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 					mirror.setSummary(mirror.getText());
 					mirror.setEnabled(true);
 					// components
-					PreferenceScreen comp = (PreferenceScreen) this
-							.findPreference("componentseditor");
-					if (getResources().getStringArray(R.array.archlinux_components_values).length > 0) {
-						comp.setEnabled(true);
-					} else {
-						comp.setEnabled(false);
-					}
+					MultiSelectListPreference components = (MultiSelectListPreference) this
+							.findPreference("components");
+					components.setEntries(R.array.ubuntu_components_entries);
+					components.setEntryValues(R.array.ubuntu_components_values);
+					if (init)
+						components.setValues(new HashSet<String>(Arrays.asList(getResources().getStringArray(R.array.default_components))));
+					components.setEnabled(true);
 				}
 				if (listPref.getValue().equals("fedora")) {
 					// suite
@@ -410,13 +409,13 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 					mirror.setSummary(mirror.getText());
 					mirror.setEnabled(true);
 					// components
-					PreferenceScreen comp = (PreferenceScreen) this
-							.findPreference("componentseditor");
-					if (getResources().getStringArray(R.array.fedora_components_values).length > 0) {
-						comp.setEnabled(true);
-					} else {
-						comp.setEnabled(false);
-					}
+					MultiSelectListPreference components = (MultiSelectListPreference) this
+							.findPreference("components");
+					components.setEntries(R.array.fedora_components_entries);
+					components.setEntryValues(R.array.fedora_components_values);
+					if (init)
+						components.setValues(new HashSet<String>(Arrays.asList(getResources().getStringArray(R.array.default_components))));
+					components.setEnabled(true);
 				}
 				if (listPref.getValue().equals("opensuse")) {
 					// suite
@@ -448,13 +447,13 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 					mirror.setSummary(mirror.getText());
 					mirror.setEnabled(true);
 					// components
-					PreferenceScreen comp = (PreferenceScreen) this
-							.findPreference("componentseditor");
-					if (getResources().getStringArray(R.array.opensuse_components_values).length > 0) {
-						comp.setEnabled(true);
-					} else {
-						comp.setEnabled(false);
-					}
+					MultiSelectListPreference components = (MultiSelectListPreference) this
+							.findPreference("components");
+					components.setEntries(R.array.opensuse_components_entries);
+					components.setEntryValues(R.array.opensuse_components_values);
+					if (init)
+						components.setValues(new HashSet<String>(Arrays.asList(getResources().getStringArray(R.array.default_components))));
+					components.setEnabled(true);
 				}
 				if (listPref.getValue().equals("kali")) {
 					// suite
@@ -485,13 +484,13 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 					mirror.setSummary(mirror.getText());
 					mirror.setEnabled(true);
 					// components
-					PreferenceScreen comp = (PreferenceScreen) this
-							.findPreference("componentseditor");
-					if (getResources().getStringArray(R.array.kali_components_values).length > 0) {
-						comp.setEnabled(true);
-					} else {
-						comp.setEnabled(false);
-					}
+					MultiSelectListPreference components = (MultiSelectListPreference) this
+							.findPreference("components");
+					components.setEntries(R.array.kali_components_entries);
+					components.setEntryValues(R.array.kali_components_values);
+					if (init)
+						components.setValues(new HashSet<String>(Arrays.asList(getResources().getStringArray(R.array.default_components))));
+					components.setEnabled(true);
 				}
 				if (listPref.getValue().equals("gentoo")) {
 					// suite
@@ -522,13 +521,13 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 					mirror.setSummary(mirror.getText());
 					mirror.setEnabled(true);
 					// components
-					PreferenceScreen comp = (PreferenceScreen) this
-							.findPreference("componentseditor");
-					if (getResources().getStringArray(R.array.gentoo_components_values).length > 0) {
-						comp.setEnabled(true);
-					} else {
-						comp.setEnabled(false);
-					}
+					MultiSelectListPreference components = (MultiSelectListPreference) this
+							.findPreference("components");
+					components.setEntries(R.array.gentoo_components_entries);
+					components.setEntryValues(R.array.gentoo_components_values);
+					if (init)
+						components.setValues(new HashSet<String>(Arrays.asList(getResources().getStringArray(R.array.default_components))));
+					components.setEnabled(true);
 				}
 				if (listPref.getValue().equals("rootfs")) {
 					// suite
@@ -558,9 +557,12 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 					mirror.setSummary(mirror.getText());
 					mirror.setEnabled(true);
 					// components
-					PreferenceScreen comp = (PreferenceScreen) this
-							.findPreference("componentseditor");
-					comp.setEnabled(false);
+					MultiSelectListPreference components = (MultiSelectListPreference) this
+							.findPreference("components");
+					components.setEntries(null);
+					components.setEntryValues(null);
+					components.setValues(new HashSet<String>());
+					components.setEnabled(false);
 				}
 			}
 			if (listPref.getKey().equals("deploytype")) {

@@ -24,7 +24,6 @@
     <string name="title_activity_settings">Настройки</string>
     <string name="title_activity_properties">Параметры</string>
     <string name="title_activity_profiles">Профили</string>
-    <string name="title_activity_components">Компоненты</string>
     <string name="title_activity_scripts">Сценарии</string>
     <string name="title_activity_mounts">Монтирование</string>
     <string name="confirm_start_title">Запустить</string>
@@ -122,8 +121,9 @@
     <string name="dialog_title_desktopenv_preference">Окружение рабочего стола</string>
     <string name="title_installgui_preference">Установить GUI</string>
     <string name="summary_installgui_preference">Включить установку окружения рабочего стола и VNC сервера</string>
-    <string name="title_componentseditor_preference">Выбрать компоненты</string>
-    <string name="summary_componentseditor_preference">Выбрать компоненты для установки</string>
+    <string name="dialog_title_components_preference">Компоненты</string>
+    <string name="summary_components_preference">Выбрать компоненты для установки</string>
+    <string name="title_components_preference">Выбрать компоненты</string>
     <string name="startup_preferences">Запуск</string>
     <string name="title_sshstartup_preference">SSH</string>
     <string name="summary_sshstartup_preference">Разрешить запуск SSH сервера</string>

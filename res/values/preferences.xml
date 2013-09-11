@@ -48,6 +48,12 @@
     <string name="fbdev" translatable="false">/dev/graphics/fb0</string>
     <string name="fbinput" translatable="false">/dev/input/event2</string>
     <string name="fbfreeze" translatable="false">false</string>
+    
+    <string-array name="default_components" translatable="false">
+        <item>desktop</item>
+        <item>ssh</item>
+        <item>vnc</item>
+    </string-array>
 
     <!-- Debian -->
     <string name="debian_suite" translatable="false">wheezy</string>

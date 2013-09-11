@@ -118,6 +118,12 @@
         <item>vnc</item>
         <item>xserver</item>
     </string-array>
+    <string-array name="debian_components_entries">
+        <item>Desktop Environment</item>
+        <item>SSH server</item>
+        <item>VNC server</item>
+        <item>X server</item>
+    </string-array>
 
     <!-- Ubuntu -->
 
@@ -138,6 +144,18 @@
         <item>vnc</item>
         <item>xserver</item>
     </string-array>
+    <string-array name="ubuntu_components_values" translatable="false">
+        <item>desktop</item>
+        <item>ssh</item>
+        <item>vnc</item>
+        <item>xserver</item>
+    </string-array>
+    <string-array name="ubuntu_components_entries">
+        <item>Desktop Environment</item>
+        <item>SSH server</item>
+        <item>VNC server</item>
+        <item>X server</item>
+    </string-array>
     
     <!-- Arch Linux -->
 
@@ -154,6 +172,12 @@
         <item>ssh</item>
         <item>vnc</item>
         <item>xserver</item>
+    </string-array>
+    <string-array name="archlinux_components_entries">
+        <item>Desktop Environment</item>
+        <item>SSH server</item>
+        <item>VNC server</item>
+        <item>X server</item>
     </string-array>
 
     <!-- Fedora -->
@@ -173,6 +197,12 @@
         <item>vnc</item>
         <item>xserver</item>
     </string-array>
+    <string-array name="fedora_components_entries">
+        <item>Desktop Environment</item>
+        <item>SSH server</item>
+        <item>VNC server</item>
+        <item>X server</item>
+    </string-array>
 
     <!-- openSUSE -->
 
@@ -188,6 +218,12 @@
         <item>ssh</item>
         <item>vnc</item>
         <item>xserver</item>
+    </string-array>
+    <string-array name="opensuse_components_entries">
+        <item>Desktop Environment</item>
+        <item>SSH server</item>
+        <item>VNC server</item>
+        <item>X server</item>
     </string-array>
     
     <!-- Kali Linux -->
@@ -205,6 +241,13 @@
         <item>vnc</item>
         <item>xserver</item>
         <item>kali-linux</item>
+    </string-array>
+    <string-array name="kali_components_entries">
+        <item>Desktop Environment</item>
+        <item>SSH server</item>
+        <item>VNC server</item>
+        <item>X server</item>
+        <item>Kali components</item>
     </string-array>
     
     <!-- Gentoo -->
@@ -225,6 +268,12 @@
         <item>ssh</item>
         <item>vnc</item>
         <item>xserver</item>
+    </string-array>
+    <string-array name="gentoo_components_entries">
+        <item>Desktop Environment</item>
+        <item>SSH server</item>
+        <item>VNC server</item>
+        <item>X server</item>
     </string-array>
 
 </resources>
