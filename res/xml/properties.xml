@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
-    
+
     <PreferenceCategory android:title="@string/action_preferences" >
         <PreferenceScreen
             android:key="install"
@@ -11,7 +11,6 @@
             android:summary="@string/summary_reconfigure_preference"
             android:title="@string/title_reconfigure_preference" />
     </PreferenceCategory>
-    
     <PreferenceCategory android:title="@string/deploy_preferences" >
         <ListPreference
             android:defaultValue="@string/distribution"
@@ -107,66 +106,73 @@
             android:summary="@string/desktopenv"
             android:title="@string/title_desktopenv_preference" />
 
-        <PreferenceScreen
-            android:key="componentseditor"
-            android:summary="@string/summary_componentseditor_preference"
-            android:title="@string/title_componentseditor_preference" />
+        <MultiSelectListPreference
+            android:defaultValue="@array/default_components"
+            android:dialogTitle="@string/dialog_title_components_preference"
+            android:entries="@array/debian_components_entries"
+            android:entryValues="@array/debian_components_values"
+            android:key="components"
+            android:summary="@string/summary_components_preference"
+            android:title="@string/title_components_preference" />
     </PreferenceCategory>
-    
     <PreferenceCategory android:title="@string/startup_preferences" >
         <CheckBoxPreference
-            android:key="sshstartup"
             android:defaultValue="@string/sshstartup"
+            android:key="sshstartup"
             android:summary="@string/summary_sshstartup_preference"
             android:title="@string/title_sshstartup_preference" />
+
         <PreferenceScreen
-            android:key="sshproperties"
             android:dependency="sshstartup"
+            android:key="sshproperties"
             android:summary="@string/summary_sshproperties_preference"
             android:title="@string/title_sshproperties_preference" />
-        
+
         <CheckBoxPreference
-            android:key="guistartup"
             android:defaultValue="@string/guistartup"
+            android:key="guistartup"
             android:summary="@string/summary_guistartup_preference"
             android:title="@string/title_guistartup_preference" />
+
         <ListPreference
-            android:key="guitype"
-            android:dependency="guistartup"
             android:defaultValue="@string/guitype"
+            android:dependency="guistartup"
             android:dialogTitle="@string/dialog_title_guitype_preference"
             android:entries="@array/guitype_entries"
             android:entryValues="@array/guitype_values"
+            android:key="guitype"
             android:summary="@string/guitype"
             android:title="@string/title_guitype_preference" />
+
         <PreferenceScreen
-            android:key="guiproperties"
             android:dependency="guistartup"
+            android:key="guiproperties"
             android:summary="@string/summary_guiproperties_preference"
             android:title="@string/title_guiproperties_preference" />
-        
+
         <CheckBoxPreference
-            android:key="customstartup"
             android:defaultValue="@string/customstartup"
+            android:key="customstartup"
             android:summary="@string/summary_customstartup_preference"
             android:title="@string/title_customstartup_preference" />
+
         <PreferenceScreen
-            android:key="scriptseditor"
             android:dependency="customstartup"
+            android:key="scriptseditor"
             android:summary="@string/summary_scriptseditor_preference"
             android:title="@string/title_scriptseditor_preference" />
-        
+
         <CheckBoxPreference
-			android:key="custommount"
             android:defaultValue="@string/custommount"
+            android:key="custommount"
             android:summary="@string/summary_custommount_preference"
             android:title="@string/title_custommount_preference" />
+
         <PreferenceScreen
-            android:key="mountseditor"
             android:dependency="custommount"
+            android:key="mountseditor"
             android:summary="@string/summary_mountseditor_preference"
             android:title="@string/title_mountseditor_preference" />
-
     </PreferenceCategory>
 
 </PreferenceScreen>

@@ -47,10 +47,6 @@
             android:label="@string/title_activity_profiles" >
         </activity>
         <activity
-            android:name="ru.meefik.linuxdeploy.ComponentsActivity"
-            android:label="@string/title_activity_components" >
-        </activity>
-        <activity
             android:name="ru.meefik.linuxdeploy.ScriptsActivity"
             android:label="@string/title_activity_scripts" >
         </activity>
