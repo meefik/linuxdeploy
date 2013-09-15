@@ -119,8 +119,6 @@
     <string name="dialog_title_locale_preference">Локализация</string>
     <string name="title_desktopenv_preference">Окружение рабочего стола</string>
     <string name="dialog_title_desktopenv_preference">Окружение рабочего стола</string>
-    <string name="title_installgui_preference">Установить GUI</string>
-    <string name="summary_installgui_preference">Включить установку окружения рабочего стола и VNC сервера</string>
     <string name="dialog_title_components_preference">Компоненты</string>
     <string name="summary_components_preference">Выбрать компоненты для установки</string>
     <string name="title_components_preference">Выбрать компоненты</string>
