@@ -111,7 +111,7 @@
             android:dialogTitle="@string/dialog_title_components_preference"
             android:entries="@array/debian_components_entries"
             android:entryValues="@array/debian_components_values"
-            android:key="components"
+            android:key="customcomponents"
             android:summary="@string/summary_components_preference"
             android:title="@string/title_components_preference" />
     </PreferenceCategory>
@@ -164,12 +164,12 @@
 
         <CheckBoxPreference
             android:defaultValue="@string/custommount"
-            android:key="custommount"
+            android:key="custommounts"
             android:summary="@string/summary_custommount_preference"
             android:title="@string/title_custommount_preference" />
 
         <PreferenceScreen
-            android:dependency="custommount"
+            android:dependency="custommounts"
             android:key="mountseditor"
             android:summary="@string/summary_mountseditor_preference"
             android:title="@string/title_mountseditor_preference" />

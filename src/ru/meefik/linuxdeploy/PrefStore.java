@@ -140,7 +140,7 @@ public class PrefStore {
 		DESKTOP_ENV = sp.getString("desktopenv",
 				c.getString(R.string.desktopenv));
 		Set<String> defcomp = new HashSet<String>(Arrays.asList(c.getResources().getStringArray(R.array.default_components)));
-		Set<String> comp_set = sp.getStringSet("components", defcomp);
+		Set<String> comp_set = sp.getStringSet("customcomponents", defcomp);
 		String components = "";
 		for (String str: comp_set) {
 			components+=str+" ";
@@ -159,7 +159,7 @@ public class PrefStore {
 		CUSTOM_SCRIPTS = sp.getBoolean("customstartup",
 				c.getString(R.string.customstartup).equals("true") ? true : false) ? sp
 				.getString("scripts", c.getString(R.string.scripts)).trim()	: "";
-		CUSTOM_MOUNTS = sp.getBoolean("custommount",
+		CUSTOM_MOUNTS = sp.getBoolean("custommounts",
 				c.getString(R.string.custommount).equals("true") ? true : false) ? sp
 				.getString("mounts", extStore.getAbsolutePath()).trim() : "";
 		SSH_PORT = sp.getString("sshport", c.getString(R.string.sshport));
