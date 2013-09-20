@@ -296,7 +296,7 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 					mirror.setEnabled(true);
 					// components
 					MultiSelectListPreference components = (MultiSelectListPreference) this
-							.findPreference("components");
+							.findPreference("xcomponents");
 					components.setEntries(R.array.debian_components_entries);
 					components.setEntryValues(R.array.debian_components_values);
 					if (init)
@@ -333,7 +333,7 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 					mirror.setEnabled(true);
 					// components
 					MultiSelectListPreference components = (MultiSelectListPreference) this
-							.findPreference("components");
+							.findPreference("xcomponents");
 					components.setEntries(R.array.ubuntu_components_entries);
 					components.setEntryValues(R.array.ubuntu_components_values);
 					if (init)
@@ -371,7 +371,7 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 					mirror.setEnabled(true);
 					// components
 					MultiSelectListPreference components = (MultiSelectListPreference) this
-							.findPreference("components");
+							.findPreference("xcomponents");
 					components.setEntries(R.array.ubuntu_components_entries);
 					components.setEntryValues(R.array.ubuntu_components_values);
 					if (init)
@@ -408,7 +408,7 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 					mirror.setEnabled(true);
 					// components
 					MultiSelectListPreference components = (MultiSelectListPreference) this
-							.findPreference("components");
+							.findPreference("xcomponents");
 					components.setEntries(R.array.fedora_components_entries);
 					components.setEntryValues(R.array.fedora_components_values);
 					if (init)
@@ -446,7 +446,7 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 					mirror.setEnabled(true);
 					// components
 					MultiSelectListPreference components = (MultiSelectListPreference) this
-							.findPreference("components");
+							.findPreference("xcomponents");
 					components.setEntries(R.array.opensuse_components_entries);
 					components.setEntryValues(R.array.opensuse_components_values);
 					if (init)
@@ -483,7 +483,7 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 					mirror.setEnabled(true);
 					// components
 					MultiSelectListPreference components = (MultiSelectListPreference) this
-							.findPreference("components");
+							.findPreference("xcomponents");
 					components.setEntries(R.array.kali_components_entries);
 					components.setEntryValues(R.array.kali_components_values);
 					if (init)
@@ -520,7 +520,7 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 					mirror.setEnabled(true);
 					// components
 					MultiSelectListPreference components = (MultiSelectListPreference) this
-							.findPreference("components");
+							.findPreference("xcomponents");
 					components.setEntries(R.array.gentoo_components_entries);
 					components.setEntryValues(R.array.gentoo_components_values);
 					if (init)
@@ -556,7 +556,7 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 					mirror.setEnabled(true);
 					// components
 					MultiSelectListPreference components = (MultiSelectListPreference) this
-							.findPreference("components");
+							.findPreference("xcomponents");
 					components.setEntries(null);
 					components.setEntryValues(null);
 					components.setValues(new HashSet<String>());
