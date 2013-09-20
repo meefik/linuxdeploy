@@ -140,7 +140,7 @@ public class PrefStore {
 		DESKTOP_ENV = sp.getString("desktopenv",
 				c.getString(R.string.desktopenv));
 		Set<String> defcomp = new HashSet<String>(Arrays.asList(c.getResources().getStringArray(R.array.default_components)));
-		Set<String> comp_set = sp.getStringSet("customcomponents", defcomp);
+		Set<String> comp_set = sp.getStringSet("xcomponents", defcomp);
 		String components = "";
 		for (String str: comp_set) {
 			components+=str+" ";
