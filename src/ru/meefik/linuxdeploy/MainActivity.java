@@ -45,19 +45,19 @@ public class MainActivity extends SherlockActivity {
 				+ new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH)
 						.format(new Date()) + "] ";
 	}
-	
+
 	private static void clearLog() {
 		logList.clear();
 		fragment = false;
 		logView.setText("");
 	}
-	
+
 	private static void showLog() {
-	    // read all logs from List
-	    String log = "";
-	    for (String str:logList)
-	        log += str + "\n";
-	    // show log in TextView
+		// read all logs from List
+		String log = "";
+		for (String str : logList)
+			log += str + "\n";
+		// show log in TextView
 		logView.setText(log);
 		// scroll TextView to bottom
 		logScroll.post(new Runnable() {
@@ -68,14 +68,14 @@ public class MainActivity extends SherlockActivity {
 			}
 		});
 	}
-	
+
 	public static void printLogMsg(String msg) {
 		if (msg.length() > 0) {
 			String[] tokens = msg.split("\\n");
 			for (int i = 0; i < tokens.length; i++) {
 				// update last record from List if fragment
 				if (i == 0 && fragment && logList.size() > 0) {
-					int idx = logList.size()-1;
+					int idx = logList.size() - 1;
 					String last = logList.get(idx);
 					logList.set(idx, last + tokens[i]);
 					continue;
@@ -83,11 +83,11 @@ public class MainActivity extends SherlockActivity {
 				// add the message to List
 				logList.add(getTimeStamp() + tokens[i]);
 				// remove first line if overflow
-			    if (logList.size() >= PrefStore.MAX_LINE)
-			    	logList.remove(0);
+				if (logList.size() >= PrefStore.MAX_LINE)
+					logList.remove(0);
 			}
 			// set fragment
-			fragment = (msg.charAt(msg.length()-1) != '\n');
+			fragment = (msg.charAt(msg.length() - 1) != '\n');
 			// show log
 			showLog();
 			// save the message to file
@@ -121,10 +121,11 @@ public class MainActivity extends SherlockActivity {
 		logView = (TextView) findViewById(R.id.LogView);
 		logScroll = (ScrollView) findViewById(R.id.LogScrollView);
 		handler = new Handler();
-		
+
 		// WiFi lock init
 		WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-		wifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL, "linuxdeploy");
+		wifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL,
+				"linuxdeploy");
 	}
 
 	@Override
@@ -137,7 +138,7 @@ public class MainActivity extends SherlockActivity {
 		menu.findItem(R.id.menu_properties).setIcon(
 				isLight ? R.drawable.ic_action_properties_light
 						: R.drawable.ic_action_properties_dark);
-		
+
 		int ot = getResources().getConfiguration().orientation;
 		if (ot == Configuration.ORIENTATION_LANDSCAPE) {
 			menu.findItem(R.id.menu_start).setIcon(
@@ -147,7 +148,7 @@ public class MainActivity extends SherlockActivity {
 					isLight ? R.drawable.ic_action_stop_light
 							: R.drawable.ic_action_stop_dark);
 		}
-		
+
 		return true;
 	}
 
@@ -173,8 +174,11 @@ public class MainActivity extends SherlockActivity {
 													.deployCmd("start");
 										}
 									}).start();
-									if (PrefStore.STARTUP.contains("framebuffer")) {
-										Intent intent_fb = new Intent(getApplicationContext(), FullscreenActivity.class);
+									if (PrefStore.STARTUP
+											.contains("framebuffer")) {
+										Intent intent_fb = new Intent(
+												getApplicationContext(),
+												FullscreenActivity.class);
 										startActivity(intent_fb);
 									}
 								}
@@ -262,29 +266,26 @@ public class MainActivity extends SherlockActivity {
 
 		PrefStore.get(getApplicationContext());
 
-		String profileName = PrefStore.getCurrentProfile(getApplicationContext());
+		String profileName = PrefStore
+				.getCurrentProfile(getApplicationContext());
 		String ipaddress = PrefStore.getLocalIpAddress();
 		/*
-		String ports = "";
-		if (PrefStore.SSH_START != null && PrefStore.SSH_START.equals("y")) {
-			ports = ", SSH: " + PrefStore.SSH_PORT;
-		}
-		if (PrefStore.VNC_START != null && PrefStore.VNC_START.equals("y")) {
-			try {
-				ports += ", VNC: " + String.valueOf(Double.valueOf(PrefStore.VNC_DISPLAY).intValue()+5900);
-			} catch (NumberFormatException ex) {
-				// ignore
-			}
-		}
-		*/
-		this.setTitle(profileName+"  [ "+ipaddress+" ]");
-		
+		 * String ports = ""; if (PrefStore.SSH_START != null &&
+		 * PrefStore.SSH_START.equals("y")) { ports = ", SSH: " +
+		 * PrefStore.SSH_PORT; } if (PrefStore.VNC_START != null &&
+		 * PrefStore.VNC_START.equals("y")) { try { ports += ", VNC: " +
+		 * String.valueOf
+		 * (Double.valueOf(PrefStore.VNC_DISPLAY).intValue()+5900); } catch
+		 * (NumberFormatException ex) { // ignore } }
+		 */
+		this.setTitle(profileName + "  [ " + ipaddress + " ]");
+
 		// show icon
 		notification(getApplicationContext(), this.getIntent());
-		
+
 		// Restore font size
 		logView.setTextSize(TypedValue.COMPLEX_UNIT_SP, PrefStore.FONT_SIZE);
-		
+
 		// Restore log
 		showLog();
 
@@ -295,7 +296,7 @@ public class MainActivity extends SherlockActivity {
 		else
 			this.getWindow().clearFlags(
 					WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-		
+
 		// WiFi lock
 		if (PrefStore.WIFI_LOCK)
 			wifiLock.acquire();
@@ -315,26 +316,26 @@ public class MainActivity extends SherlockActivity {
 	}
 
 	public static void notification(Context context, Intent intent) {
-		NotificationManager mNotificationManager =
-			    (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+		NotificationManager mNotificationManager = (NotificationManager) context
+				.getSystemService(Context.NOTIFICATION_SERVICE);
 		if (PrefStore.isShowIcon(context)) {
 			PrefStore.updateLocale(context);
-			NotificationCompat.Builder mBuilder =
-			        new NotificationCompat.Builder(context)
-			        .setSmallIcon(R.drawable.ic_launcher)
-			        .setContentTitle(context.getString(R.string.app_name))
-			        .setContentText(context.getString(R.string.notification_current_profile)+": "+PrefStore.getCurrentProfile(context));
+			NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
+					context)
+					.setSmallIcon(R.drawable.ic_launcher)
+					.setContentTitle(context.getString(R.string.app_name))
+					.setContentText(
+							context.getString(R.string.notification_current_profile)
+									+ ": "
+									+ PrefStore.getCurrentProfile(context));
 			Intent resultIntent = intent;
 			if (resultIntent == null)
 				resultIntent = new Intent(context, MainActivity.class);
 			TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
 			stackBuilder.addParentStack(MainActivity.class);
 			stackBuilder.addNextIntent(resultIntent);
-			PendingIntent resultPendingIntent =
-			        stackBuilder.getPendingIntent(
-			            0,
-			            PendingIntent.FLAG_UPDATE_CURRENT
-			        );
+			PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(
+					0, PendingIntent.FLAG_UPDATE_CURRENT);
 			mBuilder.setContentIntent(resultPendingIntent);
 			mBuilder.setOngoing(true);
 			mBuilder.setWhen(0);
@@ -342,11 +343,11 @@ public class MainActivity extends SherlockActivity {
 		} else {
 			mNotificationManager.cancel(NOTIFY_ID);
 		}
-    }
-	
+	}
+
 	public static void notification(Context context) {
-		NotificationManager mNotificationManager =
-			    (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+		NotificationManager mNotificationManager = (NotificationManager) context
+				.getSystemService(Context.NOTIFICATION_SERVICE);
 		mNotificationManager.cancel(NOTIFY_ID);
 	}
 

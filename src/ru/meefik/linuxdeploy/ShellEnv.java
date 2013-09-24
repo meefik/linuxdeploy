@@ -25,7 +25,7 @@ public class ShellEnv {
 		PrefStore.get(c);
 		this.rooted = isRooted();
 	}
-	
+
 	private boolean execCmd(List<String> params) {
 		boolean result = true;
 		try {
@@ -72,7 +72,7 @@ public class ShellEnv {
 		}
 		return result;
 	}
-	
+
 	private void sendLogs(InputStream stdstream) {
 		if (MainActivity.handler != null) {
 			try {
@@ -95,7 +95,7 @@ public class ShellEnv {
 			}
 		}
 	}
-	
+
 	private void sendLogs(final String msg) {
 		if (MainActivity.handler != null) {
 			MainActivity.handler.post(new Runnable() {
@@ -106,7 +106,7 @@ public class ShellEnv {
 			});
 		}
 	}
-	
+
 	private boolean isRooted() {
 		// exec linuxdeploy command
 		List<String> params = new ArrayList<String>();
@@ -196,8 +196,9 @@ public class ShellEnv {
 	}
 
 	public void updateEnv() {
-		if (!rooted) return;
-		
+		if (!rooted)
+			return;
+
 		sendLogs("Updating environment ... ");
 
 		if (PrefStore.ENV_DIR.length() == 0) {
@@ -273,8 +274,9 @@ public class ShellEnv {
 	}
 
 	public void updateConfig() {
-		if (!rooted) return;
-		
+		if (!rooted)
+			return;
+
 		File f = new File(PrefStore.ENV_DIR + "/etc/deploy.conf");
 		if (!f.exists())
 			return;
@@ -361,18 +363,14 @@ public class ShellEnv {
 		params.add("sed -i 's|^FB_DISPLAY=.*|FB_DISPLAY=\""
 				+ PrefStore.FB_DISPLAY + "\"|g' " + PrefStore.ENV_DIR
 				+ "/etc/deploy.conf");
-		params.add("sed -i 's|^FB_DPI=.*|FB_DPI=\""
-				+ PrefStore.FB_DPI + "\"|g' " + PrefStore.ENV_DIR
-				+ "/etc/deploy.conf");
-		params.add("sed -i 's|^FB_DEV=.*|FB_DEV=\""
-				+ PrefStore.FB_DEV + "\"|g' " + PrefStore.ENV_DIR
-				+ "/etc/deploy.conf");
-		params.add("sed -i 's|^FB_INPUT=.*|FB_INPUT=\""
-				+ PrefStore.FB_INPUT + "\"|g' " + PrefStore.ENV_DIR
-				+ "/etc/deploy.conf");
-		params.add("sed -i 's|^FB_FREEZE=.*|FB_FREEZE=\""
-				+ PrefStore.FB_FREEZE + "\"|g' " + PrefStore.ENV_DIR
-				+ "/etc/deploy.conf");
+		params.add("sed -i 's|^FB_DPI=.*|FB_DPI=\"" + PrefStore.FB_DPI
+				+ "\"|g' " + PrefStore.ENV_DIR + "/etc/deploy.conf");
+		params.add("sed -i 's|^FB_DEV=.*|FB_DEV=\"" + PrefStore.FB_DEV
+				+ "\"|g' " + PrefStore.ENV_DIR + "/etc/deploy.conf");
+		params.add("sed -i 's|^FB_INPUT=.*|FB_INPUT=\"" + PrefStore.FB_INPUT
+				+ "\"|g' " + PrefStore.ENV_DIR + "/etc/deploy.conf");
+		params.add("sed -i 's|^FB_FREEZE=.*|FB_FREEZE=\"" + PrefStore.FB_FREEZE
+				+ "\"|g' " + PrefStore.ENV_DIR + "/etc/deploy.conf");
 		params.add("[ $? -eq 0 ] && exit 0 || exit 1");
 
 		if (!execCmd(params)) {
@@ -383,8 +381,9 @@ public class ShellEnv {
 	}
 
 	public void deployCmd(String cmd) {
-		if (!rooted) return;
-		
+		if (!rooted)
+			return;
+
 		// check for update env
 		boolean update = true;
 		File f = new File(PrefStore.ENV_DIR + "/etc/version");
@@ -405,8 +404,8 @@ public class ShellEnv {
 		if (update) {
 			updateEnv();
 			updateConfig();
-			//sendLogs("Need to update the operating environment!\nTry Menu -> Settings -> Update ENV\n");
-			//return;
+			// sendLogs("Need to update the operating environment!\nTry Menu -> Settings -> Update ENV\n");
+			// return;
 		}
 		// exec linuxdeploy command
 		List<String> params = new ArrayList<String>();
@@ -417,5 +416,5 @@ public class ShellEnv {
 		params.add("exit");
 		execCmd(params);
 	}
-	
+
 }
