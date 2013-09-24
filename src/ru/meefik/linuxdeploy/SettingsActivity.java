@@ -37,7 +37,7 @@ public class SettingsActivity extends SherlockPreferenceActivity implements
 
 		this.initSummaries(this.getPreferenceScreen());
 	}
-	
+
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -50,7 +50,7 @@ public class SettingsActivity extends SherlockPreferenceActivity implements
 	@Override
 	public void onPause() {
 		super.onPause();
-		
+
 		// set autostart settings
 		int flag = (PrefStore.isAutostart(getApplicationContext()) ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED
 				: PackageManager.COMPONENT_ENABLED_STATE_DISABLED);
@@ -108,11 +108,12 @@ public class SettingsActivity extends SherlockPreferenceActivity implements
 		if (pref instanceof EditTextPreference) {
 			EditTextPreference editPref = (EditTextPreference) pref;
 			pref.setSummary(editPref.getText());
-			
+
 			if (editPref.getKey().equals("logfile")
 					&& editPref.getText().equals("{replace}")) {
 				File extStore = Environment.getExternalStorageDirectory();
-				String logFile = extStore.getAbsolutePath()+"/linuxdeploy.log";
+				String logFile = extStore.getAbsolutePath()
+						+ "/linuxdeploy.log";
 				((EditTextPreference) pref).setText(logFile);
 				((EditTextPreference) pref).setSummary(logFile);
 			}
@@ -123,7 +124,7 @@ public class SettingsActivity extends SherlockPreferenceActivity implements
 			pref.setSummary(listPref.getEntry());
 		}
 	}
-	
+
 	private void installEnvDialog() {
 		new AlertDialog.Builder(this)
 				.setTitle(R.string.title_installenv_preference)
@@ -138,7 +139,8 @@ public class SettingsActivity extends SherlockPreferenceActivity implements
 								(new Thread() {
 									@Override
 									public void run() {
-										ShellEnv sh = new ShellEnv(getApplicationContext());
+										ShellEnv sh = new ShellEnv(
+												getApplicationContext());
 										sh.updateEnv();
 										sh.updateConfig();
 									}
