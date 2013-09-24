@@ -106,7 +106,7 @@
             android:summary="@string/desktopenv"
             android:title="@string/title_desktopenv_preference" />
 
-        <MultiSelectListPreference
+        <com.h6ah4i.android.compat.preference.MultiSelectListPreferenceCompat
             android:defaultValue="@array/default_components"
             android:dialogTitle="@string/dialog_title_components_preference"
             android:entries="@array/debian_components_entries"

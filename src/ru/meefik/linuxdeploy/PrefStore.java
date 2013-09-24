@@ -17,6 +17,8 @@ import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.h6ah4i.android.compat.content.SharedPreferenceCompat;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -88,14 +90,14 @@ public class PrefStore {
 	// get preferences
 	public static void get(Context c) {
 		File extStore = Environment.getExternalStorageDirectory();
-		
+
 		SharedPreferences sp = c.getSharedPreferences(APP_PREF_FILE_NAME,
 				Context.MODE_PRIVATE);
 
 		SCREEN_LOCK = sp.getBoolean("screenlock",
 				c.getString(R.string.screenlock).equals("true") ? true : false);
-		WIFI_LOCK = sp.getBoolean("wifilock",
-				c.getString(R.string.wifilock).equals("true") ? true : false);
+		WIFI_LOCK = sp.getBoolean("wifilock", c.getString(R.string.wifilock)
+				.equals("true") ? true : false);
 		FONT_SIZE = Integer.parseInt(sp.getString("fontsize",
 				c.getString(R.string.fontsize)));
 		MAX_LINE = Integer.parseInt(sp.getString("maxline",
@@ -103,8 +105,8 @@ public class PrefStore {
 		LANGUAGE = sp.getString("language", c.getString(R.string.language));
 		THEME = sp.getString("theme", c.getString(R.string.theme));
 		ENV_DIR = sp.getString("installdir", c.getString(R.string.envdir));
-		SYMLINK = sp.getBoolean("symlink",
-				c.getString(R.string.symlink).equals("true") ? true : false);
+		SYMLINK = sp.getBoolean("symlink", c.getString(R.string.symlink)
+				.equals("true") ? true : false);
 		CURRENT_PROFILE = sp.getString("profile", null);
 		if (CURRENT_PROFILE == null)
 			setCurrentProfile(c, String.valueOf(System.currentTimeMillis()));
@@ -115,15 +117,17 @@ public class PrefStore {
 		TRACE_MODE = sp.getBoolean("debug",
 				c.getString(R.string.debug).equals("true") ? true : false)
 				&& sp.getBoolean("trace",
-						c.getString(R.string.trace).equals("true") ? true : false) ? "y"
-				: "n";
+						c.getString(R.string.trace).equals("true") ? true
+								: false) ? "y" : "n";
 		LOGGING = sp.getBoolean("logs",
 				c.getString(R.string.logs).equals("true") ? true : false);
-		LOG_FILE = sp.getString("logfile", extStore.getAbsolutePath()+"/linuxdeploy.log");
+		LOG_FILE = sp.getString("logfile", extStore.getAbsolutePath()
+				+ "/linuxdeploy.log");
 
 		sp = c.getSharedPreferences(CURRENT_PROFILE, Context.MODE_PRIVATE);
 
-		IMG_TARGET = sp.getString("diskimage", extStore.getAbsolutePath()+"/linux.img");
+		IMG_TARGET = sp.getString("diskimage", extStore.getAbsolutePath()
+				+ "/linux.img");
 		DEPLOY_TYPE = sp.getString("deploytype",
 				c.getString(R.string.deploytype));
 		IMG_SIZE = sp.getString("disksize", c.getString(R.string.disksize));
@@ -139,11 +143,19 @@ public class PrefStore {
 		LOCALE = sp.getString("locale", c.getString(R.string.locale));
 		DESKTOP_ENV = sp.getString("desktopenv",
 				c.getString(R.string.desktopenv));
-		Set<String> defcomp = new HashSet<String>(Arrays.asList(c.getResources().getStringArray(R.array.default_components)));
-		Set<String> comp_set = sp.getStringSet("xcomponents", defcomp);
+		Set<String> defcomp = new HashSet<String>(Arrays.asList(c
+				.getResources().getStringArray(R.array.default_components)));
+		if (!sp.contains("xcomponents")) {
+			// set default components
+			SharedPreferences.Editor prefEditor = sp.edit();
+			SharedPreferenceCompat.EditorCompat.putStringSet(prefEditor, "xcomponents", defcomp);
+			prefEditor.commit();
+		}
+		Set<String> comp_set = SharedPreferenceCompat.getStringSet(sp,
+				"xcomponents", defcomp);
 		String components = "";
-		for (String str: comp_set) {
-			components+=str+" ";
+		for (String str : comp_set) {
+			components += str + " ";
 		}
 		COMPONENTS = components.trim();
 		String startup_ssh = sp.getBoolean("sshstartup",
@@ -153,35 +165,35 @@ public class PrefStore {
 				c.getString(R.string.guistartup).equals("true") ? true : false) ? sp
 				.getString("guitype", c.getString(R.string.guitype)) : "";
 		String startup_custom = sp.getBoolean("customstartup",
-				c.getString(R.string.customstartup).equals("true") ? true : false) ? "custom"
-				: "";
-		STARTUP = (startup_ssh + " " + startup_gui + " " + startup_custom).trim();
+				c.getString(R.string.customstartup).equals("true") ? true
+						: false) ? "custom" : "";
+		STARTUP = (startup_ssh + " " + startup_gui + " " + startup_custom)
+				.trim();
 		CUSTOM_SCRIPTS = sp.getBoolean("customstartup",
-				c.getString(R.string.customstartup).equals("true") ? true : false) ? sp
-				.getString("scripts", c.getString(R.string.scripts)).trim()	: "";
-		CUSTOM_MOUNTS = sp.getBoolean("custommounts",
-				c.getString(R.string.custommount).equals("true") ? true : false) ? sp
-				.getString("mounts", extStore.getAbsolutePath()).trim() : "";
+				c.getString(R.string.customstartup).equals("true") ? true
+						: false) ? sp.getString("scripts",
+				c.getString(R.string.scripts)).trim() : "";
+		CUSTOM_MOUNTS = sp
+				.getBoolean("custommounts", c.getString(R.string.custommount)
+						.equals("true") ? true : false) ? sp.getString(
+				"mounts", extStore.getAbsolutePath()).trim() : "";
 		SSH_PORT = sp.getString("sshport", c.getString(R.string.sshport));
 		VNC_DISPLAY = sp.getString("vncdisplay",
 				c.getString(R.string.vncdisplay));
 		VNC_DEPTH = sp.getString("vncdepth", c.getString(R.string.vncdepth));
 		VNC_DPI = sp.getString("vncdpi", c.getString(R.string.vncdpi));
 		VNC_GEOMETRY = sp.getString("vncwidth", String.valueOf(getWidth(c)))
-				+ "x"
-				+ sp.getString("vncheight", String.valueOf(getHeight(c)));
+				+ "x" + sp.getString("vncheight", String.valueOf(getHeight(c)));
 		XSERVER_DISPLAY = sp.getString("xdisplay",
 				c.getString(R.string.xdisplay));
 		XSERVER_HOST = sp.getString("xhost", c.getString(R.string.xhost));
-		FB_DISPLAY = sp.getString("fbdisplay",
-				c.getString(R.string.fbdisplay));
+		FB_DISPLAY = sp.getString("fbdisplay", c.getString(R.string.fbdisplay));
 		FB_DPI = sp.getString("fbdpi", c.getString(R.string.fbdpi));
 		FB_DEV = sp.getString("fbdev", c.getString(R.string.fbdev));
 		FB_INPUT = sp.getString("fbinput", c.getString(R.string.fbinput));
-		FB_FREEZE = sp.getBoolean("fbfreeze",
-				c.getString(R.string.fbfreeze).equals("true") ? true : false) ? "y"
-				: "n";
-		
+		FB_FREEZE = sp.getBoolean("fbfreeze", c.getString(R.string.fbfreeze)
+				.equals("true") ? true : false) ? "y" : "n";
+
 		try {
 			VERSION = c.getPackageManager().getPackageInfo(c.getPackageName(),
 					0).versionName
@@ -192,36 +204,37 @@ public class PrefStore {
 			e.printStackTrace();
 		}
 	}
-	
-	public static int getWidth(Context mContext){
-	    int width=0;
-	    WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
-	    Display display = wm.getDefaultDisplay();
-	    if(Build.VERSION.SDK_INT>12){                   
-	        Point size = new Point();
-	        display.getSize(size);
-	        width = size.x;
-	    }
-	    else{
-	        width = display.getWidth();  // deprecated
-	    }
-	    return width;
+
+	public static int getWidth(Context mContext) {
+		int width = 0;
+		WindowManager wm = (WindowManager) mContext
+				.getSystemService(Context.WINDOW_SERVICE);
+		Display display = wm.getDefaultDisplay();
+		if (Build.VERSION.SDK_INT > 12) {
+			Point size = new Point();
+			display.getSize(size);
+			width = size.x;
+		} else {
+			width = display.getWidth(); // deprecated
+		}
+		return width;
 	}
-	
-	public static int getHeight(Context mContext){
-	    int height=0;
-	    WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
-	    Display display = wm.getDefaultDisplay();
-	    if(Build.VERSION.SDK_INT>12){               
-	        Point size = new Point();
-	        display.getSize(size);
-	        height = size.y;
-	    }else{          
-	        height = display.getHeight();  // deprecated
-	    }
-	    return height;      
+
+	public static int getHeight(Context mContext) {
+		int height = 0;
+		WindowManager wm = (WindowManager) mContext
+				.getSystemService(Context.WINDOW_SERVICE);
+		Display display = wm.getDefaultDisplay();
+		if (Build.VERSION.SDK_INT > 12) {
+			Point size = new Point();
+			display.getSize(size);
+			height = size.y;
+		} else {
+			height = display.getHeight(); // deprecated
+		}
+		return height;
 	}
-	
+
 	public static String getLocalIpAddress() {
 		String ip = "127.0.0.1";
 		try {
@@ -242,7 +255,7 @@ public class PrefStore {
 		}
 		return ip;
 	}
-	
+
 	public static boolean isAutostart(Context c) {
 		SharedPreferences sp = c.getSharedPreferences(
 				PrefStore.APP_PREF_FILE_NAME, Context.MODE_PRIVATE);
@@ -250,7 +263,7 @@ public class PrefStore {
 				c.getString(R.string.autostart).equals("true") ? true : false);
 		return isAutostart;
 	}
-	
+
 	public static boolean isShowIcon(Context c) {
 		SharedPreferences sp = c.getSharedPreferences(
 				PrefStore.APP_PREF_FILE_NAME, Context.MODE_PRIVATE);
@@ -317,7 +330,7 @@ public class PrefStore {
 		if (f.exists())
 			f.delete();
 	}
-	
+
 	// import profile
 	public static boolean importProfile(Context c, String key, String src) {
 		String fPref = "../shared_prefs/" + key + ".xml";
@@ -333,7 +346,7 @@ public class PrefStore {
 		}
 		return false;
 	}
-	
+
 	// export profile
 	public static boolean exportProfile(Context c, String key, String dst) {
 		String fPref = "../shared_prefs/" + key + ".xml";
@@ -349,33 +362,33 @@ public class PrefStore {
 		}
 		return false;
 	}
-	
+
 	// Load scripts list
 	public static List<String> getScriptsList(Context c) {
 		SharedPreferences sp = c.getSharedPreferences(CURRENT_PROFILE,
 				Context.MODE_PRIVATE);
 		String str = sp.getString("scripts", c.getString(R.string.scripts));
 		List<String> list = new ArrayList<String>();
-		for (String i: str.split(" ")) {
+		for (String i : str.split(" ")) {
 			list.add(i);
 		}
 		return list;
 	}
-	
+
 	// Save scripts list
 	public static void setScriptsList(Context c, List<String> list) {
 		SharedPreferences sp = c.getSharedPreferences(CURRENT_PROFILE,
 				Context.MODE_PRIVATE);
 		SharedPreferences.Editor prefEditor = sp.edit();
 		String str = "";
-		for (String i: list) {
+		for (String i : list) {
 			str += i + " ";
 		}
 		prefEditor.putString("scripts", str.trim());
 		prefEditor.commit();
 		PREF_CHANGE = true;
 	}
-	
+
 	// Load mounts list
 	public static List<String> getMountsList(Context c) {
 		SharedPreferences sp = c.getSharedPreferences(CURRENT_PROFILE,
@@ -383,47 +396,47 @@ public class PrefStore {
 		File extStore = Environment.getExternalStorageDirectory();
 		String str = sp.getString("mounts", extStore.getAbsolutePath());
 		List<String> list = new ArrayList<String>();
-		for (String i: str.split(" ")) {
+		for (String i : str.split(" ")) {
 			list.add(i);
 		}
 		return list;
 	}
-	
+
 	// Save mounts list
 	public static void setMountsList(Context c, List<String> list) {
 		SharedPreferences sp = c.getSharedPreferences(CURRENT_PROFILE,
 				Context.MODE_PRIVATE);
 		SharedPreferences.Editor prefEditor = sp.edit();
 		String str = "";
-		for (String i: list) {
+		for (String i : list) {
 			str += i + " ";
 		}
 		prefEditor.putString("mounts", str.trim());
 		prefEditor.commit();
 		PREF_CHANGE = true;
 	}
-	
-	public static void copyFile(File sourceFile, File destFile) throws IOException {
-	    if(!destFile.exists()) {
-	        destFile.createNewFile();
-	    }
 
-	    FileChannel source = null;
-	    FileChannel destination = null;
+	public static void copyFile(File sourceFile, File destFile)
+			throws IOException {
+		if (!destFile.exists()) {
+			destFile.createNewFile();
+		}
 
-	    try {
-	        source = new FileInputStream(sourceFile).getChannel();
-	        destination = new FileOutputStream(destFile).getChannel();
-	        destination.transferFrom(source, 0, source.size());
-	    }
-	    finally {
-	        if(source != null) {
-	            source.close();
-	        }
-	        if(destination != null) {
-	            destination.close();
-	        }
-	    }
+		FileChannel source = null;
+		FileChannel destination = null;
+
+		try {
+			source = new FileInputStream(sourceFile).getChannel();
+			destination = new FileOutputStream(destFile).getChannel();
+			destination.transferFrom(source, 0, source.size());
+		} finally {
+			if (source != null) {
+				source.close();
+			}
+			if (destination != null) {
+				destination.close();
+			}
+		}
 	}
 
 	// multilanguage support

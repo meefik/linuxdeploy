@@ -29,7 +29,7 @@ public class ScriptsActivity extends SherlockActivity {
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		listView = (ListView) findViewById(R.id.scriptsView);
 		adapter = new ArrayAdapter<String>(this,
-				android.R.layout.simple_list_item_activated_1, listItems);
+				android.R.layout.simple_list_item_single_choice, listItems);
 		listView.setAdapter(adapter);
 	}
 	
