@@ -15,7 +15,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
 public class MountsActivity extends SherlockActivity {
-	
+
 	private ListView listView;
 	private List<String> listItems = new ArrayList<String>();
 	private ArrayAdapter<String> adapter;
@@ -32,7 +32,7 @@ public class MountsActivity extends SherlockActivity {
 				android.R.layout.simple_list_item_activated_1, listItems);
 		listView.setAdapter(adapter);
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		PrefStore.updateLocale(getApplicationContext());
@@ -57,10 +57,10 @@ public class MountsActivity extends SherlockActivity {
 								@Override
 								public void onClick(DialogInterface dialog,
 										int whichButton) {
-									String text = input.getText().toString().replaceAll(" ", "_");
+									String text = input.getText().toString()
+											.replaceAll(" ", "_");
 									if (text.length() > 0) {
-										listItems
-												.add(text);
+										listItems.add(text);
 										adapter.notifyDataSetChanged();
 									}
 								}
@@ -86,7 +86,9 @@ public class MountsActivity extends SherlockActivity {
 									@Override
 									public void onClick(DialogInterface dialog,
 											int whichButton) {
-										String text = input.getText().toString().replaceAll(" ", "_");
+										String text = input.getText()
+												.toString()
+												.replaceAll(" ", "_");
 										if (text.length() > 0) {
 											listItems.set(pos, text);
 											adapter.notifyDataSetChanged();
@@ -130,20 +132,20 @@ public class MountsActivity extends SherlockActivity {
 			}
 			break;
 		}
-		return false;		
+		return false;
 	}
-	
+
 	@Override
 	public void onResume() {
 		super.onResume();
-		
-		String titleMsg = this.getString(R.string.title_activity_mounts)
-				+ ": " + PrefStore.getCurrentProfile(getApplicationContext());
+
+		String titleMsg = this.getString(R.string.title_activity_mounts) + ": "
+				+ PrefStore.getCurrentProfile(getApplicationContext());
 		this.setTitle(titleMsg);
-		
+
 		listItems.addAll(PrefStore.getMountsList(getApplicationContext()));
 	}
-	
+
 	@Override
 	public void onPause() {
 		super.onPause();

@@ -14,17 +14,17 @@ public class FullscreenActivity extends Activity {
 		super.onCreate(savedInstanceState);
 
 		// remove title
-	    requestWindowFeature(Window.FEATURE_NO_TITLE);
-	    getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-	        WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
 		setContentView(R.layout.activity_fullscreen);
 	}
-	
+
 	@Override
 	public void onResume() {
 		super.onResume();
-		
+
 		// Screen lock
 		if (PrefStore.SCREEN_LOCK)
 			this.getWindow().addFlags(
@@ -32,7 +32,7 @@ public class FullscreenActivity extends Activity {
 		else
 			this.getWindow().clearFlags(
 					WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-		
+
 		// Set screen orientation (freeze)
 		int ot = getResources().getConfiguration().orientation;
 		if (ot == Configuration.ORIENTATION_LANDSCAPE) {
@@ -40,7 +40,7 @@ public class FullscreenActivity extends Activity {
 		} else {
 			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		}
-		
+
 	}
 
 }

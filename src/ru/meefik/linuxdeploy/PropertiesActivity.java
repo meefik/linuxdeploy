@@ -13,7 +13,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
-import android.preference.MultiSelectListPreference;
+
+import com.h6ah4i.android.compat.preference.MultiSelectListPreferenceCompat;
 import android.preference.Preference;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
@@ -34,10 +35,11 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 
 		PreferenceManager prefMgr = this.getPreferenceManager();
 		prefMgr.setSharedPreferencesName(PrefStore.CURRENT_PROFILE);
-		
+
 		Bundle b = getIntent().getExtras();
 		int pref = 0;
-		if (b != null) pref = b.getInt("pref");
+		if (b != null)
+			pref = b.getInt("pref");
 		switch (pref) {
 		case 1:
 			this.addPreferencesFromResource(R.xml.properties_ssh);
@@ -70,7 +72,7 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 				.registerOnSharedPreferenceChangeListener(this);
 
 	}
-	
+
 	@Override
 	public void onPause() {
 		super.onPause();
@@ -99,7 +101,8 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 			reconfigureDialog();
 		}
 		if (preference.getKey().equals("sshproperties")) {
-			Intent intent = new Intent(getApplicationContext(), PropertiesActivity.class);
+			Intent intent = new Intent(getApplicationContext(),
+					PropertiesActivity.class);
 			Bundle b = new Bundle();
 			b.putInt("pref", 1);
 			intent.putExtras(b);
@@ -109,21 +112,24 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 			ListPreference guitype = (ListPreference) this
 					.findPreference("guitype");
 			if (guitype.getValue().equals("vnc")) {
-				Intent intent = new Intent(getApplicationContext(), PropertiesActivity.class);
+				Intent intent = new Intent(getApplicationContext(),
+						PropertiesActivity.class);
 				Bundle b = new Bundle();
 				b.putInt("pref", 2);
 				intent.putExtras(b);
 				startActivity(intent);
 			}
 			if (guitype.getValue().equals("xserver")) {
-				Intent intent = new Intent(getApplicationContext(), PropertiesActivity.class);
+				Intent intent = new Intent(getApplicationContext(),
+						PropertiesActivity.class);
 				Bundle b = new Bundle();
 				b.putInt("pref", 3);
 				intent.putExtras(b);
 				startActivity(intent);
 			}
 			if (guitype.getValue().equals("framebuffer")) {
-				Intent intent = new Intent(getApplicationContext(), PropertiesActivity.class);
+				Intent intent = new Intent(getApplicationContext(),
+						PropertiesActivity.class);
 				Bundle b = new Bundle();
 				b.putInt("pref", 4);
 				intent.putExtras(b);
@@ -131,11 +137,13 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 			}
 		}
 		if (preference.getKey().equals("scriptseditor")) {
-			Intent intent = new Intent(getApplicationContext(), ScriptsActivity.class);
+			Intent intent = new Intent(getApplicationContext(),
+					ScriptsActivity.class);
 			startActivity(intent);
 		}
 		if (preference.getKey().equals("mountseditor")) {
-			Intent intent = new Intent(getApplicationContext(), MountsActivity.class);
+			Intent intent = new Intent(getApplicationContext(),
+					MountsActivity.class);
 			startActivity(intent);
 		}
 		return true;
@@ -243,19 +251,21 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 			if (editPref.getKey().equals("diskimage")
 					&& editPref.getText().equals("{replace}")) {
 				File extStore = Environment.getExternalStorageDirectory();
-				String imgFile = extStore.getAbsolutePath()+"/linux.img";
+				String imgFile = extStore.getAbsolutePath() + "/linux.img";
 				((EditTextPreference) pref).setText(imgFile);
 				((EditTextPreference) pref).setSummary(imgFile);
 			}
 			if (editPref.getKey().equals("vncwidth")
 					&& editPref.getText().equals("{replace}")) {
-				String vncWidth = String.valueOf(PrefStore.getWidth(getApplicationContext()));
+				String vncWidth = String.valueOf(PrefStore
+						.getWidth(getApplicationContext()));
 				((EditTextPreference) pref).setText(vncWidth);
 				((EditTextPreference) pref).setSummary(vncWidth);
 			}
 			if (editPref.getKey().equals("vncheight")
 					&& editPref.getText().equals("{replace}")) {
-				String vncHeight = String.valueOf(PrefStore.getHeight(getApplicationContext()));
+				String vncHeight = String.valueOf(PrefStore
+						.getHeight(getApplicationContext()));
 				((EditTextPreference) pref).setText(vncHeight);
 				((EditTextPreference) pref).setSummary(vncHeight);
 			}
@@ -295,12 +305,14 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 					mirror.setSummary(mirror.getText());
 					mirror.setEnabled(true);
 					// components
-					MultiSelectListPreference components = (MultiSelectListPreference) this
+					MultiSelectListPreferenceCompat components = (MultiSelectListPreferenceCompat) this
 							.findPreference("xcomponents");
 					components.setEntries(R.array.debian_components_entries);
 					components.setEntryValues(R.array.debian_components_values);
 					if (init)
-						components.setValues(new HashSet<String>(Arrays.asList(getResources().getStringArray(R.array.default_components))));
+						components.setValues(new HashSet<String>(Arrays
+								.asList(getResources().getStringArray(
+										R.array.default_components))));
 					components.setEnabled(true);
 				}
 				if (listPref.getValue().equals("ubuntu")) {
@@ -332,12 +344,14 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 					mirror.setSummary(mirror.getText());
 					mirror.setEnabled(true);
 					// components
-					MultiSelectListPreference components = (MultiSelectListPreference) this
+					MultiSelectListPreferenceCompat components = (MultiSelectListPreferenceCompat) this
 							.findPreference("xcomponents");
 					components.setEntries(R.array.ubuntu_components_entries);
 					components.setEntryValues(R.array.ubuntu_components_values);
 					if (init)
-						components.setValues(new HashSet<String>(Arrays.asList(getResources().getStringArray(R.array.default_components))));
+						components.setValues(new HashSet<String>(Arrays
+								.asList(getResources().getStringArray(
+										R.array.default_components))));
 					components.setEnabled(true);
 				}
 				if (listPref.getValue().equals("archlinux")) {
@@ -370,12 +384,14 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 					mirror.setSummary(mirror.getText());
 					mirror.setEnabled(true);
 					// components
-					MultiSelectListPreference components = (MultiSelectListPreference) this
+					MultiSelectListPreferenceCompat components = (MultiSelectListPreferenceCompat) this
 							.findPreference("xcomponents");
 					components.setEntries(R.array.ubuntu_components_entries);
 					components.setEntryValues(R.array.ubuntu_components_values);
 					if (init)
-						components.setValues(new HashSet<String>(Arrays.asList(getResources().getStringArray(R.array.default_components))));
+						components.setValues(new HashSet<String>(Arrays
+								.asList(getResources().getStringArray(
+										R.array.default_components))));
 					components.setEnabled(true);
 				}
 				if (listPref.getValue().equals("fedora")) {
@@ -407,12 +423,14 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 					mirror.setSummary(mirror.getText());
 					mirror.setEnabled(true);
 					// components
-					MultiSelectListPreference components = (MultiSelectListPreference) this
+					MultiSelectListPreferenceCompat components = (MultiSelectListPreferenceCompat) this
 							.findPreference("xcomponents");
 					components.setEntries(R.array.fedora_components_entries);
 					components.setEntryValues(R.array.fedora_components_values);
 					if (init)
-						components.setValues(new HashSet<String>(Arrays.asList(getResources().getStringArray(R.array.default_components))));
+						components.setValues(new HashSet<String>(Arrays
+								.asList(getResources().getStringArray(
+										R.array.default_components))));
 					components.setEnabled(true);
 				}
 				if (listPref.getValue().equals("opensuse")) {
@@ -445,12 +463,15 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 					mirror.setSummary(mirror.getText());
 					mirror.setEnabled(true);
 					// components
-					MultiSelectListPreference components = (MultiSelectListPreference) this
+					MultiSelectListPreferenceCompat components = (MultiSelectListPreferenceCompat) this
 							.findPreference("xcomponents");
 					components.setEntries(R.array.opensuse_components_entries);
-					components.setEntryValues(R.array.opensuse_components_values);
+					components
+							.setEntryValues(R.array.opensuse_components_values);
 					if (init)
-						components.setValues(new HashSet<String>(Arrays.asList(getResources().getStringArray(R.array.default_components))));
+						components.setValues(new HashSet<String>(Arrays
+								.asList(getResources().getStringArray(
+										R.array.default_components))));
 					components.setEnabled(true);
 				}
 				if (listPref.getValue().equals("kali")) {
@@ -482,12 +503,14 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 					mirror.setSummary(mirror.getText());
 					mirror.setEnabled(true);
 					// components
-					MultiSelectListPreference components = (MultiSelectListPreference) this
+					MultiSelectListPreferenceCompat components = (MultiSelectListPreferenceCompat) this
 							.findPreference("xcomponents");
 					components.setEntries(R.array.kali_components_entries);
 					components.setEntryValues(R.array.kali_components_values);
 					if (init)
-						components.setValues(new HashSet<String>(Arrays.asList(getResources().getStringArray(R.array.default_components))));
+						components.setValues(new HashSet<String>(Arrays
+								.asList(getResources().getStringArray(
+										R.array.default_components))));
 					components.setEnabled(true);
 				}
 				if (listPref.getValue().equals("gentoo")) {
@@ -519,12 +542,14 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 					mirror.setSummary(mirror.getText());
 					mirror.setEnabled(true);
 					// components
-					MultiSelectListPreference components = (MultiSelectListPreference) this
+					MultiSelectListPreferenceCompat components = (MultiSelectListPreferenceCompat) this
 							.findPreference("xcomponents");
 					components.setEntries(R.array.gentoo_components_entries);
 					components.setEntryValues(R.array.gentoo_components_values);
 					if (init)
-						components.setValues(new HashSet<String>(Arrays.asList(getResources().getStringArray(R.array.default_components))));
+						components.setValues(new HashSet<String>(Arrays
+								.asList(getResources().getStringArray(
+										R.array.default_components))));
 					components.setEnabled(true);
 				}
 				if (listPref.getValue().equals("rootfs")) {
@@ -548,14 +573,16 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 					EditTextPreference mirror = (EditTextPreference) this
 							.findPreference("mirror");
 					if (init) {
-						File extStore = Environment.getExternalStorageDirectory();
-						String archiveFile = extStore.getAbsolutePath()+"/linux-rootfs.tar.gz";
+						File extStore = Environment
+								.getExternalStorageDirectory();
+						String archiveFile = extStore.getAbsolutePath()
+								+ "/linux-rootfs.tar.gz";
 						mirror.setText(archiveFile);
 					}
 					mirror.setSummary(mirror.getText());
 					mirror.setEnabled(true);
 					// components
-					MultiSelectListPreference components = (MultiSelectListPreference) this
+					MultiSelectListPreferenceCompat components = (MultiSelectListPreferenceCompat) this
 							.findPreference("xcomponents");
 					components.setEntries(null);
 					components.setEntryValues(null);
@@ -568,12 +595,12 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 						.findPreference("disksize");
 				ListPreference fstype = (ListPreference) this
 						.findPreference("fstype");
-				
+
 				if (listPref.getValue().equals("file"))
 					disksize.setEnabled(true);
 				else
 					disksize.setEnabled(false);
-				
+
 				if (listPref.getValue().equals("custom"))
 					fstype.setEnabled(false);
 				else
