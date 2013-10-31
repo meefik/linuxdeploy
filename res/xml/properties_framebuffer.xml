@@ -29,10 +29,13 @@
             android:summary="@string/fbinput"
             android:title="@string/title_fbinput_preference" />
 
-        <CheckBoxPreference
+        <ListPreference
             android:defaultValue="@string/fbfreeze"
+            android:dialogTitle="@string/dialog_title_fbfreeze_preference"
+            android:entries="@array/fbfreeze_entries"
+            android:entryValues="@array/fbfreeze_values"
             android:key="fbfreeze"
-            android:summary="@string/summary_fbfreeze_preference"
+            android:summary="@string/fbfreeze"
             android:title="@string/title_fbfreeze_preference" />
     </PreferenceCategory>
 

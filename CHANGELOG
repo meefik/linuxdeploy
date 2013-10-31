@@ -1,6 +1,10 @@
 Changelog (English)
 ===================
 
+1.4.3
+Added support Ubuntu 13.10 (Saucy Salamander)
+Added three modes Android UI freeze
+
 1.4.2
 Added support Debian 8.0 (jessie)
 Interface improvements
@@ -221,6 +225,10 @@ Updated list packages of base system installation
 
 История изменений (Русский)
 ===========================
+
+1.4.3
+Добавлена поддержка Ubuntu 13.10 (Saucy Salamander)
+Добавлено три режима заморозки Android UI
 
 1.4.2
 Добавлена поддержка Debian 8.0 (jessie)

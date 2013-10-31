@@ -24,6 +24,11 @@
         <item>KDE</item>
         <item>Другое</item>
     </string-array>
+    <string-array name="fbfreeze_entries">
+        <item>Не замораживать</item>
+        <item>Приостановить</item>
+        <item>Остановить</item>
+    </string-array>
     
 
     <!-- Debian -->

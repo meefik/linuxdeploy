@@ -191,8 +191,7 @@ public class PrefStore {
 		FB_DPI = sp.getString("fbdpi", c.getString(R.string.fbdpi));
 		FB_DEV = sp.getString("fbdev", c.getString(R.string.fbdev));
 		FB_INPUT = sp.getString("fbinput", c.getString(R.string.fbinput));
-		FB_FREEZE = sp.getBoolean("fbfreeze", c.getString(R.string.fbfreeze)
-				.equals("true") ? true : false) ? "y" : "n";
+		FB_FREEZE = sp.getString("fbfreeze", c.getString(R.string.fbfreeze));
 
 		try {
 			VERSION = c.getPackageManager().getPackageInfo(c.getPackageName(),

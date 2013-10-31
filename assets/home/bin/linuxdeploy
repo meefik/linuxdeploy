@@ -906,17 +906,23 @@ start_system()
 			sed -i "s|Option.*\"fbdev\".*#linuxdeploy|Option \"fbdev\" \"$FB_DEV\" #linuxdeploy|g" $MNT_TARGET/etc/X11/xorg.conf
 			sed -i "s|Option.*\"Device\".*#linuxdeploy|Option \"Device\" \"$FB_INPUT\" #linuxdeploy|g" $MNT_TARGET/etc/X11/xorg.conf
 			(set -e
-				if [ "$FB_FREEZE" == "y" ]; then
-					#setprop ctl.stop surfaceflinger
+				case "$FB_FREEZE" in
+				stop)
+					setprop ctl.stop surfaceflinger
+					chroot $MNT_TARGET su - $USER_NAME -c "xinit -- :$FB_DISPLAY -dpi $FB_DPI"
+					reboot				
+				;;
+				pause)
 					pkill -STOP system_server
 					pkill -STOP surfaceflinger
 					chroot $MNT_TARGET su - $USER_NAME -c "xinit -- :$FB_DISPLAY -dpi $FB_DPI"
 					pkill -CONT surfaceflinger
 					pkill -CONT system_server
-					#reboot
-				else
-					chroot $MNT_TARGET su - $USER_NAME -c "xinit -- :$FB_DISPLAY -dpi $FB_DPI &"
-				fi
+				;;
+				*)
+					chroot $MNT_TARGET su - $USER_NAME -c "xinit -- :$FB_DISPLAY -dpi $FB_DPI &"				
+				;;
+				esac
 			exit 0)
 			[ $? -eq 0 ] && msg "done" || msg "fail"
 		else

@@ -95,6 +95,16 @@
         <item>X Window System</item>
         <item>Frame Buffer</item>
     </string-array>
+    <string-array name="fbfreeze_values" translatable="false">
+        <item>none</item>
+        <item>pause</item>
+        <item>stop</item>
+    </string-array>
+    <string-array name="fbfreeze_entries">
+        <item>Don\'t freeze</item>
+        <item>Pause</item>
+        <item>Stop</item>
+    </string-array>
     
 
     <!-- Debian -->
@@ -128,6 +138,7 @@
     <!-- Ubuntu -->
 
     <string-array name="ubuntu_suite_values" translatable="false">
+        <item>saucy</item>
         <item>raring</item>
         <item>quantal</item>
         <item>precise</item>
