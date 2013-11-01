@@ -77,6 +77,7 @@ public class PrefStore {
 	public static String FB_DPI;
 	public static String FB_DEV;
 	public static String FB_INPUT;
+	public static String FB_ARGS;
 	public static String FB_FREEZE;
 
 	// miscellaneous
@@ -191,6 +192,7 @@ public class PrefStore {
 		FB_DPI = sp.getString("fbdpi", c.getString(R.string.fbdpi));
 		FB_DEV = sp.getString("fbdev", c.getString(R.string.fbdev));
 		FB_INPUT = sp.getString("fbinput", c.getString(R.string.fbinput));
+		FB_ARGS = sp.getString("fbargs", c.getString(R.string.fbargs));
 		FB_FREEZE = sp.getString("fbfreeze", c.getString(R.string.fbfreeze));
 
 		try {

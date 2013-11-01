@@ -169,6 +169,8 @@
     <string name="dialog_title_fbdev_preference">FB: адрес видеоустройства</string>
     <string name="title_fbinput_preference">Устройство ввода</string>
     <string name="dialog_title_fbinput_preference">FB: адрес устройства ввода</string>
+    <string name="title_fbargs_preference">Опции X-сервера</string>
+    <string name="dialog_title_fbargs_preference">FB: опции X-сервера</string>
     <string name="title_fbfreeze_preference">Заморозить Android UI</string>
     <string name="dialog_title_fbfreeze_preference">Заморозить Android UI</string>
     <string name="about_text"><font size="32"><b>Linux Deploy</b></font>\n\nЛицензия GPL v3\n\n[ <a href="https://github.com/meefik/linuxdeploy">github.com</a> , <a href="http://4pda.ru/forum/index.php?showtopic=378043">4pda.ru</a> ]\n\nЭта программа поставляется БЕЗ ВСЯКИХ ГАРАНТИЙ, а автор не несет ответственности за любые возможные последствия ее использования. Это свободное программное обеспечение, и вы можете распространять его при определенных условиях.\n\n&#169; 2012-2013 Антон Скшидлевский</string>
