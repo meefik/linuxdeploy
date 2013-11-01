@@ -369,6 +369,8 @@ public class ShellEnv {
 				+ "\"|g' " + PrefStore.ENV_DIR + "/etc/deploy.conf");
 		params.add("sed -i 's|^FB_INPUT=.*|FB_INPUT=\"" + PrefStore.FB_INPUT
 				+ "\"|g' " + PrefStore.ENV_DIR + "/etc/deploy.conf");
+		params.add("sed -i 's|^FB_ARGS=.*|FB_ARGS=\"" + PrefStore.FB_ARGS
+				+ "\"|g' " + PrefStore.ENV_DIR + "/etc/deploy.conf");
 		params.add("sed -i 's|^FB_FREEZE=.*|FB_FREEZE=\"" + PrefStore.FB_FREEZE
 				+ "\"|g' " + PrefStore.ENV_DIR + "/etc/deploy.conf");
 		params.add("[ $? -eq 0 ] && exit 0 || exit 1");

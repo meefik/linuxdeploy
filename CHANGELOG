@@ -4,6 +4,8 @@ Changelog (English)
 1.4.3
 Added support Ubuntu 13.10 (Saucy Salamander)
 Added three modes Android UI freeze
+Added autostart dbus in X-server mode and framebuffer
+Added an property "X options" for framebuffer
 
 1.4.2
 Added support Debian 8.0 (jessie)
@@ -229,6 +231,8 @@ Updated list packages of base system installation
 1.4.3
 Добавлена поддержка Ubuntu 13.10 (Saucy Salamander)
 Добавлено три режима заморозки Android UI
+Добавлен автозапуск dbus в режиме X-сервера и фрейм-буфера
+Добавлен параметр "Опции X-сервера" для фрейм-буфера
 
 1.4.2
 Добавлена поддержка Debian 8.0 (jessie)

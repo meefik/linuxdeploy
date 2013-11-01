@@ -28,6 +28,12 @@
             android:key="fbinput"
             android:summary="@string/fbinput"
             android:title="@string/title_fbinput_preference" />
+        <EditTextPreference
+            android:defaultValue="@string/fbargs"
+            android:dialogTitle="@string/dialog_title_fbargs_preference"
+            android:key="fbargs"
+            android:summary="@string/fbargs"
+            android:title="@string/title_fbargs_preference" />
 
         <ListPreference
             android:defaultValue="@string/fbfreeze"
