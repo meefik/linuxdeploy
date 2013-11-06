@@ -982,7 +982,7 @@ stop_system()
 			fi
 			# kill active sessions
 			sleep 1
-			pkill -9 sshd || true
+			pkill -9 'sshd' || true
 		exit 0)
 		[ $? -eq 0 ] && msg "done" || msg "fail"
 	;;
@@ -991,7 +991,7 @@ stop_system()
 		(set -e
 			chroot $MNT_TARGET su - $USER_NAME -c "vncserver -kill :$VNC_DISPLAY"
 			sleep 1
-			pkill -9 X*vnc || true
+			pkill -9 'X.*vnc' || true
 		exit 0)
 		[ $? -eq 0 ] && msg "done" || msg "fail"
 	;;
