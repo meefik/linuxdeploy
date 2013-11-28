@@ -497,7 +497,7 @@ configure_system()
 						PKGS="$PKGS openssh"
 					;;
 					vnc)
-						PKGS="$PKGS tightvnc"
+						PKGS="$PKGS tigervnc"
 					;;
 					xserver)
 						PKGS="$PKGS xorg-xinit xorg-server xf86-video-fbdev xf86-input-evdev"
