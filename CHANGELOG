@@ -7,6 +7,7 @@ Added three modes Android UI freeze
 Added autostart dbus in X-server mode and framebuffer
 Added an property "X options" for framebuffer
 Fixed list of packages openSUSE installation
+Change tightvnc to tigervnc in Arch Linux
 
 1.4.2
 Added support Debian 8.0 (jessie)
@@ -235,6 +236,7 @@ Updated list packages of base system installation
 Добавлен автозапуск dbus в режиме X-сервера и фрейм-буфера
 Добавлен параметр "Опции X-сервера" для фрейм-буфера
 Исправлен список пакетов установки openSUSE
+В Arch Linux заменен пакет tightvnc на tigervnc
 
 1.4.2
 Добавлена поддержка Debian 8.0 (jessie)
