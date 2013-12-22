@@ -41,6 +41,12 @@
             android:key="vncheight"
             android:summary="@string/vncheight"
             android:title="@string/title_vncheight_preference" />
+        <EditTextPreference
+            android:defaultValue="@string/vncoptions"
+            android:dialogTitle="@string/dialog_title_vncoptions_preference"
+            android:key="vncoptions"
+            android:summary="@string/vncoptions"
+            android:title="@string/title_vncoptions_preference" />
     </PreferenceCategory>
 
 </PreferenceScreen>

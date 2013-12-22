@@ -883,7 +883,7 @@ start_system()
 				# TightVNC Server
 				[ -e "$MNT_TARGET/tmp/.X$VNC_DISPLAY-lock" ] && rm $MNT_TARGET/tmp/.X$VNC_DISPLAY-lock
 				[ -e "$MNT_TARGET/tmp/.X11-unix/X$VNC_DISPLAY" ] && rm $MNT_TARGET/tmp/.X11-unix/X$VNC_DISPLAY
-				chroot $MNT_TARGET su - $USER_NAME -c "vncserver :$VNC_DISPLAY -depth $VNC_DEPTH -geometry $VNC_GEOMETRY -dpi $VNC_DPI"
+				chroot $MNT_TARGET su - $USER_NAME -c "vncserver :$VNC_DISPLAY -depth $VNC_DEPTH -geometry $VNC_GEOMETRY -dpi $VNC_DPI $VNC_OPTIONS"
 			exit 0)
 			[ $? -eq 0 ] && msg "done" || msg "fail"
 		else
