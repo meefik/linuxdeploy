@@ -41,6 +41,7 @@
     <string name="vncdpi" translatable="false">75</string>
     <string name="vncwidth" translatable="false">{replace}</string>
     <string name="vncheight" translatable="false">{replace}</string>
+    <string name="vncoptions" translatable="false">{replace}</string>
     <string name="xdisplay" translatable="false">0</string>
     <string name="xhost" translatable="false">127.0.0.1</string>
     <string name="fbdisplay" translatable="false">0</string>
