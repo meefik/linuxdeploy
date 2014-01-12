@@ -269,6 +269,13 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 				((EditTextPreference) pref).setText(vncHeight);
 				((EditTextPreference) pref).setSummary(vncHeight);
 			}
+			if (editPref.getKey().equals("vncoptions")
+					&& editPref.getText().equals("{replace}")) {
+				String vncOptions = String.valueOf(PrefStore
+						.getOptions(getApplicationContext()));
+				((EditTextPreference) pref).setText(vncOptions);
+				((EditTextPreference) pref).setSummary(vncOptions);
+			}
 		}
 
 		if (pref instanceof ListPreference) {
