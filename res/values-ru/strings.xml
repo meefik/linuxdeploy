@@ -155,8 +155,8 @@
     <string name="dialog_title_vncwidth_preference">VNC: ширина экрана</string>
     <string name="title_vncheight_preference">Высота экрана</string>
     <string name="dialog_title_vncheight_preference">VNC: высота экрана</string>
-    <string name="title_vncoptions_preference">Options</string>
-    <string name="dialog_title_vncoptions_preference">VNC: vncserver(1) command-line options</string>
+    <string name="title_vncargs_preference">Опции VNC-сервера</string>
+    <string name="dialog_title_vncargs_preference">VNC: опции VNC-сервера</string>
     <string name="xserver_preferences">X Window System</string>
     <string name="title_xdisplay_preference">Номер дисплея</string>
     <string name="dialog_title_xdisplay_preference">X: номер дисплея</string>
