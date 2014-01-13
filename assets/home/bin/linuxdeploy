@@ -846,7 +846,7 @@ start_system()
 		[ -e "$MNT_TARGET/run/dbus/pid" ] && rm $MNT_TARGET/run/dbus/pid
 		# dbus (Fedora)
 		[ -e "$MNT_TARGET/var/run/messagebus.pid" ] && rm $MNT_TARGET/var/run/messagebus.pid
-		chroot $MNT_TARGET dbus-daemon --system --fork || true	
+		chroot $MNT_TARGET dbus-daemon --system --fork || true
 	}
 	
 	case "$1" in
@@ -880,12 +880,12 @@ start_system()
 		if [ -z "$XSESSION" ]; then
 			(set -e
 				dbus_init
-				VNC_OPTIONS=""
+				VNC_ARGS=""
 				# TightVNC Server
-				which Xtightvnc && VNC_OPTIONS="$VNC_OPTIONS -compatiblekbd"
+				which Xtightvnc && VNC_ARGS="$VNC_ARGS -compatiblekbd" || true
 				[ -e "$MNT_TARGET/tmp/.X$VNC_DISPLAY-lock" ] && rm $MNT_TARGET/tmp/.X$VNC_DISPLAY-lock
 				[ -e "$MNT_TARGET/tmp/.X11-unix/X$VNC_DISPLAY" ] && rm $MNT_TARGET/tmp/.X11-unix/X$VNC_DISPLAY
-				chroot $MNT_TARGET su - $USER_NAME -c "vncserver :$VNC_DISPLAY -depth $VNC_DEPTH -geometry $VNC_GEOMETRY -dpi $VNC_DPI $VNC_OPTIONS"
+				chroot $MNT_TARGET su - $USER_NAME -c "vncserver :$VNC_DISPLAY -depth $VNC_DEPTH -geometry $VNC_GEOMETRY -dpi $VNC_DPI $VNC_ARGS"
 			exit 0)
 			[ $? -eq 0 ] && msg "done" || msg "fail"
 		else

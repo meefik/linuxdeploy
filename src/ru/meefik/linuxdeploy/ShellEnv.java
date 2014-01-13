@@ -354,7 +354,7 @@ public class ShellEnv {
 		params.add("sed -i 's|^VNC_GEOMETRY=.*|VNC_GEOMETRY=\""
 				+ PrefStore.VNC_GEOMETRY + "\"|g' " + PrefStore.ENV_DIR
 				+ "/etc/deploy.conf");
-		params.add("sed -i 's|^VNC_OPTIONS=.*|VNC_OPTIONS=\""
+		params.add("sed -i 's|^VNC_ARGS=.*|VNC_ARGS=\""
 				+ PrefStore.VNC_ARGS + "\"|g' " + PrefStore.ENV_DIR
 				+ "/etc/deploy.conf");
 		params.add("sed -i 's|^XSERVER_DISPLAY=.*|XSERVER_DISPLAY=\""
