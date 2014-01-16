@@ -1,6 +1,11 @@
 Changelog (English)
 ===================
 
+1.4.4
+Added support Fedora 20 (armhfp)
+Added VNC options
+Bugs fixed
+
 1.4.3
 Added support Ubuntu 13.10 (Saucy Salamander)
 Added three modes Android UI freeze
@@ -229,6 +234,11 @@ Updated list packages of base system installation
 
 История изменений (Русский)
 ===========================
+
+1.4.4
+Добавлена поддержка Fedora 20 (armhfp)
+Добавлен параметр VNC options
+Исправление ошибок
 
 1.4.3
 Добавлена поддержка Ubuntu 13.10 (Saucy Salamander)

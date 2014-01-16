@@ -60,22 +60,22 @@
     <!-- Debian -->
     <string name="debian_suite" translatable="false">wheezy</string>
     <string name="debian_mirror" translatable="false">http://mirror.yandex.ru/debian</string>
-    <string name="debian_architecture" translatable="false">armel</string>
+    <string name="debian_architecture" translatable="false">armhf</string>
 
     <!-- Ubuntu -->
     <string name="ubuntu_suite" translatable="false">precise</string>
     <string name="ubuntu_mirror" translatable="false">http://ports.ubuntu.com</string>
-    <string name="ubuntu_architecture" translatable="false">armel</string>
+    <string name="ubuntu_architecture" translatable="false">armhf</string>
 
     <!-- Arch Linux -->
     <string name="archlinux_suite" translatable="false">latest</string>
     <string name="archlinux_mirror" translatable="false">http://mirror.archlinuxarm.org</string>
-    <string name="archlinux_architecture" translatable="false">arm</string>
+    <string name="archlinux_architecture" translatable="false">armv7h</string>
 
     <!-- Fedora -->
-    <string name="fedora_suite" translatable="false">18</string>
+    <string name="fedora_suite" translatable="false">19</string>
     <string name="fedora_mirror" translatable="false">http://dl.fedoraproject.org/pub/fedora-secondary/releases/</string>
-    <string name="fedora_architecture" translatable="false">arm</string>
+    <string name="fedora_architecture" translatable="false">armhfp</string>
 
     <!-- openSUSE -->
     <string name="opensuse_suite" translatable="false">factory</string>
@@ -85,7 +85,7 @@
     <!-- Kali Linux -->
     <string name="kali_suite" translatable="false">kali</string>
     <string name="kali_mirror" translatable="false">http://http.kali.org/kali</string>
-    <string name="kali_architecture" translatable="false">armel</string>
+    <string name="kali_architecture" translatable="false">armhf</string>
     
     <!-- Gentoo -->
     <string name="gentoo_suite" translatable="false">latest</string>
