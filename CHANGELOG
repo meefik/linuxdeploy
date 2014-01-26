@@ -5,6 +5,7 @@ Changelog (English)
 Added support Fedora 20 (armhfp)
 Added VNC options
 Bugs fixed
+Fixed broken packages in Arch Linux
 
 1.4.3
 Added support Ubuntu 13.10 (Saucy Salamander)
@@ -239,6 +240,7 @@ Updated list packages of base system installation
 Добавлена поддержка Fedora 20 (armhfp)
 Добавлен параметр VNC options
 Исправление ошибок
+Исправлены битые пакеты в Arch Linux
 
 1.4.3
 Добавлена поддержка Ubuntu 13.10 (Saucy Salamander)
