@@ -1428,7 +1428,7 @@ status_system()
 	msg "Active system: $LINUX_VERSION"
 	msg "Running services: "
 	msg -n "* SSH: "
-	[ -n "`ps | grep -E '/usr/s?bin/sshd' | grep -v grep`" ] && msg "yes" || msg "no"
+	[ -n "`ps | grep -E '/s?bin/sshd' | grep -v grep`" ] && msg "yes" || msg "no"
 	msg -n "* VNC: "
 	[ -n "`ps | grep 'X*vnc' | grep -v grep`" ] && msg "yes" || msg "no"
 	msg "Mounted parts on Linux: "
