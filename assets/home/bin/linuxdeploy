@@ -1330,7 +1330,7 @@ install_system()
 
 		msg "Updating world: "
 		(set -e
-			chroot $MNT_TARGET emerge --update --deep --newuse world sudo
+			chroot $MNT_TARGET emerge --update --deep --newuse sudo
 		exit 0) 1>&3 2>&3
 		[ $? -eq 0 ] || return 1
 
