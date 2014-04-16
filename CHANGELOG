@@ -1,6 +1,11 @@
 Changelog (English)
 ===================
 
+1.4.5
+Added support SELinux
+BusyBox dynamically linked (fixed DNS resolver)
+Added support Ubuntu 14.04 (Trusty Tahr)
+
 1.4.4
 Added support Fedora 20 (armhfp)
 Added VNC options
@@ -235,6 +240,11 @@ Updated list packages of base system installation
 
 История изменений (Русский)
 ===========================
+
+1.4.5
+Добавлена поддержка SELinux
+BusyBox динамически слинкован (исправлена проблема с DNS резолвером)
+Добавлена поддержка Ubuntu 14.04 (Trusty Tahr)
 
 1.4.4
 Добавлена поддержка Fedora 20 (armhfp)
