@@ -138,6 +138,7 @@
     <!-- Ubuntu -->
 
     <string-array name="ubuntu_suite_values" translatable="false">
+        <item>trusty</item>
         <item>saucy</item>
         <item>raring</item>
         <item>quantal</item>
