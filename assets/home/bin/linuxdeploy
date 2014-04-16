@@ -658,7 +658,7 @@ mount_system()
 {
 	if [ "$#" -eq 0 ]; then
 		msg "Mounting partitions: "
-		mount_system root proc sys dev pts shm custom
+		mount_system root proc sys selinux dev pts shm custom
 		return $?
 	fi
 	if [ "$#" -gt 1 ]; then
