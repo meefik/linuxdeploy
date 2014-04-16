@@ -709,6 +709,16 @@ mount_system()
 			msg "skip"
 		fi
 	;;
+	selinux)
+		msg -n "/sys/fs/selinux ... "
+		tg=$MNT_TARGET/sys/fs/selinux; is_mnt=`cat /proc/mounts | grep " $tg "`
+		if [ -z "$is_mnt" -a -d "/sys/fs/selinux" ]; then
+			mount -t selinuxfs selinuxfs $tg
+			[ $? -eq 0 ] && msg "done" || msg "fail"
+		else
+			msg "skip"
+		fi
+	;;
 	dev)
 		msg -n "/dev ... "
 		tg=$MNT_TARGET/dev; is_mnt=`cat /proc/mounts | grep " $tg "`
