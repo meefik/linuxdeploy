@@ -1233,8 +1233,8 @@ install_system()
 		rm -rf $MNT_TARGET/tmp/*
 		
 		# for run su command as root without password
-		if [ -z "`grep -e '^auth[[:space:]]\+sufficient[[:space:]]\+pam_wheel.so trust use_uid$' $MNT_TARGET/etc/pam.d/su`" ]; then
-			sed -i 's/^\(auth[[:space:]]\+include[[:space:]]\+system-auth\)$/auth\t\tsufficient\tpam_wheel.so trust use_uid\n\1/g' $MNT_TARGET/etc/pam.d/su
+		if [ -z "`grep -e '^auth[[:space:]]\+sufficient[[:space:]]\+pam_wheel.so trust use_uid$' $MNT_TARGET/etc/pam.d/su-l`" ]; then
+			sed -i 's/^\(auth[[:space:]]\+include[[:space:]]\+system-auth\)$/auth\t\tsufficient\tpam_wheel.so trust use_uid\n\1/g' $MNT_TARGET/etc/pam.d/su-l
 		fi
 
 		#msg "Installing base packages: "
@@ -1305,8 +1305,8 @@ install_system()
 		rm -rf $MNT_TARGET/tmp/*
 		
 		# for run su command as root without password
-		if [ -z "`grep -e '^auth[[:space:]]\+sufficient[[:space:]]\+pam_wheel.so trust use_uid$' $MNT_TARGET/etc/pam.d/su`" ]; then
-			sed -i 's/^\(auth[[:space:]]\+include[[:space:]]\+common-auth\)$/auth\t\tsufficient\tpam_wheel.so trust use_uid\n\1/g' $MNT_TARGET/etc/pam.d/su
+		if [ -z "`grep -e '^auth[[:space:]]\+sufficient[[:space:]]\+pam_wheel.so trust use_uid$' $MNT_TARGET/etc/pam.d/su-l`" ]; then
+			sed -i 's/^\(auth[[:space:]]\+include[[:space:]]\+common-auth\)$/auth\t\tsufficient\tpam_wheel.so trust use_uid\n\1/g' $MNT_TARGET/etc/pam.d/su-l
 		fi
 	;;
 	gentoo)
