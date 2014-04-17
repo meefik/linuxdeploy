@@ -212,8 +212,13 @@ configure_system()
 			do
 				if [ -z "`grep \"^aid_inet:.*$UID\" $MNT_TARGET/etc/group`" ]; then
 					sed -i "s|^\(aid_inet:.*\)|\1,$UID|g" $MNT_TARGET/etc/group
-				fi			
+				fi
 			done
+			
+			# Add root to wheel group
+			if [ -z "`grep \"^wheel:.*root\" $MNT_TARGET/etc/group`" ]; then
+				sed -i "s|^\(wheel:.*\)|\1,root|g" $MNT_TARGET/etc/group
+			fi
 		;;
 		locales)
 			#echo "$LOCALE UTF-8" > $MNT_TARGET/etc/locale.gen
@@ -1228,8 +1233,9 @@ install_system()
 		rm -rf $MNT_TARGET/tmp/*
 		
 		# for run su command as root without password
-		sed -i 's/^#\(auth[[:space:]]\+sufficient[[:space:]]\+pam_wheel.so trust use_uid\)$/\1/g' $MNT_TARGET/etc/pam.d/su
-		chroot $MNT_TARGET /sbin/usermod -aG wheel root
+		if [ -z "`grep -e '^auth[[:space:]]\+sufficient[[:space:]]\+pam_wheel.so trust use_uid$' $MNT_TARGET/etc/pam.d/su`" ]; then
+			sed -i 's/^\(auth[[:space:]]\+include[[:space:]]\+system-auth\)$/auth\t\tsufficient\tpam_wheel.so trust use_uid\n\1/g' $MNT_TARGET/etc/pam.d/su
+		fi
 
 		#msg "Installing base packages: "
 		#for FILE in `cd $CACHE_DIR && ls *.rpm`; do
@@ -1297,6 +1303,11 @@ install_system()
 		chroot $MNT_TARGET /bin/rpm -iv --force --nosignature --nodeps /tmp/*.rpm 1>&3 2>&3
 		# clean cache
 		rm -rf $MNT_TARGET/tmp/*
+		
+		# for run su command as root without password
+		if [ -z "`grep -e '^auth[[:space:]]\+sufficient[[:space:]]\+pam_wheel.so trust use_uid$' $MNT_TARGET/etc/pam.d/su`" ]; then
+			sed -i 's/^\(auth[[:space:]]\+include[[:space:]]\+common-auth\)$/auth\t\tsufficient\tpam_wheel.so trust use_uid\n\1/g' $MNT_TARGET/etc/pam.d/su
+		fi
 	;;
 	gentoo)
 		msg "Installing Gentoo distribution: "
