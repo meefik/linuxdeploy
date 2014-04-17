@@ -1226,6 +1226,10 @@ install_system()
 		chmod 04755 $MNT_TARGET/usr/bin/systemd-detect-virt
 		# clean cache
 		rm -rf $MNT_TARGET/tmp/*
+		
+		# for run su command as root without password
+		sed -i 's/^#\(auth[[:space:]]\+sufficient[[:space:]]\+pam_wheel.so trust use_uid\)$/\1/g' $MNT_TARGET/etc/pam.d/su
+		chroot $MNT_TARGET /sbin/usermod -aG wheel root
 
 		#msg "Installing base packages: "
 		#for FILE in `cd $CACHE_DIR && ls *.rpm`; do
