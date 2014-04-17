@@ -1276,7 +1276,7 @@ install_system()
 		msg "Retrieving base packages: "
 		for PACKAGE in $BASIC_PACKAGES; do
 			msg -n "$PACKAGE ... "
-    		PKG_URL=`cat $PKG_LIST | grep -e "^arm" -e "^noarch" | grep -m1 -e "^.*/$PACKAGE-[0-9s][0-9\.].*\.rpm$"`
+    		PKG_URL=`grep -e "^arm" -e "^noarch" | grep -m1 -e "^.*/$PACKAGE-[0-9s][0-9\.].*\.rpm$" $PKG_LIST`
     		test "$PKG_URL" || { msg "fail"; return 1; }
     		FILE=`basename $PKG_URL`
     		#echo "downloading ${FILE}... "
