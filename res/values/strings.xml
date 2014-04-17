@@ -24,8 +24,8 @@
     <string name="title_activity_settings">Settings</string>
     <string name="title_activity_properties">Properties</string>
     <string name="title_activity_profiles">Profiles</string>
-	<string name="title_activity_scripts">Scripts</string>
-	<string name="title_activity_mounts">Mounts</string>
+    <string name="title_activity_scripts">Scripts</string>
+    <string name="title_activity_mounts">Mounts</string>
     <string name="confirm_start_title">Start</string>
     <string name="confirm_stop_title">Stop</string>
     <string name="confirm_start_message">Mount GNU/Linux system and start services?</string>
@@ -175,6 +175,6 @@
     <string name="dialog_title_fbargs_preference">FB: X options</string>
     <string name="title_fbfreeze_preference">Freeze Android UI</string>
     <string name="dialog_title_fbfreeze_preference">Freeze Android UI</string>
-    <string name="about_text"><font size="32"><b>Linux Deploy</b></font>\n\nGPL v3\n\n[ <a href="https://github.com/meefik/linuxdeploy">github.com</a> , <a href="http://4pda.ru/forum/index.php?showtopic=378043">4pda.ru</a> ]\n\nThis program comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions.\n\n&#169; 2012-2013 Anton Skshidlevsky</string>
+    <string name="about_text"><font size="32"><b>Linux Deploy</b></font>\n\nGPL v3\n\n[ <a href="https://github.com/meefik/linuxdeploy">github.com</a> , <a href="http://4pda.ru/forum/index.php?showtopic=378043">4pda.ru</a> ]\n\nThis program comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions.\n\n&#169; 2012-2014 Anton Skshidlevsky</string>
 
 </resources>
