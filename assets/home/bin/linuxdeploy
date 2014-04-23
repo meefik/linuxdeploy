@@ -373,11 +373,7 @@ configure_system()
 		;;
 		dbus)
 			case "$DISTRIB" in
-			debian|ubuntu|kali)
-				mkdir $MNT_TARGET/var/run/dbus
-				chmod 755 $MNT_TARGET/var/run/dbus				
-			;;
-			archlinux)
+			debian|ubuntu|kali|archlinux)
 				mkdir $MNT_TARGET/run/dbus
 				chmod 755 $MNT_TARGET/run/dbus
 			;;
