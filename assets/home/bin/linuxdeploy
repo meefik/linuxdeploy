@@ -373,6 +373,10 @@ configure_system()
 		;;
 		dbus)
 			case "$DISTRIB" in
+			debian|ubuntu|kali)
+				mkdir $MNT_TARGET/var/run/dbus
+				chmod 755 $MNT_TARGET/var/run/dbus				
+			;;
 			archlinux)
 				mkdir $MNT_TARGET/run/dbus
 				chmod 755 $MNT_TARGET/run/dbus
@@ -913,7 +917,7 @@ start_system()
 		if [ -z "$XSESSION" ]; then
 			(set -e
 				dbus_init
-				chroot $MNT_TARGET su - $USER_NAME -c "export DISPLAY=$XSERVER_HOST:$XSERVER_DISPLAY; ~/.xsession &"
+				chroot $MNT_TARGET su - $USER_NAME -c "export DISPLAY=$XSERVER_HOST:$XSERVER_DISPLAY; ~/.xinitrc &"
 			exit 0)
 			[ $? -eq 0 ] && msg "done" || msg "fail"
 		else

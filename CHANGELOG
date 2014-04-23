@@ -5,6 +5,7 @@ Changelog (English)
 Added support SELinux
 BusyBox dynamically linked (fixed DNS resolver)
 Added support Ubuntu 14.04 (Trusty Tahr)
+Fixed X Window System startup
 
 1.4.4
 Added support Fedora 20 (armhfp)
@@ -245,6 +246,7 @@ Updated list packages of base system installation
 Добавлена поддержка SELinux
 BusyBox динамически слинкован (исправлена проблема с DNS резолвером)
 Добавлена поддержка Ubuntu 14.04 (Trusty Tahr)
+Исправлена ошибка запуска X Window System
 
 1.4.4
 Добавлена поддержка Fedora 20 (armhfp)
