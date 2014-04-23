@@ -374,11 +374,11 @@ configure_system()
 		dbus)
 			case "$DISTRIB" in
 			debian|ubuntu|kali|archlinux)
-				mkdir $MNT_TARGET/run/dbus
+				mkdir $MNT_TARGET/run/dbus || true
 				chmod 755 $MNT_TARGET/run/dbus
 			;;
 			fedora)
-				mkdir $MNT_TARGET/var/run/dbus
+				mkdir $MNT_TARGET/var/run/dbus || true
 				chmod 755 $MNT_TARGET/var/run/dbus
 				chroot $MNT_TARGET sh -c "dbus-uuidgen > /etc/machine-id"
 			;;
