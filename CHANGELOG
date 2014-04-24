@@ -6,6 +6,7 @@ Added support SELinux
 BusyBox dynamically linked (fixed DNS resolver)
 Added support Ubuntu 14.04 (Trusty Tahr)
 Fixed X Window System startup
+Fixed dbus configuration
 
 1.4.4
 Added support Fedora 20 (armhfp)
@@ -247,6 +248,7 @@ Updated list packages of base system installation
 BusyBox динамически слинкован (исправлена проблема с DNS резолвером)
 Добавлена поддержка Ubuntu 14.04 (Trusty Tahr)
 Исправлена ошибка запуска X Window System
+Исправлена ошибка при конфигурации dbus
 
 1.4.4
 Добавлена поддержка Fedora 20 (armhfp)
