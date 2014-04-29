@@ -178,7 +178,7 @@ configure_system()
 				PAM_SU="$MNT_TARGET/etc/pam.d/su"
 			;;
 			esac
-			if [ -z "`grep -e '^auth[:space:]]\+sufficient[[:space:]]\+pam_succeed_if.so uid = 0 use_uid quiet$' $PAM_SU`" ]; then
+			if [ -z "`grep -e '^auth.*sufficient.*pam_succeed_if.so uid = 0 use_uid quiet$' $PAM_SU`" ]; then
 				sed -i '1,/^auth/s/^\(auth.*\)$/auth\tsufficient\tpam_succeed_if.so uid = 0 use_uid quiet\n\1/' $PAM_SU
 			fi
 		;;
