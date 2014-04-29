@@ -1432,6 +1432,8 @@ status_system()
 	msg "CPU: $(cat /proc/cpuinfo | grep ^Processor | awk -F': ' '{print $2}')"
 	msg "$(cat /proc/meminfo | grep ^MemTotal)"
 	msg "$(cat /proc/meminfo | grep ^SwapTotal)"
+	msg -n "SELinux: "
+	[ -e "/sys/fs/selinux/enforce" ] && msg "yes" || msg "no"
 	msg -n "Support loop device: "
 	[ -n "`ls /dev/block/loop0`" ] && msg "yes" || msg "no"
 	msg "Supported file systems: $(cat /proc/filesystems | grep -v nodev | sort | xargs)"
