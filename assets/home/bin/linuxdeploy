@@ -35,11 +35,6 @@ msg()
 	echo "$1" "$2" 1>&3
 }
 
-selinux()
-{
-	echo $1 > /sys/fs/selinux/enforce
-}
-
 prepare_system()
 {
 	msg -n "Checking mount points ... "
