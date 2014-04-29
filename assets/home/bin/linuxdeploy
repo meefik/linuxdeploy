@@ -1435,7 +1435,7 @@ status_system()
 	msg -n "SELinux: "
 	[ -e "/sys/fs/selinux/enforce" ] && msg "yes" || msg "no"
 	msg -n "Support loop device: "
-	[ -n "`ls /dev/block/loop0`" ] && msg "yes" || msg "no"
+	[ -e "/dev/block/loop0" ] && msg "yes" || msg "no"
 	msg "Supported file systems: $(cat /proc/filesystems | grep -v nodev | sort | xargs)"
 	LINUX_VERSION=`[ -r "$MNT_TARGET/etc/os-release" ] && . "$MNT_TARGET/etc/os-release"; [ -n "$PRETTY_NAME" ] && echo "$PRETTY_NAME" || echo "unknown"`
 	msg "Active system: $LINUX_VERSION"
