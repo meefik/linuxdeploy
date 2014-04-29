@@ -1133,19 +1133,19 @@ install_system()
 		msg "Retrieving base packages: "
 		for PACKAGE in $BASIC_PACKAGES; do
 			msg -n "$PACKAGE ... "
-    		FILE=`echo "$PKG_LIST" | grep -m1 -e "^$PACKAGE-[[:digit:]].*\.xz$" -e "^$PACKAGE-[[:digit:]].*\.gz$"`
-    		test "$FILE" || { msg "fail"; return 1; }
-    		#echo "downloading ${FILE}... "
-    		for i in 1 2 3
-    		do
-    			wget -q -c -O $CACHE_DIR/$FILE $REPO/$FILE
-    			[ $? -eq 0 ] && break || sleep 30s
-    		done
-    		#echo "unpacking ${FILE}... "
+    			FILE=`echo "$PKG_LIST" | grep -m1 -e "^$PACKAGE-[[:digit:]].*\.xz$" -e "^$PACKAGE-[[:digit:]].*\.gz$"`
+    			test "$FILE" || { msg "fail"; return 1; }
+    			#echo "downloading ${FILE}... "
+    			for i in 1 2 3
+    			do
+    				wget -q -c -O $CACHE_DIR/$FILE $REPO/$FILE
+    				[ $? -eq 0 ] && break || sleep 30s
+    			done
+    			#echo "unpacking ${FILE}... "
 			case "$FILE" in
-    		*.gz) tar xzf $CACHE_DIR/$FILE -C $MNT_TARGET;;
-    		*.xz) xz -dc $CACHE_DIR/$FILE | tar x -C $MNT_TARGET;;
-    		*) msg "fail"; return 1;;
+			*.gz) tar xzf $CACHE_DIR/$FILE -C $MNT_TARGET;;
+			*.xz) xz -dc $CACHE_DIR/$FILE | tar x -C $MNT_TARGET;;
+			*) msg "fail"; return 1;;
 			esac
 			[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 		done
@@ -1243,23 +1243,6 @@ install_system()
 		chmod 04755 $MNT_TARGET/usr/bin/systemd-detect-virt
 		# clean cache
 		rm -rf $MNT_TARGET/tmp/*
-
-		#msg "Installing base packages: "
-		#for FILE in `cd $CACHE_DIR && ls *.rpm`; do
-		#	msg -n "$FILE ... "
-		#	chroot $MNT_TARGET /bin/rpm -i --nodeps --force /tmp/$FILE
-		#	[ $? -eq 0 ] && msg "done" || msg "fail"
-		#done
-
-		#msg "Preconfigure system: "
-		#configure_system dns mtab repository
-
-		#msg "Installing base system: "
-		#chroot $MNT_TARGET /usr/bin/yum groupinstall "Base" --nogpgcheck --skip-broken -y 1>&3 2>&3
-
-		#msg -n "Clearing cache ... "
-		#chroot $MNT_TARGET /usr/bin/yum clean all
-    	#[ $? -eq 0 ] && msg "done" || msg "fail"
 	;;
 	opensuse)
 		msg "Installing openSUSE distribution: "
@@ -1289,18 +1272,18 @@ install_system()
 		msg "Retrieving base packages: "
 		for PACKAGE in $BASIC_PACKAGES; do
 			msg -n "$PACKAGE ... "
-    		PKG_URL=`grep -e "^arm" -e "^noarch" | grep -m1 -e "^.*/$PACKAGE-[0-9s][0-9\.].*\.rpm$" $PKG_LIST`
-    		test "$PKG_URL" || { msg "fail"; return 1; }
-    		FILE=`basename $PKG_URL`
-    		#echo "downloading ${FILE}... "
-    		for i in 1 2 3
-    		do
-    			wget -q -c -O $MNT_TARGET/tmp/$FILE $REPO/$PKG_URL
-    			[ $? -eq 0 ] && break || sleep 30s
-    		done
-    		#echo "unpacking ${FILE}... "
-    		(cd $MNT_TARGET; rpm2cpio $MNT_TARGET/tmp/$FILE | cpio -idmu)
-    		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
+    			PKG_URL=`grep -e "^arm" -e "^noarch" | grep -m1 -e "^.*/$PACKAGE-[0-9s][0-9\.].*\.rpm$" $PKG_LIST`
+    			test "$PKG_URL" || { msg "fail"; return 1; }
+    			FILE=`basename $PKG_URL`
+    			#echo "downloading ${FILE}... "
+    			for i in 1 2 3
+    			do
+    				wget -q -c -O $MNT_TARGET/tmp/$FILE $REPO/$PKG_URL
+    				[ $? -eq 0 ] && break || sleep 30s
+    			done
+    			#echo "unpacking ${FILE}... "
+    			(cd $MNT_TARGET; rpm2cpio $MNT_TARGET/tmp/$FILE | cpio -idmu)
+    			[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 		done
 
 		msg "Mounting partitions: "
