@@ -28,7 +28,7 @@
     <string name="serverdns" translatable="false"></string>
     <string name="locale" translatable="false">en_US.UTF-8</string>
     <string name="desktopenv" translatable="false">lxde</string>
-	<string name="components" translatable="false">desktop ssh vnc</string>
+    <string name="components" translatable="false">desktop ssh vnc</string>
     <string name="customstartup" translatable="false">false</string>
     <string name="scripts" translatable="false">/etc/init.d/myscript</string>
     <string name="custommount" translatable="false">false</string>
