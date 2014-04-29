@@ -440,7 +440,8 @@ configure_system()
 		(set -e
 			case "$DISTRIB" in
 			debian|ubuntu|kali)
-				PKGS="selinux-policy-default"
+				PKGS=""
+				[ -e "/sys/fs/selinux/enforce" ] && PKGS="selinux-policy-default"
 				for component in $COMPONENTS
 				do
 					case "$component" in
