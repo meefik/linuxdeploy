@@ -441,7 +441,6 @@ configure_system()
 			case "$DISTRIB" in
 			debian|ubuntu|kali)
 				PKGS=""
-				[ -e "/sys/fs/selinux/enforce" ] && PKGS="selinux-policy-default"
 				for component in $COMPONENTS
 				do
 					case "$component" in
@@ -1094,6 +1093,7 @@ install_system()
 		msg "Installing Debian-based distribution: "
 
 		BASIC_PACKAGES="locales,sudo,man-db"
+		[ -e "/sys/fs/selinux/enforce" ] && BASIC_PACKAGES="$BASIC_PACKAGES,selinux-policy-default"
 
 		[ -z "$DEBOOTSTRAP_DIR" ] && DEBOOTSTRAP_DIR=${ENV_DIR%/}/deploy/debootstrap
 		export DEBOOTSTRAP_DIR
