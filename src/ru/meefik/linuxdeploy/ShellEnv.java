@@ -245,14 +245,16 @@ public class ShellEnv {
 		params.add("chmod 755 " + PrefStore.ENV_DIR + "/bin/busybox");
 		params.add(PrefStore.ENV_DIR + "/bin/busybox --install -s "
 				+ PrefStore.ENV_DIR + "/bin");
+		if (PrefStore.BUILTIN_SHELL == false) {
+			params.add("rm " + PrefStore.ENV_DIR + "/bin/sh");
+			params.add("ln -s /system/bin/sh " + PrefStore.ENV_DIR + "/bin/sh"); 
+		}
 		params.add("PATH=" + PrefStore.ENV_DIR + "/bin:$PATH; export PATH");
 		params.add("chmod -R 755 " + PrefStore.ENV_DIR + "/bin");
 		params.add("chmod -R a+rX " + PrefStore.ENV_DIR + "/etc "
 				+ PrefStore.ENV_DIR + "/deploy");
 		params.add("chmod 755 " + PrefStore.ENV_DIR
 				+ "/deploy/debootstrap/pkgdetails");
-		params.add("chown -R root:root " + PrefStore.ENV_DIR + "/bin "
-				+ PrefStore.ENV_DIR + "/etc " + PrefStore.ENV_DIR + "/deploy");
 		if (PrefStore.SYMLINK) {
 			params.add("rm -f /system/bin/linuxdeploy");
 			params.add("ln -s "

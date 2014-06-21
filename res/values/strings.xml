@@ -68,6 +68,8 @@
     <string name="env_preferences">Operating environment</string>
     <string name="title_installdir_preference">ENV directory</string>
     <string name="dialog_title_installdir_preference">ENV directory</string>
+    <string name="title_builtinshell_preference">Built-in shell</string>
+    <string name="summary_builtinshell_preference">Use built-in shell</string>
     <string name="title_symlink_preference">Create symlink</string>
     <string name="summary_symlink_preference">Create a symbolic link in Android on linuxdeploy</string>
     <string name="title_installenv_preference">Update ENV</string>

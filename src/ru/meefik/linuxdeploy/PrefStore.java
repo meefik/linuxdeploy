@@ -39,6 +39,7 @@ public class PrefStore {
 	public static Integer MAX_LINE;
 	public static String THEME;
 	public static String ENV_DIR;
+	public static Boolean BUILTIN_SHELL;
 	public static Boolean SYMLINK;
 
 	// to debug
@@ -95,6 +96,8 @@ public class PrefStore {
 
 		SharedPreferences sp = c.getSharedPreferences(APP_PREF_FILE_NAME,
 				Context.MODE_PRIVATE);
+		
+		SharedPreferences.Editor prefEditor = sp.edit();
 
 		SCREEN_LOCK = sp.getBoolean("screenlock",
 				c.getString(R.string.screenlock).equals("true") ? true : false);
@@ -106,7 +109,14 @@ public class PrefStore {
 				c.getString(R.string.maxline)));
 		LANGUAGE = sp.getString("language", c.getString(R.string.language));
 		THEME = sp.getString("theme", c.getString(R.string.theme));
+		
 		ENV_DIR = sp.getString("installdir", c.getString(R.string.envdir));
+		if (ENV_DIR.equals("{replace}")) ENV_DIR = c.getApplicationInfo().dataDir+File.separator+"linux";
+		// Update ENV_DIR
+		prefEditor.putString("installdir", ENV_DIR);
+		
+		BUILTIN_SHELL = sp.getBoolean("builtinshell", c.getString(R.string.builtinshell).equals("true") ? true : false);
+		
 		SYMLINK = sp.getBoolean("symlink", c.getString(R.string.symlink)
 				.equals("true") ? true : false);
 		CURRENT_PROFILE = sp.getString("profile", null);
@@ -149,9 +159,7 @@ public class PrefStore {
 				.getResources().getStringArray(R.array.default_components)));
 		if (!sp.contains("xcomponents")) {
 			// set default components
-			SharedPreferences.Editor prefEditor = sp.edit();
 			SharedPreferenceCompat.EditorCompat.putStringSet(prefEditor, "xcomponents", defcomp);
-			prefEditor.commit();
 		}
 		Set<String> comp_set = SharedPreferenceCompat.getStringSet(sp,
 				"xcomponents", defcomp);
@@ -206,6 +214,8 @@ public class PrefStore {
 		} catch (NameNotFoundException e) {
 			e.printStackTrace();
 		}
+		
+		prefEditor.commit();
 	}
 
 	public static int getWidth(Context mContext) {
