@@ -116,7 +116,6 @@ public class PrefStore {
 		prefEditor.putString("installdir", ENV_DIR);
 		
 		BUILTIN_SHELL = sp.getBoolean("builtinshell", c.getString(R.string.builtinshell).equals("true") ? true : false);
-		
 		SYMLINK = sp.getBoolean("symlink", c.getString(R.string.symlink)
 				.equals("true") ? true : false);
 		CURRENT_PROFILE = sp.getString("profile", null);
@@ -135,8 +134,11 @@ public class PrefStore {
 				c.getString(R.string.logs).equals("true") ? true : false);
 		LOG_FILE = sp.getString("logfile", extStore.getAbsolutePath()
 				+ "/linuxdeploy.log");
+		
+		prefEditor.commit();
 
 		sp = c.getSharedPreferences(CURRENT_PROFILE, Context.MODE_PRIVATE);
+		prefEditor = sp.edit();
 
 		IMG_TARGET = sp.getString("diskimage", extStore.getAbsolutePath()
 				+ "/linux.img");
@@ -204,6 +206,8 @@ public class PrefStore {
 		FB_INPUT = sp.getString("fbinput", c.getString(R.string.fbinput));
 		FB_ARGS = sp.getString("fbargs", c.getString(R.string.fbargs));
 		FB_FREEZE = sp.getString("fbfreeze", c.getString(R.string.fbfreeze));
+		
+		prefEditor.commit();
 
 		try {
 			VERSION = c.getPackageManager().getPackageInfo(c.getPackageName(),
@@ -214,8 +218,6 @@ public class PrefStore {
 		} catch (NameNotFoundException e) {
 			e.printStackTrace();
 		}
-		
-		prefEditor.commit();
 	}
 
 	public static int getWidth(Context mContext) {
