@@ -1,7 +1,7 @@
 #!/system/bin/sh
 #
 # Linux Deploy for Android
-# (C) 2012 Anton Skshidlevsky <meefik@gmail.com>
+# (C) 2012-2014 Anton Skshidlevsky <meefik@gmail.com>
 #
 
 ENV_DIR="."

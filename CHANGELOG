@@ -1,6 +1,10 @@
 Changelog (English)
 ===================
 
+1.4.6
+Added option to disable the built-in shell
+Operating environment by default: /data/data/ru.meefik.linuxdeploy/linux
+
 1.4.5
 Added support SELinux
 BusyBox dynamically linked (fixed DNS resolver)
@@ -242,6 +246,10 @@ Updated list packages of base system installation
 
 История изменений (Русский)
 ===========================
+
+1.4.6
+Добавлена опция для отключения встроенного командного интерпретатора
+Путь рабочего окружения по умолчанию: /data/data/ru.meefik.linuxdeploy/linux
 
 1.4.5
 Добавлена поддержка SELinux
