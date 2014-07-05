@@ -941,10 +941,12 @@ start_system()
 			sed -i "s|Option.*\"Device\".*#linuxdeploy|Option \"Device\" \"$FB_INPUT\" #linuxdeploy|g" $MNT_TARGET/etc/X11/xorg.conf
 			(set -e
 				dbus_init
+				sync
 				case "$FB_FREEZE" in
 				stop)
 					setprop ctl.stop surfaceflinger
 					chroot $MNT_TARGET su - $USER_NAME -c "xinit -- :$FB_DISPLAY -dpi $FB_DPI $FB_ARGS"
+					sync
 					reboot				
 				;;
 				pause)
