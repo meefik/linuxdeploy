@@ -24,6 +24,29 @@ exec 3>&1
 cd $ENV_DIR
 umask 0022
 
+# This shell seems to be screwing things up with the
+# built-in busybox shell. Lots of permissions errors.
+if [ "$SHELL" = "/tmp-mksh/tmp-mksh" ]; then
+  BIN_DIR="${ENV_DIR%/}/bin"
+  if [ "$(readlink "${BIN_DIR}/sh")" = "${BIN_DIR}/busybox" ]; then
+    rm "${BIN_DIR}/sh" || { echo "fail"; exit 1; }
+    ln -s /system/bin/mksh "${BIN_DIR}/sh" || { echo "fail"; exit 1; }
+  fi
+  if [ "$(readlink "${BIN_DIR}/chroot")" = "${BIN_DIR}/busybox" ]; then
+    if [ ! -e /system/xbin/busybox ]; then
+      echo "Please install the latest busybox-armv7l to /system/xbin"
+      exit 1
+    fi
+    # Older busybox versions and some busybox
+    # installers seem to get chattr and chroot mixed up.
+    if /system/xbin/busybox chroot @@@@@ 2>& 1 | grep -q -i "must use '-v'"; then
+      echo "Please install the latest busybox-armv7l to /system/xbin"
+      exit 1
+    fi
+    rm "${BIN_DIR}/chroot" || { echo "fail"; exit 1; }
+    ln -s /system/xbin/busybox "${BIN_DIR}/chroot" || { echo "fail"; exit 1; }
+  fi
+fi
 
 #################################################
 
