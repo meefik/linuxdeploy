@@ -246,8 +246,12 @@ public class ShellEnv {
 		params.add(PrefStore.ENV_DIR + "/bin/busybox --install -s "
 				+ PrefStore.ENV_DIR + "/bin");
 		if (PrefStore.BUILTIN_SHELL == false) {
+			// Set system shell
 			params.add("rm " + PrefStore.ENV_DIR + "/bin/sh");
-			params.add("ln -s /system/bin/sh " + PrefStore.ENV_DIR + "/bin/sh"); 
+			params.add("ln -s /system/bin/sh " + PrefStore.ENV_DIR + "/bin/sh");
+			// Set system chroot
+			params.add("rm " + PrefStore.ENV_DIR + "/bin/chroot");
+			params.add("ln -s /system/xbin/chroot " + PrefStore.ENV_DIR + "/bin/chroot");
 		}
 		params.add("PATH=" + PrefStore.ENV_DIR + "/bin:$PATH; export PATH");
 		params.add("chmod -R 755 " + PrefStore.ENV_DIR + "/bin");
