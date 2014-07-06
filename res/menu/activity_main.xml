@@ -15,7 +15,7 @@
     <item
         android:id="@+id/menu_properties"
         android:orderInCategory="100"
-        android:showAsAction="always"
+        android:showAsAction="ifRoom"
         android:title="@string/menu_properties">
     </item>
     <item
