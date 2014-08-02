@@ -6,6 +6,7 @@ Added option to disable the built-in shell
 Operating environment by default: /data/data/ru.meefik.linuxdeploy/linux
 Added sync in framebuffer
 Added ACCESS_SUPERUSER permission
+Fixed packages list of Arch Linux (issue #136)
 
 1.4.5
 Added support SELinux
@@ -254,6 +255,7 @@ Updated list packages of base system installation
 Путь рабочего окружения по умолчанию: /data/data/ru.meefik.linuxdeploy/linux
 Добавлена команда sync перед переходом в режим фрем-буфера
 Добавлено разрешение ACCESS_SUPERUSER
+Исправлены битые пакеты в Arch Linux (тикет #136)
 
 1.4.5
 Добавлена поддержка SELinux
