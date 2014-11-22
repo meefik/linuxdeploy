@@ -208,19 +208,19 @@ configure_system()
 			# Add users in aid_inet group
 			case "$DISTRIB" in
 			debian|ubuntu|kali)
-				INET_USERS="messagebus www-data mysql postgres"
+				INET_USERS="root messagebus www-data mysql postgres"
 			;;
 			archlinux)
-				INET_USERS="dbus"
+				INET_USERS="root dbus"
 			;;
 			fedora)
-				INET_USERS="dbus"
+				INET_USERS="root dbus"
 			;;
 			opensuse)
-				INET_USERS="messagebus"
+				INET_USERS="root messagebus"
 			;;			
 			gentoo)
-				INET_USERS="messagebus"
+				INET_USERS="root messagebus"
 			;;
 			esac
 			for UID in $INET_USERS
@@ -907,7 +907,6 @@ start_system()
 		if [ -z "$XSESSION" ]; then
 			(set -e
 				dbus_init
-				VNC_ARGS=""
 				# TightVNC Server
 				which Xtightvnc && VNC_ARGS="$VNC_ARGS -compatiblekbd" || true
 				[ -e "$MNT_TARGET/tmp/.X$VNC_DISPLAY-lock" ] && rm $MNT_TARGET/tmp/.X$VNC_DISPLAY-lock
