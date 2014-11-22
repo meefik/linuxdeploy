@@ -44,7 +44,7 @@
         <EditTextPreference
             android:defaultValue="@string/vncargs"
             android:dialogTitle="@string/dialog_title_vncargs_preference"
-            android:key="vncoptions"
+            android:key="vncargs"
             android:summary="@string/vncargs"
             android:title="@string/title_vncargs_preference" />
     </PreferenceCategory>
