@@ -156,12 +156,6 @@
         <item>vnc</item>
         <item>xserver</item>
     </string-array>
-    <string-array name="ubuntu_components_values" translatable="false">
-        <item>desktop</item>
-        <item>ssh</item>
-        <item>vnc</item>
-        <item>xserver</item>
-    </string-array>
     <string-array name="ubuntu_components_entries">
         <item>Desktop Environment</item>
         <item>SSH server</item>
@@ -220,7 +214,7 @@
     <!-- openSUSE -->
 
     <string-array name="opensuse_suite_values" translatable="false">
-        <item>factory</item>
+        <item>openSUSE-current</item>
     </string-array>
     <string-array name="opensuse_architecture_values" translatable="false">
         <item>armv6hl</item>

@@ -5,6 +5,7 @@ Changelog (English)
 Fixed packages list of Arch Linux (issue #161)
 Fixed error with VNC_ARGS (issue #153)
 User root is added to the group aid_inet be default (ticket #135)
+Takes into account changes in openSUSE repository (ticket #154)
 
 1.4.6
 Added option to disable the built-in shell
@@ -260,6 +261,7 @@ Updated list packages of base system installation
 Исправлен список пакетов в Arch Linux (тикет #161)
 Исправлена ошибка, связанная с VNC_ARGS (тикет #153)
 Пользователь root добавлен в группу aid_inet по умолчанию (тикет #135)
+Учтены изменения в репозитории openSUSE (тикет #154)
 
 1.4.6
 Добавлена опция для отключения встроенного командного интерпретатора
