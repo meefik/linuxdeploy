@@ -733,7 +733,7 @@ mount_system()
 			[ -e "/sys/fs/selinux/enforce" ] && echo 0 > /sys/fs/selinux/enforce
 			mount -t selinuxfs selinuxfs $tg
 			mount -o remount,ro,bind $tg
-			[ $? -eq 0 ] && msg "done (disabled temporarily)" || msg "fail"
+			[ $? -eq 0 ] && msg "done" || msg "fail"
 		else
 			msg "skip"
 		fi
@@ -832,11 +832,9 @@ umount_system()
 			msg -n "$pp ... "
 			if [ `echo $pp | grep -ci "selinux"` -gt 0 ]; then
 				[ -e $MNT_TARGET/tmp/.linuxdeploy_selinux_state ] && cat $MNT_TARGET/tmp/.linuxdeploy_selinux_state > /sys/fs/selinux/enforce
-				msg "state restored"
-			else
-				umount $p
-				[ $? -eq 0 ] && msg "done" || msg "fail"
 			fi
+			umount $p
+			[ $? -eq 0 ] && msg "done" || msg "fail"
 			um=1
 		done
 	done
