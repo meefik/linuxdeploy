@@ -214,7 +214,8 @@
     <!-- openSUSE -->
 
     <string-array name="opensuse_suite_values" translatable="false">
-        <item>openSUSE-current</item>
+        <item>12.3</item>
+        <item>13.2</item>
     </string-array>
     <string-array name="opensuse_architecture_values" translatable="false">
         <item>armv6hl</item>
