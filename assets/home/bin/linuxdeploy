@@ -729,6 +729,7 @@ mount_system()
 		msg -n "/sys/fs/selinux ... "
 		tg=$MNT_TARGET/sys/fs/selinux; is_mnt=`cat /proc/mounts | grep " $tg "`
 		if [ -z "$is_mnt" -a -d "/sys/fs/selinux" ]; then
+			cat /sys/fs/selinux/enforce > $MNT_TARGET/tmp/.linuxdeploy_selinux_state
 			[ -e "/sys/fs/selinux/enforce" ] && echo 0 > /sys/fs/selinux/enforce
 			mount -t selinuxfs selinuxfs $tg
 			mount -o remount,ro,bind $tg
@@ -829,6 +830,9 @@ umount_system()
 		do
 			pp=`echo $p | sed "s|$MNT_TARGET/*|/|g"`
 			msg -n "$pp ... "
+			if [ `echo $pp | grep -ci "selinux"` -gt 0 ]; then
+				[ -e $MNT_TARGET/tmp/.linuxdeploy_selinux_state ] && cat $MNT_TARGET/tmp/.linuxdeploy_selinux_state > /sys/fs/selinux/enforce
+			fi
 			umount $p
 			[ $? -eq 0 ] && msg "done" || msg "fail"
 			um=1
