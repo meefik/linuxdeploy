@@ -79,7 +79,7 @@
     <string name="fedora_architecture" translatable="false">armhfp</string>
 
     <!-- openSUSE -->
-    <string name="opensuse_suite" translatable="false">openSUSE-current</string>
+    <string name="opensuse_suite" translatable="false">12.3</string>
     <string name="opensuse_mirror" translatable="false">http://download.opensuse.org/ports/</string>
     <string name="opensuse_architecture" translatable="false">armv7hl</string>
 
