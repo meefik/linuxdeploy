@@ -194,6 +194,7 @@
         <item>19</item>
         <item>20</item>
     </string-array>
+    <!-- f19 and later only have armhfp -->
     <string-array name="fedora_architecture_values" translatable="false">
         <item>arm</item>
         <item>armhfp</item>
