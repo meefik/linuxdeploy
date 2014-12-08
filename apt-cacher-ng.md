@@ -82,3 +82,6 @@ http://ports.ubuntu.com
 ````
 #Running apt-cacher-ng
 `apt-cacher-ng -c /etc/apt-cacher-ng`
+
+# Setting up Linux Deploy
+Your mirror url should be *http://your_computer:3142/XXXX* where *XXXX* is one of *armdebian*, *armubuntu*, or *armkali*.
