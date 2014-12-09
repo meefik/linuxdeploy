@@ -1,6 +1,9 @@
 Changelog (English)
 ===================
 
+1.4.8
+Added support Android 5 (busybox PIE support)
+
 1.4.7
 Fixed packages list of Arch Linux (issue #161)
 Fixed error with VNC_ARGS (issue #153)
@@ -257,6 +260,9 @@ Updated list packages of base system installation
 
 История изменений (Русский)
 ===========================
+
+1.4.8
+Добавлена поддержка Android 5 (busybox пересобран с поддержкой PIE)
 
 1.4.7
 Исправлен список пакетов в Arch Linux (тикет #161)

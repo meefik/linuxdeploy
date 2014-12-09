@@ -83,8 +83,8 @@ diff -urN ../busybox-1.20.2.orig/configs/linuxdeploy_defconfig ./configs/linuxde
 +#
 +# Build Options
 +#
-+CONFIG_STATIC=y
-+# CONFIG_PIE is not set
++#CONFIG_STATIC is not set
++CONFIG_PIE=y
 +# CONFIG_NOMMU is not set
 +# CONFIG_BUILD_LIBBUSYBOX is not set
 +# CONFIG_FEATURE_INDIVIDUAL is not set
