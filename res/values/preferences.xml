@@ -74,8 +74,8 @@
     <string name="archlinux_architecture" translatable="false">armv7h</string>
 
     <!-- Fedora -->
-    <string name="fedora_suite" translatable="false">19</string>
-    <string name="fedora_mirror" translatable="false">http://dl.fedoraproject.org/pub/fedora-secondary/releases/</string>
+    <string name="fedora_suite" translatable="false">20</string>
+    <string name="fedora_mirror" translatable="false">http://dl.fedoraproject.org/pub/</string>
     <string name="fedora_architecture" translatable="false">armhfp</string>
 
     <!-- openSUSE -->
