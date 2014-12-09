@@ -2,8 +2,7 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
-LOCAL_LDLIBS   = -static
-#LOCAL_CFLAGS   = -Wall -g
+LOCAL_CFLAGS   = -Wall -g -fPIE
 
 LOCAL_MODULE    := pkgdetails
 LOCAL_SRC_FILES := pkgdetails.c
