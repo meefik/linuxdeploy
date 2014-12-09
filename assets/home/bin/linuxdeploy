@@ -282,10 +282,18 @@ configure_system()
 			fedora)
 				find $MNT_TARGET/etc/yum.repos.d/ -name *.repo | while read f; do sed -i 's/^enabled=.*/enabled=0/g' $f; done
 				REPO_FILE="$MNT_TARGET/etc/yum.repos.d/fedora-${SUITE}-${ARCH}.repo"
+				case "$SUITE" in
+				17|18|19)
+					REPO="${MIRROR%/}/fedora-secondary/releases/${SUITE}/Everything/${ARCH}/os/"
+				;;
+				20|21)
+					REPO="${MIRROR%/}/fedora/linux/releases/${SUITE}/Everything/${ARCH}/os/"
+				;;
+				esac
 				echo "[fedora-${SUITE}-${ARCH}]" > $REPO_FILE
 				echo "name=Fedora ${SUITE} - ${ARCH}" >> $REPO_FILE
 				echo "failovermethod=priority" >> $REPO_FILE
-				echo "baseurl=${MIRROR%/}/${SUITE}/Everything/${ARCH}/os/" >> $REPO_FILE
+				echo "baseurl=${REPO}" >> $REPO_FILE
 				echo "enabled=1" >> $REPO_FILE
 				echo "metadata_expire=7d" >> $REPO_FILE
 				echo "gpgcheck=0" >> $REPO_FILE
