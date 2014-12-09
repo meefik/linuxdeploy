@@ -4,6 +4,7 @@ Changelog (English)
 1.4.8
 Added support Android 5 (PIE support)
 Added support Fedora 21 (armhfp only)
+Fixed LD_PRELOAD errors
 
 1.4.7
 Fixed packages list of Arch Linux (issue #161)
@@ -265,6 +266,7 @@ Updated list packages of base system installation
 1.4.8
 Добавлена поддержка Android 5 (поддержка PIE)
 Добавлена поддержка Fedora 21 (только armhfp)
+Исправление ошибок LD_PRELOAD
 
 1.4.7
 Исправлен список пакетов в Arch Linux (тикет #161)
