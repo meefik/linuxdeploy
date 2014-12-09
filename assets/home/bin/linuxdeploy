@@ -17,6 +17,8 @@ PATH=${ENV_DIR%/}/bin:$PATH:/usr/bin:/bin:/usr/sbin:/sbin
 TERM=vt100
 export PATH TERM
 
+unset LD_PRELOAD
+
 exec 3>&1
 [ "$DEBUG_MODE" != "y" ] && { exec 1>/dev/null; exec 2>/dev/null; }
 [ "$TRACE_MODE" == "y" ] && set -x
@@ -560,7 +562,7 @@ configure_system()
 						PKGS="$PKGS openssh-server"
 					;;
 					vnc)
-						PKGS="$PKGS tigervnc-server"
+						PKGS="$PKGS tigervnc-server trousers"
 					;;
 					xserver)
 						PKGS="$PKGS xorg-x11-xinit xorg-x11-server-Xorg xorg-x11-drv-fbdev xorg-x11-drv-evdev"
