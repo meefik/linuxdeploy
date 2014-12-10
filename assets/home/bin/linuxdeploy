@@ -420,12 +420,12 @@ configure_system()
 				if [ -z "`grep '^INPUT_DEVICES=' $MNT_TARGET/etc/portage/make.conf`" ]; then
 					echo 'INPUT_DEVICES="evdev"' >> $MNT_TARGET/etc/portage/make.conf
 				else
-					sed -i 's|^\(INPUT_DEVICES=.*\)|\1"evdev"|g' $MNT_TARGET/etc/portage/make.conf
+					sed -i 's|^\(INPUT_DEVICES=\).*|\1"evdev"|g' $MNT_TARGET/etc/portage/make.conf
 				fi
 				if [ -z "`grep '^VIDEO_CARDS=' $MNT_TARGET/etc/portage/make.conf`" ]; then
 					echo 'VIDEO_CARDS="fbdev"' >> $MNT_TARGET/etc/portage/make.conf
 				else
-					sed -i 's|^\(VIDEO_CARDS=.*\)|\1"fbdev"|g' $MNT_TARGET/etc/portage/make.conf
+					sed -i 's|^\(VIDEO_CARDS=\).*|\1"fbdev"|g' $MNT_TARGET/etc/portage/make.conf
 				fi
 			;;
 			opensuse)
