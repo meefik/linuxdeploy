@@ -199,6 +199,7 @@
     <string-array name="fedora_architecture_values" translatable="false">
         <item>arm</item>
         <item>armhfp</item>
+        <item>aarch64</item>
     </string-array>
     <string-array name="fedora_components_values" translatable="false">
         <item>desktop</item>
