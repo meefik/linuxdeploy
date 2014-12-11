@@ -16,3 +16,7 @@
 
 # Local configuration file (sdk path, etc)
 local.properties
+
+# Generic save file patterns
+*~
+.*.swp
