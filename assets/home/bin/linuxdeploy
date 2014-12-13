@@ -951,8 +951,21 @@ start_system()
 		XPID=`cat $MNT_TARGET/tmp/xsession.pid`
 		[ -n "$XPID" ] && XSESSION=`ps | grep "^$XPID "`
 		if [ -z "$XSESSION" ]; then
+			fb=`basename $FB_DEV`
+			depth=`cat /sys/class/graphics/$fb/bits_per_pixel`
+			if [ ! -e "$FB_INPUT" ]; then
+				for event in `ls /sys/class/input | grep event`
+				do
+					if [ -n "`grep touchscreen /sys/class/input/$event/device/name`" ]; then
+						FB_INPUT="/dev/input/$event"
+						break
+					fi
+				done
+			fi
 			sed -i "s|Option.*\"fbdev\".*#linuxdeploy|Option \"fbdev\" \"$FB_DEV\" #linuxdeploy|g" $MNT_TARGET/etc/X11/xorg.conf
 			sed -i "s|Option.*\"Device\".*#linuxdeploy|Option \"Device\" \"$FB_INPUT\" #linuxdeploy|g" $MNT_TARGET/etc/X11/xorg.conf
+			sed -i "s|Option.*\"DefaultDepth\".*#linuxdeploy|Option \"DefaultDepth\" \"$depth\" #linuxdeploy|g" $MNT_TARGET/etc/X11/xorg.conf
+			sed -i "s|Option.*\"Depth\".*#linuxdeploy|Option \"Depth\" \"$depth\" #linuxdeploy|g" $MNT_TARGET/etc/X11/xorg.conf
 			(set -e
 				dbus_init
 				sync
