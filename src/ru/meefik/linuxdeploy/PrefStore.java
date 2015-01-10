@@ -85,8 +85,10 @@ public class PrefStore {
 	// miscellaneous
 	public static String CURRENT_PROFILE;
 	public static Boolean PREF_CHANGE = false;
+	public static String MARCH = "unknown";
 	public static String VERSION = "unknown";
-	public static final String ROOT_ASSETS = "home";
+	public static String SHELL = "/system/xbin/ash";
+	public static final String ROOT_ASSETS = "root";
 	public static final String APP_PREF_FILE_NAME = "app_settings";
 	public static final String PROFILES_FILE_NAME = "profiles";
 
@@ -116,6 +118,9 @@ public class PrefStore {
 		prefEditor.putString("installdir", ENV_DIR);
 		
 		BUILTIN_SHELL = sp.getBoolean("builtinshell", c.getString(R.string.builtinshell).equals("true") ? true : false);
+		if (BUILTIN_SHELL) {
+			SHELL = ENV_DIR + "/bin/sh";
+		}
 		SYMLINK = sp.getBoolean("symlink", c.getString(R.string.symlink)
 				.equals("true") ? true : false);
 		CURRENT_PROFILE = sp.getString("profile", null);
@@ -208,6 +213,8 @@ public class PrefStore {
 		FB_FREEZE = sp.getString("fbfreeze", c.getString(R.string.fbfreeze));
 		
 		prefEditor.commit();
+		
+		MARCH = getArch();
 
 		try {
 			VERSION = c.getPackageManager().getPackageInfo(c.getPackageName(),
@@ -218,6 +225,19 @@ public class PrefStore {
 		} catch (NameNotFoundException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static String getArch() {
+		String arch = System.getProperty("os.arch");    
+		char a = arch.toLowerCase().charAt(0);
+		String march = "";
+		switch (a) {
+		case 'a': march = "arm"; break;
+		case 'm': march = "mips"; break;
+		case 'i': 
+		case 'x': march = "intel"; break;
+		}
+	    return march;
 	}
 
 	public static int getWidth(Context mContext) {

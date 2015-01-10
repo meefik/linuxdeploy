@@ -1,6 +1,16 @@
 Changelog (English)
 ===================
 
+1.5.0
+Added support for devices with an Intel architecture
+Added support for cross-architecture installation x86 <-> ARM based on QEMU (binfmt_misc require support in the kernel)
+Updated built-in BusyBox to version 1.23.0
+
+1.4.9
+Added support for third-party BusyBox (required /system/xbin/ash)
+Added support Ubuntu 14.10 (Utopic Unicorn)
+Added support arm64/aarch64 for some distributions
+
 1.4.8
 Added support Android 5 (PIE support)
 Added support Fedora 21 (armhfp only)
@@ -262,6 +272,16 @@ Updated list packages of base system installation
 
 История изменений (Русский)
 ===========================
+
+1.5.0
+Добавлена поддержка устройств с Intel архитектурой
+Добавлена поддержка кросс-архитектурной инсталляции x86 <-> ARM на основе QEMU (требуется поддержка binfmt_misc на уровне ядра)
+Обновлен встроенный BusyBox до версии 1.23.0
+
+1.4.9
+Добавленна поддержка сторонних сборок BusyBox (требуется /system/xbin/ash)
+Добавлена поддержка Ubuntu 14.10 (Utopic Unicorn)
+Добавлена поддержка arm64/aarch64 для некоторых дистрибутивов
 
 1.4.8
 Добавлена поддержка Android 5 (поддержка PIE)

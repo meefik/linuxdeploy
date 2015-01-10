@@ -65,13 +65,13 @@
             android:key="installdir"
             android:summary="@string/envdir"
             android:title="@string/title_installdir_preference" />
-
+        
         <CheckBoxPreference
             android:defaultValue="@string/builtinshell"
             android:key="builtinshell"
             android:summary="@string/summary_builtinshell_preference"
             android:title="@string/title_builtinshell_preference" />
-        
+
         <CheckBoxPreference
             android:defaultValue="@string/symlink"
             android:key="symlink"
