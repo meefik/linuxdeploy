@@ -1,7 +1,7 @@
 Linux Deploy (English)
 =====================
 
-Copyright (C) 2012  Anton Skshidlevsky
+Copyright (C) 2012-2015  Anton Skshidlevsky
 
 Licensed under the [GPL version 3](http://www.gnu.org/licenses/) or later.
 
@@ -17,6 +17,7 @@ Installing a new operating system takes about 30 minutes. The recommended minimu
 * Supported distributions: Debian, Ubuntu, Arch Linux, Fedora, openSUSE, Kali Linux, Gentoo, RootFS (tgz, tbz2)
 * Installation type: image file, disk partition, directory
 * Supported file systems: ext2, ext3, ext4
+* Supported architectures: ARM, x86
 * Control interface: SSH, VNC, X, framebuffer
 * Desktop environment: XTerm, LXDE, Xfce, GNOME, KDE
 * Supported languages: English, Russian
@@ -53,7 +54,7 @@ Source code: <https://github.com/meefik/linuxdeploy>. This source code are writt
 Linux Deploy (Русский)
 ======================
 
-Copyright (C) 2012  Антон Скшидлевский
+Copyright (C) 2012-2015  Антон Скшидлевский
 
 Лицензировано под [GPL версии 3](http://www.gnu.org/licenses/) или более поздней.
 
@@ -69,6 +70,7 @@ Copyright (C) 2012  Антон Скшидлевский
 * Поддерживаемые дистрибутивы: Debian, Ubuntu, Arch Linux, Fedora, openSUSE, Kali Linux, Gentoo, RootFS (tgz, tbz2)
 * Тип установки: файл образа, раздел диска, директория
 * Поддерживаемые файловые системы: ext2, ext3, ext4
+* Поддерживаемые архитектуры: ARM, x86
 * Интерфейс управления: SSH, VNC, X, фрейм-буфер
 * Окружение рабочего стола: XTerm, LXDE, Xfce, GNOME, KDE
 * Поддерживаемые языки: русский, английский
