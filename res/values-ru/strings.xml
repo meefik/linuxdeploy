@@ -69,7 +69,7 @@
     <string name="title_installdir_preference">Директория окружения</string>
     <string name="dialog_title_installdir_preference">Директория окружения</string>
     <string name="title_builtinshell_preference">Встроенный интерпретатор</string>
-    <string name="summary_builtinshell_preference">Использовать встроенный командный интерпретатор</string>
+    <string name="summary_builtinshell_preference">Использовать встроенный BusyBox</string>
     <string name="title_symlink_preference">Создать симлинк</string>
     <string name="summary_symlink_preference">Создать в Android символьную ссылку на linuxdeploy</string>
     <string name="title_installenv_preference">Обновить окружение</string>

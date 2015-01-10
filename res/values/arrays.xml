@@ -92,8 +92,8 @@
     </string-array>
     <string-array name="guitype_entries" translatable="false">
         <item>VNC</item>
-        <item>X Window System</item>
-        <item>Frame Buffer</item>
+        <item>X Server</item>
+        <item>Framebuffer</item>
     </string-array>
     <string-array name="fbfreeze_values" translatable="false">
         <item>none</item>
@@ -121,6 +121,8 @@
     <string-array name="debian_architecture_values" translatable="false">
         <item>armel</item>
         <item>armhf</item>
+        <item>arm64</item>
+        <item>i386</item>
     </string-array>
     <string-array name="debian_components_values" translatable="false">
         <item>desktop</item>
@@ -138,6 +140,7 @@
     <!-- Ubuntu -->
 
     <string-array name="ubuntu_suite_values" translatable="false">
+        <item>utopic</item>
         <item>trusty</item>
         <item>saucy</item>
         <item>raring</item>
@@ -149,6 +152,7 @@
     <string-array name="ubuntu_architecture_values" translatable="false">
         <item>armel</item>
         <item>armhf</item>
+        <item>arm64</item>
     </string-array>
     <string-array name="ubuntu_components_values" translatable="false">
         <item>desktop</item>

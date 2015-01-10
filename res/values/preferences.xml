@@ -8,7 +8,7 @@
     <string name="language" translatable="false">en</string>
     <string name="theme" translatable="false">dark</string>
     <string name="autostart" translatable="false">false</string>
-    <string name="appicon" translatable="false">false</string>
+    <string name="appicon" translatable="false">true</string>
     <string name="envdir" translatable="false">{replace}</string>
     <string name="builtinshell" translatable="false">true</string>
     <string name="symlink" translatable="false">false</string>

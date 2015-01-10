@@ -1,11 +1,5 @@
 --- debootstrap.orig	2013-04-04 18:58:36.000000000 +0400
 +++ debootstrap	2013-05-19 23:57:50.596593154 +0400
-@@ -1,4 +1,4 @@
--#!/bin/sh -e
-+#!./bin/sh -e
- 
- VERSION='1.0.48'
- 
 @@ -17,7 +17,7 @@
  	fi
  fi
@@ -20,7 +14,6 @@
  		cp "$0"				 "$TARGET/debootstrap/debootstrap"
  		cp $DEBOOTSTRAP_DIR/functions	 "$TARGET/debootstrap/functions"
 -		cp $DEBOOTSTRAP_DIR/devices.tar.gz	 "$TARGET/debootstrap/devices.tar.gz"
-+		cp $DEBOOTSTRAP_DIR/pkgdetails	 "$TARGET/debootstrap/pkgdetails"
 +		cp $DEBOOTSTRAP_DIR/devices.tgz	 "$TARGET/debootstrap/devices.tgz"
  		cp $SCRIPT			 "$TARGET/debootstrap/suite-script"
  		echo "$ARCH"			>"$TARGET/debootstrap/arch"

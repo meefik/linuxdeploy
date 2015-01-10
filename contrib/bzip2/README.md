@@ -14,12 +14,8 @@ bzip2 - a block-sorting file compressor.
 
 3) Build bzip2:
 
-    cd ./bzip2
-    export CFLAGS=-static
-    export LDLAGS=-static
-    ./configure
-    make
+    cd ./bzip2-1.0.6
+    make CFLAGS=-static LDFLAGS=-static
+    strip -s bzip2
 
-4) Copy bzip2 binary to linuxdeploy directory:
-
-    cp ./bzip2 <LinuxDeploy>/assets/home/bin/bzip2
+4) Copy bzip2 binary to assets directory.

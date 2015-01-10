@@ -15,12 +15,8 @@ mke2fs - create an ext2/3 filesystem.
 3) Build mke2fs:
 
     cd ./e2fsprogs-1.42.5
-    export CFLAGS=-static
-    export LDLAGS=-static
     ./configure
-    make
+    make CFLAGS=-static LDFLAGS=-static
+    strip -s ./misc/mke2fs
 
-4) Copy mke2fs binary to linuxdeploy directory:
-
-    cp ./misc/mke2fs <LinuxDeploy>/assets/home/bin/mke2fs
-
+4) Copy mke2fs binary to assets directory.

@@ -113,25 +113,22 @@ public class ShellEnv {
 		params.add("su");
 		params.add("ls /data/local 1>/dev/null");
 		if (!execCmd(params)) {
-			sendLogs("Require superuser privileges (root)!\n");
+			sendLogs("ERROR: Require superuser privileges (root)!\n");
 			return false;
 		} else {
 			return true;
 		}
 	}
 
-	private boolean copyFile(String homeDir, String filename) {
+	private boolean extractFile(String rootAsset, String path) {
 		boolean result = true;
 		AssetManager assetManager = c.getAssets();
 		InputStream in = null;
 		OutputStream out = null;
 		try {
-			in = assetManager.open(filename);
-			String newFileName = homeDir
-					+ filename.replaceFirst(PrefStore.ROOT_ASSETS, "");
-			// Log.d("linuxdeploy", "extract: "+filename+" to "+newFileName);
-			out = new FileOutputStream(newFileName);
-
+			in = assetManager.open(rootAsset + path);
+			String fullPath = PrefStore.ENV_DIR + path;
+			out = new FileOutputStream(fullPath);
 			byte[] buffer = new byte[1024];
 			int read;
 			while ((read = in.read(buffer)) != -1) {
@@ -164,27 +161,23 @@ public class ShellEnv {
 		return result;
 	}
 
-	private boolean copyFileOrDir(String homeDir, String path) {
+	private boolean extractDir(String rootAsset, String path) {
 		AssetManager assetManager = c.getAssets();
 		String assets[] = null;
 		try {
-			assets = assetManager.list(path);
+			assets = assetManager.list(rootAsset + path);
 			if (assets.length == 0) {
-				if (!copyFile(homeDir, path))
+				if (!extractFile(rootAsset, path))
 					return false;
 			} else {
-				String fullPath = homeDir
-						+ path.replaceFirst(PrefStore.ROOT_ASSETS, "");
-				// String fullPath =
-				// getFilesDir().getAbsolutePath()+File.separator+path;
+				String fullPath = PrefStore.ENV_DIR	+ path;
 				File dir = new File(fullPath);
 				if (!dir.exists()) {
 					dir.mkdir();
-					// Log.d("linuxdeploy", "mkdir: "+fullPath);
 				}
 
 				for (int i = 0; i < assets.length; ++i) {
-					if (!copyFileOrDir(homeDir, path + "/" + assets[i]))
+					if (!extractDir(rootAsset, path + "/" + assets[i]))
 						return false;
 				}
 			}
@@ -225,40 +218,29 @@ public class ShellEnv {
 			return;
 		}
 
-		boolean copyResult = copyFileOrDir(PrefStore.ENV_DIR,
-				PrefStore.ROOT_ASSETS);
-		if (!copyResult) {
+		if (!extractDir(PrefStore.ROOT_ASSETS, "")) {
+			sendLogs("fail\n");
+			return;
+		}
+		if (!extractDir(PrefStore.MARCH, "")) {
 			sendLogs("fail\n");
 			return;
 		}
 
 		params.clear();
 		params.add("su");
+		params.add("PATH=" + PrefStore.ENV_DIR + "/bin:$PATH; export PATH");
 		if (PrefStore.TRACE_MODE.equals("y"))
 			params.add("set -x");
 		if (!PrefStore.DEBUG_MODE.equals("y")) {
 			params.add("exec 1>/dev/null");
 			params.add("exec 2>/dev/null");
 		}
-		params.add("chmod 755 " + PrefStore.ENV_DIR);
-		params.add("chmod 755 " + PrefStore.ENV_DIR + "/bin");
-		params.add("chmod 755 " + PrefStore.ENV_DIR + "/bin/busybox");
-		params.add(PrefStore.ENV_DIR + "/bin/busybox --install -s "
+		if (PrefStore.BUILTIN_SHELL) {
+			params.add("chmod 755 " + PrefStore.ENV_DIR + "/bin/busybox");
+			params.add(PrefStore.ENV_DIR + "/bin/busybox --install -s "
 				+ PrefStore.ENV_DIR + "/bin");
-		if (PrefStore.BUILTIN_SHELL == false) {
-			// Set system shell
-			params.add("rm " + PrefStore.ENV_DIR + "/bin/sh");
-			params.add("ln -s /system/bin/sh " + PrefStore.ENV_DIR + "/bin/sh");
-			// Set system chroot
-			params.add("rm " + PrefStore.ENV_DIR + "/bin/chroot");
-			params.add("ln -s /system/xbin/chroot " + PrefStore.ENV_DIR + "/bin/chroot");
 		}
-		params.add("PATH=" + PrefStore.ENV_DIR + "/bin:$PATH; export PATH");
-		params.add("chmod -R 755 " + PrefStore.ENV_DIR + "/bin");
-		params.add("chmod -R a+rX " + PrefStore.ENV_DIR + "/etc "
-				+ PrefStore.ENV_DIR + "/deploy");
-		params.add("chmod 755 " + PrefStore.ENV_DIR
-				+ "/deploy/debootstrap/pkgdetails");
 		if (PrefStore.SYMLINK) {
 			params.add("rm -f /system/bin/linuxdeploy");
 			params.add("ln -s "
@@ -270,7 +252,10 @@ public class ShellEnv {
 		}
 		params.add("echo '" + PrefStore.VERSION + "' > " + PrefStore.ENV_DIR
 				+ "/etc/version");
-		params.add("chmod 644 " + PrefStore.ENV_DIR + "/etc/version");
+		params.add("chmod 755 " + PrefStore.ENV_DIR);
+		params.add("chmod -R 755 " + PrefStore.ENV_DIR + "/bin");
+		params.add("chmod -R 755 " + PrefStore.ENV_DIR + "/etc");
+		params.add("chmod -R 755 " + PrefStore.ENV_DIR + "/deploy");
 		params.add("exit");
 		if (!execCmd(params)) {
 			sendLogs("fail\n");
@@ -301,8 +286,10 @@ public class ShellEnv {
 		params.add("cd " + PrefStore.ENV_DIR);
 		params.add("sed -i 's|^ENV_DIR=.*|ENV_DIR=\"" + PrefStore.ENV_DIR
 				+ "\"|g' " + PrefStore.ENV_DIR + "/bin/linuxdeploy");
-		params.add("sed -i 's|^#!.*|#!" + PrefStore.ENV_DIR + "/bin/sh|g' "
+		params.add("sed -i 's|^#!.*|#!" + PrefStore.SHELL + "|g' "
 				+ PrefStore.ENV_DIR + "/bin/linuxdeploy");
+		params.add("sed -i 's|^#!.*|#!" + PrefStore.SHELL + " -e|g' "
+				+ PrefStore.ENV_DIR + "/bin/debootstrap");
 		params.add("sed -i 's|^DEBUG_MODE=.*|DEBUG_MODE=\""
 				+ PrefStore.DEBUG_MODE + "\"|g' " + PrefStore.ENV_DIR
 				+ "/etc/deploy.conf");

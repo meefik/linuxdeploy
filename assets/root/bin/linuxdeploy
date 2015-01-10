@@ -1,33 +1,9 @@
-#!/system/bin/sh
+#!/bin/sh
 #
 # Linux Deploy for Android
-# (C) 2012-2014 Anton Skshidlevsky <meefik@gmail.com>
+# (C) 2012-2015 Anton Skshidlevsky <meefik@gmail.com>
 #
-
-ENV_DIR="."
-
-if [ -r "${ENV_DIR%/}/etc/deploy.conf" ]; then
-	. ${ENV_DIR%/}/etc/deploy.conf
-else
-	echo "Configuration file not found!"
-	exit 1
-fi
-
-PATH=${ENV_DIR%/}/bin:$PATH:/usr/bin:/bin:/usr/sbin:/sbin
-TERM=vt100
-export PATH TERM
-
-unset LD_PRELOAD
-
-exec 3>&1
-[ "$DEBUG_MODE" != "y" ] && { exec 1>/dev/null; exec 2>/dev/null; }
-[ "$TRACE_MODE" == "y" ] && set -x
-
-cd $ENV_DIR
-umask 0022
-
-
-#################################################
+################################################################################
 
 msg()
 {
@@ -41,19 +17,19 @@ prepare_system()
 	[ -z "$is_mnt" ] && msg "done" || { msg "fail"; msg "Press STOP and repeat attempt."; return 1; }
 
 	msg -n "Checking installation path ... "
-	if [ "$DEPLOY_TYPE" == "file" ]; then
+	if [ "$DEPLOY_TYPE" = "file" ]; then
 		if [ -e "$IMG_TARGET" -a ! -f "$IMG_TARGET" ]; then
 			msg "fail"; return 1
 		fi
 	fi
-	if [ "$DEPLOY_TYPE" == "partition" ]; then
+	if [ "$DEPLOY_TYPE" = "partition" ]; then
 		if [ ! -b "$IMG_TARGET" ]; then
 			msg "fail"; return 1
 		fi
 	fi
 	msg "done"
 
-	if [ "$DEPLOY_TYPE" == "file" ]; then
+	if [ "$DEPLOY_TYPE" = "file" ]; then
 		if [ "$IMG_SIZE" -eq 0 ]; then
 			[ -f "$IMG_TARGET" ] && FILE_SIZE=`stat -c %s $IMG_TARGET` || FILE_SIZE=0
 			DIR_NAME=`dirname $IMG_TARGET`
@@ -71,7 +47,7 @@ prepare_system()
 		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 	fi
 
-	if [ "$DEPLOY_TYPE" == "file" -o "$DEPLOY_TYPE" == "partition" ]; then
+	if [ "$DEPLOY_TYPE" = "file" -o "$DEPLOY_TYPE" = "partition" ]; then
 		for fs in ext4 ext3 ext2
 		do
 			if [ -n "`cat /proc/filesystems | grep $fs`" ]; then
@@ -80,11 +56,11 @@ prepare_system()
 			fi
 		done
 		[ -z "$fs_support" ] && { msg "The Linux kernel does not support filesystems ext2/ext3/ext4!"; return 1; }
-		[ "$FS_TYPE" == "auto" ] && FS_TYPE=$fs_support
+		[ "$FS_TYPE" = "auto" ] && FS_TYPE=$fs_support
 		
 		msg -n "Making file system ($FS_TYPE) ... "
 		(set -e
-			is_loop=`losetup | grep $IMG_TARGET || true`
+			is_loop=`losetup -a | grep $IMG_TARGET || true`
 			is_raw=`cat /proc/mounts | grep $IMG_TARGET || true`
 			[ -z "$is_loop" -a -z "$is_raw" ] && mke2fs -qF -t $FS_TYPE -O ^has_journal $IMG_TARGET
 		exit 0)
@@ -98,7 +74,7 @@ configure_system()
 {
 	if [ "$#" -eq 0 ]; then
 		msg "Configuring GNU/Linux system: "
-		configure_system dns mtab motd hosts hostname timezone su sudo groups locales repository profile upstart dbus xorg packages
+		configure_system qemu dns mtab motd hosts hostname timezone su sudo groups locales repository profile upstart dbus xorg packages
 		return 0
 	fi
 	if [ "$#" -gt 1 ]; then
@@ -113,15 +89,15 @@ configure_system()
 	(set -e	
 		case "$1" in
 		dns)
-			echo -n > $MNT_TARGET/etc/resolv.conf
 			if [ -z "$SERVER_DNS" ]; then
-				dns1=`getprop net.dns1`
-				dns2=`getprop net.dns2`
+				dns1=$(getprop net.dns1 || true)
+				dns2=$(getprop net.dns2 || true)
 				DNS_LIST="$dns1 $dns2"
 				[ -z "$dns1" -a -z "$dns2" ] && DNS_LIST="8.8.8.8"
 			else
 				DNS_LIST=`echo $SERVER_DNS | tr ',;' ' '`
 			fi
+			printf '' > $MNT_TARGET/etc/resolv.conf
 			for dns in $DNS_LIST
 			do
 				echo "nameserver $dns" >> $MNT_TARGET/etc/resolv.conf
@@ -135,7 +111,7 @@ configure_system()
 		motd)
 			if [ -f $MNT_TARGET/etc/os-release ]
 			then
-				LINUX_VERSION=`source $MNT_TARGET/etc/os-release; echo $PRETTY_NAME`
+				LINUX_VERSION=`. $MNT_TARGET/etc/os-release; echo $PRETTY_NAME`
 			elif [ -f $MNT_TARGET/etc/arch-release ]
 			then
 				LINUX_VERSION="Arch Linux"
@@ -167,7 +143,8 @@ configure_system()
 			echo 'localhost' > $MNT_TARGET/etc/hostname
 		;;
 		timezone)
-			TZ=`getprop persist.sys.timezone`
+			TZ=$(getprop persist.sys.timezone || true)
+			[ -z "$TZ" ] && TZ=$(cat /etc/timezone)
 			[ -z "$TZ" ] && exit 1
 			rm -f $MNT_TARGET/etc/localtime || true
 			cp $MNT_TARGET/usr/share/zoneinfo/$TZ $MNT_TARGET/etc/localtime
@@ -439,11 +416,30 @@ configure_system()
 			cp $ENV_DIR/deploy/xorg.conf $XORG_CONF
 			chmod 644 $XORG_CONF
 		;;
+		qemu)
+			[ -d /proc/sys/fs/binfmt_misc ] || exit 0
+			case "$MARCH" in
+			arm)
+				qemu_static=$(which qemu-i386-static)
+				qemu_target=${MNT_TARGET%/}/usr/local/bin/qemu-i386-static
+			;;
+			intel)
+				qemu_static=$(which qemu-arm-static)
+				qemu_target=${MNT_TARGET%/}/usr/local/bin/qemu-arm-static
+			;;
+			esac
+			[ -e "$qemu_target" ] && exit 0
+			[ -z "$qemu_static" ] && exit 1
+			mkdir -p ${MNT_TARGET%/}/usr/local/bin || true
+			cp $qemu_static $qemu_target
+			chown 0:0 $qemu_target
+			chmod 755 $qemu_target
+		;;
 		esac
 	exit 0)
 	[ $? -eq 0 ] && msg "done" || msg "fail"
 
-	if [ "$1" == "packages" ]; then
+	if [ "$1" = "packages" ]; then
 		msg "Installing additional packages: "
 		(set -e
 			case "$DISTRIB" in
@@ -455,7 +451,7 @@ configure_system()
 					case "$component" in
 					desktop)
 						PKGS="$PKGS desktop-base x11-xserver-utils xfonts-base"
-						[ "$DISTRIB" == "kali" ] && PKGS="$PKGS kali-defaults kali-menu"
+						[ "$DISTRIB" = "kali" ] && PKGS="$PKGS kali-defaults kali-menu"
 						case "$DESKTOP_ENV" in
 						xterm)
 							PKGS="$PKGS xterm"
@@ -684,7 +680,7 @@ mount_system()
 {
 	if [ "$#" -eq 0 ]; then
 		msg "Mounting partitions: "
-		mount_system root proc sys selinux dev pts shm custom
+		mount_system root proc sys selinux dev pts shm binfmt_misc custom
 		return $?
 	fi
 	if [ "$#" -gt 1 ]; then
@@ -739,8 +735,10 @@ mount_system()
 		msg -n "/sys/fs/selinux ... "
 		tg=$MNT_TARGET/sys/fs/selinux; is_mnt=`cat /proc/mounts | grep " $tg "`
 		if [ -z "$is_mnt" -a -d "/sys/fs/selinux" ]; then
-			cat /sys/fs/selinux/enforce > $MNT_TARGET/tmp/.linuxdeploy_selinux_state
-			[ -e "/sys/fs/selinux/enforce" ] && echo 0 > /sys/fs/selinux/enforce
+			if [ -e /sys/fs/selinux/enforce ]; then
+				cat /sys/fs/selinux/enforce > ${ENV_DIR%/}/etc/selinux_state
+				echo 0 > /sys/fs/selinux/enforce
+			fi
 			mount -t selinuxfs selinuxfs $tg
 			mount -o remount,ro,bind $tg
 			[ $? -eq 0 ] && msg "done" || msg "fail"
@@ -782,6 +780,27 @@ mount_system()
 			[ ! -d "$tg" ] && mkdir -p $tg
 			mount -t tmpfs tmpfs $tg
 			[ $? -eq 0 ] && msg "done" || msg "fail"
+		else
+			msg "skip"
+		fi
+	;;
+	binfmt_misc)
+		msg -n "/proc/sys/fs/binfmt_misc ... "
+		if [ -d /proc/sys/fs/binfmt_misc ]; then
+			mount -t binfmt_misc binfmt_misc /proc/sys/fs/binfmt_misc
+			case "$MARCH" in
+			arm)
+				echo ':qemu-i386:M::\x7fELF\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x03\x00:\xff\xff\xff\xff\xff\xfe\xfe\xff\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff:/usr/local/bin/qemu-i386-static:' > /proc/sys/fs/binfmt_misc/register
+				[ $? -eq 0 ] && msg "done" || msg "fail"
+			;;
+			intel)
+				echo ':qemu-arm:M::\x7fELF\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x28\x00:\xff\xff\xff\xff\xff\xff\xff\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff:/usr/local/bin/qemu-arm-static:' > /proc/sys/fs/binfmt_misc/register
+				[ $? -eq 0 ] && msg "done" || msg "fail"
+			;;
+			*)
+				msg "skip"
+			;;
+			esac
 		else
 			msg "skip"
 		fi
@@ -832,7 +851,7 @@ umount_system()
 	[ $? -eq 0 ] && msg "done" || msg "fail"
 
 	msg "Unmounting partitions: "
-	um=0
+	selinux_state=${ENV_DIR%/}/etc/selinux_state
 	for i in '.*' '*'
 	do
 		parts=`cat /proc/mounts | awk '{print $2}' | grep "^$MNT_TARGET/$i$" | sort -r`
@@ -840,19 +859,35 @@ umount_system()
 		do
 			pp=`echo $p | sed "s|$MNT_TARGET/*|/|g"`
 			msg -n "$pp ... "
-			if [ `echo $pp | grep -ci "selinux"` -gt 0 ]; then
-				[ -e $MNT_TARGET/tmp/.linuxdeploy_selinux_state ] && cat $MNT_TARGET/tmp/.linuxdeploy_selinux_state > /sys/fs/selinux/enforce
+			if [ `echo $pp | grep -ci "selinux"` -gt 0 -a -e $selinux_state -a -e /sys/fs/selinux/enforce ]; then
+				cat $selinux_state > /sys/fs/selinux/enforce
 			fi
 			umount $p
 			[ $? -eq 0 ] && msg "done" || msg "fail"
-			um=1
 		done
 	done
-	[ $um -eq 0 ] && msg "...not mounted anything"
+	msg -n "/proc/sys/fs/binfmt_misc ... "
+	if [ -d /proc/sys/fs/binfmt_misc ]; then
+		case "$MARCH" in
+		arm)
+			echo -1 > /proc/sys/fs/binfmt_misc/qemu-i386
+			[ $? -eq 0 ] && msg "done" || msg "fail"
+		;;
+		intel)
+			echo -1 > /proc/sys/fs/binfmt_misc/qemu-arm
+			[ $? -eq 0 ] && msg "done" || msg "fail"
+		;;
+		*)
+			msg "skip"
+		;;
+		esac
+	else
+		msg "skip"
+	fi
 
 	msg -n "Disassociating loop device ... "
 	(set -e
-		loop=`losetup | grep $IMG_TARGET | awk -F: '{print $1}' || true`
+		loop=`losetup -a | grep $IMG_TARGET | awk -F: '{print $1}' || true`
 		[ -n "$loop" ] && losetup -d $loop
 	exit 0)
 	[ $? -eq 0 ] && msg "done" || msg "fail"
@@ -1110,7 +1145,7 @@ install_system()
 	[ $? -ne 0 ] && return 1
 
 	msg "Mounting partitions: "
-	mount_system root
+	mount_system root binfmt_misc
 	[ $? -ne 0 ] && return 1
 
 	case "$DISTRIB" in
@@ -1124,7 +1159,13 @@ install_system()
 		debootstrap --no-check-gpg --arch $ARCH --foreign --extractor=ar --include=$BASIC_PACKAGES $SUITE $MNT_TARGET $MIRROR 1>&3 2>&3
 		[ $? -ne 0 ] && return 1
 
+		if [ -d /proc/sys/fs/binfmt_misc ]; then
+			msg "Preconfigure system: "
+			configure_system qemu
+		fi
+
 		unset DEBOOTSTRAP_DIR
+		sed -i "s|^#!.*|#!/bin/sh -e|g" ${MNT_TARGET%/}/debootstrap/debootstrap
 		chroot $MNT_TARGET /debootstrap/debootstrap --second-stage 1>&3 2>&3
 		[ $? -ne 0 ] && return 1
 
@@ -1213,7 +1254,7 @@ install_system()
 			BASIC_PACKAGES="acl attr audit audit-libs avahi-autoipd basesystem bash bind-libs bind-libs-lite bind-license bind-utils bzip2 bzip2-libs ca-certificates checkpolicy chkconfig coreutils cpio cracklib cracklib-dicts crda cronie cronie-anacron crontabs cryptsetup-libs curl cyrus-sasl-lib db4 dbus dbus-glib dbus-libs device-mapper device-mapper-libs dhclient dhcp-common dhcp-libs diffutils dnsmasq dosfstools dracut e2fsprogs e2fsprogs-libs elfutils-libelf ethtool expat fedora-release fedora-release-notes file file-libs filesystem findutils fipscheck fipscheck-lib gamin gawk gdbm glib2 glibc glibc-common gmp gnupg2 gpgme grep groff groff-base gzip hardlink hostname hwdata info initscripts iproute iptables iputils iw kbd kbd-misc keyutils keyutils-libs kmod kmod-libs krb5-libs less libacl libassuan libattr libblkid libcap libcap-ng libcom_err libcurl libdaemon libdb libdb-utils libedit libevent libffi libgcc libgcrypt libgpg-error libgssglue libgudev1 libidn libmount libnfsidmap libnl libnl3 libpcap libpipeline libpwquality libselinux libselinux-utils libsemanage libsepol libss libssh2 libsss_sudo libstdc++ libtirpc libudev libusb1 libuser libutempter libuuid libxml2 linux-atm-libs logrotate lua m4 man-db man-pages mingetty mobile-broadband-provider-info ncurses ncurses-base ncurses-libs net-tools newt newt-python nfs-utils nspr nss nss-myhostname nss-softokn nss-softokn-freebl nss-sysinit nss-tools nss-util ntpdate openldap openssh-clients openssl pam parted passwd pciutils-libs pcre pinentry pkgconfig policycoreutils popt ppp procps psmisc pth pygpgme python python-chardet python-iniparse python-kitchen python-libs python-pycurl python-urlgrabber readline rootfiles rootfs-resize rpcbind rpm rpm-build-libs rpm-libs rpm-python rsyslog sed selinux-policy selinux-policy-targeted setserial setup shadow-utils shared-mime-info slang sqlite sudo systemd systemd-sysv sysvinit-tools tar tcp_wrappers-libs tzdata udev usbutils ustr util-linux vim-minimal wget which wireless-tools wpa_supplicant xz xz-libs yum yum-metadata-parser yum-utils zlib"
 		fi
 		
-		if [ $SUITE -lt 20 -o "$ARCH" == "aarch64" ]
+		if [ $SUITE -lt 20 -o "$ARCH" = "aarch64" ]
 		then REPO="${MIRROR%/}/fedora-secondary/releases/${SUITE}/Everything/${ARCH}/os"
 		else REPO="${MIRROR%/}/fedora/linux/releases/${SUITE}/Everything/${ARCH}/os"
 		fi
@@ -1353,7 +1394,7 @@ install_system()
 			wget -c -O $STAGE3 $REPO/$ARCHIVE
 			[ $? -eq 0 ] && { OK=1; break; } || sleep 30s
 		done
-		[ "$OK" == "1" ] && msg "done" || { msg "fail"; return 1; }
+		[ "$OK" = "1" ] && msg "done" || { msg "fail"; return 1; }
 
 		msg -n "Unpacking stage3 archive ... "
 		(set -e
@@ -1434,13 +1475,6 @@ uninstall_system()
 	umount_system
 	[ $? -ne 0 ] && return 1
 
-	#msg -n "Removing disk image ... "
-	#(set -e
-	#	[ -f "$IMG_TARGET" ] && rm $IMG_TARGET
-	#	[ -d "$MNT_TARGET" ] && rmdir $MNT_TARGET
-	#exit 0)
-	#[ $? -eq 0 ] && msg "done" || msg "fail"
-
 	msg -n "Removing symlink ... "
 	(set -e
 		if [ -e "/system/bin/linuxdeploy" ]; then
@@ -1462,24 +1496,49 @@ uninstall_system()
 
 status_system()
 {
-	msg "Linux Deploy version: $(cat $ENV_DIR/etc/version)"
-	msg "Android version: $(getprop ro.build.version.release)"
-	msg "Device: $(getprop ro.product.brand) $(getprop ro.product.device)"
-	msg "CPU: $(cat /proc/cpuinfo | grep ^Processor | awk -F': ' '{print $2}')"
-	msg "$(cat /proc/meminfo | grep ^MemTotal)"
-	msg "$(cat /proc/meminfo | grep ^SwapTotal)"
+	msg -n "Linux Deploy version: "
+	msg "$(cat $ENV_DIR/etc/version)"
+
+	msg -n "Device: "
+	msg "$(getprop ro.product.brand) $(getprop ro.product.device)"
+
+	msg -n "Android: "
+	msg "$(getprop ro.build.version.release)"
+
+	msg -n "Architecture: "
+	msg "$(uname -m)"
+
+	msg -n "Kernel: "
+	msg "$(uname -r)"
+
+	msg -n "Memory: "
+	msg "$(cat /proc/meminfo | grep ^MemTotal | awk '{print $2}') KB"
+
+	msg -n "Swap: "
+	msg "$(cat /proc/meminfo | grep ^SwapTotal | awk '{print $2}') KB"
+
 	msg -n "SELinux: "
 	[ -e "/sys/fs/selinux/enforce" ] && msg "yes" || msg "no"
-	msg -n "Support loop device: "
-	[ -e "/dev/block/loop0" ] && msg "yes" || msg "no"
-	msg "Supported file systems: $(cat /proc/filesystems | grep -v nodev | sort | xargs)"
-	LINUX_VERSION=`[ -r "$MNT_TARGET/etc/os-release" ] && . "$MNT_TARGET/etc/os-release"; [ -n "$PRETTY_NAME" ] && echo "$PRETTY_NAME" || echo "unknown"`
-	msg "Active system: $LINUX_VERSION"
+
+	msg -n "Loop devices: "
+	[ -z "$(losetup -f)" ] && msg "no" || msg "yes"
+
+	msg -n "Support binfmt_misc: "
+	[ -d /proc/sys/fs/binfmt_misc ] && msg "yes" || msg "no"
+
+	msg -n "Supported FS: "
+	msg "$(printf '%s ' $(grep -v nodev /proc/filesystems | sort))"
+
+	msg -n "Mounted system: "
+	linux_version=$([ -r "$MNT_TARGET/etc/os-release" ] && . "$MNT_TARGET/etc/os-release"; [ -n "$PRETTY_NAME" ] && echo "$PRETTY_NAME" || echo "unknown")
+	msg "$linux_version"
+
 	msg "Running services: "
 	msg -n "* SSH: "
-	[ -n "`ps | grep -E '/s?bin/sshd' | grep -v grep`" ] && msg "yes" || msg "no"
+	[ -n "`ps | grep '{sshd}' | grep -v grep`" ] && msg "yes" || msg "no"
 	msg -n "* VNC: "
-	[ -n "`ps | grep 'X*vnc' | grep -v grep`" ] && msg "yes" || msg "no"
+	[ -n "`ps | grep '{X.*vnc}' | grep -v grep`" ] && msg "yes" || msg "no"
+
 	msg "Mounted parts on Linux: "
 	for i in `cat /proc/mounts | grep $MNT_TARGET | awk '{print $2}' | sed "s|$MNT_TARGET/*|/|g"`
 	do
@@ -1487,6 +1546,7 @@ status_system()
 		is_mounted=1
 	done
 	[ -z "$is_mounted" ] && msg " ...not mounted anything"
+
 	msg "Available mount points: "
 	for p in `cat /proc/mounts | grep ^/dev/ | grep -v $MNT_TARGET | grep -v ' /mnt/asec/' | grep -v ' /mnt/secure/' | awk '{print $2":"$3}'`
 	do
@@ -1499,6 +1559,7 @@ status_system()
 			msg "* $PART: $AVAILABLE/$TOTAL GB ($FSTYPE)"
 		fi
 	done
+
 	msg "Available partitions: "
 	for i in /sys/block/*/dev
 	do
@@ -1524,7 +1585,46 @@ status_system()
 	[ -z "$is_partitions" ] && msg " ...no available partitions"
 }
 
-#################################################
+################################################################################
+
+ENV_DIR="."
+
+cd $ENV_DIR
+
+PATH=${ENV_DIR%/}/bin:/system/xbin:/system/bin:/usr/bin:/bin:/usr/sbin:/sbin
+TERM=vt100
+export PATH TERM
+unset LD_PRELOAD
+umask 0022
+
+# load config
+if [ -r "${ENV_DIR%/}/etc/deploy.conf" ]; then
+	. ${ENV_DIR%/}/etc/deploy.conf
+else
+	echo "ERROR: Configuration file not found!"
+	exit 1
+fi
+
+# log level
+exec 3>&1
+[ "$DEBUG_MODE" != "y" ] && { exec 1>/dev/null; exec 2>/dev/null; }
+[ "$TRACE_MODE" = "y" ] && set -x
+
+# check architecture
+case "$(uname -m)" in
+armv[4-9]*|aarch64)
+	MARCH="arm"
+;;
+i[3-6]86|x86_64)
+	MARCH="intel"
+;;
+*)
+	echo "ERROR: Unsupported hardware architecture!"
+	exit 1
+;;
+esac
+
+################################################################################
 
 case "$1" in
 mount)

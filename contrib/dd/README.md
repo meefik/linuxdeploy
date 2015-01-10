@@ -14,7 +14,7 @@ dd - convert and copy a file.
 
 3) Build dd:
 
-    cd ./coreutils
+    cd ./coreutils-8.13
     export CFLAGS=-static
     export LDLAGS=-static
     ./configure
@@ -23,11 +23,7 @@ dd - convert and copy a file.
     cd ../src
     make version.h
     make dd
-
-4) Remove all symbol and relocation information:
-
     strip -s dd
 
-5) Copy dd binary to linuxdeploy directory:
+4) Copy dd binary to assets directory.
 
-    cp ./dd <LinuxDeploy>/assets/home/bin/dd
