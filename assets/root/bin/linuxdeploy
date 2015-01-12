@@ -1141,7 +1141,7 @@ install_system()
 	[ $? -ne 0 ] && return 1
 
 	msg "Mounting partitions: "
-	mount_system root binfmt_misc
+	mount_system root
 	[ $? -ne 0 ] && return 1
 
 	case "$DISTRIB" in
@@ -1155,18 +1155,16 @@ install_system()
 		debootstrap --no-check-gpg --arch $ARCH --foreign --extractor=ar --include=$BASIC_PACKAGES $SUITE $MNT_TARGET $MIRROR 1>&3 2>&3
 		[ $? -ne 0 ] && return 1
 
-		if [ -d /proc/sys/fs/binfmt_misc ]; then
-			msg "Preconfigure system: "
-			configure_system qemu
-		fi
+		msg "Mounting partitions: "
+		mount_system proc sys selinux dev pts shm binfmt_misc
+
+		msg "Preconfigure system: "
+		configure_system qemu
 
 		unset DEBOOTSTRAP_DIR
 		sed -i "s|^#!.*|#!/bin/sh -e|g" ${MNT_TARGET%/}/debootstrap/debootstrap
 		chroot $MNT_TARGET /debootstrap/debootstrap --second-stage 1>&3 2>&3
 		[ $? -ne 0 ] && return 1
-
-		msg "Mounting partitions: "
-		mount_system proc sys selinux dev pts shm
 	;;
 	archlinux)
 		msg "Installing Arch Linux distribution: "
@@ -1215,10 +1213,10 @@ install_system()
 		done
 
 		msg "Mounting partitions: "
-		mount_system proc sys selinux dev pts shm
+		mount_system proc sys selinux dev pts shm binfmt_misc
 
 		msg "Preconfigure system: "
-		configure_system dns mtab repository qemu
+		configure_system qemu dns mtab repository
 
 		msg "Installing base packages: "
 		(set -e
@@ -1286,7 +1284,10 @@ install_system()
 		done
 
 		msg "Mounting partitions: "
-		mount_system proc sys selinux dev pts shm
+		mount_system proc sys selinux dev pts shm binfmt_misc
+
+		msg "Preconfigure system: "
+		configure_system qemu
 
 		msg "Installing base packages: "
 		chroot $MNT_TARGET /bin/rpm -iv --force --nosignature --nodeps /tmp/*.rpm 1>&3 2>&3
@@ -1297,7 +1298,7 @@ install_system()
 		rm -rf $MNT_TARGET/tmp/*
 
 		msg "Preconfigure system: "
-		configure_system dns mtab repository qemu
+		configure_system dns mtab repository
 
 		msg "Installing minimal environment: "
 		(set -e
@@ -1346,7 +1347,7 @@ install_system()
 		msg "Retrieving base packages: "
 		for PACKAGE in $BASIC_PACKAGES; do
 			msg -n "$PACKAGE ... "
-    			PKG_URL=`grep -e "^arm" -e "^noarch" -e "^i586" $PKG_LIST | grep -m1 -e "^.*/$PACKAGE-[0-9s][0-9\.].*\.rpm$"`
+    			PKG_URL=`grep -e "^$ARCH" -e "^noarch" $PKG_LIST | grep -m1 -e "^.*/$PACKAGE-[0-9s][0-9\.].*\.rpm$"`
     			test "$PKG_URL" || { msg "fail"; return 1; }
     			FILE=`basename $PKG_URL`
     			#echo "downloading ${FILE}... "
@@ -1361,7 +1362,10 @@ install_system()
 		done
 
 		msg "Mounting partitions: "
-		mount_system proc sys selinux dev pts shm
+		mount_system proc sys selinux dev pts shm binfmt_misc
+
+		msg "Preconfigure system: "
+		configure_system qemu dns mtab
 
 		msg "Installing base packages: "
 		chroot $MNT_TARGET /bin/rpm -iv --force --nosignature --nodeps /tmp/*.rpm 1>&3 2>&3
@@ -1401,10 +1405,10 @@ install_system()
 		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 
 		msg "Mounting partitions: "
-		mount_system proc sys selinux dev pts shm
+		mount_system proc sys selinux dev pts shm binfmt_misc
 
 		msg "Preconfigure system: "
-		configure_system dns mtab groups repository
+		configure_system qemu dns mtab groups repository
 		
 		msg -n "Updating portage tree ... "
 		(set -e
@@ -1598,7 +1602,7 @@ umask 0022
 if [ -r "${ENV_DIR%/}/etc/deploy.conf" ]; then
 	. ${ENV_DIR%/}/etc/deploy.conf
 else
-	echo "ERROR: Configuration file not found!"
+	echo "Configuration file not found!"
 	exit 1
 fi
 
@@ -1616,8 +1620,7 @@ i[3-6]86|x86_64)
 	MARCH="intel"
 ;;
 *)
-	echo "ERROR: Unsupported hardware architecture!"
-	exit 1
+	echo "Unsupported hardware architecture!"
 ;;
 esac
 
