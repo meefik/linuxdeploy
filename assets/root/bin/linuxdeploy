@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Linux Deploy for Android
 # (C) 2012-2015 Anton Skshidlevsky <meefik@gmail.com>
@@ -202,10 +202,10 @@ configure_system()
 				INET_USERS="root messagebus"
 			;;
 			esac
-			for UID in $INET_USERS
+			for uid in $INET_USERS
 			do
-				if [ -z "`grep \"^aid_inet:.*$UID\" $MNT_TARGET/etc/group`" ]; then
-					sed -i "s|^\(aid_inet:.*\)|\1,$UID|g" $MNT_TARGET/etc/group
+				if [ -z "`grep \"^aid_inet:.*$uid\" $MNT_TARGET/etc/group`" ]; then
+					sed -i "s|^\(aid_inet:.*\)|\1,$uid|g" $MNT_TARGET/etc/group
 				fi
 			done
 		;;
@@ -261,14 +261,10 @@ configure_system()
 			fedora)
 				find $MNT_TARGET/etc/yum.repos.d/ -name *.repo | while read f; do sed -i 's/^enabled=.*/enabled=0/g' $f; done
 				REPO_FILE="$MNT_TARGET/etc/yum.repos.d/fedora-${SUITE}-${ARCH}.repo"
-				case "$SUITE" in
-				17|18|19)
-					REPO="${MIRROR%/}/fedora-secondary/releases/${SUITE}/Everything/${ARCH}/os/"
-				;;
-				20|21)
-					REPO="${MIRROR%/}/fedora/linux/releases/${SUITE}/Everything/${ARCH}/os/"
-				;;
-				esac
+				if [ "$ARCH" = "i386" -o "$ARCH" != "aarch64" -a "$SUITE" -ge 20 ]
+				then REPO="${MIRROR%/}/fedora/linux/releases/${SUITE}/Everything/${ARCH}/os"
+				else REPO="${MIRROR%/}/fedora-secondary/releases/${SUITE}/Everything/${ARCH}/os"
+				fi
 				echo "[fedora-${SUITE}-${ARCH}]" > $REPO_FILE
 				echo "name=Fedora ${SUITE} - ${ARCH}" >> $REPO_FILE
 				echo "failovermethod=priority" >> $REPO_FILE
@@ -439,7 +435,7 @@ configure_system()
 	exit 0)
 	[ $? -eq 0 ] && msg "done" || msg "fail"
 
-	if [ "$1" = "packages" ]; then
+	if [ "$1" = "packages" -a -n "$COMPONENTS" ]; then
 		msg "Installing additional packages: "
 		(set -e
 			case "$DISTRIB" in
@@ -541,16 +537,16 @@ configure_system()
 							PKGS="$PKGS xterm"
 						;;
 						lxde)
-							IGRP="LXDE"
+							IGRP="lxde-desktop"
 						;;
 						xfce)
-							IGRP="XFCE"
+							IGRP="xfce-desktop"
 						;;
 						gnome)
-							IGRP="GNOME"
+							IGRP="gnome-desktop"
 						;;
 						kde)
-							PKGS="$PKGS kde-baseapps kde-workspace ark konsole gwenview"
+							IGRP="kde-desktop"
 						;;
 						esac
 					;;
@@ -558,7 +554,7 @@ configure_system()
 						PKGS="$PKGS openssh-server"
 					;;
 					vnc)
-						PKGS="$PKGS tigervnc-server trousers"
+						PKGS="$PKGS tigervnc-server"
 					;;
 					xserver)
 						PKGS="$PKGS xorg-x11-xinit xorg-x11-server-Xorg xorg-x11-drv-fbdev xorg-x11-drv-evdev"
@@ -839,7 +835,7 @@ umount_system()
 		for i in 1 2 3 4
 		do
 			[ "$i" -gt "3" ] && exit 1
-			pids=`lsof | grep $MNT_TARGET | awk '{print $1}' | uniq || true`
+			pids=`lsof | grep $MNT_TARGET | awk '{print $2}' | uniq || true`
 			if [ -n "$pids" ]; then
 				kill -9 $pids || true
 				sleep 1
@@ -1179,6 +1175,8 @@ install_system()
 		REPO="${MIRROR%/}/$ARCH/core"
 		CACHE_DIR="$MNT_TARGET/var/cache/pacman/pkg"
 
+		msg "Repository: $REPO"
+
 		msg -n "Preparing for deployment ... "
 		(set -e
 			cd $MNT_TARGET
@@ -1220,7 +1218,7 @@ install_system()
 		mount_system proc sys selinux dev pts shm
 
 		msg "Preconfigure system: "
-		configure_system dns mtab repository
+		configure_system dns mtab repository qemu
 
 		msg "Installing base packages: "
 		(set -e
@@ -1239,29 +1237,14 @@ install_system()
 	fedora)
 		msg "Installing Fedora distribution: "
 
-		BASIC_PACKAGES="acl attr audit audit-libs avahi-autoipd avahi-libs basesystem bash bind-libs bind-libs-lite bind-license bind-utils bzip2 bzip2-libs c-ares ca-certificates checkpolicy chkconfig coreutils cpio cracklib cracklib-dicts crda cronie cronie-anacron crontabs cryptsetup-libs cups-libs curl cyrus-sasl-gssapi cyrus-sasl-lib dbus dbus-glib dbus-libs device-mapper device-mapper-libs dhclient dhcp-common dhcp-libs diffutils dnsmasq dosfstools dracut e2fsprogs e2fsprogs-libs elfutils-libelf ethtool expat fedora-release fedora-release-notes file file-libs filesystem findutils fipscheck fipscheck-lib gamin gawk gdbm glib2 glibc glibc-common gmp gnupg2 gnutls gpgme grep groff groff-base gzip hardlink hostname hwdata info initscripts iproute iptables iputils iw jbigkit-libs json-c kbd kbd-misc keyutils keyutils-libs kmod kmod-libs kpartx krb5-libs less libacl libassuan libattr libbasicobjects libblkid libbsd libcap libcap-ng libcollection libcom_err libcurl libdaemon libdb libdb-utils libdb4 libdhash libedit libee libestr libevent libffi libgcc libgcrypt libgpg-error libgudev1 libidn libini_config libipa_hbac libjpeg-turbo libldb liblognorm libmicrohttpd libmount libnfsidmap libnl libnl3 libpath_utils libpcap libpipeline libpng libpwquality libref_array libselinux libselinux-utils libsemanage libsepol libss libssh2 libsss_idmap libstdc++ libtalloc libtasn1 libtdb libtevent libtiff libtirpc libusbx libuser libutempter libuuid libwbclient libxml2 linux-atm-libs logrotate lua m4 man-db man-pages mingetty mobile-broadband-provider-info ncurses ncurses-base ncurses-libs net-tools nettle newt newt-python nfs-utils nspr nss nss-softokn nss-softokn-freebl nss-sysinit nss-tools nss-util ntpdate openldap openssh-clients openssl-libs p11-kit pam parted passwd pciutils-libs pcre pinentry pkgconfig policycoreutils popt procps-ng psmisc pth pygpgme pyliblzma pyparted pytalloc python python-chardet python-iniparse python-kitchen python-libs python-psutil python-pycurl python-urlgrabber qrencode-libs quota quota-nls readline rootfiles rootfs-resize rpcbind rpm rpm-build-libs rpm-libs rpm-python rsyslog samba-libs sed selinux-policy selinux-policy-targeted setserial setup shadow-utils shared-mime-info slang sqlite sssd sssd-client sudo systemd systemd-libs tar tcp_wrappers tcp_wrappers-libs tzdata usbutils ustr util-linux vim-minimal wget which wireless-tools wpa_supplicant xz xz-libs yum yum-metadata-parser yum-utils zlib"
+		BASIC_PACKAGES="audit-libs basesystem bash bzip2-libs ca-certificates chkconfig coreutils cpio cracklib cracklib-dicts crypto-policies cryptsetup-libs curl cyrus-sasl-lib dbus dbus-libs device-mapper device-mapper-libs diffutils elfutils-libelf elfutils-libs expat fedora-release fedora-repos file-libs filesystem fipscheck fipscheck-lib gamin gawk gdbm glib2 glibc glibc-common gmp gnupg2 gnutls gpgme grep gzip hwdata info keyutils-libs kmod kmod-libs krb5-libs libacl libarchive libassuan libattr libblkid libcap libcap-ng libcom_err libcurl libdb libdb4 libdb-utils libffi libgcc libgcrypt libgpg-error libidn libmetalink libmicrohttpd libmount libpwquality libseccomp libselinux libselinux-utils libsemanage libsepol libsmartcols libssh2 libstdc++ libtasn1 libuser libutempter libuuid libverto libxml2 lua lzo man-pages ncurses ncurses-base ncurses-libs nettle nspr nss nss-myhostname nss-softokn nss-softokn-freebl nss-sysinit nss-tools nss-util openldap openssl-libs p11-kit p11-kit-trust pam pcre pinentry pkgconfig policycoreutils popt pth pygpgme pyliblzma python python-chardet python-iniparse python-kitchen python-libs python-pycurl python-six python-urlgrabber pyxattr qrencode-libs readline rootfiles rpm rpm-build-libs rpm-libs rpm-plugin-selinux rpm-python sed selinux-policy setup shadow-utils shared-mime-info sqlite sudo systemd systemd-libs systemd-sysv tcp_wrappers-libs trousers tzdata ustr util-linux vim-minimal xz-libs yum yum-metadata-parser yum-utils zlib"
 
-		if [ $SUITE -le 18 ]; then
-			BASIC_PACKAGES=$BASIC_PACKAGES + " libsss_sudo"
-		fi
-		if [ $SUITE -le 19 ]; then
-			BASIC_PACKAGES=$BASIC_PACKAGES + " libgssglue nss-myhostname systemd-sysv "
-		fi
-		if [ $SUITE -le 20 ]; then
-			BASIC_PACKAGES=$BASIC_PACKAGES + " sysvinit-tools"
-		fi		
-		if [ $SUITE -eq 17 ]; then
-			BASIC_PACKAGES="acl attr audit audit-libs avahi-autoipd basesystem bash bind-libs bind-libs-lite bind-license bind-utils bzip2 bzip2-libs ca-certificates checkpolicy chkconfig coreutils cpio cracklib cracklib-dicts crda cronie cronie-anacron crontabs cryptsetup-libs curl cyrus-sasl-lib db4 dbus dbus-glib dbus-libs device-mapper device-mapper-libs dhclient dhcp-common dhcp-libs diffutils dnsmasq dosfstools dracut e2fsprogs e2fsprogs-libs elfutils-libelf ethtool expat fedora-release fedora-release-notes file file-libs filesystem findutils fipscheck fipscheck-lib gamin gawk gdbm glib2 glibc glibc-common gmp gnupg2 gpgme grep groff groff-base gzip hardlink hostname hwdata info initscripts iproute iptables iputils iw kbd kbd-misc keyutils keyutils-libs kmod kmod-libs krb5-libs less libacl libassuan libattr libblkid libcap libcap-ng libcom_err libcurl libdaemon libdb libdb-utils libedit libevent libffi libgcc libgcrypt libgpg-error libgssglue libgudev1 libidn libmount libnfsidmap libnl libnl3 libpcap libpipeline libpwquality libselinux libselinux-utils libsemanage libsepol libss libssh2 libsss_sudo libstdc++ libtirpc libudev libusb1 libuser libutempter libuuid libxml2 linux-atm-libs logrotate lua m4 man-db man-pages mingetty mobile-broadband-provider-info ncurses ncurses-base ncurses-libs net-tools newt newt-python nfs-utils nspr nss nss-myhostname nss-softokn nss-softokn-freebl nss-sysinit nss-tools nss-util ntpdate openldap openssh-clients openssl pam parted passwd pciutils-libs pcre pinentry pkgconfig policycoreutils popt ppp procps psmisc pth pygpgme python python-chardet python-iniparse python-kitchen python-libs python-pycurl python-urlgrabber readline rootfiles rootfs-resize rpcbind rpm rpm-build-libs rpm-libs rpm-python rsyslog sed selinux-policy selinux-policy-targeted setserial setup shadow-utils shared-mime-info slang sqlite sudo systemd systemd-sysv sysvinit-tools tar tcp_wrappers-libs tzdata udev usbutils ustr util-linux vim-minimal wget which wireless-tools wpa_supplicant xz xz-libs yum yum-metadata-parser yum-utils zlib"
+		if [ "$ARCH" = "i386" -o "$ARCH" != "aarch64" -a "$SUITE" -ge 20 ]
+		then REPO="${MIRROR%/}/fedora/linux/releases/${SUITE}/Everything/${ARCH}/os"
+		else REPO="${MIRROR%/}/fedora-secondary/releases/${SUITE}/Everything/${ARCH}/os"
 		fi
 		
-		if [ $SUITE -lt 20 -o "$ARCH" = "aarch64" ]
-		then REPO="${MIRROR%/}/fedora-secondary/releases/${SUITE}/Everything/${ARCH}/os"
-		else REPO="${MIRROR%/}/fedora/linux/releases/${SUITE}/Everything/${ARCH}/os"
-		fi
-		
-		msg "Repo: $REPO"
-		
-		PKG_LIST="$MNT_TARGET/tmp/packages.list"
+		msg "Repository: $REPO"
 
 		msg -n "Preparing for deployment ... "
 		(set -e
@@ -1277,8 +1260,10 @@ install_system()
 		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 
 		msg -n "Retrieving packages list ... "
+		PKG_LIST="$MNT_TARGET/tmp/packages.list"
 		(set -e
 			REPODATA_FILE=`wget -q -O - $REPO/repodata | sed -n '/<a / s/^.*<a [^>]*href="\([^\"]*\-primary\.xml\.gz\)".*$/\1/p'`
+			[ -z "$REPODATA_FILE" ] && exit 1
 			wget -q -O - $REPO/repodata/$REPODATA_FILE | gzip -dc | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\)".*$/\1/p' > $PKG_LIST
 		exit 0)
 		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
@@ -1287,7 +1272,7 @@ install_system()
 		for PACKAGE in $BASIC_PACKAGES; do
 			msg -n "$PACKAGE ... "
 			PKG_URL=`grep -m1 -e "^.*/$PACKAGE-[0-9][0-9\.\-].*\.rpm$" $PKG_LIST`
-			#test "$PKG_URL" || { msg "fail"; return 1; }
+			test "$PKG_URL" || { msg "skip"; continue; }
 			FILE=`basename $PKG_URL`
 			#echo "downloading ${FILE}... "
 			for i in 1 2 3
@@ -1308,14 +1293,18 @@ install_system()
 		msg -n "Updating packages database ... "
 		chroot $MNT_TARGET /bin/rpm -i --force --nosignature --nodeps --justdb /tmp/*.rpm
 		[ $? -eq 0 ] && msg "done" || msg "fail"
-		# to fix cap_set_file failed
-		#chroot $MNT_TARGET /bin/rpm -i --nosignature --justdb /tmp/glibc-common-*.rpm /tmp/iputils-*.rpm /tmp/systemd-*.rpm
-		# to fix chown32(/dev/pts/*) operation not permitted
-		chmod 04755 $MNT_TARGET/usr/libexec/pt_chown
-		chmod 04755 $MNT_TARGET/usr/bin/ping
-		chmod 04755 $MNT_TARGET/usr/bin/systemd-detect-virt
 		# clean cache
 		rm -rf $MNT_TARGET/tmp/*
+
+		msg "Preconfigure system: "
+		configure_system dns mtab repository qemu
+
+		msg "Installing minimal environment: "
+		(set -e
+			chroot $MNT_TARGET yum groupinstall minimal-environment --nogpgcheck --skip-broken -y --exclude openssh-server
+			chroot $MNT_TARGET yum clean all
+		exit 0) 1>&3 2>&3
+		[ $? -ne 0 ] && return 1
 	;;
 	opensuse)
 		msg "Installing openSUSE distribution: "
@@ -1326,8 +1315,13 @@ install_system()
 		13.2) BASIC_PACKAGES="aaa_base aaa_base-extras autoyast2-installation bash bind-libs bind-utils branding-openSUSE bridge-utils bzip2 coreutils cpio cracklib cracklib-dict-full cron cronie cryptsetup curl cyrus-sasl dbus-1 dbus-1-x11 device-mapper dhcpcd diffutils dirmngr dmraid e2fsprogs elfutils file filesystem fillup findutils fontconfig gawk gio-branding-openSUSE glib2-tools glibc glibc-extra glibc-i18ndata glibc-locale gnu-unifont-bitmap-fonts gpg2 grep groff gzip hwinfo ifplugd info initviocons iproute2 iputils kbd kpartx krb5 less libX11-6 libX11-data libXau6 libXext6 libXft2 libXrender1 libacl1 libadns1 libaio1 libasm1 libassuan0 libattr1 libaudit1 libaugeas0 libblkid1 libbz2-1 libcairo2 libcap-ng0 libcap2 libcom_err2 libcrack2 libcryptsetup4 libcurl4 libdaemon0 libdb-4_8 libdbus-1-3 libdrm2 libdw1 libedit0 libelf0 libelf1 libestr0 libexpat1 libext2fs2 libffi4 libfreetype6 libgcc_s1 libgcrypt20 libgdbm4 libgio-2_0-0 libglib-2_0-0 libgmodule-2_0-0 libgmp10 libgnutls28 libgobject-2_0-0 libgpg-error0 libgssglue1 libharfbuzz0 libhogweed2 libicu53_1 libidn11 libiw30 libjson-c2 libkeyutils1 libkmod2 libksba8 libldap-2_4-2 liblua5_1 liblua5_2 liblzma5 libmagic1 libmicrohttpd10 libmodman1 libmount1 libncurses5 libncurses6 libnettle4 libnl3 libopenssl1_0_0 libp11-kit0 libpango-1_0-0 libparted0 libpci3 libpcre1 libpipeline1 libpixman-1-0 libply-boot-client2 libply-splash-core2 libply-splash-graphics2 libply2 libpng16-16 libpolkit0 libpopt0 libprocps3 libproxy1 libpth20 libpython2_7-1_0 libqrencode3 libreadline6 libreiserfs-0_3-0 libsasl2-3 libselinux1 libsemanage1 libsepol1 libsolv-tools libssh2-1 libstdc++6 libstorage5 libtasn1 libtasn1-6 libtirpc1 libudev1 libusb-0_1-4 libusb-1_0-0 libustr-1_0-1 libuuid1 libwrap0 libxcb-render0 libxcb-shm0 libxcb1 libxml2-2 libxtables10 libyui-ncurses-pkg6 libyui-ncurses6 libyui6 libz1 libzio1 libzypp logrotate lsscsi lvm2 man man-pages mdadm multipath-tools ncurses-utils net-tools netcfg openSUSE-build-key openSUSE-release-13.2 openSUSE-release-ftp-13.2 openslp openssl pam pam-config pango-tools parted pciutils pciutils-ids perl perl-Bootloader perl-Config-Crontab perl-XML-Parser perl-XML-Simple perl-base perl-gettext permissions pinentry pkg-config plymouth plymouth-branding-openSUSE plymouth-plugin-label plymouth-plugin-script plymouth-scripts polkit procps python-base rpcbind rpm rsyslog sed shadow shared-mime-info sudo suse-module-tools sysconfig sysfsutils syslog-service systemd systemd-presets-branding-openSUSE systemd-sysvinit sysvinit-tools tar tcpd terminfo-base timezone tunctl u-boot-tools udev unzip update-alternatives util-linux vim vlan wallpaper-branding-openSUSE wireless-tools wpa_supplicant xz yast2 yast2-bootloader yast2-core yast2-country yast2-country-data yast2-firstboot yast2-hardware-detection yast2-installation yast2-packager yast2-perl-bindings yast2-pkg-bindings yast2-proxy yast2-slp yast2-storage yast2-trans-stats yast2-transfer yast2-update yast2-xml yast2-ycp-ui-bindings zypper"
 		;;
 		esac
-		REPO="${MIRROR%/}/${ARCH}/distribution/${SUITE}/repo/oss/suse"
-		PKG_LIST="$MNT_TARGET/tmp/packages.list"
+
+		if [ "$ARCH" = "i586" ]
+		then REPO="${MIRROR%/}/distribution/${SUITE}/repo/oss/suse"
+		else REPO="${MIRROR%/}/${ARCH}/distribution/${SUITE}/repo/oss/suse"
+		fi
+
+		msg "Repository: $REPO"
 
 		msg -n "Preparing for deployment ... "
 		(set -e
@@ -1341,8 +1335,10 @@ install_system()
 		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 
 		msg -n "Retrieving packages list ... "
+		PKG_LIST="$MNT_TARGET/tmp/packages.list"
 		(set -e
 			REPODATA_FILE=`wget -q -O - $REPO/repodata | sed -n '/<a / s/^.*<a [^>]*href="\([^\"]*\-primary\.xml\.gz\)".*$/\1/p'`
+			[ -z "$REPODATA_FILE" ] && exit 1
 			wget -q -O - $REPO/repodata/$REPODATA_FILE | gzip -dc | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\)".*$/\1/p' > $PKG_LIST
 		exit 0)
 		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
@@ -1350,7 +1346,7 @@ install_system()
 		msg "Retrieving base packages: "
 		for PACKAGE in $BASIC_PACKAGES; do
 			msg -n "$PACKAGE ... "
-    			PKG_URL=`grep -e "^arm" -e "^noarch" | grep -m1 -e "^.*/$PACKAGE-[0-9s][0-9\.].*\.rpm$" $PKG_LIST`
+    			PKG_URL=`grep -e "^arm" -e "^noarch" -e "^i586" $PKG_LIST | grep -m1 -e "^.*/$PACKAGE-[0-9s][0-9\.].*\.rpm$"`
     			test "$PKG_URL" || { msg "fail"; return 1; }
     			FILE=`basename $PKG_URL`
     			#echo "downloading ${FILE}... "
@@ -1369,6 +1365,7 @@ install_system()
 
 		msg "Installing base packages: "
 		chroot $MNT_TARGET /bin/rpm -iv --force --nosignature --nodeps /tmp/*.rpm 1>&3 2>&3
+		[ $? -ne 0 ] && return 1
 		# clean cache
 		rm -rf $MNT_TARGET/tmp/*
 	;;
@@ -1383,7 +1380,7 @@ install_system()
 		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 
 		msg -n "Getting repository path ... "
-		REPO="${MIRROR%/}/arm/autobuilds"
+		REPO="${MIRROR%/}/autobuilds"
 		STAGE3="$MNT_TARGET/tmp/latest-stage3.tar.bz2"
 		ARCHIVE=`wget -q -O - "${REPO}/latest-stage3-${ARCH}.txt" | grep -v ^#`
 		[ -n "$ARCHIVE" ]&& msg "done" || { msg "fail"; return 1; }
@@ -1587,7 +1584,7 @@ status_system()
 
 ################################################################################
 
-ENV_DIR="."
+ENV_DIR="$(cd ${0%/*}/..; pwd)"
 
 cd $ENV_DIR
 

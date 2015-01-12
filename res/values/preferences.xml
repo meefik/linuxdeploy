@@ -19,8 +19,8 @@
     <string name="logfile" translatable="false">{replace}</string>
     <string name="distribution" translatable="false">debian</string>
     <string name="suite" translatable="false">@string/debian_suite</string>
-    <string name="mirror" translatable="false">@string/debian_mirror</string>
-    <string name="architecture" translatable="false">@string/debian_architecture</string>
+    <string name="architecture" translatable="false">{replace}</string>
+    <string name="mirror" translatable="false">{replace}</string>
     <string name="deploytype" translatable="false">file</string>
     <string name="diskimage" translatable="false">{replace}</string>
     <string name="disksize" translatable="false">0</string>
@@ -60,37 +60,75 @@
 
     <!-- Debian -->
     <string name="debian_suite" translatable="false">wheezy</string>
-    <string name="debian_mirror" translatable="false">http://mirror.yandex.ru/debian</string>
-    <string name="debian_architecture" translatable="false">armhf</string>
+    <!-- arm -->
+    <string name="arm_debian_mirror" translatable="false">http://ftp.debian.org/debian/</string>
+    <string name="arm_debian_architecture" translatable="false">armhf</string>
+    <!-- intel -->
+    <string name="intel_debian_mirror" translatable="false">http://ftp.debian.org/debian/</string>
+    <string name="intel_debian_architecture" translatable="false">i386</string>
 
     <!-- Ubuntu -->
-    <string name="ubuntu_suite" translatable="false">precise</string>
-    <string name="ubuntu_mirror" translatable="false">http://ports.ubuntu.com</string>
-    <string name="ubuntu_architecture" translatable="false">armhf</string>
-
-    <!-- Arch Linux -->
-    <string name="archlinux_suite" translatable="false">latest</string>
-    <string name="archlinux_mirror" translatable="false">http://mirror.archlinuxarm.org</string>
-    <string name="archlinux_architecture" translatable="false">armv7h</string>
+    <string name="ubuntu_suite" translatable="false">trusty</string>
+    <!-- arm -->
+    <string name="arm_ubuntu_mirror" translatable="false">http://ports.ubuntu.com/</string>
+    <string name="arm_ubuntu_architecture" translatable="false">armhf</string>
+    <!-- intel -->
+    <string name="intel_ubuntu_mirror" translatable="false">http://archive.ubuntu.com/ubuntu/</string>
+    <string name="intel_ubuntu_architecture" translatable="false">i386</string>
+        
+    <!-- Kali Linux -->
+    <string name="kali_suite" translatable="false">kali</string>
+    <!-- arm -->
+    <string name="arm_kali_mirror" translatable="false">http://http.kali.org/kali/</string>
+    <string name="arm_kali_architecture" translatable="false">armhf</string>
+    <!-- intel -->
+    <string name="intel_kali_mirror" translatable="false">http://http.kali.org/kali/</string>
+    <string name="intel_kali_architecture" translatable="false">i386</string>
 
     <!-- Fedora -->
     <string name="fedora_suite" translatable="false">21</string>
-    <string name="fedora_mirror" translatable="false">http://dl.fedoraproject.org/pub/</string>
-    <string name="fedora_architecture" translatable="false">armhfp</string>
+    <!-- arm -->
+    <string name="arm_fedora_mirror" translatable="false">http://dl.fedoraproject.org/pub/</string>
+    <string name="arm_fedora_architecture" translatable="false">armhfp</string>
+    <!-- intel -->
+    <string name="intel_fedora_mirror" translatable="false">http://dl.fedoraproject.org/pub/</string>
+    <string name="intel_fedora_architecture" translatable="false">i386</string>
+    
+    <!-- Arch Linux -->
+    <string name="archlinux_suite" translatable="false">latest</string>
+    <!-- arm -->
+    <string name="arm_archlinux_mirror" translatable="false">http://mirror.archlinuxarm.org/</string>
+    <string name="arm_archlinux_architecture" translatable="false">armv7h</string>
+    <!-- intel -->
+    <string name="intel_archlinux_suite" translatable="false">latest</string>
+    <string name="intel_archlinux_mirror" translatable="false">http://mirrors.kernel.org/archlinux/</string>
+    <string name="intel_archlinux_architecture" translatable="false">i686</string>
 
     <!-- openSUSE -->
-    <string name="opensuse_suite" translatable="false">12.3</string>
-    <string name="opensuse_mirror" translatable="false">http://download.opensuse.org/ports/</string>
-    <string name="opensuse_architecture" translatable="false">armv7hl</string>
+    <string name="opensuse_suite" translatable="false">13.2</string>
+    <!-- arm -->
+    <string name="arm_opensuse_mirror" translatable="false">http://download.opensuse.org/ports/</string>
+    <string name="arm_opensuse_architecture" translatable="false">armv7hl</string>
+    <!-- intel -->
+    <string name="intel_opensuse_mirror" translatable="false">http://download.opensuse.org/</string>
+    <string name="intel_opensuse_architecture" translatable="false">i586</string>
 
-    <!-- Kali Linux -->
-    <string name="kali_suite" translatable="false">kali</string>
-    <string name="kali_mirror" translatable="false">http://http.kali.org/kali</string>
-    <string name="kali_architecture" translatable="false">armhf</string>
-    
     <!-- Gentoo -->
     <string name="gentoo_suite" translatable="false">latest</string>
-    <string name="gentoo_mirror" translatable="false">http://mirror.yandex.ru/gentoo-distfiles/releases/</string>
-    <string name="gentoo_architecture" translatable="false">armv7a</string>
+    <!-- arm -->
+    <string name="arm_gentoo_mirror" translatable="false">http://mirror.yandex.ru/gentoo-distfiles/releases/arm/</string>
+    <string name="arm_gentoo_architecture" translatable="false">armv7a_hardfp</string>
+    <!-- intel -->
+    <string name="intel_gentoo_mirror" translatable="false">http://mirror.yandex.ru/gentoo-distfiles/releases/x86/</string>
+    <string name="intel_gentoo_architecture" translatable="false">i686</string>
+    
+    <!-- RootFS -->
+    <string name="rootfs_suite" translatable="false" />
+    <!-- arm -->
+    <string name="arm_rootfs_mirror" translatable="false" />
+    <string name="arm_rootfs_architecture" translatable="false" />
+    <!-- intel -->
+    <string name="intel_rootfs_mirror" translatable="false" />
+    <string name="intel_rootfs_architecture" translatable="false" />
    
 </resources>

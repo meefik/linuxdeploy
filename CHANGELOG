@@ -279,7 +279,7 @@ Updated list packages of base system installation
 Обновлен встроенный BusyBox до версии 1.23.0
 
 1.4.9
-Добавленна поддержка сторонних сборок BusyBox (требуется /system/xbin/ash)
+Добавлена поддержка сторонних сборок BusyBox (требуется /system/xbin/ash)
 Добавлена поддержка Ubuntu 14.10 (Utopic Unicorn)
 Добавлена поддержка arm64/aarch64 для некоторых дистрибутивов
 

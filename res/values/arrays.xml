@@ -68,20 +68,20 @@
     <string-array name="distribution_values" translatable="false">
         <item>debian</item>
         <item>ubuntu</item>
-        <item>archlinux</item>
-        <item>fedora</item>
-        <item>opensuse</item>
         <item>kali</item>
+        <item>fedora</item>
+        <item>archlinux</item>
+        <item>opensuse</item>
         <item>gentoo</item>
         <item>rootfs</item>
     </string-array>
     <string-array name="distribution_entries" translatable="false">
         <item>Debian</item>
         <item>Ubuntu</item>
-        <item>Arch Linux</item>
-        <item>Fedora</item>
-        <item>openSUSE</item>
         <item>Kali Linux</item>
+        <item>Fedora</item>
+        <item>Arch Linux</item>
+        <item>openSUSE</item>
         <item>Gentoo</item>
         <item>RootFS</item>
     </string-array>
@@ -121,7 +121,7 @@
     <string-array name="debian_architecture_values" translatable="false">
         <item>armel</item>
         <item>armhf</item>
-        <item>arm64</item>
+        <item>arm64</item> <!-- jessie and later -->
         <item>i386</item>
     </string-array>
     <string-array name="debian_components_values" translatable="false">
@@ -152,7 +152,8 @@
     <string-array name="ubuntu_architecture_values" translatable="false">
         <item>armel</item>
         <item>armhf</item>
-        <item>arm64</item>
+        <item>arm64</item> <!-- utopic and later -->
+        <item>i386</item>
     </string-array>
     <string-array name="ubuntu_components_values" translatable="false">
         <item>desktop</item>
@@ -167,80 +168,6 @@
         <item>X server</item>
     </string-array>
     
-    <!-- Arch Linux -->
-
-    <string-array name="archlinux_suite_values" translatable="false">
-        <item>latest</item>
-    </string-array>
-    <string-array name="archlinux_architecture_values" translatable="false">
-        <item>arm</item>
-        <item>armv6h</item>
-        <item>armv7h</item>
-    </string-array>
-    <string-array name="archlinux_components_values" translatable="false">
-        <item>desktop</item>
-        <item>ssh</item>
-        <item>vnc</item>
-        <item>xserver</item>
-    </string-array>
-    <string-array name="archlinux_components_entries">
-        <item>Desktop Environment</item>
-        <item>SSH server</item>
-        <item>VNC server</item>
-        <item>X server</item>
-    </string-array>
-
-    <!-- Fedora -->
-
-    <string-array name="fedora_suite_values" translatable="false">
-        <item>17</item>
-        <item>18</item>
-        <item>19</item>
-        <item>20</item>
-        <item>21</item>
-    </string-array>
-    <!-- f19 and later only have armhfp -->
-    <string-array name="fedora_architecture_values" translatable="false">
-        <item>arm</item>
-        <item>armhfp</item>
-        <item>aarch64</item>
-    </string-array>
-    <string-array name="fedora_components_values" translatable="false">
-        <item>desktop</item>
-        <item>ssh</item>
-        <item>vnc</item>
-        <item>xserver</item>
-    </string-array>
-    <string-array name="fedora_components_entries">
-        <item>Desktop Environment</item>
-        <item>SSH server</item>
-        <item>VNC server</item>
-        <item>X server</item>
-    </string-array>
-
-    <!-- openSUSE -->
-
-    <string-array name="opensuse_suite_values" translatable="false">
-        <item>12.3</item>
-        <item>13.2</item>
-    </string-array>
-    <string-array name="opensuse_architecture_values" translatable="false">
-        <item>armv6hl</item>
-        <item>armv7hl</item>
-    </string-array>
-    <string-array name="opensuse_components_values" translatable="false">
-        <item>desktop</item>
-        <item>ssh</item>
-        <item>vnc</item>
-        <item>xserver</item>
-    </string-array>
-    <string-array name="opensuse_components_entries">
-        <item>Desktop Environment</item>
-        <item>SSH server</item>
-        <item>VNC server</item>
-        <item>X server</item>
-    </string-array>
-    
     <!-- Kali Linux -->
 
     <string-array name="kali_suite_values" translatable="false">
@@ -249,6 +176,7 @@
     <string-array name="kali_architecture_values" translatable="false">
         <item>armel</item>
         <item>armhf</item>
+        <item>i386</item>
     </string-array>
     <string-array name="kali_components_values" translatable="false">
         <item>desktop</item>
@@ -265,6 +193,80 @@
         <item>Kali components</item>
     </string-array>
     
+    <!-- Fedora -->
+
+    <string-array name="fedora_suite_values" translatable="false">
+        <item>18</item>
+        <item>19</item>
+        <item>20</item>
+        <item>21</item>
+    </string-array>
+    <string-array name="fedora_architecture_values" translatable="false">
+        <item>arm</item> <!-- f18 only -->
+        <item>armhfp</item> <!-- f19 and later -->
+        <item>aarch64</item> <!-- f21 and later -->
+        <item>i386</item>
+    </string-array>
+    <string-array name="fedora_components_values" translatable="false">
+        <item>desktop</item>
+        <item>ssh</item>
+        <item>vnc</item>
+        <item>xserver</item>
+    </string-array>
+    <string-array name="fedora_components_entries">
+        <item>Desktop Environment</item>
+        <item>SSH server</item>
+        <item>VNC server</item>
+        <item>X server</item>
+    </string-array>
+    
+    <!-- Arch Linux -->
+
+    <string-array name="archlinux_suite_values" translatable="false">
+        <item>latest</item>
+    </string-array>
+    <string-array name="archlinux_architecture_values" translatable="false">
+        <item>arm</item>
+        <item>armv6h</item>
+        <item>armv7h</item>
+        <item>i686</item>
+    </string-array>
+    <string-array name="archlinux_components_values" translatable="false">
+        <item>desktop</item>
+        <item>ssh</item>
+        <item>vnc</item>
+        <item>xserver</item>
+    </string-array>
+    <string-array name="archlinux_components_entries">
+        <item>Desktop Environment</item>
+        <item>SSH server</item>
+        <item>VNC server</item>
+        <item>X server</item>
+    </string-array>
+
+    <!-- openSUSE -->
+
+    <string-array name="opensuse_suite_values" translatable="false">
+        <item>12.3</item>
+        <item>13.2</item>
+    </string-array>
+    <string-array name="opensuse_architecture_values" translatable="false">
+        <item>armv7hl</item>
+        <item>i686</item>
+    </string-array>
+    <string-array name="opensuse_components_values" translatable="false">
+        <item>desktop</item>
+        <item>ssh</item>
+        <item>vnc</item>
+        <item>xserver</item>
+    </string-array>
+    <string-array name="opensuse_components_entries">
+        <item>Desktop Environment</item>
+        <item>SSH server</item>
+        <item>VNC server</item>
+        <item>X server</item>
+    </string-array>
+    
     <!-- Gentoo -->
 
     <string-array name="gentoo_suite_values" translatable="false">
@@ -277,6 +279,8 @@
         <item>armv6j_hardfp</item>
         <item>armv7a</item>
         <item>armv7a_hardfp</item>
+        <item>i486</item>
+        <item>i686</item>
     </string-array>
     <string-array name="gentoo_components_values" translatable="false">
         <item>desktop</item>
@@ -290,5 +294,12 @@
         <item>VNC server</item>
         <item>X server</item>
     </string-array>
+    
+    <!-- RootFS -->
+
+    <string-array name="rootfs_suite_values" translatable="false" />
+    <string-array name="rootfs_architecture_values" translatable="false" />
+    <string-array name="rootfs_components_values" translatable="false" />
+    <string-array name="rootfs_components_entries" translatable="false" />
 
 </resources>
