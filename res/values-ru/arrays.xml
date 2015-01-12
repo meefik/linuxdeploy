@@ -49,18 +49,28 @@
         <item>X сервер</item>
     </string-array>
     
-    <!-- Arch Linux -->
+    <!-- Kali Linux -->
 
-    <string-array name="archlinux_components_entries">
+    <string-array name="kali_components_entries">
+        <item>Окружение рабочего стола</item>
+        <item>SSH сервер</item>
+        <item>VNC сервер</item>
+        <item>X сервер</item>
+        <item>Компоненты Kali</item>
+    </string-array>
+    
+    <!-- Fedora -->
+
+    <string-array name="fedora_components_entries">
         <item>Окружение рабочего стола</item>
         <item>SSH сервер</item>
         <item>VNC сервер</item>
         <item>X сервер</item>
     </string-array>
+    
+    <!-- Arch Linux -->
 
-    <!-- Fedora -->
-
-    <string-array name="fedora_components_entries">
+    <string-array name="archlinux_components_entries">
         <item>Окружение рабочего стола</item>
         <item>SSH сервер</item>
         <item>VNC сервер</item>
@@ -76,16 +86,6 @@
         <item>X сервер</item>
     </string-array>
     
-    <!-- Kali Linux -->
-
-    <string-array name="kali_components_entries">
-        <item>Окружение рабочего стола</item>
-        <item>SSH сервер</item>
-        <item>VNC сервер</item>
-        <item>X сервер</item>
-        <item>Компоненты Kali</item>
-    </string-array>
-    
     <!-- Gentoo -->
 
     <string-array name="gentoo_components_entries">
@@ -94,6 +94,5 @@
         <item>VNC сервер</item>
         <item>X сервер</item>
     </string-array>
-
-
+    
 </resources>

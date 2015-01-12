@@ -1,6 +1,7 @@
 package ru.meefik.linuxdeploy;
 
 import java.io.File;
+import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -248,26 +249,25 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 				pref.setSummary(this
 						.getString(R.string.summary_disksize_preference));
 			}
-			if (editPref.getKey().equals("diskimage")
-					&& editPref.getText().equals("{replace}")) {
-				File extStore = Environment.getExternalStorageDirectory();
-				String imgFile = extStore.getAbsolutePath() + "/linux.img";
-				((EditTextPreference) pref).setText(imgFile);
-				((EditTextPreference) pref).setSummary(imgFile);
-			}
-			if (editPref.getKey().equals("vncwidth")
-					&& editPref.getText().equals("{replace}")) {
-				String vncWidth = String.valueOf(PrefStore
-						.getWidth(getApplicationContext()));
-				((EditTextPreference) pref).setText(vncWidth);
-				((EditTextPreference) pref).setSummary(vncWidth);
-			}
-			if (editPref.getKey().equals("vncheight")
-					&& editPref.getText().equals("{replace}")) {
-				String vncHeight = String.valueOf(PrefStore
-						.getHeight(getApplicationContext()));
-				((EditTextPreference) pref).setText(vncHeight);
-				((EditTextPreference) pref).setSummary(vncHeight);
+			if (editPref.getText().equals("{replace}")) {
+				if (editPref.getKey().equals("diskimage")) {
+					File extStore = Environment.getExternalStorageDirectory();
+					String imgFile = extStore.getAbsolutePath() + "/linux.img";
+					((EditTextPreference) pref).setText(imgFile);
+					((EditTextPreference) pref).setSummary(imgFile);
+				}
+				if (editPref.getKey().equals("vncwidth")) {
+					String vncWidth = String.valueOf(PrefStore
+							.getWidth(getApplicationContext()));
+					((EditTextPreference) pref).setText(vncWidth);
+					((EditTextPreference) pref).setSummary(vncWidth);
+				}
+				if (editPref.getKey().equals("vncheight")) {
+					String vncHeight = String.valueOf(PrefStore
+							.getHeight(getApplicationContext()));
+					((EditTextPreference) pref).setText(vncHeight);
+					((EditTextPreference) pref).setSummary(vncHeight);
+				}
 			}
 		}
 
@@ -276,302 +276,89 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 			pref.setSummary(listPref.getEntry());
 
 			if (listPref.getKey().equals("distribution")) {
-				if (listPref.getValue().equals("debian")) {
-					// suite
-					ListPreference suite = (ListPreference) this
-							.findPreference("suite");
-					suite.setEntries(R.array.debian_suite_values);
-					suite.setEntryValues(R.array.debian_suite_values);
-					if (init)
-						suite.setValue(getString(R.string.debian_suite));
-					suite.setSummary(suite.getEntry());
-					suite.setEnabled(true);
-					// architecture
-					ListPreference architecture = (ListPreference) this
-							.findPreference("architecture");
-					architecture.setEntries(R.array.debian_architecture_values);
-					architecture
-							.setEntryValues(R.array.debian_architecture_values);
-					if (init)
-						architecture
-								.setValue(getString(R.string.debian_architecture));
-					architecture.setSummary(architecture.getEntry());
-					architecture.setEnabled(true);
-					// mirror
-					EditTextPreference mirror = (EditTextPreference) this
-							.findPreference("mirror");
-					if (init)
-						mirror.setText(getString(R.string.debian_mirror));
-					mirror.setSummary(mirror.getText());
-					mirror.setEnabled(true);
-					// components
-					MultiSelectListPreferenceCompat components = (MultiSelectListPreferenceCompat) this
-							.findPreference("xcomponents");
-					components.setEntries(R.array.debian_components_entries);
-					components.setEntryValues(R.array.debian_components_values);
-					if (init)
-						components.setValues(new HashSet<String>(Arrays
-								.asList(getResources().getStringArray(
-										R.array.default_components))));
-					components.setEnabled(true);
+				ListPreference distribution = (ListPreference) this
+						.findPreference("distribution");
+				ListPreference suite = (ListPreference) this
+						.findPreference("suite");
+				ListPreference architecture = (ListPreference) this
+						.findPreference("architecture");
+				EditTextPreference mirror = (EditTextPreference) this
+						.findPreference("mirror");
+				MultiSelectListPreferenceCompat components = (MultiSelectListPreferenceCompat) this
+						.findPreference("xcomponents");
+		
+				String distributionStr = listPref.getValue();
+				
+				// suite
+				int suiteValuesId = PrefStore.getResourceId(this,
+						distributionStr + "_suite_values", "array");
+				if (suiteValuesId != -1) {
+					suite.setEntries(suiteValuesId);
+					suite.setEntryValues(suiteValuesId);
 				}
-				if (listPref.getValue().equals("ubuntu")) {
-					// suite
-					ListPreference suite = (ListPreference) this
-							.findPreference("suite");
-					suite.setEntries(R.array.ubuntu_suite_values);
-					suite.setEntryValues(R.array.ubuntu_suite_values);
-					if (init)
-						suite.setValue(getString(R.string.ubuntu_suite));
-					suite.setSummary(suite.getEntry());
-					suite.setEnabled(true);
-					// architecture
-					ListPreference architecture = (ListPreference) this
-							.findPreference("architecture");
-					architecture.setEntries(R.array.ubuntu_architecture_values);
-					architecture
-							.setEntryValues(R.array.ubuntu_architecture_values);
-					if (init)
-						architecture
-								.setValue(getString(R.string.ubuntu_architecture));
-					architecture.setSummary(architecture.getEntry());
-					architecture.setEnabled(true);
-					// mirror
-					EditTextPreference mirror = (EditTextPreference) this
-							.findPreference("mirror");
-					if (init)
-						mirror.setText(getString(R.string.ubuntu_mirror));
-					mirror.setSummary(mirror.getText());
-					mirror.setEnabled(true);
-					// components
-					MultiSelectListPreferenceCompat components = (MultiSelectListPreferenceCompat) this
-							.findPreference("xcomponents");
-					components.setEntries(R.array.ubuntu_components_entries);
-					components.setEntryValues(R.array.ubuntu_components_values);
-					if (init)
-						components.setValues(new HashSet<String>(Arrays
-								.asList(getResources().getStringArray(
-										R.array.default_components))));
-					components.setEnabled(true);
+				if (init) {
+					int suiteId = PrefStore.getResourceId(this, distributionStr
+							+ "_suite", "string");
+					if (suiteId != -1) {
+						suite.setValue(getString(suiteId));
+					}
 				}
-				if (listPref.getValue().equals("archlinux")) {
-					// suite
-					ListPreference suite = (ListPreference) this
-							.findPreference("suite");
-					suite.setEntries(R.array.archlinux_suite_values);
-					suite.setEntryValues(R.array.archlinux_suite_values);
-					if (init)
-						suite.setValue(getString(R.string.archlinux_suite));
-					suite.setSummary(suite.getEntry());
-					suite.setEnabled(true);
-					// architecture
-					ListPreference architecture = (ListPreference) this
-							.findPreference("architecture");
-					architecture
-							.setEntries(R.array.archlinux_architecture_values);
-					architecture
-							.setEntryValues(R.array.archlinux_architecture_values);
-					if (init)
-						architecture
-								.setValue(getString(R.string.archlinux_architecture));
-					architecture.setSummary(architecture.getEntry());
-					architecture.setEnabled(true);
-					// mirror
-					EditTextPreference mirror = (EditTextPreference) this
-							.findPreference("mirror");
-					if (init)
-						mirror.setText(getString(R.string.archlinux_mirror));
-					mirror.setSummary(mirror.getText());
-					mirror.setEnabled(true);
-					// components
-					MultiSelectListPreferenceCompat components = (MultiSelectListPreferenceCompat) this
-							.findPreference("xcomponents");
-					components.setEntries(R.array.ubuntu_components_entries);
-					components.setEntryValues(R.array.ubuntu_components_values);
-					if (init)
-						components.setValues(new HashSet<String>(Arrays
-								.asList(getResources().getStringArray(
-										R.array.default_components))));
-					components.setEnabled(true);
+				suite.setSummary(suite.getEntry());
+				suite.setEnabled(true);
+
+				// architecture
+				int architectureValuesId = PrefStore.getResourceId(this,
+						distributionStr + "_architecture_values", "array");
+				if (suiteValuesId != -1) {
+					architecture.setEntries(architectureValuesId);
+					architecture.setEntryValues(architectureValuesId);
 				}
-				if (listPref.getValue().equals("fedora")) {
-					// suite
-					ListPreference suite = (ListPreference) this
-							.findPreference("suite");
-					suite.setEntries(R.array.fedora_suite_values);
-					suite.setEntryValues(R.array.fedora_suite_values);
-					if (init)
-						suite.setValue(getString(R.string.fedora_suite));
-					suite.setSummary(suite.getEntry());
-					suite.setEnabled(true);
-					// architecture
-					ListPreference architecture = (ListPreference) this
-							.findPreference("architecture");
-					architecture.setEntries(R.array.fedora_architecture_values);
-					architecture
-							.setEntryValues(R.array.fedora_architecture_values);
-					if (init)
-						architecture
-								.setValue(getString(R.string.fedora_architecture));
-					architecture.setSummary(architecture.getEntry());
-					architecture.setEnabled(true);
-					// mirror
-					EditTextPreference mirror = (EditTextPreference) this
-							.findPreference("mirror");
-					if (init)
-						mirror.setText(getString(R.string.fedora_mirror));
-					mirror.setSummary(mirror.getText());
-					mirror.setEnabled(true);
-					// components
-					MultiSelectListPreferenceCompat components = (MultiSelectListPreferenceCompat) this
-							.findPreference("xcomponents");
-					components.setEntries(R.array.fedora_components_entries);
-					components.setEntryValues(R.array.fedora_components_values);
-					if (init)
-						components.setValues(new HashSet<String>(Arrays
-								.asList(getResources().getStringArray(
-										R.array.default_components))));
-					components.setEnabled(true);
+				if (init || architecture.getValue().equals("{replace}")) {
+					int architectureId = PrefStore.getResourceId(this,
+							PrefStore.MARCH + "_" + distributionStr
+									+ "_architecture", "string");
+					if (architectureId != -1) {
+						architecture.setValue(getString(architectureId));
+					}
 				}
-				if (listPref.getValue().equals("opensuse")) {
-					// suite
-					ListPreference suite = (ListPreference) this
-							.findPreference("suite");
-					suite.setEntries(R.array.opensuse_suite_values);
-					suite.setEntryValues(R.array.opensuse_suite_values);
-					if (init)
-						suite.setValue(getString(R.string.opensuse_suite));
-					suite.setSummary(suite.getEntry());
-					suite.setEnabled(true);
-					// architecture
-					ListPreference architecture = (ListPreference) this
-							.findPreference("architecture");
-					architecture
-							.setEntries(R.array.opensuse_architecture_values);
-					architecture
-							.setEntryValues(R.array.opensuse_architecture_values);
-					if (init)
-						architecture
-								.setValue(getString(R.string.opensuse_architecture));
-					architecture.setSummary(architecture.getEntry());
-					architecture.setEnabled(true);
-					// mirror
-					EditTextPreference mirror = (EditTextPreference) this
-							.findPreference("mirror");
-					if (init)
-						mirror.setText(getString(R.string.opensuse_mirror));
-					mirror.setSummary(mirror.getText());
-					mirror.setEnabled(true);
-					// components
-					MultiSelectListPreferenceCompat components = (MultiSelectListPreferenceCompat) this
-							.findPreference("xcomponents");
-					components.setEntries(R.array.opensuse_components_entries);
-					components
-							.setEntryValues(R.array.opensuse_components_values);
-					if (init)
-						components.setValues(new HashSet<String>(Arrays
-								.asList(getResources().getStringArray(
-										R.array.default_components))));
-					components.setEnabled(true);
+				architecture.setSummary(architecture.getEntry());
+				architecture.setEnabled(true);
+
+				// mirror
+				if (init || mirror.getText().equals("{replace}")) {
+					int mirrorId = PrefStore
+							.getResourceId(this, PrefStore.MARCH + "_"
+									+ distributionStr + "_mirror", "string");
+					if (mirrorId != -1) {
+						mirror.setText(getString(mirrorId));
+					}
 				}
-				if (listPref.getValue().equals("kali")) {
-					// suite
-					ListPreference suite = (ListPreference) this
-							.findPreference("suite");
-					suite.setEntries(R.array.kali_suite_values);
-					suite.setEntryValues(R.array.kali_suite_values);
-					if (init)
-						suite.setValue(getString(R.string.kali_suite));
-					suite.setSummary(suite.getEntry());
-					suite.setEnabled(true);
-					// architecture
-					ListPreference architecture = (ListPreference) this
-							.findPreference("architecture");
-					architecture.setEntries(R.array.kali_architecture_values);
-					architecture
-							.setEntryValues(R.array.kali_architecture_values);
-					if (init)
-						architecture
-								.setValue(getString(R.string.kali_architecture));
-					architecture.setSummary(architecture.getEntry());
-					architecture.setEnabled(true);
-					// mirror
-					EditTextPreference mirror = (EditTextPreference) this
-							.findPreference("mirror");
-					if (init)
-						mirror.setText(getString(R.string.kali_mirror));
-					mirror.setSummary(mirror.getText());
-					mirror.setEnabled(true);
-					// components
-					MultiSelectListPreferenceCompat components = (MultiSelectListPreferenceCompat) this
-							.findPreference("xcomponents");
-					components.setEntries(R.array.kali_components_entries);
-					components.setEntryValues(R.array.kali_components_values);
-					if (init)
-						components.setValues(new HashSet<String>(Arrays
-								.asList(getResources().getStringArray(
-										R.array.default_components))));
-					components.setEnabled(true);
+				mirror.setSummary(mirror.getText());
+				mirror.setEnabled(true);
+
+				// components
+				int componentsEntriesId = PrefStore.getResourceId(this,
+						distributionStr + "_components_entries", "array");
+				int componentsValuesId = PrefStore.getResourceId(this,
+						distributionStr + "_components_values", "array");
+				if (componentsEntriesId != -1 && componentsValuesId != -1) {
+					components.setEntries(componentsEntriesId);
+					components.setEntryValues(componentsValuesId);
 				}
-				if (listPref.getValue().equals("gentoo")) {
-					// suite
-					ListPreference suite = (ListPreference) this
-							.findPreference("suite");
-					suite.setEntries(R.array.gentoo_suite_values);
-					suite.setEntryValues(R.array.gentoo_suite_values);
-					if (init)
-						suite.setValue(getString(R.string.gentoo_suite));
-					suite.setSummary(suite.getEntry());
-					suite.setEnabled(true);
-					// architecture
-					ListPreference architecture = (ListPreference) this
-							.findPreference("architecture");
-					architecture.setEntries(R.array.gentoo_architecture_values);
-					architecture
-							.setEntryValues(R.array.gentoo_architecture_values);
-					if (init)
-						architecture
-								.setValue(getString(R.string.gentoo_architecture));
-					architecture.setSummary(architecture.getEntry());
-					architecture.setEnabled(true);
-					// mirror
-					EditTextPreference mirror = (EditTextPreference) this
-							.findPreference("mirror");
-					if (init)
-						mirror.setText(getString(R.string.gentoo_mirror));
-					mirror.setSummary(mirror.getText());
-					mirror.setEnabled(true);
-					// components
-					MultiSelectListPreferenceCompat components = (MultiSelectListPreferenceCompat) this
-							.findPreference("xcomponents");
-					components.setEntries(R.array.gentoo_components_entries);
-					components.setEntryValues(R.array.gentoo_components_values);
-					if (init)
-						components.setValues(new HashSet<String>(Arrays
-								.asList(getResources().getStringArray(
-										R.array.default_components))));
-					components.setEnabled(true);
+				if (init) {
+					components.setValues(new HashSet<String>(Arrays
+							.asList(getResources().getStringArray(
+									R.array.default_components))));
 				}
+				components.setEnabled(true);
+				
+				// RootFS
 				if (listPref.getValue().equals("rootfs")) {
 					// suite
-					ListPreference suite = (ListPreference) this
-							.findPreference("suite");
-					suite.setEntries(null);
-					suite.setEntryValues(null);
-					suite.setValue("unknown");
-					suite.setSummary(null);
 					suite.setEnabled(false);
 					// architecture
-					ListPreference architecture = (ListPreference) this
-							.findPreference("architecture");
-					architecture.setEntries(null);
-					architecture.setEntryValues(null);
-					architecture.setValue("unknown");
-					architecture.setSummary(null);
 					architecture.setEnabled(false);
 					// mirror
-					EditTextPreference mirror = (EditTextPreference) this
-							.findPreference("mirror");
 					if (init) {
 						File extStore = Environment
 								.getExternalStorageDirectory();
@@ -582,13 +369,26 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 					mirror.setSummary(mirror.getText());
 					mirror.setEnabled(true);
 					// components
-					MultiSelectListPreferenceCompat components = (MultiSelectListPreferenceCompat) this
-							.findPreference("xcomponents");
-					components.setEntries(null);
-					components.setEntryValues(null);
-					components.setValues(new HashSet<String>());
 					components.setEnabled(false);
 				}
+			}
+			if (listPref.getKey().equals("architecture") && init) {
+				ListPreference distribution = (ListPreference) this
+						.findPreference("distribution");
+				EditTextPreference mirror = (EditTextPreference) this
+						.findPreference("mirror");
+
+				String architectureStr = PrefStore.getArch(listPref.getValue());
+				String distributionStr = distribution.getValue();
+				
+				int mirrorId = PrefStore
+						.getResourceId(this, architectureStr + "_"
+								+ distributionStr + "_mirror", "string");
+				if (mirrorId != -1) {
+					mirror.setText(getString(mirrorId));
+				}
+				
+				mirror.setSummary(mirror.getText());
 			}
 			if (listPref.getKey().equals("deploytype")) {
 				EditTextPreference disksize = (EditTextPreference) this

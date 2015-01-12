@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -214,7 +215,7 @@ public class PrefStore {
 		
 		prefEditor.commit();
 		
-		MARCH = getArch();
+		MARCH = getArch(System.getProperty("os.arch"));
 
 		try {
 			VERSION = c.getPackageManager().getPackageInfo(c.getPackageName(),
@@ -227,8 +228,7 @@ public class PrefStore {
 		}
 	}
 	
-	public static String getArch() {
-		String arch = System.getProperty("os.arch");    
+	public static String getArch(String arch) {
 		char a = arch.toLowerCase().charAt(0);
 		String march = "";
 		switch (a) {
@@ -499,6 +499,14 @@ public class PrefStore {
 		if (THEME
 				.equals(c.getResources().getStringArray(R.array.theme_values)[1]))
 			c.setTheme(R.style.LightTheme);
+	}
+	
+	public static int getResourceId(Context c, String variableName, String resourceName) {
+	    try {
+	        return c.getResources().getIdentifier(variableName, resourceName, c.getPackageName());
+	    } catch (Exception e) {
+	        return -1;
+	    } 
 	}
 
 }
