@@ -13,8 +13,8 @@ msg()
 prepare_system()
 {
 	msg -n "Checking mount points ... "
-	is_mnt=`cat /proc/mounts | grep " $MNT_TARGET "`
-	[ -z "$is_mnt" ] && msg "done" || { msg "fail"; msg "Press STOP and repeat attempt."; return 1; }
+	is_mnt=$(grep -c " $MNT_TARGET " /proc/mounts)
+	[ "$is_mnt" -eq 0 ] && msg "done" || { msg "fail"; msg "Press STOP and repeat attempt."; return 1; }
 
 	msg -n "Checking installation path ... "
 	if [ "$DEPLOY_TYPE" = "file" ]; then
@@ -31,10 +31,10 @@ prepare_system()
 
 	if [ "$DEPLOY_TYPE" = "file" ]; then
 		if [ "$IMG_SIZE" -eq 0 ]; then
-			[ -f "$IMG_TARGET" ] && FILE_SIZE=`stat -c %s $IMG_TARGET` || FILE_SIZE=0
-			DIR_NAME=`dirname $IMG_TARGET`
-			BLOCK_SIZE=`stat -c %s -f $DIR_NAME`
-			AVAILABLE_SIZE=`stat -c %a -f $DIR_NAME`
+			[ -f "$IMG_TARGET" ] && FILE_SIZE=$(stat -c %s $IMG_TARGET) || FILE_SIZE=0
+			DIR_NAME=$(dirname $IMG_TARGET)
+			BLOCK_SIZE=$(stat -c %s -f $DIR_NAME)
+			AVAILABLE_SIZE=$(stat -c %a -f $DIR_NAME)
 			let AVAILABLE_SIZE="($BLOCK_SIZE*$AVAILABLE_SIZE)+$FILE_SIZE"
 			let IMG_SIZE="($AVAILABLE_SIZE-$AVAILABLE_SIZE/10)/1048576"
 			[ "$IMG_SIZE" -gt 4095 ] && IMG_SIZE=4095
@@ -50,7 +50,7 @@ prepare_system()
 	if [ "$DEPLOY_TYPE" = "file" -o "$DEPLOY_TYPE" = "partition" ]; then
 		for fs in ext4 ext3 ext2
 		do
-			if [ -n "`cat /proc/filesystems | grep $fs`" ]; then
+			if [ "$(grep -c $fs /proc/filesystems)" -gt 0 ]; then
 				fs_support=$fs
 				break
 			fi
@@ -60,9 +60,9 @@ prepare_system()
 		
 		msg -n "Making file system ($FS_TYPE) ... "
 		(set -e
-			is_loop=`losetup -a | grep $IMG_TARGET || true`
-			is_raw=`cat /proc/mounts | grep $IMG_TARGET || true`
-			[ -z "$is_loop" -a -z "$is_raw" ] && mke2fs -qF -t $FS_TYPE -O ^has_journal $IMG_TARGET
+			is_loop=$(losetup -a | grep -c $IMG_TARGET || true)
+			is_raw=$(grep -c $IMG_TARGET /proc/mounts || true)
+			[ "$is_loop" -eq 0 -a "$is_raw" -eq 0 ] && mke2fs -qF -t $FS_TYPE -O ^has_journal $IMG_TARGET
 		exit 0)
 		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 	fi
@@ -95,7 +95,7 @@ configure_system()
 				DNS_LIST="$dns1 $dns2"
 				[ -z "$dns1" -a -z "$dns2" ] && DNS_LIST="8.8.8.8"
 			else
-				DNS_LIST=`echo $SERVER_DNS | tr ',;' ' '`
+				DNS_LIST=$(echo $SERVER_DNS | tr ',;' ' ')
 			fi
 			printf '' > $MNT_TARGET/etc/resolv.conf
 			for dns in $DNS_LIST
@@ -106,38 +106,36 @@ configure_system()
 		mtab)
 			#chroot $MNT_TARGET ln -sf /proc/mounts /etc/mtab
 			rm -f $MNT_TARGET/etc/mtab || true
-			cat /proc/mounts | grep $MNT_TARGET | sed "s|$MNT_TARGET/*|/|g" > $MNT_TARGET/etc/mtab
+			grep $MNT_TARGET /proc/mounts | sed "s|$MNT_TARGET/*|/|g" > $MNT_TARGET/etc/mtab
 		;;
 		motd)
 			if [ -f $MNT_TARGET/etc/os-release ]
 			then
-				LINUX_VERSION=`. $MNT_TARGET/etc/os-release; echo $PRETTY_NAME`
+				LINUX_VERSION=$(. $MNT_TARGET/etc/os-release; echo $PRETTY_NAME)
 			elif [ -f $MNT_TARGET/etc/arch-release ]
 			then
 				LINUX_VERSION="Arch Linux"
 			elif [ -f $MNT_TARGET/etc/gentoo-release ]
 			then
-				LINUX_VERSION=`cat $MNT_TARGET/etc/gentoo-release`
+				LINUX_VERSION=$(cat $MNT_TARGET/etc/gentoo-release)
 			elif [ -f $MNT_TARGET/etc/fedora-release ]
 			then
-				LINUX_VERSION=`cat $MNT_TARGET/etc/fedora-release`
+				LINUX_VERSION=$(cat $MNT_TARGET/etc/fedora-release)
 			elif [ -f $MNT_TARGET/etc/redhat-release ]
 			then
-				LINUX_VERSION=`cat $MNT_TARGET/etc/redhat-release`
+				LINUX_VERSION=$(cat $MNT_TARGET/etc/redhat-release)
 			elif [ -f $MNT_TARGET/etc/debian_version ]
 			then
-				LINUX_VERSION=`printf "Debian GNU/Linux " ; cat $MNT_TARGET/etc/debian_version`
+				LINUX_VERSION=$(printf "Debian GNU/Linux " ; cat $MNT_TARGET/etc/debian_version)
 			fi
-			#LINUX_VERSION=`chroot $MNT_TARGET lsb_release -d | sed 's|Description:[[:space:]]*||' || true`
-			#LINUX_VERSION=`(. $MNT_TARGET/etc/os-release && echo $PRETTY_NAME) || true`
 			[ -z "$LINUX_VERSION" ] && LINUX_VERSION="GNU/Linux ($DISTRIB)"
 			MOTD="$LINUX_VERSION [running on Android via Linux Deploy]"
 			rm -f $MNT_TARGET/etc/motd || true
 			echo $MOTD > $MNT_TARGET/etc/motd
 		;;
 		hosts)
-			is_localhost=`cat $MNT_TARGET/etc/hosts | grep "^127.0.0.1" || true`
-			[ -z "$is_localhost" ] && echo '127.0.0.1 localhost' >> $MNT_TARGET/etc/hosts
+			is_localhost=$(grep -c "^127.0.0.1" $MNT_TARGET/etc/hosts || true)
+			[ "$is_localhost" -eq 0 ] && echo '127.0.0.1 localhost' >> $MNT_TARGET/etc/hosts
 		;;
 		hostname)
 			echo 'localhost' > $MNT_TARGET/etc/hostname
@@ -159,27 +157,27 @@ configure_system()
 				PAM_SU="$MNT_TARGET/etc/pam.d/su"
 			;;
 			esac
-			if [ -z "`grep -e '^auth.*sufficient.*pam_succeed_if.so uid = 0 use_uid quiet$' $PAM_SU`" ]; then
+			if [ -z "$(grep -e '^auth.*sufficient.*pam_succeed_if.so uid = 0 use_uid quiet$' $PAM_SU)" ]; then
 				sed -i '1,/^auth/s/^\(auth.*\)$/auth\tsufficient\tpam_succeed_if.so uid = 0 use_uid quiet\n\1/' $PAM_SU
 			fi
 		;;
 		sudo)
 			SUDO_STR="$USER_NAME ALL=(ALL:ALL) NOPASSWD:ALL"
-			is_str=`cat $MNT_TARGET/etc/sudoers | grep "$SUDO_STR" || true`
-			[ -z "$is_str" ] && echo $SUDO_STR >> $MNT_TARGET/etc/sudoers
+			is_str=$(grep -c "$SUDO_STR" $MNT_TARGET/etc/sudoers || true)
+			[ "$is_str" -eq 0 ] && echo $SUDO_STR >> $MNT_TARGET/etc/sudoers
 			chmod 440 $MNT_TARGET/etc/sudoers		
 		;;
 		groups)
-			AIDS=`cat ${ENV_DIR%/}/deploy/android-groups`
+			AIDS=$(cat ${ENV_DIR%/}/deploy/android-groups)
 			for AID in $AIDS
 			do
-				XNAME=`echo $AID | awk -F: '{print $1}'`
-				XID=`echo $AID | awk -F: '{print $2}'`
+				XNAME=$(echo $AID | awk -F: '{print $1}')
+				XID=$(echo $AID | awk -F: '{print $2}')
 				sed -i "s|^$XNAME:.*|$XNAME:x:$XID:$USER_NAME|g" $MNT_TARGET/etc/group || true
-				is_str=`cat $MNT_TARGET/etc/group | grep "^$XNAME:" || true`
-				[ -z "$is_str" ] && echo "$XNAME:x:$XID:$USER_NAME" >> $MNT_TARGET/etc/group
-				is_str=`cat $MNT_TARGET/etc/passwd | grep "^$XNAME:" || true`
-				[ -z "$is_str" ] && echo "$XNAME:x:$XID:$XID::/:/bin/false" >> $MNT_TARGET/etc/passwd
+				is_str=$(grep -c "^$XNAME:" $MNT_TARGET/etc/group || true)
+				[ "$is_str" -eq 0 ] && echo "$XNAME:x:$XID:$USER_NAME" >> $MNT_TARGET/etc/group
+				is_str=$(grep -c "^$XNAME:" $MNT_TARGET/etc/passwd || true)
+				[ "$is_str" -eq 0 ] && echo "$XNAME:x:$XID:$XID::/:/bin/false" >> $MNT_TARGET/etc/passwd
 				sed -i 's|^UID_MIN.*|UID_MIN 5000|g' $MNT_TARGET/etc/login.defs
 				sed -i 's|^GID_MIN.*|GID_MIN 5000|g' $MNT_TARGET/etc/login.defs
 			done
@@ -204,17 +202,14 @@ configure_system()
 			esac
 			for uid in $INET_USERS
 			do
-				if [ -z "`grep \"^aid_inet:.*$uid\" $MNT_TARGET/etc/group`" ]; then
+				if [ -z "$(grep \"^aid_inet:.*$uid\" $MNT_TARGET/etc/group)" ]; then
 					sed -i "s|^\(aid_inet:.*\)|\1,$uid|g" $MNT_TARGET/etc/group
 				fi
 			done
 		;;
 		locales)
-			#echo "$LOCALE UTF-8" > $MNT_TARGET/etc/locale.gen
-			#chmod 644 $MNT_TARGET/etc/locale.gen
-			#chroot $MNT_TARGET locale-gen $LOCALE
-			inputfile=`echo $LOCALE | awk -F. '{print $1}'`
-			charmapfile=`echo $LOCALE | awk -F. '{print $2}'`
+			inputfile=$(echo $LOCALE | awk -F. '{print $1}')
+			charmapfile=$(echo $LOCALE | awk -F. '{print $2}')
 			chroot $MNT_TARGET localedef -i $inputfile -c -f $charmapfile $LOCALE
 			case "$DISTRIB" in
 			debian|ubuntu|kali)
@@ -229,7 +224,7 @@ configure_system()
 			opensuse)
 				echo "RC_LANG=$LOCALE" > $MNT_TARGET/etc/sysconfig/language
 			;;
-			esac		
+			esac
 		;;
 		repository)
 			case "$DISTRIB" in
@@ -239,7 +234,7 @@ configure_system()
 				else
 					echo "# Generated by Linux Deploy" > $MNT_TARGET/etc/apt/sources.list
 				fi
-				if [ -z "`grep "$MIRROR.*$SUITE" $MNT_TARGET/etc/apt/sources.list`" ]; then
+				if [ -z "$(grep "$MIRROR.*$SUITE" $MNT_TARGET/etc/apt/sources.list)" ]; then
 					case "$DISTRIB" in
 					debian|kali)
 						echo "deb $MIRROR $SUITE main contrib non-free" >> $MNT_TARGET/etc/apt/sources.list
@@ -253,10 +248,17 @@ configure_system()
 				fi
 			;;
 			archlinux)
+				if [ "$ARCH" = "i686" ]
+				then REPO="${MIRROR%/}/\$repo/os/\$arch"
+				else REPO="${MIRROR%/}/\$arch/\$repo"
+				fi
 				sed -i "s|^[[:space:]]*Architecture[[:space:]]*=.*$|Architecture = $ARCH|" $MNT_TARGET/etc/pacman.conf
 				sed -i "s|^[[:space:]]*\(CheckSpace\)|#\1|" $MNT_TARGET/etc/pacman.conf
 				sed -i "s|^[[:space:]]*SigLevel[[:space:]]*=.*$|SigLevel = Never|" $MNT_TARGET/etc/pacman.conf
-				sed -i "s|^[[:space:]]*Server[[:space:]]*=.*|Server = $MIRROR/$ARCH/\$repo|" $MNT_TARGET/etc/pacman.d/mirrorlist
+				if [ $(grep -c -e "[[:space:]]*Server" $MNT_TARGET/etc/pacman.d/mirrorlist) -gt 0 ]
+				then sed -i "s|^[[:space:]]*Server[[:space:]]*=.*|Server = $REPO|" $MNT_TARGET/etc/pacman.d/mirrorlist
+				else echo "Server = $REPO" >> $MNT_TARGET/etc/pacman.d/mirrorlist
+				fi
 			;;
 			fedora)
 				find $MNT_TARGET/etc/yum.repos.d/ -name *.repo | while read f; do sed -i 's/^enabled=.*/enabled=0/g' $f; done
@@ -275,31 +277,35 @@ configure_system()
 				chmod 644 $REPO_FILE
 			;;
 			opensuse)
+				if [ "$ARCH" = "i586" ]
+				then REPO="${MIRROR%/}/distribution/${SUITE}/repo/oss/"
+				else REPO="${MIRROR%/}/${ARCH}/distribution/${SUITE}/repo/oss/"
+				fi
 				REPO_NAME="openSUSE-${SUITE}-${ARCH}-Repo-OSS"
 				REPO_FILE="$MNT_TARGET/etc/zypp/repos.d/${REPO_NAME}.repo"
 				echo "[${REPO_NAME}]" > $REPO_FILE 
 				echo "name=${REPO_NAME}" >> $REPO_FILE
 				echo "enabled=1" >> $REPO_FILE
 				echo "autorefresh=0" >> $REPO_FILE
-				echo "baseurl=${MIRROR%/}/${ARCH}/distribution/${SUITE}/repo/oss/" >> $REPO_FILE
+				echo "baseurl=$REPO" >> $REPO_FILE
 				echo "type=NONE" >> $REPO_FILE
 				chmod 644 $REPO_FILE
 			;;
 			gentoo)
-				if [ -z "`grep '^aid_inet:.*,portage' $MNT_TARGET/etc/group`" ]; then
+				if [ -z "$(grep '^aid_inet:.*,portage' $MNT_TARGET/etc/group)" ]; then
 					sed -i "s|^\(aid_inet:.*\)|\1,portage|g" $MNT_TARGET/etc/group
 				fi
 				# set MAKEOPTS
-				NUMBER_OF_CPU=`cat /proc/cpuinfo | grep ^processor | wc -l`
+				NUMBER_OF_CPU=$(grep -c ^processor /proc/cpuinfo)
 				let NUMBER_OF_CPU=$NUMBER_OF_CPU+1
-				if [ -z "`grep '^MAKEOPTS=' $MNT_TARGET/etc/portage/make.conf`" ]; then
+				if [ -z "$(grep '^MAKEOPTS=' $MNT_TARGET/etc/portage/make.conf)" ]; then
 					echo "MAKEOPTS=\"-j$NUMBER_OF_CPU\"" >> $MNT_TARGET/etc/portage/make.conf
 				fi
 			;;
 			esac
 		;;
 		profile)
-			reserved=`echo $USER_NAME | grep ^aid_ || true`
+			reserved=$(echo $USER_NAME | grep ^aid_ || true)
 			if [ -n "$reserved" ]; then
 				echo "Username $USER_NAME is reserved!"
 				exit 1
@@ -312,11 +318,11 @@ configure_system()
 			# Set default password for $USER_NAME
 			PASSWORD="changeme"
 			chroot $MNT_TARGET sh -c "printf '%s\n' $PASSWORD $PASSWORD | passwd $USER_NAME"
-			USER_HOME=`cat $MNT_TARGET/etc/passwd | grep -m1 "^$USER_NAME:" | awk -F: '{print $6}'`
-			USER_ID=`cat $MNT_TARGET/etc/passwd | grep -m1 "^$USER_NAME:" | awk -F: '{print $3}'`
-			GROUP_ID=`cat $MNT_TARGET/etc/passwd | grep -m1 "^$USER_NAME:" | awk -F: '{print $4}'`
+			USER_HOME=$(grep -m1 "^$USER_NAME:" $MNT_TARGET/etc/passwd | awk -F: '{print $6}')
+			USER_ID=$(grep -m1 "^$USER_NAME:" $MNT_TARGET/etc/passwd | awk -F: '{print $3}')
+			GROUP_ID=$(grep -m1 "^$USER_NAME:" $MNT_TARGET/etc/passwd | awk -F: '{print $4}')
 			PROFILE_STR='PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
-			 is_str=`cat $MNT_TARGET$USER_HOME/.profile | grep "$PROFILE_STR" || true`
+			is_str=$(grep "$PROFILE_STR" $MNT_TARGET$USER_HOME/.profile || true)
 			[ -z "$is_str" ] && echo $PROFILE_STR >> $MNT_TARGET$USER_HOME/.profile
 			# gui
 			mkdir $MNT_TARGET$USER_HOME/.vnc || true
@@ -382,7 +388,7 @@ configure_system()
 			case "$DISTRIB" in
 			debian|ubuntu|kali)
 				mkdir -p $MNT_TARGET/etc/X11
-				if [ -n "`grep -e '^allowed_users' $MNT_TARGET/etc/X11/Xwrapper.config`" ]; then
+				if [ -n "$(grep -e '^allowed_users' $MNT_TARGET/etc/X11/Xwrapper.config)" ]; then
 					sed -i 's/^allowed_users=.*/allowed_users=anybody/g' $MNT_TARGET/etc/X11/Xwrapper.config
 				else
 					echo "allowed_users=anybody" >> $MNT_TARGET/etc/X11/Xwrapper.config
@@ -390,12 +396,12 @@ configure_system()
 			;;
 			gentoo)
 				# set Xorg make configuration
-				if [ -z "`grep '^INPUT_DEVICES=' $MNT_TARGET/etc/portage/make.conf`" ]; then
+				if [ -z "$(grep '^INPUT_DEVICES=' $MNT_TARGET/etc/portage/make.conf)" ]; then
 					echo 'INPUT_DEVICES="evdev"' >> $MNT_TARGET/etc/portage/make.conf
 				else
 					sed -i 's|^\(INPUT_DEVICES=\).*|\1"evdev"|g' $MNT_TARGET/etc/portage/make.conf
 				fi
-				if [ -z "`grep '^VIDEO_CARDS=' $MNT_TARGET/etc/portage/make.conf`" ]; then
+				if [ -z "$(grep '^VIDEO_CARDS=' $MNT_TARGET/etc/portage/make.conf)" ]; then
 					echo 'VIDEO_CARDS="fbdev"' >> $MNT_TARGET/etc/portage/make.conf
 				else
 					sed -i 's|^\(VIDEO_CARDS=\).*|\1"fbdev"|g' $MNT_TARGET/etc/portage/make.conf
@@ -634,10 +640,10 @@ configure_system()
 					;;
 					vnc)
 						# set server USE flag for tightvnc
-						if [ -z "`grep '^net-misc/tightvnc' $MNT_TARGET/etc/portage/package.use`" ]; then
+						if [ -z "$(grep '^net-misc/tightvnc' $MNT_TARGET/etc/portage/package.use)" ]; then
 							echo "net-misc/tightvnc server" >> $MNT_TARGET/etc/portage/package.use
 						fi
-						if [ -z "`grep '^net-misc/tightvnc.*server' $MNT_TARGET/etc/portage/package.use`" ]; then
+						if [ -z "$(grep '^net-misc/tightvnc.*server' $MNT_TARGET/etc/portage/package.use)" ]; then
 							sed -i "s|^\(net-misc/tightvnc.*\)|\1 server|g" $MNT_TARGET/etc/portage/package.use
 						fi
 						PKGS="$PKGS tightvnc"
@@ -691,8 +697,8 @@ mount_system()
 	case "$1" in
 	root)
 		msg -n "/ ... "
-		is_mnt=`cat /proc/mounts | grep " $MNT_TARGET "`
-		if [ -z "$is_mnt" ]; then
+		is_mnt=$(grep -c " $MNT_TARGET " /proc/mounts)
+		if [ "$is_mnt" -eq 0 ]; then
 			[ ! -d "$MNT_TARGET" ] && mkdir -p $MNT_TARGET
 			[ -d "$IMG_TARGET" ] && MNT_OPTS="bind" || MNT_OPTS="rw,relatime"
 			mount -o $MNT_OPTS $IMG_TARGET $MNT_TARGET
@@ -707,8 +713,8 @@ mount_system()
 	;;
 	proc)
 		msg -n "/proc ... "
-		tg=$MNT_TARGET/proc; is_mnt=`cat /proc/mounts | grep " $tg "`
-		if [ -z "$is_mnt" ]; then
+		tg=$MNT_TARGET/proc; is_mnt=$(grep -c " $tg " /proc/mounts)
+		if [ "$is_mnt" -eq 0 ]; then
 			[ ! -d "$tg" ] && mkdir -p $tg
 			mount -t proc proc $tg
 			[ $? -eq 0 ] && msg "done" || msg "fail"
@@ -718,8 +724,8 @@ mount_system()
 	;;
 	sys)
 		msg -n "/sys ... "
-		tg=$MNT_TARGET/sys; is_mnt=`cat /proc/mounts | grep " $tg "`
-		if [ -z "$is_mnt" ]; then
+		tg=$MNT_TARGET/sys; is_mnt=$(grep -c " $tg " /proc/mounts)
+		if [ "$is_mnt" -eq 0 ]; then
 			[ ! -d "$tg" ] && mkdir -p $tg
 			mount -t sysfs sys $tg
 			[ $? -eq 0 ] && msg "done" || msg "fail"
@@ -729,8 +735,8 @@ mount_system()
 	;;
 	selinux)
 		msg -n "/sys/fs/selinux ... "
-		tg=$MNT_TARGET/sys/fs/selinux; is_mnt=`cat /proc/mounts | grep " $tg "`
-		if [ -z "$is_mnt" -a -d "/sys/fs/selinux" ]; then
+		tg=$MNT_TARGET/sys/fs/selinux; is_mnt=$(grep -c " $tg " /proc/mounts)
+		if [ "$is_mnt" -eq 0 -a -d "/sys/fs/selinux" ]; then
 			if [ -e /sys/fs/selinux/enforce ]; then
 				cat /sys/fs/selinux/enforce > ${ENV_DIR%/}/etc/selinux_state
 				echo 0 > /sys/fs/selinux/enforce
@@ -744,8 +750,8 @@ mount_system()
 	;;
 	dev)
 		msg -n "/dev ... "
-		tg=$MNT_TARGET/dev; is_mnt=`cat /proc/mounts | grep " $tg "`
-		if [ -z "$is_mnt" ]; then
+		tg=$MNT_TARGET/dev; is_mnt=$(grep -c " $tg " /proc/mounts)
+		if [ "$is_mnt" -eq 0 ]; then
 			[ ! -d "$tg" ] && mkdir -p $tg
 			mount -o bind /dev $tg
 			[ $? -eq 0 ] && msg "done" || msg "fail"
@@ -760,8 +766,8 @@ mount_system()
 	;;
 	pts)
 		msg -n "/dev/pts ... "
-		tg=$MNT_TARGET/dev/pts; is_mnt=`cat /proc/mounts | grep " $tg "`
-		if [ -z "$is_mnt" ]; then
+		tg=$MNT_TARGET/dev/pts; is_mnt=$(grep -c " $tg " /proc/mounts)
+		if [ "$is_mnt" -eq 0 ]; then
 			[ ! -d "$tg" ] && mkdir -p $tg
 			mount -o "mode=0620,gid=5" -t devpts devpts $tg
 			[ $? -eq 0 ] && msg "done" || msg "fail"
@@ -771,8 +777,8 @@ mount_system()
 	;;
 	shm)
 		msg -n "/dev/shm ... "
-		tg=$MNT_TARGET/dev/shm; is_mnt=`cat /proc/mounts | grep " $tg "`
-		if [ -z "$is_mnt" ]; then
+		tg=$MNT_TARGET/dev/shm; is_mnt=$(grep -c " $tg " /proc/mounts)
+		if [ "$is_mnt" -eq 0 ]; then
 			[ ! -d "$tg" ] && mkdir -p $tg
 			mount -t tmpfs tmpfs $tg
 			[ $? -eq 0 ] && msg "done" || msg "fail"
@@ -804,17 +810,17 @@ mount_system()
 	custom)
 		for disk in $CUSTOM_MOUNTS
 		do
-			disk_name=`basename /root/$disk`
+			disk_name=$(basename /root/$disk)
 			msg -n "/mnt/$disk_name ... "
 			tg=$MNT_TARGET/mnt/$disk_name
-			is_tg=`cat /proc/mounts | grep " $tg "`
-			if [ -z "$is_tg" -a -d "$disk" ]; then
+			is_mnt=$(grep -c " $tg " /proc/mounts)
+			if [ "$is_mnt" -eq 0 -a -d "$disk" ]; then
 				[ ! -d "$tg" ] && mkdir -p $tg
 				mount -o bind $disk $tg
 				[ $? -eq 0 ] && msg "done" || msg "fail"
 				continue
 			fi
-			if [ -z "$is_tg" -a -e "$disk" ]; then
+			if [ "$is_mnt" -eq 0 -a -e "$disk" ]; then
 				[ ! -d "$tg" ] && mkdir -p $tg
 				mount -o rw,relatime $disk $tg
 				[ $? -eq 0 ] && msg "done" || msg "fail"
@@ -831,17 +837,22 @@ mount_system()
 umount_system()
 {
 	msg -n "Release resources ... "
+	lsof_full=$(lsof | head -1 | grep -c ^COMMAND)
 	(set -e
-		for i in 1 2 3 4
+		for i in 1 2 3
 		do
-			[ "$i" -gt "3" ] && exit 1
-			pids=`lsof | grep $MNT_TARGET | awk '{print $2}' | uniq || true`
+			if [ "$lsof_full" -eq 0 ]; then
+				pids=$(lsof | grep $MNT_TARGET | awk '{print $1}' | uniq || true)
+			else
+				pids=$(lsof | grep $MNT_TARGET | awk '{print $2}' | uniq || true)
+			fi
 			if [ -n "$pids" ]; then
 				kill -9 $pids || true
 				sleep 1
 			else
 				break
 			fi
+			[ "$i" -ge 3 ] && exit 1
 		done
 	exit 0)
 	[ $? -eq 0 ] && msg "done" || msg "fail"
@@ -850,12 +861,12 @@ umount_system()
 	selinux_state=${ENV_DIR%/}/etc/selinux_state
 	for i in '.*' '*'
 	do
-		parts=`cat /proc/mounts | awk '{print $2}' | grep "^$MNT_TARGET/$i$" | sort -r`
+		parts=$(cat /proc/mounts | awk '{print $2}' | grep "^$MNT_TARGET/$i$" | sort -r)
 		for p in $parts
 		do
-			pp=`echo $p | sed "s|$MNT_TARGET/*|/|g"`
+			pp=$(echo $p | sed "s|$MNT_TARGET/*|/|g")
 			msg -n "$pp ... "
-			if [ `echo $pp | grep -ci "selinux"` -gt 0 -a -e $selinux_state -a -e /sys/fs/selinux/enforce ]; then
+			if [ $(echo $pp | grep -ci "selinux") -gt 0 -a -e $selinux_state -a -e /sys/fs/selinux/enforce ]; then
 				cat $selinux_state > /sys/fs/selinux/enforce
 			fi
 			umount $p
@@ -883,7 +894,7 @@ umount_system()
 
 	msg -n "Disassociating loop device ... "
 	(set -e
-		loop=`losetup -a | grep $IMG_TARGET | awk -F: '{print $1}' || true`
+		loop=$(losetup -a | grep $IMG_TARGET | awk -F: '{print $1}' || true)
 		[ -n "$loop" ] && losetup -d $loop
 	exit 0)
 	[ $? -eq 0 ] && msg "done" || msg "fail"
@@ -924,7 +935,7 @@ start_system()
 	case "$1" in
 	ssh)
 		msg -n "SSH :$SSH_PORT ... "
-		if [ -z "`ps | grep -E '/usr/s?bin/sshd' | grep -v grep`" ]; then
+		if [ -z "$(ps | grep -E '/usr/s?bin/sshd' | grep -v grep)" ]; then
 			sed -i "s|^Port .*|Port $SSH_PORT|g" $MNT_TARGET/etc/ssh/sshd_config
 			(set -e
 				# Debian/Ubuntu/Kali Linux
@@ -933,7 +944,7 @@ start_system()
 					exit 0
 				fi
 				# Arch Linux/Fedora/openSUSE/Gentoo
-				if [ -z "`ls $MNT_TARGET/etc/ssh/ | grep key`" ]; then
+				if [ -z "$(ls $MNT_TARGET/etc/ssh/ | grep key)" ]; then
 					chroot $MNT_TARGET su - root -c 'ssh-keygen -A' || true
 					echo
 				fi
@@ -947,8 +958,8 @@ start_system()
 	vnc)
 		let vncport=5900+$VNC_DISPLAY
 		msg -n "VNC :$vncport ... "
-		XPID=`cat $MNT_TARGET/tmp/xsession.pid`
-		[ -n "$XPID" ] && XSESSION=`ps | grep "^$XPID "`
+		XPID=$(cat $MNT_TARGET/tmp/xsession.pid)
+		[ -n "$XPID" ] && XSESSION=$(ps | grep "^$XPID ")
 		if [ -z "$XSESSION" ]; then
 			(set -e
 				dbus_init
@@ -965,8 +976,8 @@ start_system()
 	;;
 	xserver)
 		msg -n "X Window System ... "
-		XPID=`cat $MNT_TARGET/tmp/xsession.pid`
-		[ -n "$XPID" ] && XSESSION=`ps | grep "^$XPID "`
+		XPID=$(cat $MNT_TARGET/tmp/xsession.pid)
+		[ -n "$XPID" ] && XSESSION=$(ps | grep "^$XPID ")
 		if [ -z "$XSESSION" ]; then
 			(set -e
 				dbus_init
@@ -979,13 +990,13 @@ start_system()
 	;;
 	framebuffer)
 		msg -n "Frame Buffer ... "
-		XPID=`cat $MNT_TARGET/tmp/xsession.pid`
-		[ -n "$XPID" ] && XSESSION=`ps | grep "^$XPID "`
+		XPID=$(cat $MNT_TARGET/tmp/xsession.pid)
+		[ -n "$XPID" ] && XSESSION=$(ps | grep "^$XPID ")
 		if [ -z "$XSESSION" ]; then
 			if [ ! -e "$FB_INPUT" ]; then
-				for event in `ls /sys/class/input | grep event`
+				for event in $(ls /sys/class/input | grep event)
 				do
-					if [ -n "`grep touchscreen /sys/class/input/$event/device/name`" ]; then
+					if [ -n "$(grep touchscreen /sys/class/input/$event/device/name)" ]; then
 						FB_INPUT="/dev/input/$event"
 						break
 					fi
@@ -1112,8 +1123,8 @@ stop_system()
 
 chroot_system()
 {
-	is_mnt=`cat /proc/mounts | grep " $MNT_TARGET "`
-	if [ -z "$is_mnt" ]; then
+	is_mnt=$(grep -c " $MNT_TARGET " /proc/mounts)
+	if [ "$is_mnt" -eq 0 ]; then
 		mount_system
 		[ $? -ne 0 ] && return 1
 	fi
@@ -1170,7 +1181,12 @@ install_system()
 		msg "Installing Arch Linux distribution: "
 
 		BASIC_PACKAGES="acl archlinux-keyring attr bash bzip2 ca-certificates coreutils cracklib curl db e2fsprogs expat findutils gawk gcc-libs gdbm glibc gmp gnupg gpgme grep keyutils krb5 libarchive libassuan libcap libgcrypt libgpg-error libgssglue libidn libksba libldap libsasl libssh2 libtirpc linux-api-headers lzo ncurses openssl pacman pacman-mirrorlist pam pambase perl pinentry pth readline run-parts sed shadow sudo tzdata util-linux xz zlib"
-		REPO="${MIRROR%/}/$ARCH/core"
+
+		if [ "$ARCH" = "i686" ]
+		then REPO="${MIRROR%/}/core/os/$ARCH"
+		else REPO="${MIRROR%/}/$ARCH/core"
+		fi
+
 		CACHE_DIR="$MNT_TARGET/var/cache/pacman/pkg"
 
 		msg "Repository: $REPO"
@@ -1189,13 +1205,13 @@ install_system()
 		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 
 		msg -n "Retrieving packages list ... "
-		PKG_LIST=`wget -q -O - "$REPO/" | sed -n '/<a / s/^.*<a [^>]*href="\([^\"]*\)".*$/\1/p' | awk -F'/' '{print $NF}' | sort -rn`
+		PKG_LIST=$(wget -q -O - "$REPO/" | sed -n '/<a / s/^.*<a [^>]*href="\([^\"]*\)".*$/\1/p' | awk -F'/' '{print $NF}' | sort -rn)
 		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 
 		msg "Retrieving base packages: "
 		for PACKAGE in $BASIC_PACKAGES; do
 			msg -n "$PACKAGE ... "
-    			FILE=`echo "$PKG_LIST" | grep -m1 -e "^$PACKAGE-[[:digit:]].*\.xz$" -e "^$PACKAGE-[[:digit:]].*\.gz$"`
+    			FILE=$(echo "$PKG_LIST" | grep -m1 -e "^$PACKAGE-[[:digit:]].*\.xz$" -e "^$PACKAGE-[[:digit:]].*\.gz$")
     			test "$FILE" || { msg "fail"; return 1; }
     			#echo "downloading ${FILE}... "
     			for i in 1 2 3
@@ -1221,14 +1237,14 @@ install_system()
 		msg "Installing base packages: "
 		(set -e
 			chroot $MNT_TARGET /usr/bin/pacman --noconfirm -Sy
-			EXTRA_PACKAGES=`chroot $MNT_TARGET /usr/bin/pacman --noconfirm -Sg base | awk '{print $2}' | grep -v -e 'linux' -e 'kernel'`
+			EXTRA_PACKAGES=$(chroot $MNT_TARGET /usr/bin/pacman --noconfirm -Sg base | awk '{print $2}' | grep -v -e 'linux' -e 'kernel')
 			chroot $MNT_TARGET /usr/bin/pacman --noconfirm --force -Sq $BASIC_PACKAGES $EXTRA_PACKAGES
 		exit 0) 1>&3 2>&3
 		[ $? -ne 0 ] && return 1
 
 		msg -n "Clearing cache ... "
 		(set -e
-			rm -f $CACHE_DIR/* `find $MNT_TARGET -type f -name "*.pacorig"`
+			rm -f $CACHE_DIR/* $(find $MNT_TARGET -type f -name "*.pacorig")
 		exit 0)
 		[ $? -eq 0 ] && msg "done" || msg "fail"
 	;;
@@ -1260,7 +1276,7 @@ install_system()
 		msg -n "Retrieving packages list ... "
 		PKG_LIST="$MNT_TARGET/tmp/packages.list"
 		(set -e
-			REPODATA_FILE=`wget -q -O - $REPO/repodata | sed -n '/<a / s/^.*<a [^>]*href="\([^\"]*\-primary\.xml\.gz\)".*$/\1/p'`
+			REPODATA_FILE=$(wget -q -O - $REPO/repodata | sed -n '/<a / s/^.*<a [^>]*href="\([^\"]*\-primary\.xml\.gz\)".*$/\1/p')
 			[ -z "$REPODATA_FILE" ] && exit 1
 			wget -q -O - $REPO/repodata/$REPODATA_FILE | gzip -dc | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\)".*$/\1/p' > $PKG_LIST
 		exit 0)
@@ -1269,9 +1285,9 @@ install_system()
 		msg "Retrieving base packages: "
 		for PACKAGE in $BASIC_PACKAGES; do
 			msg -n "$PACKAGE ... "
-			PKG_URL=`grep -m1 -e "^.*/$PACKAGE-[0-9][0-9\.\-].*\.rpm$" $PKG_LIST`
+			PKG_URL=$(grep -m1 -e "^.*/$PACKAGE-[0-9][0-9\.\-].*\.rpm$" $PKG_LIST)
 			test "$PKG_URL" || { msg "skip"; continue; }
-			FILE=`basename $PKG_URL`
+			FILE=$(basename $PKG_URL)
 			#echo "downloading ${FILE}... "
 			for i in 1 2 3
 			do
@@ -1338,7 +1354,7 @@ install_system()
 		msg -n "Retrieving packages list ... "
 		PKG_LIST="$MNT_TARGET/tmp/packages.list"
 		(set -e
-			REPODATA_FILE=`wget -q -O - $REPO/repodata | sed -n '/<a / s/^.*<a [^>]*href="\([^\"]*\-primary\.xml\.gz\)".*$/\1/p'`
+			REPODATA_FILE=$(wget -q -O - $REPO/repodata | sed -n '/<a / s/^.*<a [^>]*href="\([^\"]*\-primary\.xml\.gz\)".*$/\1/p')
 			[ -z "$REPODATA_FILE" ] && exit 1
 			wget -q -O - $REPO/repodata/$REPODATA_FILE | gzip -dc | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\)".*$/\1/p' > $PKG_LIST
 		exit 0)
@@ -1347,9 +1363,9 @@ install_system()
 		msg "Retrieving base packages: "
 		for PACKAGE in $BASIC_PACKAGES; do
 			msg -n "$PACKAGE ... "
-    			PKG_URL=`grep -e "^$ARCH" -e "^noarch" $PKG_LIST | grep -m1 -e "^.*/$PACKAGE-[0-9s][0-9\.].*\.rpm$"`
+    			PKG_URL=$(grep -e "^$ARCH" -e "^noarch" $PKG_LIST | grep -m1 -e "^.*/$PACKAGE-[0-9s][0-9\.].*\.rpm$")
     			test "$PKG_URL" || { msg "fail"; return 1; }
-    			FILE=`basename $PKG_URL`
+    			FILE=$(basename $PKG_URL)
     			#echo "downloading ${FILE}... "
     			for i in 1 2 3
     			do
@@ -1386,7 +1402,7 @@ install_system()
 		msg -n "Getting repository path ... "
 		REPO="${MIRROR%/}/autobuilds"
 		STAGE3="$MNT_TARGET/tmp/latest-stage3.tar.bz2"
-		ARCHIVE=`wget -q -O - "${REPO}/latest-stage3-${ARCH}.txt" | grep -v ^#`
+		ARCHIVE=$(wget -q -O - "${REPO}/latest-stage3-${ARCH}.txt" | grep -v ^#)
 		[ -n "$ARCHIVE" ]&& msg "done" || { msg "fail"; return 1; }
 
 		msg -n "Retrieving stage3 archive ... "
@@ -1429,35 +1445,35 @@ install_system()
 	;;
 	rootfs)
 		msg "Getting and unpacking rootfs archive: "
-		if [ -n "`echo $MIRROR | grep -i 'gz$'`" ]; then
+		if [ -n "$(echo $MIRROR | grep -i 'gz$')" ]; then
 			if [ -e "$MIRROR" ]; then
 				(set -e
 					tar xzpvf "$MIRROR" -C $MNT_TARGET
 				exit 0) 1>&3 2>&3
 				[ $? -eq 0 ] || return 1
 			fi
-			if [ -n "`echo $MIRROR | grep -i '^http'`" ]; then
+			if [ -n "$(echo $MIRROR | grep -i '^http')" ]; then
 				(set -e
 					wget -q -O - "$MIRROR" | tar xzpv -C $MNT_TARGET
 				exit 0) 1>&3 2>&3
 				[ $? -eq 0 ] || return 1 
 			fi
 		fi
-		if [ -n "`echo $MIRROR | grep -i 'bz2$'`" ]; then
+		if [ -n "$(echo $MIRROR | grep -i 'bz2$')" ]; then
 			if [ -e "$MIRROR" ]; then
 				(set -e
 					bzip2 --decompress --stdout --force "$MIRROR" | tar xpv -C $MNT_TARGET
 				exit 0) 1>&3 2>&3
 				[ $? -eq 0 ] || return 1
 			fi
-			if [ -n "`echo $MIRROR | grep -i '^http'`" ]; then
+			if [ -n "$(echo $MIRROR | grep -i '^http')" ]; then
 				(set -e
 					wget -q -O - "$MIRROR" | bzip2 --decompress --stdout --force | tar xpv -C $MNT_TARGET
 				exit 0) 1>&3 2>&3
 				[ $? -eq 0 ] || return 1 
 			fi
 		fi
-		[ "`ls $MNT_TARGET | wc -l`" -le 1 ] && { msg " ...installation failed."; return 1; }
+		[ "$(ls $MNT_TARGET | wc -l)" -le 1 ] && { msg " ...installation failed."; return 1; }
 	;;
 	*)
 		msg "This Linux distribution not supported."
@@ -1513,10 +1529,10 @@ status_system()
 	msg "$(uname -r)"
 
 	msg -n "Memory: "
-	msg "$(cat /proc/meminfo | grep ^MemTotal | awk '{print $2}') KB"
+	msg "$(grep ^MemTotal /proc/meminfo | awk '{print $2}') KB"
 
 	msg -n "Swap: "
-	msg "$(cat /proc/meminfo | grep ^SwapTotal | awk '{print $2}') KB"
+	msg "$(grep ^SwapTotal /proc/meminfo | awk '{print $2}') KB"
 
 	msg -n "SELinux: "
 	[ -e "/sys/fs/selinux/enforce" ] && msg "yes" || msg "no"
@@ -1536,12 +1552,12 @@ status_system()
 
 	msg "Running services: "
 	msg -n "* SSH: "
-	[ -n "`ps | grep '{sshd}' | grep -v grep`" ] && msg "yes" || msg "no"
+	[ -n "$(ps | grep -E '/s?bin/sshd' | grep -v grep)" ] && msg "yes" || msg "no"
 	msg -n "* VNC: "
-	[ -n "`ps | grep '{X.*vnc}' | grep -v grep`" ] && msg "yes" || msg "no"
+	[ -n "$(ps | grep 'X.*vnc' | grep -v grep)" ] && msg "yes" || msg "no"
 
 	msg "Mounted parts on Linux: "
-	for i in `cat /proc/mounts | grep $MNT_TARGET | awk '{print $2}' | sed "s|$MNT_TARGET/*|/|g"`
+	for i in $(grep $MNT_TARGET /proc/mounts | awk '{print $2}' | sed "s|$MNT_TARGET/*|/|g")
 	do
 		msg "* $i"
 		is_mounted=1
@@ -1549,13 +1565,13 @@ status_system()
 	[ -z "$is_mounted" ] && msg " ...not mounted anything"
 
 	msg "Available mount points: "
-	for p in `cat /proc/mounts | grep ^/dev/ | grep -v $MNT_TARGET | grep -v ' /mnt/asec/' | grep -v ' /mnt/secure/' | awk '{print $2":"$3}'`
+	for p in $(cat /proc/mounts | grep ^/dev/ | grep -v $MNT_TARGET | grep -v ' /mnt/asec/' | grep -v ' /mnt/secure/' | awk '{print $2":"$3}')
 	do
-		PART=`echo $p | awk -F: '{print $1}'`
-		FSTYPE=`echo $p | awk -F: '{print $2}'`
-		BLOCK_SIZE=`stat -c '%s' -f $PART`
-		AVAILABLE=`stat -c '%a' -f $PART | awk '{printf("%.1f",$1*'$BLOCK_SIZE'/1024/1024/1024)}'`
-		TOTAL=`stat -c '%b' -f $PART | awk '{printf("%.1f",$1*'$BLOCK_SIZE'/1024/1024/1024)}'`
+		PART=$(echo $p | awk -F: '{print $1}')
+		FSTYPE=$(echo $p | awk -F: '{print $2}')
+		BLOCK_SIZE=$(stat -c '%s' -f $PART)
+		AVAILABLE=$(stat -c '%a' -f $PART | awk '{printf("%.1f",$1*'$BLOCK_SIZE'/1024/1024/1024)}')
+		TOTAL=$(stat -c '%b' -f $PART | awk '{printf("%.1f",$1*'$BLOCK_SIZE'/1024/1024/1024)}')
 		if [ -n "$AVAILABLE" -a -n "$TOTAL" ]; then
 			msg "* $PART: $AVAILABLE/$TOTAL GB ($FSTYPE)"
 		fi
@@ -1568,15 +1584,15 @@ status_system()
 			DEVNAME=$(echo $i | sed -e 's@/dev@@' -e 's@.*/@@')
 			[ -e "/dev/$DEVNAME" ] && DEVPATH=/dev/$DEVNAME
 			[ -e "/dev/block/$DEVNAME" ] && DEVPATH=/dev/block/$DEVNAME
-			[ -n "$DEVPATH" ] && PARTS=`fdisk -l $DEVPATH | grep ^/dev/ | awk '{print $1}'`
+			[ -n "$DEVPATH" ] && PARTS=$(fdisk -l $DEVPATH | grep ^/dev/ | awk '{print $1}')
 			for PART in $PARTS
 			do
-				SIZE=`fdisk -l $PART | grep 'Disk.*bytes' | awk '{ sub(/,/,""); print $3" "$4}'`
-				BOOT=`fdisk -l $DEVPATH | grep ^$PART | awk '{print $2}'`
+				SIZE=$(fdisk -l $PART | grep 'Disk.*bytes' | awk '{ sub(/,/,""); print $3" "$4}')
+				BOOT=$(fdisk -l $DEVPATH | grep ^$PART | awk '{print $2}')
 				if [ "$BOOT" = "*" ]; then
-					TYPE=`fdisk -l $DEVPATH | grep ^$PART | awk '{str=$7; for (i=8;i<=11;i++) if ($i!="") str=str" "$i; printf("%s",str)}'`
+					TYPE=$(fdisk -l $DEVPATH | grep ^$PART | awk '{str=$7; for (i=8;i<=11;i++) if ($i!="") str=str" "$i; printf("%s",str)}')
 				else
-					TYPE=`fdisk -l $DEVPATH | grep ^$PART | awk '{str=$6; for (i=7;i<=10;i++) if ($i!="") str=str" "$i; printf("%s",str)}'`
+					TYPE=$(fdisk -l $DEVPATH | grep ^$PART | awk '{str=$6; for (i=7;i<=10;i++) if ($i!="") str=str" "$i; printf("%s",str)}')
 				fi
 				msg "* $PART: $SIZE ($TYPE)"
 				is_partitions=1
