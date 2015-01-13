@@ -140,14 +140,14 @@
     <!-- Ubuntu -->
 
     <string-array name="ubuntu_suite_values" translatable="false">
-        <item>utopic</item>
-        <item>trusty</item>
-        <item>saucy</item>
-        <item>raring</item>
-        <item>quantal</item>
-        <item>precise</item>
-        <item>oneiric</item>
         <item>lucid</item>
+        <item>oneiric</item>
+        <item>precise</item>
+        <item>quantal</item>
+        <item>raring</item>
+        <item>saucy</item>
+        <item>trusty</item>
+        <item>utopic</item>
     </string-array>
     <string-array name="ubuntu_architecture_values" translatable="false">
         <item>armel</item>
@@ -252,7 +252,7 @@
     </string-array>
     <string-array name="opensuse_architecture_values" translatable="false">
         <item>armv7hl</item>
-        <item>i686</item>
+        <item>i586</item>
     </string-array>
     <string-array name="opensuse_components_values" translatable="false">
         <item>desktop</item>
