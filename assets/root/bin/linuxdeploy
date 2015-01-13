@@ -1267,8 +1267,8 @@ install_system()
 			echo "root:x:0:0:root:/root:/bin/bash" > etc/passwd
 			echo "root:x:0:" > etc/group
 			touch etc/fstab
-			mkdir -p usr/bin usr/sbin usr/lib
-			ln -sf usr/bin; ln -sf usr/sbin; ln -sf usr/lib
+			mkdir -p usr/bin usr/sbin usr/lib usr/lib64
+			ln -sf usr/bin; ln -sf usr/sbin; ln -sf usr/lib; ln -sf usr/lib64
 			mkdir tmp; chmod 01777 tmp
 		exit 0)
 		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
