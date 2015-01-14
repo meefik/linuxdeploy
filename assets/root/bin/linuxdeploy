@@ -975,7 +975,7 @@ start_system()
 		fi
 	;;
 	xserver)
-		msg -n "X Window System ... "
+		msg -n "X Server ... "
 		XPID=$(cat $MNT_TARGET/tmp/xsession.pid)
 		[ -n "$XPID" ] && XSESSION=$(ps | grep "^$XPID ")
 		if [ -z "$XSESSION" ]; then
@@ -1091,7 +1091,7 @@ stop_system()
 		[ $? -eq 0 ] && msg "done" || msg "fail"
 	;;
 	xserver)
-		msg -n "X Window System ... "
+		msg -n "X Server ... "
 		(set -e
 			chroot $MNT_TARGET su - $USER_NAME -c 'kill -9 $(cat /tmp/xsession.pid)'
 		exit 0)
