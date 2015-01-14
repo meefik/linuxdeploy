@@ -255,7 +255,7 @@ configure_system()
 				sed -i "s|^[[:space:]]*Architecture[[:space:]]*=.*$|Architecture = $ARCH|" $MNT_TARGET/etc/pacman.conf
 				sed -i "s|^[[:space:]]*\(CheckSpace\)|#\1|" $MNT_TARGET/etc/pacman.conf
 				sed -i "s|^[[:space:]]*SigLevel[[:space:]]*=.*$|SigLevel = Never|" $MNT_TARGET/etc/pacman.conf
-				if [ $(grep -c -e "[[:space:]]*Server" $MNT_TARGET/etc/pacman.d/mirrorlist) -gt 0 ]
+				if [ $(grep -c -e "^[[:space:]]*Server" $MNT_TARGET/etc/pacman.d/mirrorlist) -gt 0 ]
 				then sed -i "s|^[[:space:]]*Server[[:space:]]*=.*|Server = $REPO|" $MNT_TARGET/etc/pacman.d/mirrorlist
 				else echo "Server = $REPO" >> $MNT_TARGET/etc/pacman.d/mirrorlist
 				fi

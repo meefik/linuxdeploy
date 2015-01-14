@@ -3,11 +3,13 @@
 BB_VERSION="1.23.0"
 ANDROID_NATIVE_API_LEVEL="android-9"
 MARCH="$1"
-[ -z "$MARCH" ] && { echo "Usage: $0 <arm|intel|mips>"; exit 1; }
+PIE="$2"
+[ -z "$MARCH" ] && { echo "Usage: $0 <arm|intel|mips> [pie]"; exit 1; }
 [ -z "$ANDROID_NDK_ROOT" ] && ANDROID_NDK_ROOT="$HOME/android-ndk-r10d"
 HOST_ARCH=$(uname -m)
 NCPU=$(grep -ci processor /proc/cpuinfo)
 PREFIX="../bb-$MARCH"
+[ -n "$PIE" ] && PREFIX="$PREFIX-pie"
 
 pkg="busybox-$BB_VERSION"
 
@@ -56,7 +58,10 @@ sed -i "s|CONFIG_SYSROOT_TEMPLATE|$CONFIG_SYSROOT|" ./configs/$defconfig
 sed -i "s|CONFIG_EXTRA_CFLAGS_TEMPLATE|$CONFIG_EXTRA_CFLAGS|" ./configs/$defconfig
 sed -i "s|CONFIG_EXTRA_LDFLAGS_TEMPLATE|$CONFIG_EXTRA_LDFLAGS|" ./configs/$defconfig
 sed -i "s|CONFIG_EXTRA_LDLIBS_TEMPLATE|$CONFIG_EXTRA_LDLIBS|" ./configs/$defconfig
-
+if [ -n "$PIE" ]
+then sed -i "s|^# CONFIG_PIE.*|CONFIG_PIE=y|" ./configs/$defconfig
+else sed -i "s|^CONFIG_PIE.*|# CONFIG_PIE is not set|" ./configs/$defconfig
+fi
 make $defconfig || exit 1
 
 echo ">>> make"
@@ -64,4 +69,3 @@ make -j$NCPU || exit 1
 
 echo ">>> install"
 make CONFIG_PREFIX=$PREFIX install || exit 1
-
