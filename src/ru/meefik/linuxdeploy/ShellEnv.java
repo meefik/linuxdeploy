@@ -113,7 +113,7 @@ public class ShellEnv {
 		params.add("su");
 		params.add("ls /data/local 1>/dev/null");
 		if (!execCmd(params)) {
-			sendLogs("ERROR: Require superuser privileges (root)!\n");
+			sendLogs("Require superuser privileges (root)!\n");
 			return false;
 		} else {
 			return true;
@@ -222,9 +222,21 @@ public class ShellEnv {
 			sendLogs("fail\n");
 			return;
 		}
-		if (!extractDir(PrefStore.MARCH, "")) {
+		if (!extractDir(PrefStore.MARCH+"/all", "")) {
 			sendLogs("fail\n");
 			return;
+		}
+		// PIE for Android L
+		if (android.os.Build.VERSION.SDK_INT >= 21) {
+			if (!extractDir(PrefStore.MARCH+"/pie", "")) {
+				sendLogs("fail\n");
+				return;
+			}
+		} else {
+			if (!extractDir(PrefStore.MARCH+"/nopie", "")) {
+				sendLogs("fail\n");
+				return;
+			}
 		}
 
 		params.clear();
