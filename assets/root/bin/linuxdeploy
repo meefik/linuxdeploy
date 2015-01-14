@@ -792,12 +792,20 @@ mount_system()
 			mount -t binfmt_misc binfmt_misc /proc/sys/fs/binfmt_misc
 			case "$MARCH" in
 			arm)
-				echo ':qemu-i386:M::\x7fELF\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x03\x00:\xff\xff\xff\xff\xff\xfe\xfe\xff\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff:/usr/local/bin/qemu-i386-static:' > /proc/sys/fs/binfmt_misc/register
-				[ $? -eq 0 ] && msg "done" || msg "fail"
+				if [ -e "/proc/sys/fs/binfmt_misc/qemu-i386" ]; then
+					echo ':qemu-i386:M::\x7fELF\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x03\x00:\xff\xff\xff\xff\xff\xfe\xfe\xff\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff:/usr/local/bin/qemu-i386-static:' > /proc/sys/fs/binfmt_misc/register
+					[ $? -eq 0 ] && msg "done" || msg "fail"
+				else
+					msg "skip"
+				fi
 			;;
 			intel)
-				echo ':qemu-arm:M::\x7fELF\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x28\x00:\xff\xff\xff\xff\xff\xff\xff\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff:/usr/local/bin/qemu-arm-static:' > /proc/sys/fs/binfmt_misc/register
-				[ $? -eq 0 ] && msg "done" || msg "fail"
+				if [ -e "/proc/sys/fs/binfmt_misc/qemu-arm" ]; then
+					echo ':qemu-arm:M::\x7fELF\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x28\x00:\xff\xff\xff\xff\xff\xff\xff\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff:/usr/local/bin/qemu-arm-static:' > /proc/sys/fs/binfmt_misc/register
+					[ $? -eq 0 ] && msg "done" || msg "fail"
+				else
+					msg "skip"
+				fi
 			;;
 			*)
 				msg "skip"
