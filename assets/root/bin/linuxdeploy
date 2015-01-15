@@ -447,7 +447,7 @@ configure_system()
 			case "$DISTRIB" in
 			debian|ubuntu|kali)
 				PKGS=""
-				[ -e "/sys/fs/selinux/enforce" ] && PKGS="selinux-policy-default"
+				[ -e "/sys/fs/selinux/enforce" ] && PKGS="policycoreutils"
 				for component in $COMPONENTS
 				do
 					case "$component" in
@@ -742,7 +742,7 @@ mount_system()
 				echo 0 > /sys/fs/selinux/enforce
 			fi
 			mount -t selinuxfs selinuxfs $tg
-			mount -o remount,ro,bind $tg
+			#mount -o remount,ro,bind $tg
 			[ $? -eq 0 ] && msg "done" || msg "fail"
 		else
 			msg "skip"
@@ -792,7 +792,7 @@ mount_system()
 			mount -t binfmt_misc binfmt_misc /proc/sys/fs/binfmt_misc
 			case "$MARCH" in
 			arm)
-				if [ -e "/proc/sys/fs/binfmt_misc/qemu-i386" ]; then
+				if [ ! -e "/proc/sys/fs/binfmt_misc/qemu-i386" ]; then
 					echo ':qemu-i386:M::\x7fELF\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x03\x00:\xff\xff\xff\xff\xff\xfe\xfe\xff\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff:/usr/local/bin/qemu-i386-static:' > /proc/sys/fs/binfmt_misc/register
 					[ $? -eq 0 ] && msg "done" || msg "fail"
 				else
@@ -800,7 +800,7 @@ mount_system()
 				fi
 			;;
 			intel)
-				if [ -e "/proc/sys/fs/binfmt_misc/qemu-arm" ]; then
+				if [ ! -e "/proc/sys/fs/binfmt_misc/qemu-arm" ]; then
 					echo ':qemu-arm:M::\x7fELF\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x28\x00:\xff\xff\xff\xff\xff\xff\xff\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff:/usr/local/bin/qemu-arm-static:' > /proc/sys/fs/binfmt_misc/register
 					[ $? -eq 0 ] && msg "done" || msg "fail"
 				else
