@@ -1,8 +1,9 @@
+default_mirror http://http.kali.org/kali
 mirror_style release
 download_style apt
 finddebs_style from-indices
 variants - buildd fakechroot minbase scratchbox
-keyring /usr/share/keyrings/debian-archive-keyring.gpg
+keyring /usr/share/keyrings/kali-archive-keyring.gpg
 
 if doing_variant fakechroot; then
 	test "$FAKECHROOT" = "true" || error 1 FAKECHROOTREQ "This variant requires fakechroot environment to be started"
@@ -32,6 +33,12 @@ work_out_debs () {
 		# ldd.fake needs binutils
 		required="$required binutils"
 	fi
+
+	case $MIRRORS in
+	    https://*)
+		base="$base apt-transport-https ca-certificates"
+		;;
+	esac
 }
 
 first_stage_install () {
@@ -98,7 +105,8 @@ second_stage_install () {
 
 	p; progress $baseprog $bases INSTCORE "Installing core packages" #2
 	ln -sf mawk "$TARGET/usr/bin/awk"
-	x_core_install base-files base-passwd
+	x_core_install base-passwd
+	x_core_install base-files
 	p; progress $baseprog $bases INSTCORE "Installing core packages" #3
 	x_core_install dpkg
 
@@ -138,6 +146,11 @@ second_stage_install () {
 		dpkg_progress $baseprog $bases UNPACKREQ "Unpacking required packages" UNPACKING
 
 	info CONFREQ "Configuring required packages..."
+
+	echo \
+"#!/bin/sh
+exit 101" > "$TARGET/usr/sbin/policy-rc.d"
+	chmod 755 "$TARGET/usr/sbin/policy-rc.d"
 
 	mv "$TARGET/sbin/start-stop-daemon" "$TARGET/sbin/start-stop-daemon.REAL"
 	echo \
@@ -185,6 +198,7 @@ echo \"Warning: Fake start-stop-daemon called, doing nothing\"" > "$TARGET/sbin/
 		dpkg_progress $baseprog $bases CONFBASE "Configuring base system" CONFIGURING
 
 	mv "$TARGET/sbin/start-stop-daemon.REAL" "$TARGET/sbin/start-stop-daemon"
+	rm -f "$TARGET/usr/sbin/policy-rc.d"
 
 	progress $bases $bases CONFBASE "Configuring base system"
 	info BASESUCCESS "Base system installed successfully."
