@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -18,8 +17,6 @@ import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.h6ah4i.android.compat.content.SharedPreferenceCompat;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -29,6 +26,8 @@ import android.os.Build;
 import android.os.Environment;
 import android.view.Display;
 import android.view.WindowManager;
+
+import com.h6ah4i.android.compat.content.SharedPreferenceCompat;
 
 public class PrefStore {
 
