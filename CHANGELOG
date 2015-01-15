@@ -6,9 +6,7 @@ Added support for devices with an Intel architecture
 Added support for cross-architecture installation x86 <-> ARM based on QEMU (binfmt_misc require support in the kernel)
 Updated built-in BusyBox to version 1.23.0 (builds with PIE and without PIE)
 Added support Ubuntu 15.04 (Vivid Vervet)
-Fix for SELinux in Debian/Ubuntu/Kali
 Added suits kali-dev and kali-rolling in Kali Linux
-
 
 1.4.9
 Added support for third-party BusyBox (required /system/xbin/ash)
@@ -282,7 +280,6 @@ Updated list packages of base system installation
 Добавлена поддержка кросс-архитектурной инсталляции x86 <-> ARM на основе QEMU (требуется поддержка binfmt_misc на уровне ядра)
 Обновлен встроенный BusyBox до версии 1.23.0 (сборки с PIE и без PIE)
 Добавлена версия Ubuntu 15.04 (Vivid Vervet)
-Исправление для SELinux в Debian/Ubuntu/Kali
 Добавлены ветки kali-dev и kali-rolling в Kali Linux
 
 1.4.9
