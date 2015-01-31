@@ -627,12 +627,12 @@ diff -urN ../busybox-1.23.0.orig/configs/linuxdeploy_defconfig ./configs/linuxde
 +CONFIG_MOUNT=y
 +CONFIG_FEATURE_MOUNT_FAKE=y
 +CONFIG_FEATURE_MOUNT_VERBOSE=y
-+# CONFIG_FEATURE_MOUNT_HELPERS is not set
++CONFIG_FEATURE_MOUNT_HELPERS=y
 +CONFIG_FEATURE_MOUNT_LABEL=y
 +# CONFIG_FEATURE_MOUNT_NFS is not set
-+CONFIG_FEATURE_MOUNT_CIFS=y
++# CONFIG_FEATURE_MOUNT_CIFS is not set
 +CONFIG_FEATURE_MOUNT_FLAGS=y
-+CONFIG_FEATURE_MOUNT_FSTAB=y
++# CONFIG_FEATURE_MOUNT_FSTAB is not set
 +# CONFIG_PIVOT_ROOT is not set
 +# CONFIG_RDATE is not set
 +# CONFIG_RDEV is not set
@@ -646,7 +646,7 @@ diff -urN ../busybox-1.23.0.orig/configs/linuxdeploy_defconfig ./configs/linuxde
 +# CONFIG_FEATURE_SWAPON_PRI is not set
 +# CONFIG_SWITCH_ROOT is not set
 +CONFIG_UMOUNT=y
-+CONFIG_FEATURE_UMOUNT_ALL=y
++# CONFIG_FEATURE_UMOUNT_ALL is not set
 +
 +#
 +# Common options for mount/umount
