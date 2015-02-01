@@ -265,12 +265,11 @@ public class ShellEnv {
 		params.add("echo '" + PrefStore.VERSION + "' > " + PrefStore.ENV_DIR
 				+ "/etc/version");
 		params.add("chmod 755 " + PrefStore.ENV_DIR);
-		params.add("chmod -R 755 " + PrefStore.ENV_DIR + "/bin");
-		params.add("chmod -R 755 " + PrefStore.ENV_DIR + "/etc");
-		params.add("chmod -R 755 " + PrefStore.ENV_DIR + "/deploy");
-		params.add("find " + PrefStore.ENV_DIR + "/bin -exec chmod 755 {} \\;");
-		params.add("find " + PrefStore.ENV_DIR + "/etc -exec chmod 755 {} \\;");
-		params.add("find " + PrefStore.ENV_DIR + "/deploy -exec chmod 755 {} \\;");
+		String[] files = {PrefStore.ENV_DIR + "/bin", PrefStore.ENV_DIR + "/etc", PrefStore.ENV_DIR + "/deploy"};
+		for (int i = 0; i < files.length; i++) {
+			params.add("chmod -R 755 " + files[i]);
+			params.add("find " + files[i] + " | while read f; do chmod 755 $f; done");
+		}
 		params.add("exit");
 		if (!execCmd(params)) {
 			sendLogs("fail\n");
