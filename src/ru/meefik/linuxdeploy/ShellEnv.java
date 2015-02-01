@@ -268,6 +268,9 @@ public class ShellEnv {
 		params.add("chmod -R 755 " + PrefStore.ENV_DIR + "/bin");
 		params.add("chmod -R 755 " + PrefStore.ENV_DIR + "/etc");
 		params.add("chmod -R 755 " + PrefStore.ENV_DIR + "/deploy");
+		params.add("find " + PrefStore.ENV_DIR + "/bin -exec chmod 755 {} \\;");
+		params.add("find " + PrefStore.ENV_DIR + "/etc -exec chmod 755 {} \\;");
+		params.add("find " + PrefStore.ENV_DIR + "/deploy -exec chmod 755 {} \\;");
 		params.add("exit");
 		if (!execCmd(params)) {
 			sendLogs("fail\n");
