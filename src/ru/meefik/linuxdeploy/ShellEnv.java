@@ -241,7 +241,6 @@ public class ShellEnv {
 
 		params.clear();
 		params.add("su");
-		params.add("PATH=" + PrefStore.ENV_DIR + "/bin:$PATH; export PATH");
 		if (PrefStore.TRACE_MODE.equals("y"))
 			params.add("set -x");
 		if (!PrefStore.DEBUG_MODE.equals("y")) {
@@ -253,6 +252,7 @@ public class ShellEnv {
 			params.add(PrefStore.ENV_DIR + "/bin/busybox --install -s "
 				+ PrefStore.ENV_DIR + "/bin");
 		}
+		params.add("PATH=" + PrefStore.ENV_DIR + "/bin:$PATH; export PATH");
 		if (PrefStore.SYMLINK) {
 			params.add("rm -f /system/bin/linuxdeploy");
 			params.add("ln -s "
