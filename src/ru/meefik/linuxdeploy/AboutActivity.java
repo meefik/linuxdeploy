@@ -43,7 +43,7 @@ public class AboutActivity extends SherlockActivity {
 			finish();
 			break;
 		case R.id.menu_donate:
-			Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://meefik.github.io/donate.html"));
+			Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://meefik.github.io/donate"));
 			startActivity(browserIntent);
 			break;
 		}
