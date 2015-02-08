@@ -142,7 +142,6 @@
     <string-array name="ubuntu_suite_values" translatable="false">
         <item>lucid</item>
         <item>precise</item>
-        <item>saucy</item>
         <item>trusty</item>
         <item>utopic</item>
         <item>vivid</item>
