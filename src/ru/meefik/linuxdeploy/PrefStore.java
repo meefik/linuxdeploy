@@ -228,13 +228,15 @@ public class PrefStore {
 	}
 	
 	public static String getArch(String arch) {
-		char a = arch.toLowerCase().charAt(0);
 		String march = "";
-		switch (a) {
-		case 'a': march = "arm"; break;
-		case 'm': march = "mips"; break;
-		case 'i': 
-		case 'x': march = "intel"; break;
+		if (arch.length() > 0) {
+			char a = arch.toLowerCase().charAt(0);
+			switch (a) {
+			case 'a': march = "arm"; break;
+			case 'm': march = "mips"; break;
+			case 'i': 
+			case 'x': march = "intel"; break;
+			}
 		}
 	    return march;
 	}

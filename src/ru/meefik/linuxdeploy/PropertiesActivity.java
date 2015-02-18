@@ -276,8 +276,6 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 			pref.setSummary(listPref.getEntry());
 
 			if (listPref.getKey().equals("distribution")) {
-				ListPreference distribution = (ListPreference) this
-						.findPreference("distribution");
 				ListPreference suite = (ListPreference) this
 						.findPreference("suite");
 				ListPreference architecture = (ListPreference) this
@@ -300,7 +298,8 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 					int suiteId = PrefStore.getResourceId(this, distributionStr
 							+ "_suite", "string");
 					if (suiteId != -1) {
-						suite.setValue(getString(suiteId));
+						String suiteStr = getString(suiteId);
+						if (suiteStr.length() > 0) suite.setValue(suiteStr);
 					}
 				}
 				suite.setSummary(suite.getEntry());
@@ -318,7 +317,8 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 							PrefStore.MARCH + "_" + distributionStr
 									+ "_architecture", "string");
 					if (architectureId != -1) {
-						architecture.setValue(getString(architectureId));
+						String architectureStr = getString(architectureId);
+						if (architectureStr.length() > 0) architecture.setValue(architectureStr);
 					}
 				}
 				architecture.setSummary(architecture.getEntry());
@@ -353,7 +353,7 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 				components.setEnabled(true);
 				
 				// RootFS
-				if (listPref.getValue().equals("rootfs")) {
+				if (distributionStr.equals("rootfs")) {
 					// suite
 					suite.setEnabled(false);
 					// architecture
