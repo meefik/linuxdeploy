@@ -1410,7 +1410,7 @@ install_system()
 		msg -n "Getting repository path ... "
 		REPO="${MIRROR%/}/autobuilds"
 		STAGE3="$MNT_TARGET/tmp/latest-stage3.tar.bz2"
-		ARCHIVE=$(wget -q -O - "${REPO}/latest-stage3-${ARCH}.txt" | grep -v ^#)
+		ARCHIVE=$(wget -q -O - "${REPO}/latest-stage3-${ARCH}.txt" | awk '{print $1}' | grep -v ^#)
 		[ -n "$ARCHIVE" ]&& msg "done" || { msg "fail"; return 1; }
 
 		msg -n "Retrieving stage3 archive ... "
