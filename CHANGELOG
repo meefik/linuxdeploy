@@ -9,6 +9,7 @@ Added support Ubuntu 15.04 (Vivid Vervet)
 Added suits kali-dev and kali-rolling in Kali Linux
 Bugfix "Couldn't find these debs: 0"
 Fixed Gentoo installation problems
+Updated linuxdeploy shell
 
 1.4.9
 Added support for third-party BusyBox (required /system/xbin/ash)
@@ -285,6 +286,7 @@ Updated list packages of base system installation
 Добавлены ветки kali-dev и kali-rolling в Kali Linux
 Исправлена ошибка "Couldn't find these debs: 0"
 Истранены проблемы с установкой Gentoo
+Обновлен linuxdeploy shell
 
 1.4.9
 Добавлена поддержка сторонних сборок BusyBox (требуется /system/xbin/ash)
