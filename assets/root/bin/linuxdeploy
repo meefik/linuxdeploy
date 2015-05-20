@@ -1582,7 +1582,7 @@ status_system()
 	[ -z "$is_mounted" ] && msg " ...not mounted anything"
 
 	msg "Available mount points: "
-	for p in $(cat /proc/mounts | grep ^/dev/ | grep -v $MNT_TARGET | grep -v ' /mnt/asec/' | grep -v ' /mnt/secure/' | awk '{print $2":"$3}')
+	for p in $(grep -v $MNT_TARGET /proc/mounts | grep ^/ | awk '{print $2":"$3}')
 	do
 		PART=$(echo $p | awk -F: '{print $1}')
 		FSTYPE=$(echo $p | awk -F: '{print $2}')
@@ -1605,12 +1605,7 @@ status_system()
 			for PART in $PARTS
 			do
 				SIZE=$(fdisk -l $PART | grep 'Disk.*bytes' | awk '{ sub(/,/,""); print $3" "$4}')
-				BOOT=$(fdisk -l $DEVPATH | grep ^$PART | awk '{print $2}')
-				if [ "$BOOT" = "*" ]; then
-					TYPE=$(fdisk -l $DEVPATH | grep ^$PART | awk '{str=$7; for (i=8;i<=11;i++) if ($i!="") str=str" "$i; printf("%s",str)}')
-				else
-					TYPE=$(fdisk -l $DEVPATH | grep ^$PART | awk '{str=$6; for (i=7;i<=10;i++) if ($i!="") str=str" "$i; printf("%s",str)}')
-				fi
+				TYPE=$(fdisk -l $DEVPATH | grep ^$PART | tr -d '*' | awk '{str=$6; for (i=7;i<=10;i++) if ($i!="") str=str" "$i; printf("%s",str)}')
 				msg "* $PART: $SIZE ($TYPE)"
 				is_partitions=1
 			done
