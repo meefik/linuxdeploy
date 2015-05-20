@@ -1,6 +1,9 @@
 Changelog (English)
 ===================
 
+1.5.1
+Updated command "status"
+
 1.5.0
 Added support for devices with an Intel architecture
 Added support for cross-architecture installation x86 <-> ARM based on QEMU (binfmt_misc require support in the kernel)
@@ -277,6 +280,9 @@ Updated list packages of base system installation
 
 История изменений (Русский)
 ===========================
+
+1.5.1
+Обновлена команда "состояние"
 
 1.5.0
 Добавлена поддержка устройств с Intel архитектурой
