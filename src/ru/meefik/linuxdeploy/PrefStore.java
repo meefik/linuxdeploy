@@ -84,6 +84,7 @@ public class PrefStore {
 
 	// miscellaneous
 	public static String CURRENT_PROFILE;
+	public static String EXTERNAL_STORAGE;
 	public static Boolean PREF_CHANGE = false;
 	public static String MARCH = "unknown";
 	public static String VERSION = "unknown";
@@ -94,7 +95,7 @@ public class PrefStore {
 
 	// get preferences
 	public static void get(Context c) {
-		File extStore = Environment.getExternalStorageDirectory();
+		EXTERNAL_STORAGE = Environment.getExternalStorageDirectory().getAbsolutePath();
 
 		SharedPreferences sp = c.getSharedPreferences(APP_PREF_FILE_NAME,
 				Context.MODE_PRIVATE);
@@ -137,16 +138,14 @@ public class PrefStore {
 								: false) ? "y" : "n";
 		LOGGING = sp.getBoolean("logs",
 				c.getString(R.string.logs).equals("true") ? true : false);
-		LOG_FILE = sp.getString("logfile", extStore.getAbsolutePath()
-				+ "/linuxdeploy.log");
+		LOG_FILE = sp.getString("logfile", EXTERNAL_STORAGE + "/linuxdeploy.log");
 		
 		prefEditor.commit();
 
 		sp = c.getSharedPreferences(CURRENT_PROFILE, Context.MODE_PRIVATE);
 		prefEditor = sp.edit();
 
-		IMG_TARGET = sp.getString("diskimage", extStore.getAbsolutePath()
-				+ "/linux.img");
+		IMG_TARGET = sp.getString("diskimage", EXTERNAL_STORAGE + "/linux.img");
 		DEPLOY_TYPE = sp.getString("deploytype",
 				c.getString(R.string.deploytype));
 		IMG_SIZE = sp.getString("disksize", c.getString(R.string.disksize));
@@ -193,7 +192,7 @@ public class PrefStore {
 		CUSTOM_MOUNTS = sp
 				.getBoolean("custommounts", c.getString(R.string.custommount)
 						.equals("true") ? true : false) ? sp.getString(
-				"mounts", extStore.getAbsolutePath()).trim() : "";
+				"mounts", EXTERNAL_STORAGE).trim() : "";
 		SSH_PORT = sp.getString("sshport", c.getString(R.string.sshport));
 		VNC_DISPLAY = sp.getString("vncdisplay",
 				c.getString(R.string.vncdisplay));
@@ -429,8 +428,7 @@ public class PrefStore {
 	public static List<String> getMountsList(Context c) {
 		SharedPreferences sp = c.getSharedPreferences(CURRENT_PROFILE,
 				Context.MODE_PRIVATE);
-		File extStore = Environment.getExternalStorageDirectory();
-		String str = sp.getString("mounts", extStore.getAbsolutePath());
+		String str = sp.getString("mounts", EXTERNAL_STORAGE);
 		List<String> list = new ArrayList<String>();
 		for (String i : str.split(" ")) {
 			list.add(i);

@@ -25,6 +25,15 @@ aid_mtp:1024
 aid_drmrpc:1026
 aid_nfc:1027
 aid_sdcard_r:1028
+aid_clat:1029
+aid_loop_radio:1030
+aid_media_drm:1031
+aid_package_info:1032
+aid_sdcard_pics:1033
+aid_sdcard_av:1034
+aid_sdcard_all:1035
+aid_logd:1036
+aid_shared_relro:1037
 aid_shell:2000
 aid_cache:2001
 aid_diag:2002
@@ -35,3 +44,4 @@ aid_net_raw:3004
 aid_net_admin:3005
 aid_net_bw_stats:3006
 aid_net_bw_acct:3007
+aid_net_bt_stack:3008

@@ -8,6 +8,7 @@
     <string-array name="deploytype_entries">
         <item>Файл</item>
         <item>Раздел</item>
+        <item>Оперативная память</item>
         <item>Пользовательский</item>
     </string-array>
     <string-array name="fstype_entries">

@@ -2,7 +2,9 @@ Changelog (English)
 ===================
 
 1.5.1
+Added support for installation type in RAM
 Updated command "status"
+Updated security groups
 
 1.5.0
 Added support for devices with an Intel architecture
@@ -282,7 +284,9 @@ Updated list packages of base system installation
 ===========================
 
 1.5.1
+Добавлена поддержка установки дистрибутивов в оперативную память
 Обновлена команда "состояние"
+Обновлены группы безопасности
 
 1.5.0
 Добавлена поддержка устройств с Intel архитектурой
