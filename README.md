@@ -15,7 +15,7 @@ Installing a new operating system takes about 30 minutes. The recommended minimu
 
 #### Features: ####
 * Supported distributions: Debian, Ubuntu, Arch Linux, Fedora, openSUSE, Kali Linux, Gentoo, RootFS (tgz, tbz2)
-* Installation type: image file, disk partition, directory
+* Installation type: image file, disk partition, RAM, directory
 * Supported file systems: ext2, ext3, ext4
 * Supported architectures: ARM, x86
 * Control interface: SSH, VNC, X, framebuffer
@@ -68,7 +68,7 @@ Copyright (C) 2012-2015  Антон Скшидлевский
 
 #### Характеристики: ####
 * Поддерживаемые дистрибутивы: Debian, Ubuntu, Arch Linux, Fedora, openSUSE, Kali Linux, Gentoo, RootFS (tgz, tbz2)
-* Тип установки: файл образа, раздел диска, директория
+* Тип установки: файл образа, раздел диска, оперативная память, директория
 * Поддерживаемые файловые системы: ext2, ext3, ext4
 * Поддерживаемые архитектуры: ARM, x86
 * Интерфейс управления: SSH, VNC, X, фрейм-буфер
