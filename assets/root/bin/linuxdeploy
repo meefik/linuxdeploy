@@ -27,6 +27,11 @@ prepare_system()
 			msg "fail"; return 1
 		fi
 	fi
+	if [ "$DEPLOY_TYPE" = "ram" ]; then
+		if [ -e "$IMG_TARGET" -a ! -d "$IMG_TARGET" ]; then
+			msg "fail"; return 1
+		fi
+	fi
 	msg "done"
 
 	if [ "$DEPLOY_TYPE" = "file" ]; then
@@ -63,6 +68,20 @@ prepare_system()
 			is_loop=$(losetup -a | grep -c $IMG_TARGET || true)
 			is_raw=$(grep -c $IMG_TARGET /proc/mounts || true)
 			[ "$is_loop" -eq 0 -a "$is_raw" -eq 0 ] && mke2fs -qF -t $FS_TYPE -O ^has_journal $IMG_TARGET
+		exit 0)
+		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
+	fi
+
+	if [ "$DEPLOY_TYPE" = "ram" ]; then
+		if [ "$IMG_SIZE" -eq 0 ]; then
+			RAM_FREE=$(grep ^MemFree /proc/meminfo | awk '{print $2}')
+			let IMG_SIZE="$RAM_FREE/1024"
+		fi
+		msg -n "Making new disk image ($IMG_SIZE MB) ... "
+		(set -e
+			mkdir $IMG_TARGET || true
+			umount $IMG_TARGET || true
+			mount -t tmpfs -o size=${IMG_SIZE}M tmpfs $IMG_TARGET
 		exit 0)
 		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 	fi
@@ -1534,7 +1553,7 @@ status_system()
 	msg "$(cat $ENV_DIR/etc/version)"
 
 	msg -n "Device: "
-	msg "$(getprop ro.product.brand) $(getprop ro.product.device)"
+	msg "$(getprop ro.product.model)"
 
 	msg -n "Android: "
 	msg "$(getprop ro.build.version.release)"
@@ -1546,10 +1565,18 @@ status_system()
 	msg "$(uname -r)"
 
 	msg -n "Memory: "
-	msg "$(grep ^MemTotal /proc/meminfo | awk '{print $2}') KB"
+	MEM_TOTAL=$(grep ^MemTotal /proc/meminfo | awk '{print $2}')
+	let MEM_TOTAL=$MEM_TOTAL/1024
+	MEM_FREE=$(grep ^MemFree /proc/meminfo | awk '{print $2}')
+	let MEM_FREE=$MEM_FREE/1024
+	msg "$MEM_FREE/$MEM_TOTAL MB"
 
 	msg -n "Swap: "
-	msg "$(grep ^SwapTotal /proc/meminfo | awk '{print $2}') KB"
+	SWAP_TOTAL=$(grep ^SwapTotal /proc/meminfo | awk '{print $2}')
+	let SWAP_TOTAL=$SWAP_TOTAL/1024
+	SWAP_FREE=$(grep ^SwapFree /proc/meminfo | awk '{print $2}')
+	let SWAP_FREE=$SWAP_FREE/1024
+	msg "$SWAP_FREE/$SWAP_TOTAL MB"
 
 	msg -n "SELinux: "
 	[ -e "/sys/fs/selinux/enforce" ] && msg "yes" || msg "no"

@@ -1,7 +1,6 @@
 package ru.meefik.linuxdeploy;
 
 import java.io.File;
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -14,8 +13,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
-
-import com.h6ah4i.android.compat.preference.MultiSelectListPreferenceCompat;
 import android.preference.Preference;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
@@ -23,6 +20,7 @@ import android.preference.PreferenceScreen;
 
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.MenuItem;
+import com.h6ah4i.android.compat.preference.MultiSelectListPreferenceCompat;
 
 public class PropertiesActivity extends SherlockPreferenceActivity implements
 		Preference.OnPreferenceClickListener, OnSharedPreferenceChangeListener {
@@ -391,20 +389,34 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 				mirror.setSummary(mirror.getText());
 			}
 			if (listPref.getKey().equals("deploytype")) {
+				EditTextPreference diskimage = (EditTextPreference) this
+						.findPreference("diskimage");
 				EditTextPreference disksize = (EditTextPreference) this
 						.findPreference("disksize");
 				ListPreference fstype = (ListPreference) this
 						.findPreference("fstype");
 
-				if (listPref.getValue().equals("file"))
+				switch (listPref.getValue()) {
+				case "file":
+					diskimage.setText(PrefStore.EXTERNAL_STORAGE + "/linux.img");
 					disksize.setEnabled(true);
-				else
-					disksize.setEnabled(false);
-
-				if (listPref.getValue().equals("custom"))
-					fstype.setEnabled(false);
-				else
 					fstype.setEnabled(true);
+					break;
+				case "partition":
+					diskimage.setText("/dev/block/mmcblkXpY");
+					disksize.setEnabled(false);
+					fstype.setEnabled(true);
+					break;
+				case "ram":
+					diskimage.setText("/data/local/tmp");
+					disksize.setEnabled(true);
+					fstype.setEnabled(false);
+					break;
+				default:
+					diskimage.setText("/data/local/linux");
+					disksize.setEnabled(false);
+					fstype.setEnabled(false);
+				}
 			}
 		}
 
