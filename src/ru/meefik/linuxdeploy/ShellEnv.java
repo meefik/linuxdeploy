@@ -38,10 +38,6 @@ public class ShellEnv {
 			params.add("exit $?");
 			params.add(0, "PATH=" + PrefStore.ENV_DIR
 					+ "/bin:$PATH; export PATH");
-			if (!PrefStore.DEBUG_MODE.equals("y")) {
-				params.add(0, "exec 2>/dev/null");
-				params.add(0, "exec 1>/dev/null");
-			}
 			if (PrefStore.TRACE_MODE.equals("y"))
 				params.add(0, "set -x");
 
@@ -209,6 +205,10 @@ public class ShellEnv {
 		}
 
 		List<String> params = new ArrayList<String>();
+		if (!PrefStore.DEBUG_MODE.equals("y")) {
+			params.add("exec 1>/dev/null");
+			params.add("exec 2>/dev/null");
+		}
 		params.add("mkdir " + PrefStore.ENV_DIR);
 		params.add("rm -R " + PrefStore.ENV_DIR + "/bin");
 		params.add("rm -R " + PrefStore.ENV_DIR + "/etc");
@@ -241,7 +241,10 @@ public class ShellEnv {
 		}
 
 		params.clear();
-
+		if (!PrefStore.DEBUG_MODE.equals("y")) {
+			params.add("exec 1>/dev/null");
+			params.add("exec 2>/dev/null");
+		}
 		if (PrefStore.BUILTIN_SHELL) {
 			params.add("chmod 755 " + PrefStore.ENV_DIR + "/bin/busybox");
 			params.add(PrefStore.ENV_DIR + "/bin/busybox --install -s "
@@ -284,6 +287,10 @@ public class ShellEnv {
 		sendLogs("Updating configuration file ... ");
 
 		List<String> params = new ArrayList<String>();
+		if (!PrefStore.DEBUG_MODE.equals("y")) {
+			params.add("exec 1>/dev/null");
+			params.add("exec 2>/dev/null");
+		}
 		params.add("cd " + PrefStore.ENV_DIR);
 		params.add("sed -i 's|^ENV_DIR=.*|ENV_DIR=\"" + PrefStore.ENV_DIR
 				+ "\"|g' " + PrefStore.ENV_DIR + "/bin/linuxdeploy");
