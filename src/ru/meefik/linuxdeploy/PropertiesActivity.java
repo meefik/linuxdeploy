@@ -398,22 +398,30 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 
 				switch (listPref.getValue()) {
 				case "file":
-					diskimage.setText(PrefStore.EXTERNAL_STORAGE + "/linux.img");
+					if (init) {
+						diskimage.setText(PrefStore.EXTERNAL_STORAGE + "/linux.img");
+					}
 					disksize.setEnabled(true);
 					fstype.setEnabled(true);
 					break;
 				case "partition":
-					diskimage.setText("/dev/block/mmcblkXpY");
+					if (init) {
+						diskimage.setText("/dev/block/mmcblkXpY");
+					}
 					disksize.setEnabled(false);
 					fstype.setEnabled(true);
 					break;
 				case "ram":
-					diskimage.setText("/data/local/tmp");
+					if (init) {
+						diskimage.setText("/data/local/tmp");
+					}
 					disksize.setEnabled(true);
 					fstype.setEnabled(false);
 					break;
 				default:
-					diskimage.setText("/data/local/linux");
+					if (init) {
+						diskimage.setText("/data/local/linux");
+					}
 					disksize.setEnabled(false);
 					fstype.setEnabled(false);
 				}
