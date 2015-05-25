@@ -704,7 +704,7 @@ mount_system()
 {
 	if [ "$#" -eq 0 ]; then
 		msg "Mounting partitions: "
-		mount_system root proc sys selinux dev pts shm binfmt_misc custom
+		mount_system root proc sys selinux dev tty pts shm binfmt_misc custom
 		return $?
 	fi
 	if [ "$#" -gt 1 ]; then
@@ -735,7 +735,8 @@ mount_system()
 	;;
 	proc)
 		msg -n "/proc ... "
-		tg=$MNT_TARGET/proc; is_mnt=$(grep -c " $tg " /proc/mounts)
+		tg=$MNT_TARGET/proc
+		is_mnt=$(grep -c " $tg " /proc/mounts)
 		if [ "$is_mnt" -eq 0 ]; then
 			[ ! -d "$tg" ] && mkdir -p $tg
 			mount -t proc proc $tg
@@ -746,7 +747,8 @@ mount_system()
 	;;
 	sys)
 		msg -n "/sys ... "
-		tg=$MNT_TARGET/sys; is_mnt=$(grep -c " $tg " /proc/mounts)
+		tg=$MNT_TARGET/sys
+		is_mnt=$(grep -c " $tg " /proc/mounts)
 		if [ "$is_mnt" -eq 0 ]; then
 			[ ! -d "$tg" ] && mkdir -p $tg
 			mount -t sysfs sys $tg
@@ -757,7 +759,8 @@ mount_system()
 	;;
 	selinux)
 		msg -n "/sys/fs/selinux ... "
-		tg=$MNT_TARGET/sys/fs/selinux; is_mnt=$(grep -c " $tg " /proc/mounts)
+		tg=$MNT_TARGET/sys/fs/selinux
+		is_mnt=$(grep -c " $tg " /proc/mounts)
 		if [ "$is_mnt" -eq 0 -a -d "/sys/fs/selinux" ]; then
 			if [ -e /sys/fs/selinux/enforce ]; then
 				cat /sys/fs/selinux/enforce > ${ENV_DIR%/}/etc/selinux_state
@@ -772,7 +775,8 @@ mount_system()
 	;;
 	dev)
 		msg -n "/dev ... "
-		tg=$MNT_TARGET/dev; is_mnt=$(grep -c " $tg " /proc/mounts)
+		tg=$MNT_TARGET/dev
+		is_mnt=$(grep -c " $tg " /proc/mounts)
 		if [ "$is_mnt" -eq 0 ]; then
 			[ ! -d "$tg" ] && mkdir -p $tg
 			mount -o bind /dev $tg
@@ -786,9 +790,19 @@ mount_system()
 			msg "skip"
 		fi
 	;;
+	tty)
+		msg -n "/dev/tty ... "
+		if [ -e "/dev/tty0" ]; then
+			msg "skip"
+		else
+			ln -s /dev/null /dev/tty0
+			[ $? -eq 0 ] && msg "done" || msg "fail"
+		fi
+	;;
 	pts)
 		msg -n "/dev/pts ... "
-		tg=$MNT_TARGET/dev/pts; is_mnt=$(grep -c " $tg " /proc/mounts)
+		tg=$MNT_TARGET/dev/pts
+		is_mnt=$(grep -c " $tg " /proc/mounts)
 		if [ "$is_mnt" -eq 0 ]; then
 			[ ! -d "$tg" ] && mkdir -p $tg
 			mount -o "mode=0620,gid=5" -t devpts devpts $tg
@@ -799,7 +813,8 @@ mount_system()
 	;;
 	shm)
 		msg -n "/dev/shm ... "
-		tg=$MNT_TARGET/dev/shm; is_mnt=$(grep -c " $tg " /proc/mounts)
+		tg=$MNT_TARGET/dev/shm
+		is_mnt=$(grep -c " $tg " /proc/mounts)
 		if [ "$is_mnt" -eq 0 ]; then
 			[ ! -d "$tg" ] && mkdir -p $tg
 			mount -t tmpfs tmpfs $tg
