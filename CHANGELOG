@@ -5,6 +5,7 @@ Changelog (English)
 Added support for installation type in RAM
 Updated command "status"
 Updated security groups
+Added fix for tty0 (use X options: "-sharevts vt0")
 
 1.5.0
 Added support for devices with an Intel architecture
@@ -287,6 +288,7 @@ Updated list packages of base system installation
 Добавлена поддержка установки дистрибутивов в оперативную память
 Обновлена команда "состояние"
 Обновлены группы безопасности
+Добавлено исправление для tty0 (используйте опции X-сервера: "-sharevts vt0")
 
 1.5.0
 Добавлена поддержка устройств с Intel архитектурой
