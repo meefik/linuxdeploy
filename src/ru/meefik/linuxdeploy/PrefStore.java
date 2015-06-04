@@ -17,6 +17,7 @@ import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -240,6 +241,7 @@ public class PrefStore {
 	    return march;
 	}
 
+	@SuppressLint("NewApi")
 	public static int getWidth(Context mContext) {
 		int width = 0;
 		WindowManager wm = (WindowManager) mContext
@@ -255,6 +257,7 @@ public class PrefStore {
 		return width;
 	}
 
+	@SuppressLint("NewApi")
 	public static int getHeight(Context mContext) {
 		int height = 0;
 		WindowManager wm = (WindowManager) mContext
