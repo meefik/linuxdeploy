@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="theme_entries">
+        <item>Dunkel</item>
+        <item>Hell</item>
+    </string-array>
+    <string-array name="deploytype_entries">
+        <item>Datei</item>
+        <item>Partition</item>
+        <item>RAM</item>
+        <item>Benutzerdefiniert</item>
+    </string-array>
+    <string-array name="fstype_entries">
+        <item>Auto</item>
+        <item>ext2</item>
+        <item>ext3</item>
+        <item>ext4</item>
+    </string-array>
+    <string-array name="desktopenv_entries">
+        <item>XTerm</item>
+        <item>LXDE</item>
+        <item>Xfce</item>
+        <item>GNOME</item>
+        <item>KDE</item>
+        <item>Andere</item>
+    </string-array>
+    <string-array name="fbfreeze_entries">
+        <item>Nicht freeze</item>
+        <item>Pause</item>
+        <item>Stop</item>
+    </string-array>
+    
+
+    <!-- Debian -->
+
+    <string-array name="debian_components_entries">
+        <item>Desktop Oberfl&#228;che</item>
+        <item>SSH Server</item>
+        <item>VNC Server</item>
+        <item>X Server</item>
+    </string-array>
+
+    <!-- Ubuntu -->
+
+    <string-array name="ubuntu_components_entries">
+        <item>Desktop Oberfl&#228;che</item>
+        <item>SSH Server</item>
+        <item>VNC Server</item>
+        <item>X Server</item>
+    </string-array>
+    
+    <!-- Kali Linux -->
+
+    <string-array name="kali_components_entries">
+        <item>Desktop Oberfl&#228;che</item>
+        <item>SSH Server</item>
+        <item>VNC Server</item>
+        <item>X Server</item>
+        <item>Kali components</item>
+    </string-array>
+    
+    <!-- Fedora -->
+
+    <string-array name="fedora_components_entries">
+        <item>Desktop Oberfl&#228;che</item>
+        <item>SSH Server</item>
+        <item>VNC Server</item>
+        <item>X Server</item>
+    </string-array>
+    
+    <!-- Arch Linux -->
+
+    <string-array name="archlinux_components_entries">
+        <item>Desktop Oberfl&#228;che</item>
+        <item>SSH Server</item>
+        <item>VNC Server</item>
+        <item>X Server</item>
+    </string-array>
+
+    <!-- openSUSE -->
+
+    <string-array name="opensuse_components_entries">
+        <item>Desktop Oberfl&#228;che</item>
+        <item>SSH Server</item>
+        <item>VNC Server</item>
+        <item>X Server</item>
+    </string-array>
+    
+    <!-- Gentoo -->
+
+    <string-array name="gentoo_components_entries">
+        <item>Desktop Oberfl&#228;che</item>
+        <item>SSH Server</item>
+        <item>VNC Server</item>
+        <item>X Server</item>
+    </string-array>
+
+</resources>
