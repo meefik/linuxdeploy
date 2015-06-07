@@ -173,7 +173,7 @@ public class MainActivity extends SherlockActivity {
 										public void run() {
 											new ShellEnv(
 													getApplicationContext())
-													.deployCmd("start");
+													.execScript("start");
 										}
 									}).start();
 									if (PrefStore.STARTUP
@@ -210,7 +210,7 @@ public class MainActivity extends SherlockActivity {
 										public void run() {
 											new ShellEnv(
 													getApplicationContext())
-													.deployCmd("stop");
+													.execScript("stop");
 										}
 									}).start();
 								}
@@ -228,7 +228,7 @@ public class MainActivity extends SherlockActivity {
 			(new Thread() {
 				@Override
 				public void run() {
-					new ShellEnv(getApplicationContext()).deployCmd("status");
+					new ShellEnv(getApplicationContext()).execScript("status");
 				}
 			}).start();
 			break;

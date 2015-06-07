@@ -54,7 +54,7 @@ public class SettingsActivity extends SherlockPreferenceActivity implements
 		// set autostart settings
 		int flag = (PrefStore.isAutostart(getApplicationContext()) ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED
 				: PackageManager.COMPONENT_ENABLED_STATE_DISABLED);
-		ComponentName component = new ComponentName(this, BootUpReceiver.class);
+		ComponentName component = new ComponentName(this, BootupReceiver.class);
 		getPackageManager().setComponentEnabledSetting(component, flag,
 				PackageManager.DONT_KILL_APP);
 
@@ -172,7 +172,7 @@ public class SettingsActivity extends SherlockPreferenceActivity implements
 									@Override
 									public void run() {
 										new ShellEnv(getApplicationContext())
-												.deployCmd("uninstall");
+												.execScript("uninstall");
 									}
 								}).start();
 								finish();

@@ -26,7 +26,7 @@ public class ShellEnv {
 		this.rooted = isRooted();
 	}
 
-	private boolean execCmd(List<String> params) {
+	private boolean exec(List<String> params) {
 		boolean result = true;
 		try {
 			Process process = Runtime.getRuntime().exec("su");
@@ -117,7 +117,7 @@ public class ShellEnv {
 		// exec linuxdeploy command
 		List<String> params = new ArrayList<String>();
 		params.add("ls /data/local 1>/dev/null");
-		if (!execCmd(params)) {
+		if (!exec(params)) {
 			sendLogs("Require superuser privileges (root)!\n");
 			return false;
 		} else {
@@ -214,7 +214,7 @@ public class ShellEnv {
 		params.add("rm -R " + PrefStore.ENV_DIR + "/etc");
 		params.add("rm -R " + PrefStore.ENV_DIR + "/deploy");
 		params.add("chmod 777 " + PrefStore.ENV_DIR);
-		if (!execCmd(params)) {
+		if (!exec(params)) {
 			sendLogs("fail\n");
 			return;
 		}
@@ -269,7 +269,7 @@ public class ShellEnv {
 			params.add("find " + dirs[i]
 					+ " | while read f; do chmod 755 $f; done");
 		}
-		if (!execCmd(params)) {
+		if (!exec(params)) {
 			sendLogs("fail\n");
 			return;
 		}
@@ -377,14 +377,14 @@ public class ShellEnv {
 		params.add("sed -i 's|^FB_FREEZE=.*|FB_FREEZE=\"" + PrefStore.FB_FREEZE
 				+ "\"|g' " + PrefStore.ENV_DIR + "/etc/deploy.conf");
 
-		if (!execCmd(params)) {
+		if (!exec(params)) {
 			sendLogs("fail\n");
 			return;
 		}
 		sendLogs("done\n");
 	}
 
-	public void deployCmd(String cmd) {
+	public void execScript(String arg) {
 		if (!rooted)
 			return;
 
@@ -413,8 +413,8 @@ public class ShellEnv {
 		}
 		// exec linuxdeploy command
 		List<String> params = new ArrayList<String>();
-		params.add(PrefStore.ENV_DIR + "/bin/linuxdeploy " + cmd);
-		execCmd(params);
+		params.add(PrefStore.ENV_DIR + "/bin/linuxdeploy " + arg);
+		exec(params);
 	}
 
 }

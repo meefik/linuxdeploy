@@ -165,7 +165,7 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 										new ShellEnv(getApplicationContext())
 												.updateConfig();
 										new ShellEnv(getApplicationContext())
-												.deployCmd("configure");
+												.execScript("configure");
 									}
 								}).start();
 								finish();
@@ -197,7 +197,7 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 										new ShellEnv(getApplicationContext())
 												.updateConfig();
 										new ShellEnv(getApplicationContext())
-												.deployCmd("install");
+												.execScript("install");
 									}
 								}).start();
 								finish();

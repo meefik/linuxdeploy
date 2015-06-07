@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ru.meefik.linuxdeploy"
-    android:versionCode="139"
+    android:versionCode="140"
     android:versionName="1.5.1" >
 
     <uses-sdk
@@ -20,7 +20,7 @@
         android:label="@string/app_name"
         android:theme="@style/BlackTheme" >
         <activity
-            android:name="ru.meefik.linuxdeploy.MainActivity"
+            android:name=".MainActivity"
             android:label="@string/title_activity_main"
             android:uiOptions="splitActionBarWhenNarrow" >
             <intent-filter>
@@ -29,46 +29,56 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="ru.meefik.linuxdeploy.SettingsActivity"
+            android:name=".SettingsActivity"
             android:label="@string/title_activity_settings" >
         </activity>
         <activity
-            android:name="ru.meefik.linuxdeploy.PropertiesActivity"
+            android:name=".PropertiesActivity"
             android:icon="@drawable/ic_launcher_properties"
             android:label="@string/title_activity_properties" >
         </activity>
         <activity
-            android:name="ru.meefik.linuxdeploy.AboutActivity"
+            android:name=".AboutActivity"
             android:label="@string/title_activity_about" >
         </activity>
         <activity
-            android:name="ru.meefik.linuxdeploy.ProfilesActivity"
+            android:name=".ProfilesActivity"
             android:icon="@drawable/ic_launcher_profiles"
             android:label="@string/title_activity_profiles" >
         </activity>
         <activity
-            android:name="ru.meefik.linuxdeploy.ScriptsActivity"
+            android:name=".ScriptsActivity"
             android:label="@string/title_activity_scripts" >
         </activity>
         <activity
-            android:name="ru.meefik.linuxdeploy.MountsActivity"
+            android:name=".MountsActivity"
             android:label="@string/title_activity_mounts" >
         </activity>
-        <activity android:name="ru.meefik.linuxdeploy.FullscreenActivity" >
+        <activity android:name=".FullscreenActivity" >
         </activity>
 
         <receiver
-            android:name="ru.meefik.linuxdeploy.BootUpReceiver"
+            android:name=".BootupReceiver"
             android:enabled="false"
             android:exported="false" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+        
+        <receiver
+            android:name=".ShutdownReceiver"
+            android:enabled="true"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="android.intent.action.ACTION_SHUTDOWN" />
+            </intent-filter>
+        </receiver>
 
         <service
-            android:name="ru.meefik.linuxdeploy.BootUpService"
-            android:enabled="true" >
+            android:name=".ExecService"
+            android:enabled="true"
+            android:exported="false" >
         </service>
     </application>
 
