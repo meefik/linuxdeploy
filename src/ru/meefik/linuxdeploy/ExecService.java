@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 
-public class BootUpService extends Service {
+public class ExecService extends Service {
 
 	@Override
 	public IBinder onBind(Intent arg0) {
@@ -15,10 +15,11 @@ public class BootUpService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
     	final Context mContext = this;
+    	final String command = intent.getStringExtra("command");
 		(new Thread() {
 			@Override
 			public void run() {
-				new ShellEnv(mContext).deployCmd("start");
+				new ShellEnv(mContext).execScript(command);
 			}
 		}).start();
     	MainActivity.notification(mContext, null);

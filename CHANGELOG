@@ -8,6 +8,7 @@ Updated security groups
 Added fix for tty0 (use X options: "-sharevts vt0")
 Translated into German
 Translated into Italian
+Added handling for shutdown event
 
 1.5.0
 Added support for devices with an Intel architecture
@@ -293,6 +294,7 @@ Updated list packages of base system installation
 Добавлено исправление для tty0 (используйте опции X-сервера: "-sharevts vt0")
 Переведено на немецкий язык
 Переведено на итальянский язык
+Добавлена обработка события отключения питания устройства
 
 1.5.0
 Добавлена поддержка устройств с Intel архитектурой
