@@ -73,8 +73,8 @@
     <string name="title_symlink_preference">Crea collegamento</string>
     <string name="summary_symlink_preference">Crea un collegamento simbolico a linuxdeploy in Android</string>
     <string name="title_installenv_preference">Aggiorna ENV</string>
-    <string name="summary_installenv_preference">Aggiorna l'\ambiente operativo</string>
-    <string name="message_installenv_confirm_dialog">Aggiornare l'\mbiente operativo?</string>
+    <string name="summary_installenv_preference">Aggiorna l\'ambiente operativo</string>
+    <string name="message_installenv_confirm_dialog">Aggiornare l\'mbiente operativo?</string>
     <string name="title_removeenv_preference">Rimuovi ENV</string>
     <string name="summary_removeenv_preference">Rimuovi l\'ambiente operativo</string>
     <string name="message_removeenv_confirm_dialog">Rimuovere l\'ambiente operativo?</string>
