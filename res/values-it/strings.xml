@@ -10,7 +10,7 @@
     <string name="menu_donate">Dona</string>
     <string name="menu_exit">Esci</string>
     <string name="menu_status">Stato</string>
-    <string name="menu_clear">Puliscu</string>
+    <string name="menu_clear">Pulisci</string>
     <string name="menu_new">Nuovo</string>
     <string name="menu_edit">Modifica</string>
     <string name="menu_discard">Elimina</string>
@@ -20,7 +20,7 @@
     <string name="menu_clearall">Pulisci tutto</string>
     <string name="notification_current_profile">Profilo corrente</string>
     <string name="title_activity_main">Linux Deploy</string>
-    <string name="title_activity_about">Circa</string>
+    <string name="title_activity_about">Info su</string>
     <string name="title_activity_settings">Impostazioni</string>
     <string name="title_activity_properties">Propertietà</string>
     <string name="title_activity_profiles">Profili</string>
@@ -63,13 +63,13 @@
     <string name="dialog_title_theme_preference">Scegli tema</string>
     <string name="title_appicon_preference">Mostra icona</string>
     <string name="summary_appicon_preference">Mostra icona nella barra delle notifiche</string>
-    <string name="title_autostart_preference">Autoavvio</string>
+    <string name="title_autostart_preference">Avvio automatico</string>
     <string name="summary_autostart_preference">Esegui automaticamente GNU/Linux all\'avvio di Android</string>
     <string name="env_preferences">Ambiente operativo</string>
     <string name="title_installdir_preference">Cartella ENV</string>
     <string name="dialog_title_installdir_preference">Cartella ENV</string>
-    <string name="title_builtinshell_preference">Built-in shell</string>
-    <string name="summary_builtinshell_preference">Usa la versione di BusyBox incorporata</string>
+    <string name="title_builtinshell_preference">Shell integrata</string>
+    <string name="summary_builtinshell_preference">Usa la versione di BusyBox integrata</string>
     <string name="title_symlink_preference">Crea collegamento</string>
     <string name="summary_symlink_preference">Crea un collegamento simbolico a linuxdeploy in Android</string>
     <string name="title_installenv_preference">Aggiorna ENV</string>
@@ -82,7 +82,7 @@
     <string name="title_debug_preference">Modalità Debug</string>
     <string name="summary_debug_preference">Mostra informazioni di debug</string>
     <string name="title_trace_preference">Modalità di tracciamento</string>
-    <string name="summary_trace_preference">Abilità modalità di tracciament</string>
+    <string name="summary_trace_preference">Abilità modalità di tracciamento</string>
     <string name="title_logs_preference">Logging</string>
     <string name="summary_logs_preference">Salva i messaggi di log in un file</string>
     <string name="title_logfile_preference">File di log</string>
@@ -97,8 +97,8 @@
     <string name="deploy_preferences">Distribuzione</string>
     <string name="title_distribution_preference">Distribuzione</string>
     <string name="dialog_title_distribution_preference">Distribuzione</string>
-    <string name="title_suite_preference">Versione Distribusione</string>
-    <string name="dialog_title_suite_preference">Versione Distribution</string>
+    <string name="title_suite_preference">Versione Distribuzione</string>
+    <string name="dialog_title_suite_preference">Versione Distribuzione</string>
     <string name="title_mirror_preference">Mirror URL</string>
     <string name="dialog_title_mirror_preference">Mirror URL</string>
     <string name="title_architecture_preference">Architettura</string>
@@ -126,7 +126,7 @@
     <string name="title_components_preference">Seleziona componenti</string>
     <string name="startup_preferences">Avvio</string>
     <string name="title_sshstartup_preference">SSH</string>
-    <string name="summary_sshstartup_preference">Permetti avvio server SSH</string>
+    <string name="summary_sshstartup_preference">Permetti l\'avvio del server SSH</string>
     <string name="title_sshproperties_preference">Impostazioni SSH</string>
     <string name="summary_sshproperties_preference">Modifica impostazioni server SSH</string>
     <string name="title_guistartup_preference">GUI</string>
@@ -135,11 +135,11 @@
     <string name="dialog_title_guitype_preference">Sottosistema grafico</string>
     <string name="title_guiproperties_preference">Impostazioni GUI</string>
     <string name="summary_guiproperties_preference">Modifica le impostazioni per il sottosistema grafico</string>
-    <string name="title_customstartup_preference">Script personalizzatiCustom scripts</string>
+    <string name="title_customstartup_preference">Script personalizzati</string>
     <string name="summary_customstartup_preference">Abilita l\'esecuzione di script personalizzati</string>
     <string name="title_scriptseditor_preference">Lista degli script</string>
     <string name="summary_scriptseditor_preference">Modifica lista script personalizzati</string>
-    <string name="title_custommount_preference">Mont personalizzati</string>
+    <string name="title_custommount_preference">Montaggi personalizzati</string>
     <string name="summary_custommount_preference">Permetti il montaggio delle risosre di Android</string>
     <string name="title_mountseditor_preference">Punti di montaggio</string>
     <string name="summary_mountseditor_preference">Modifica la lista dei punti di montaggio</string>
@@ -149,7 +149,7 @@
     <string name="vnc_preferences">VNC</string>
     <string name="title_vncdisplay_preference">Schermo</string>
     <string name="dialog_title_vncdisplay_preference">Numero schermo VNC:</string>
-    <string name="title_vncdepth_preference">Profondita (bits)</string>
+    <string name="title_vncdepth_preference">Profondità (bits)</string>
     <string name="dialog_title_vncdepth_preference">Profondità VNC:</string>
     <string name="title_vncdpi_preference">DPI</string>
     <string name="dialog_title_vncdpi_preference">Punti per pollice (DPI) VNC:</string>
