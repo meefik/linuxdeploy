@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ru.meefik.linuxdeploy"
-    android:versionCode="140"
+    android:versionCode="141"
     android:versionName="1.5.1" >
 
     <uses-sdk
@@ -58,19 +58,11 @@
         </activity>
 
         <receiver
-            android:name=".BootupReceiver"
+            android:name=".EventsReceiver"
             android:enabled="false"
             android:exported="false" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver>
-        
-        <receiver
-            android:name=".ShutdownReceiver"
-            android:enabled="true"
-            android:exported="false" >
-            <intent-filter>
                 <action android:name="android.intent.action.ACTION_SHUTDOWN" />
             </intent-filter>
         </receiver>
