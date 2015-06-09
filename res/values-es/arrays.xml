@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  
+    <string-array name="theme_entries">
+        <item>Oscuro</item>
+        <item>Claro</item>
+    </string-array>
+    <string-array name="deploytype_entries">
+        <item>Archivo</item>
+        <item>Partición</item>
+        <item>RAM</item>
+        <item>Personalizado</item>
+    </string-array>
+    <string-array name="fstype_entries">
+        <item>Auto</item>
+        <item>ext2</item>
+        <item>ext3</item>
+        <item>ext4</item>
+    </string-array>
+    <string-array name="desktopenv_entries">
+        <item>XTerm</item>
+        <item>LXDE</item>
+        <item>Xfce</item>
+        <item>GNOME</item>
+        <item>KDE</item>
+        <item>Otro</item>
+    </string-array>
+    <string-array name="fbfreeze_entries">
+        <item>No congelar</item>
+        <item>Pausa</item>
+        <item>Parar</item>
+    </string-array>
+    
+
+    <!-- Debian -->
+
+    <string-array name="debian_components_entries">
+        <item>Ambiente Escritorio</item>
+        <item>servidor SSH</item>
+        <item>servidor VNC</item>
+        <item>X server</item>
+    </string-array>
+
+    <!-- Ubuntu -->
+
+    <string-array name="ubuntu_components_entries">
+        <item>Ambiente Escritorio</item>
+        <item>servidor SSH</item>
+        <item>servidor VNC</item>
+        <item>X server</item>
+    </string-array>
+    
+    <!-- Kali Linux -->
+
+    <string-array name="kali_components_entries">
+        <item>Ambiente Escritorio</item>
+        <item>servidor SSH</item>
+        <item>servidor VNC</item>
+        <item>X server</item>
+        <item>Componentes Kali</item>
+    </string-array>
+    
+    <!-- Fedora -->
+
+    <string-array name="fedora_components_entries">
+        <item>Ambiente Escritorio</item>
+        <item>servidor SSH</item>
+        <item>servidor VNC</item>
+        <item>X server</item>
+    </string-array>
+    
+    <!-- Arch Linux -->
+
+    <string-array name="archlinux_components_entries">
+        <item>Ambiente Escritorio</item>
+        <item>servidor SSH</item>
+        <item>servidor VNC</item>
+        <item>X server</item>
+    </string-array>
+
+    <!-- openSUSE -->
+
+    <string-array name="opensuse_components_entries">
+        <item>Ambiente Escritorio</item>
+        <item>servidor SSH</item>
+        <item>servidor VNC</item>
+        <item>X server</item>
+    </string-array>
+    
+    <!-- Gentoo -->
+
+    <string-array name="gentoo_components_entries">
+        <item>Ambiente Escritorio</item>
+        <item>servidor SSH</item>
+        <item>servidor VNC</item>
+        <item>X server</item>
+    </string-array>
+    
+</resources>
