@@ -156,6 +156,7 @@
         <item>trusty</item>
         <item>utopic</item>
         <item>vivid</item>
+        <item>wily</item>
     </string-array>
     <string-array name="ubuntu_architecture_values" translatable="false">
         <item>armel</item>
@@ -210,6 +211,7 @@
         <item>19</item>
         <item>20</item>
         <item>21</item>
+        <item>22</item>
     </string-array>
     <string-array name="fedora_architecture_values" translatable="false">
         <item>arm</item> <!-- f18 only -->
