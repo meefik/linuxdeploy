@@ -93,7 +93,7 @@ configure_system()
 {
 	if [ "$#" -eq 0 ]; then
 		msg "Configuring GNU/Linux system: "
-		configure_system qemu dns mtab motd hosts hostname timezone su sudo groups locales repository profile upstart dbus xorg packages
+		configure_system qemu dns mtab motd hosts hostname timezone su sudo groups locales repository profile dbus xorg misc packages
 		return 0
 	fi
 	if [ "$#" -gt 1 ]; then
@@ -383,12 +383,6 @@ configure_system()
 			fi
 			chown -R $USER_ID:$GROUP_ID $MNT_TARGET$USER_HOME || true
 		;;
-		upstart)
-			if [ -e "$MNT_TARGET/sbin/initctl" ]; then
-				chroot $MNT_TARGET dpkg-divert --local --rename --add /sbin/initctl
-				chroot $MNT_TARGET ln -s /bin/true /sbin/initctl
-			fi
-		;;
 		dbus)
 			case "$DISTRIB" in
 			debian|ubuntu|kali|archlinux)
@@ -459,6 +453,16 @@ configure_system()
 			chown 0:0 $qemu_target
 			chmod 755 $qemu_target
 		;;
+		misc)
+			# Fix for upstart (Ubuntu)
+			if [ -e "$MNT_TARGET/sbin/initctl" ]; then
+				chroot $MNT_TARGET dpkg-divert --local --rename --add /sbin/initctl
+				chroot $MNT_TARGET ln -s /bin/true /sbin/initctl
+			fi
+			# Fix for yum (Fedora)
+			if [ -e "$MNT_TARGET/usr/bin/yum-deprecated" ]; then
+				chroot $MNT_TARGET ln -s /usr/bin/yum-deprecated /usr/bin/yum
+			fi
 		esac
 	exit 0)
 	[ $? -eq 0 ] && msg "done" || msg "fail"
@@ -590,17 +594,9 @@ configure_system()
 					;;
 					esac
 				done
-				case "$SUITE" in
-				22)
-					yum="yum-deprecated"
-				;;
-				*)
-					yum="yum"
-				;;
-				esac
-				chroot $MNT_TARGET $yum install $PKGS --nogpgcheck --skip-broken -y
-				[ -n "$IGRP" ] && chroot $MNT_TARGET $yum groupinstall "$IGRP" --nogpgcheck --skip-broken -y
-				chroot $MNT_TARGET $yum clean all
+				chroot $MNT_TARGET yum install $PKGS --nogpgcheck --skip-broken -y
+				[ -n "$IGRP" ] && chroot $MNT_TARGET yum groupinstall "$IGRP" --nogpgcheck --skip-broken -y
+				chroot $MNT_TARGET yum clean all
 			;;
 			opensuse)
 				PKGS=""
@@ -1374,20 +1370,12 @@ install_system()
 		rm -rf $MNT_TARGET/tmp/*
 
 		msg "Preconfigure system: "
-		configure_system dns mtab repository
+		configure_system dns mtab misc repository
 
 		msg "Installing minimal environment: "
-		case "$SUITE" in
-		22)
-			yum="yum-deprecated"
-		;;
-		*)
-			yum="yum"
-		;;
-		esac
 		(set -e
-			chroot $MNT_TARGET $yum groupinstall minimal-environment --nogpgcheck --skip-broken -y --exclude openssh-server
-			chroot $MNT_TARGET $yum clean all
+			chroot $MNT_TARGET yum groupinstall minimal-environment --nogpgcheck --skip-broken -y --exclude openssh-server
+			chroot $MNT_TARGET yum clean all
 		exit 0) 1>&3 2>&3
 		[ $? -ne 0 ] && return 1
 	;;
