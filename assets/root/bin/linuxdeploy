@@ -461,7 +461,10 @@ configure_system()
 			fi
 			# Fix for yum (Fedora)
 			if [ -e "$MNT_TARGET/usr/bin/yum-deprecated" ]; then
-				chroot $MNT_TARGET ln -s /usr/bin/yum-deprecated /usr/bin/yum
+				rm $MNT_TARGET/usr/bin/yum || true
+				echo '#!/bin/sh' > $MNT_TARGET/usr/bin/yum
+				echo '/usr/bin/yum-deprecated $*' >> $MNT_TARGET/usr/bin/yum
+				chmod 755 $MNT_TARGET/usr/bin/yum
 			fi
 		esac
 	exit 0)
