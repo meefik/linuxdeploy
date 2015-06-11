@@ -7,6 +7,8 @@ Updated command "status"
 Updated security groups
 Added fix for tty0 (use X options: "-sharevts vt0")
 Added handling for shutdown event
+Added support Ubuntu 15.10 (Wily Werewolf)
+Added support Fedora 22 (armhfp only)
 Translated into German, Italian and Spanish
 
 1.5.0
@@ -292,6 +294,8 @@ Updated list packages of base system installation
 Обновлены группы безопасности
 Добавлено исправление для tty0 (используйте опции X-сервера: "-sharevts vt0")
 Добавлена обработка события отключения питания устройства
+Добавлена поддержка Ubuntu 15.10 (Wily Werewolf)
+Добавлена поддержка Fedora 22 (только armhfp)
 Переведено на немецкий, итальянский и испанский языки
 
 1.5.0

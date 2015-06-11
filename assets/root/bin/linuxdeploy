@@ -474,7 +474,7 @@ configure_system()
 				do
 					case "$component" in
 					desktop)
-						PKGS="$PKGS desktop-base x11-xserver-utils xfonts-base"
+						PKGS="$PKGS desktop-base x11-xserver-utils xfonts-base xfonts-utils"
 						[ "$DISTRIB" = "kali" ] && PKGS="$PKGS kali-defaults kali-menu"
 						case "$DESKTOP_ENV" in
 						xterm)
@@ -510,6 +510,7 @@ configure_system()
 				done
 				export DEBIAN_FRONTEND=noninteractive
 				chroot $MNT_TARGET apt-get update -yq
+				chroot $MNT_TARGET apt-get install -yf
 				chroot $MNT_TARGET apt-get install $PKGS --no-install-recommends -yq
 				chroot $MNT_TARGET apt-get clean
 			;;
@@ -589,9 +590,17 @@ configure_system()
 					;;
 					esac
 				done
-				chroot $MNT_TARGET yum install $PKGS --nogpgcheck --skip-broken -y
-				[ -n "$IGRP" ] && chroot $MNT_TARGET yum groupinstall "$IGRP" --nogpgcheck --skip-broken -y
-				chroot $MNT_TARGET yum clean all
+				case "$SUITE" in
+				22)
+					yum="yum-deprecated"
+				;;
+				*)
+					yum="yum"
+				;;
+				esac
+				chroot $MNT_TARGET $yum install $PKGS --nogpgcheck --skip-broken -y
+				[ -n "$IGRP" ] && chroot $MNT_TARGET $yum groupinstall "$IGRP" --nogpgcheck --skip-broken -y
+				chroot $MNT_TARGET $yum clean all
 			;;
 			opensuse)
 				PKGS=""
@@ -1368,9 +1377,17 @@ install_system()
 		configure_system dns mtab repository
 
 		msg "Installing minimal environment: "
+		case "$SUITE" in
+		22)
+			yum="yum-deprecated"
+		;;
+		*)
+			yum="yum"
+		;;
+		esac
 		(set -e
-			chroot $MNT_TARGET yum groupinstall minimal-environment --nogpgcheck --skip-broken -y --exclude openssh-server
-			chroot $MNT_TARGET yum clean all
+			chroot $MNT_TARGET $yum groupinstall minimal-environment --nogpgcheck --skip-broken -y --exclude openssh-server
+			chroot $MNT_TARGET $yum clean all
 		exit 0) 1>&3 2>&3
 		[ $? -ne 0 ] && return 1
 	;;
