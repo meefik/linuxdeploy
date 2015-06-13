@@ -7,6 +7,7 @@
         <item>Deutsch</item>
         <item>Italiano</item>
         <item>Español</item>
+        <item>简体中文</item>
     </string-array>
     <string-array name="language_values" translatable="false">
         <item>en</item>
@@ -14,6 +15,7 @@
         <item>de</item>
         <item>it</item>
         <item>es</item>
+        <item>zh</item>
     </string-array>
     <string-array name="theme_entries">
         <item>Dark</item>
