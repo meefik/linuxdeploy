@@ -1,25 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string-array name="language_entries" translatable="false">
-        <item>English</item>
-        <item>Русский</item>
-        <item>Deutsch</item>
-        <item>Italiano</item>
-        <item>Español</item>
-        <item>简体中文</item>
-    </string-array>
-    <string-array name="language_values" translatable="false">
-        <item>en</item>
-        <item>ru</item>
-        <item>de</item>
-        <item>it</item>
-        <item>es</item>
-        <item>zh</item>
-    </string-array>
     <string-array name="theme_entries">
-        <item>Dark</item>
-        <item>Light</item>
+        <item>暗色</item>
+        <item>亮色</item>
     </string-array>
     <string-array name="theme_values" translatable="false">
         <item>dark</item>
@@ -32,10 +16,10 @@
         <item>custom</item>
     </string-array>
     <string-array name="deploytype_entries">
-        <item>File</item>
-        <item>Partition</item>
+        <item>文件</item>
+        <item>分区</item>
         <item>RAM</item>
-        <item>Custom</item>
+        <item>自定义</item>
     </string-array>
     <string-array name="fstype_values" translatable="false">
         <item>auto</item>
@@ -44,7 +28,7 @@
         <item>ext4</item>
     </string-array>
     <string-array name="fstype_entries">
-        <item>Auto</item>
+        <item>自动</item>
         <item>ext2</item>
         <item>ext3</item>
         <item>ext4</item>
@@ -76,7 +60,7 @@
         <item>Xfce</item>
         <item>GNOME</item>
         <item>KDE</item>
-        <item>Other</item>
+        <item>其它</item>
     </string-array>
     <string-array name="distribution_values" translatable="false">
         <item>debian</item>
@@ -114,9 +98,9 @@
         <item>stop</item>
     </string-array>
     <string-array name="fbfreeze_entries">
-        <item>Don\'t freeze</item>
-        <item>Pause</item>
-        <item>Stop</item>
+        <item>不冻结</item>
+        <item>暂停</item>
+        <item>停止</item>
     </string-array>
     
 
@@ -144,10 +128,10 @@
         <item>xserver</item>
     </string-array>
     <string-array name="debian_components_entries">
-        <item>Desktop Environment</item>
-        <item>SSH server</item>
-        <item>VNC server</item>
-        <item>X server</item>
+        <item>桌面环境</item>
+        <item>SSH 服务器</item>
+        <item>VNC 服务器</item>
+        <item>X11 服务器</item>
     </string-array>
 
     <!-- Ubuntu -->
@@ -173,10 +157,10 @@
         <item>xserver</item>
     </string-array>
     <string-array name="ubuntu_components_entries">
-        <item>Desktop Environment</item>
-        <item>SSH server</item>
-        <item>VNC server</item>
-        <item>X server</item>
+        <item>桌面环境</item>
+        <item>SSH 服务器</item>
+        <item>VNC 服务器</item>
+        <item>X11 服务器</item>
     </string-array>
     
     <!-- Kali Linux -->
@@ -199,11 +183,11 @@
         <item>kali-linux</item>
     </string-array>
     <string-array name="kali_components_entries">
-        <item>Desktop Environment</item>
-        <item>SSH server</item>
-        <item>VNC server</item>
-        <item>X server</item>
-        <item>Kali components</item>
+        <item>桌面环境</item>
+        <item>SSH 服务器</item>
+        <item>VNC 服务器</item>
+        <item>X11 服务器</item>
+        <item>Kali 附加内容</item>
     </string-array>
     
     <!-- Fedora -->
@@ -228,10 +212,10 @@
         <item>xserver</item>
     </string-array>
     <string-array name="fedora_components_entries">
-        <item>Desktop Environment</item>
-        <item>SSH server</item>
-        <item>VNC server</item>
-        <item>X server</item>
+        <item>桌面环境</item>
+        <item>SSH 服务器</item>
+        <item>VNC 服务器</item>
+        <item>X11 服务器</item>
     </string-array>
     
     <!-- Arch Linux -->
@@ -252,10 +236,10 @@
         <item>xserver</item>
     </string-array>
     <string-array name="archlinux_components_entries">
-        <item>Desktop Environment</item>
-        <item>SSH server</item>
-        <item>VNC server</item>
-        <item>X server</item>
+        <item>桌面环境</item>
+        <item>SSH 服务器</item>
+        <item>VNC 服务器</item>
+        <item>X11 服务器</item>
     </string-array>
 
     <!-- openSUSE -->
@@ -275,10 +259,10 @@
         <item>xserver</item>
     </string-array>
     <string-array name="opensuse_components_entries">
-        <item>Desktop Environment</item>
-        <item>SSH server</item>
-        <item>VNC server</item>
-        <item>X server</item>
+        <item>桌面环境</item>
+        <item>SSH 服务器</item>
+        <item>VNC 服务器</item>
+        <item>X11 服务器</item>
     </string-array>
     
     <!-- Gentoo -->
@@ -303,10 +287,10 @@
         <item>xserver</item>
     </string-array>
     <string-array name="gentoo_components_entries">
-        <item>Desktop Environment</item>
-        <item>SSH server</item>
-        <item>VNC server</item>
-        <item>X server</item>
+        <item>桌面环境</item>
+        <item>SSH 服务器</item>
+        <item>VNC 服务器</item>
+        <item>X11 服务器</item>
     </string-array>
     
     <!-- RootFS -->
