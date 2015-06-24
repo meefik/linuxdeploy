@@ -5,54 +5,17 @@
         <item>暗色</item>
         <item>亮色</item>
     </string-array>
-    <string-array name="theme_values" translatable="false">
-        <item>dark</item>
-        <item>light</item>
-    </string-array>
-    <string-array name="deploytype_values" translatable="false">
-        <item>file</item>
-        <item>partition</item>
-        <item>ram</item>
-        <item>custom</item>
-    </string-array>
     <string-array name="deploytype_entries">
         <item>文件</item>
         <item>分区</item>
         <item>RAM</item>
         <item>自定义</item>
     </string-array>
-    <string-array name="fstype_values" translatable="false">
-        <item>auto</item>
-        <item>ext2</item>
-        <item>ext3</item>
-        <item>ext4</item>
-    </string-array>
     <string-array name="fstype_entries">
         <item>自动</item>
         <item>ext2</item>
         <item>ext3</item>
         <item>ext4</item>
-    </string-array>
-    <string-array name="locale_values" translatable="false">
-        <item>en_US.UTF-8</item>
-        <item>ru_RU.UTF-8</item>
-        <item>de_DE.UTF-8</item>
-        <item>it_IT.UTF-8</item>
-        <item>es_ES.UTF-8</item>
-    </string-array>
-    <string-array name="vncdepth_values" translatable="false">
-        <item>8</item>
-        <item>15</item>
-        <item>16</item>
-        <item>24</item>
-    </string-array>
-    <string-array name="desktopenv_values" translatable="false">
-        <item>xterm</item>
-        <item>lxde</item>
-        <item>xfce</item>
-        <item>gnome</item>
-        <item>kde</item>
-        <item>other</item>
     </string-array>
     <string-array name="desktopenv_entries">
         <item>XTerm</item>
@@ -61,41 +24,6 @@
         <item>GNOME</item>
         <item>KDE</item>
         <item>其它</item>
-    </string-array>
-    <string-array name="distribution_values" translatable="false">
-        <item>debian</item>
-        <item>ubuntu</item>
-        <item>kali</item>
-        <item>fedora</item>
-        <item>archlinux</item>
-        <item>opensuse</item>
-        <item>gentoo</item>
-        <item>rootfs</item>
-    </string-array>
-    <string-array name="distribution_entries" translatable="false">
-        <item>Debian</item>
-        <item>Ubuntu</item>
-        <item>Kali Linux</item>
-        <item>Fedora</item>
-        <item>Arch Linux</item>
-        <item>openSUSE</item>
-        <item>Gentoo</item>
-        <item>RootFS</item>
-    </string-array>
-    <string-array name="guitype_values" translatable="false">
-        <item>vnc</item>
-        <item>xserver</item>
-        <item>framebuffer</item>
-    </string-array>
-    <string-array name="guitype_entries" translatable="false">
-        <item>VNC</item>
-        <item>X Server</item>
-        <item>Framebuffer</item>
-    </string-array>
-    <string-array name="fbfreeze_values" translatable="false">
-        <item>none</item>
-        <item>pause</item>
-        <item>stop</item>
     </string-array>
     <string-array name="fbfreeze_entries">
         <item>不冻结</item>
@@ -106,27 +34,6 @@
 
     <!-- Debian -->
 
-    <string-array name="debian_suite_values" translatable="false">
-        <item>stable</item>
-        <item>testing</item>
-        <item>unstable</item>
-        <item>squeeze</item>
-        <item>wheezy</item>
-        <item>jessie</item>
-        <item>sid</item>
-    </string-array>
-    <string-array name="debian_architecture_values" translatable="false">
-        <item>armel</item>
-        <item>armhf</item>
-        <item>arm64</item> <!-- jessie and later -->
-        <item>i386</item>
-    </string-array>
-    <string-array name="debian_components_values" translatable="false">
-        <item>desktop</item>
-        <item>ssh</item>
-        <item>vnc</item>
-        <item>xserver</item>
-    </string-array>
     <string-array name="debian_components_entries">
         <item>桌面环境</item>
         <item>SSH 服务器</item>
@@ -136,26 +43,6 @@
 
     <!-- Ubuntu -->
 
-    <string-array name="ubuntu_suite_values" translatable="false">
-        <item>lucid</item>
-        <item>precise</item>
-        <item>trusty</item>
-        <item>utopic</item>
-        <item>vivid</item>
-        <item>wily</item>
-    </string-array>
-    <string-array name="ubuntu_architecture_values" translatable="false">
-        <item>armel</item>
-        <item>armhf</item>
-        <item>arm64</item> <!-- saucy and later -->
-        <item>i386</item>
-    </string-array>
-    <string-array name="ubuntu_components_values" translatable="false">
-        <item>desktop</item>
-        <item>ssh</item>
-        <item>vnc</item>
-        <item>xserver</item>
-    </string-array>
     <string-array name="ubuntu_components_entries">
         <item>桌面环境</item>
         <item>SSH 服务器</item>
@@ -165,23 +52,6 @@
     
     <!-- Kali Linux -->
 
-    <string-array name="kali_suite_values" translatable="false">
-        <item>kali</item>
-        <item>kali-dev</item>
-        <item>kali-rolling</item>
-    </string-array>
-    <string-array name="kali_architecture_values" translatable="false">
-        <item>armel</item>
-        <item>armhf</item>
-        <item>i386</item>
-    </string-array>
-    <string-array name="kali_components_values" translatable="false">
-        <item>desktop</item>
-        <item>ssh</item>
-        <item>vnc</item>
-        <item>xserver</item>
-        <item>kali-linux</item>
-    </string-array>
     <string-array name="kali_components_entries">
         <item>桌面环境</item>
         <item>SSH 服务器</item>
@@ -192,25 +62,6 @@
     
     <!-- Fedora -->
 
-    <string-array name="fedora_suite_values" translatable="false">
-        <item>18</item>
-        <item>19</item>
-        <item>20</item>
-        <item>21</item>
-        <item>22</item>
-    </string-array>
-    <string-array name="fedora_architecture_values" translatable="false">
-        <item>arm</item> <!-- f18 only -->
-        <item>armhfp</item> <!-- f19 and later -->
-        <item>aarch64</item> <!-- f21 and later -->
-        <item>i386</item>
-    </string-array>
-    <string-array name="fedora_components_values" translatable="false">
-        <item>desktop</item>
-        <item>ssh</item>
-        <item>vnc</item>
-        <item>xserver</item>
-    </string-array>
     <string-array name="fedora_components_entries">
         <item>桌面环境</item>
         <item>SSH 服务器</item>
@@ -220,21 +71,6 @@
     
     <!-- Arch Linux -->
 
-    <string-array name="archlinux_suite_values" translatable="false">
-        <item>latest</item>
-    </string-array>
-    <string-array name="archlinux_architecture_values" translatable="false">
-        <item>arm</item>
-        <item>armv6h</item>
-        <item>armv7h</item>
-        <item>i686</item>
-    </string-array>
-    <string-array name="archlinux_components_values" translatable="false">
-        <item>desktop</item>
-        <item>ssh</item>
-        <item>vnc</item>
-        <item>xserver</item>
-    </string-array>
     <string-array name="archlinux_components_entries">
         <item>桌面环境</item>
         <item>SSH 服务器</item>
@@ -244,20 +80,6 @@
 
     <!-- openSUSE -->
 
-    <string-array name="opensuse_suite_values" translatable="false">
-        <item>12.3</item>
-        <item>13.2</item>
-    </string-array>
-    <string-array name="opensuse_architecture_values" translatable="false">
-        <item>armv7hl</item>
-        <item>i586</item>
-    </string-array>
-    <string-array name="opensuse_components_values" translatable="false">
-        <item>desktop</item>
-        <item>ssh</item>
-        <item>vnc</item>
-        <item>xserver</item>
-    </string-array>
     <string-array name="opensuse_components_entries">
         <item>桌面环境</item>
         <item>SSH 服务器</item>
@@ -267,37 +89,11 @@
     
     <!-- Gentoo -->
 
-    <string-array name="gentoo_suite_values" translatable="false">
-        <item>latest</item>
-    </string-array>
-    <string-array name="gentoo_architecture_values" translatable="false">
-        <item>armv4tl</item>
-        <item>armv5tel</item>
-        <item>armv6j</item>
-        <item>armv6j_hardfp</item>
-        <item>armv7a</item>
-        <item>armv7a_hardfp</item>
-        <item>i486</item>
-        <item>i686</item>
-    </string-array>
-    <string-array name="gentoo_components_values" translatable="false">
-        <item>desktop</item>
-        <item>ssh</item>
-        <item>vnc</item>
-        <item>xserver</item>
-    </string-array>
     <string-array name="gentoo_components_entries">
         <item>桌面环境</item>
         <item>SSH 服务器</item>
         <item>VNC 服务器</item>
         <item>X11 服务器</item>
     </string-array>
-    
-    <!-- RootFS -->
-
-    <string-array name="rootfs_suite_values" translatable="false" />
-    <string-array name="rootfs_architecture_values" translatable="false" />
-    <string-array name="rootfs_components_values" translatable="false" />
-    <string-array name="rootfs_components_entries" translatable="false" />
 
 </resources>
