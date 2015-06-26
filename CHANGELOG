@@ -9,7 +9,8 @@ Added fix for tty0 (use X options: "-sharevts vt0")
 Added handling for shutdown event
 Added support Ubuntu 15.10 (Wily Werewolf)
 Added support Fedora 22 (armhfp only)
-Translated into German, Italian and Spanish
+Added more locales
+Translated into German, Italian, Spanish and Chinese
 
 1.5.0
 Added support for devices with an Intel architecture
@@ -296,7 +297,8 @@ Updated list packages of base system installation
 Добавлена обработка события отключения питания устройства
 Добавлена поддержка Ubuntu 15.10 (Wily Werewolf)
 Добавлена поддержка Fedora 22 (только armhfp)
-Переведено на немецкий, итальянский и испанский языки
+Добавлено больше локализаций
+Переведено на немецкий, итальянский, испанский и китайский языки
 
 1.5.0
 Добавлена поддержка устройств с Intel архитектурой
