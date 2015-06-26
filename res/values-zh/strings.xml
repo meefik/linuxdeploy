@@ -116,7 +116,7 @@
     <string name="dialog_title_username_preference">用户名</string>
     <string name="title_serverdns_preference">DNS 服务器</string>
     <string name="dialog_title_serverdns_preference">DNS 服务器地址</string>
-    <string name="summary_serverdns_preference"></自动
+    <string name="summary_serverdns_preference">自动</string>
     <string name="title_locale_preference">本地化</string>
     <string name="dialog_title_locale_preference">本地化</string>
     <string name="title_desktopenv_preference">桌面环境</string>
