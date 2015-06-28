@@ -1474,7 +1474,8 @@ install_system()
 
 		msg -n "Unpacking stage3 archive ... "
 		(set -e
-			bzip2 --decompress --stdout --force $STAGE3 | tar x -C $MNT_TARGET
+			#bzip2 --decompress --stdout --force $STAGE3 | tar x -C $MNT_TARGET
+			tar xjpf $STAGE3 -C $MNT_TARGET
 			rm $STAGE3
 		exit 0)
 		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
@@ -1521,13 +1522,15 @@ install_system()
 		if [ -n "$(echo $MIRROR | grep -i 'bz2$')" ]; then
 			if [ -e "$MIRROR" ]; then
 				(set -e
-					bzip2 --decompress --stdout --force "$MIRROR" | tar xpv -C $MNT_TARGET
+					#bzip2 --decompress --stdout --force "$MIRROR" | tar xpv -C $MNT_TARGET
+					tar xjpvf "$MIRROR" -C $MNT_TARGET
 				exit 0) 1>&3 2>&3
 				[ $? -eq 0 ] || return 1
 			fi
 			if [ -n "$(echo $MIRROR | grep -i '^http')" ]; then
 				(set -e
-					wget -q -O - "$MIRROR" | bzip2 --decompress --stdout --force | tar xpv -C $MNT_TARGET
+					#wget -q -O - "$MIRROR" | bzip2 --decompress --stdout --force | tar xpv -C $MNT_TARGET
+					wget -q -O - "$MIRROR" | tar xjpv -C $MNT_TARGET
 				exit 0) 1>&3 2>&3
 				[ $? -eq 0 ] || return 1 
 			fi
