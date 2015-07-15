@@ -47,7 +47,8 @@ prepare_system()
 		fi
 		msg -n "Making new disk image ($IMG_SIZE MB) ... "
 		(set -e
-			dd if=/dev/zero of=$IMG_TARGET bs=1048576 seek=$IMG_SIZE count=0 || dd if=/dev/zero of=$IMG_TARGET bs=1048576 count=$IMG_SIZE
+			# System dd does not support count=0. $IMG_SIZE does not include M mebibyte suffix. Bundled dd does not support seek > 2GiB. Write > 2GB is unknown.
+			/system/bin/dd if=/dev/zero of=$IMG_TARGET bs=1048576 seek=`expr $IMG_SIZE - 1` count=1 || dd if=/dev/zero of=$IMG_TARGET bs=1048576 seek=$IMG_SIZE count=0 || dd if=/dev/zero of=$IMG_TARGET bs=1048576 count=$IMG_SIZE
 		exit 0)
 		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 	fi
@@ -62,7 +63,7 @@ prepare_system()
 		done
 		[ -z "$fs_support" ] && { msg "The Linux kernel does not support filesystems ext2/ext3/ext4!"; return 1; }
 		[ "$FS_TYPE" = "auto" ] && FS_TYPE=$fs_support
-		
+
 		msg -n "Making file system ($FS_TYPE) ... "
 		(set -e
 			is_loop=$(losetup -a | grep -c $IMG_TARGET || true)
@@ -1270,15 +1271,15 @@ install_system()
 		msg "Retrieving base packages: "
 		for PACKAGE in $BASIC_PACKAGES; do
 			msg -n "$PACKAGE ... "
-    			FILE=$(echo "$PKG_LIST" | grep -m1 -e "^$PACKAGE-[[:digit:]].*\.xz$" -e "^$PACKAGE-[[:digit:]].*\.gz$")
-    			test "$FILE" || { msg "fail"; return 1; }
-    			#echo "downloading ${FILE}... "
-    			for i in 1 2 3
-    			do
-    				wget -q -c -O $CACHE_DIR/$FILE $REPO/$FILE
-    				[ $? -eq 0 ] && break || sleep 30s
-    			done
-    			#echo "unpacking ${FILE}... "
+				FILE=$(echo "$PKG_LIST" | grep -m1 -e "^$PACKAGE-[[:digit:]].*\.xz$" -e "^$PACKAGE-[[:digit:]].*\.gz$")
+				test "$FILE" || { msg "fail"; return 1; }
+				#echo "downloading ${FILE}... "
+				for i in 1 2 3
+				do
+					wget -q -c -O $CACHE_DIR/$FILE $REPO/$FILE
+					[ $? -eq 0 ] && break || sleep 30s
+				done
+				#echo "unpacking ${FILE}... "
 			case "$FILE" in
 			*.gz) tar xzf $CACHE_DIR/$FILE -C $MNT_TARGET;;
 			*.xz) xz -dc $CACHE_DIR/$FILE | tar x -C $MNT_TARGET;;
@@ -1422,18 +1423,18 @@ install_system()
 		msg "Retrieving base packages: "
 		for PACKAGE in $BASIC_PACKAGES; do
 			msg -n "$PACKAGE ... "
-    			PKG_URL=$(grep -e "^$ARCH" -e "^noarch" $PKG_LIST | grep -m1 -e "^.*/$PACKAGE-[0-9s][0-9\.].*\.rpm$")
-    			test "$PKG_URL" || { msg "fail"; return 1; }
-    			FILE=$(basename $PKG_URL)
-    			#echo "downloading ${FILE}... "
-    			for i in 1 2 3
-    			do
-    				wget -q -c -O $MNT_TARGET/tmp/$FILE $REPO/$PKG_URL
-    				[ $? -eq 0 ] && break || sleep 30s
-    			done
-    			#echo "unpacking ${FILE}... "
-    			(cd $MNT_TARGET; rpm2cpio $MNT_TARGET/tmp/$FILE | cpio -idmu)
-    			[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
+				PKG_URL=$(grep -e "^$ARCH" -e "^noarch" $PKG_LIST | grep -m1 -e "^.*/$PACKAGE-[0-9s][0-9\.].*\.rpm$")
+				test "$PKG_URL" || { msg "fail"; return 1; }
+				FILE=$(basename $PKG_URL)
+				#echo "downloading ${FILE}... "
+				for i in 1 2 3
+				do
+					wget -q -c -O $MNT_TARGET/tmp/$FILE $REPO/$PKG_URL
+					[ $? -eq 0 ] && break || sleep 30s
+				done
+				#echo "unpacking ${FILE}... "
+				(cd $MNT_TARGET; rpm2cpio $MNT_TARGET/tmp/$FILE | cpio -idmu)
+				[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 		done
 
 		msg "Mounting partitions: "
