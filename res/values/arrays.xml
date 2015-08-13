@@ -308,6 +308,7 @@
         <item>armhf</item>
         <item>arm64</item> <!-- saucy and later -->
         <item>i386</item>
+        <item>amd64</item>
     </string-array>
     <string-array name="ubuntu_components_values" translatable="false">
         <item>desktop</item>

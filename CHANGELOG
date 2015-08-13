@@ -9,6 +9,7 @@ Added fix for tty0 (use X options: "-sharevts vt0")
 Added handling for shutdown event
 Added support Ubuntu 15.10 (Wily Werewolf)
 Added support Fedora 22 (armhfp only)
+Added support Ubuntu amd64
 Added more locales
 Translated into German, Italian, Spanish and Chinese
 
@@ -297,6 +298,7 @@ Updated list packages of base system installation
 Добавлена обработка события отключения питания устройства
 Добавлена поддержка Ubuntu 15.10 (Wily Werewolf)
 Добавлена поддержка Fedora 22 (только armhfp)
+Добавлена поддержка Ubuntu amd64
 Добавлено больше локализаций
 Переведено на немецкий, итальянский, испанский и китайский языки
 
