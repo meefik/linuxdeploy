@@ -279,6 +279,7 @@
         <item>armhf</item>
         <item>arm64</item> <!-- jessie and later -->
         <item>i386</item>
+        <item>amd64</item>
     </string-array>
     <string-array name="debian_components_values" translatable="false">
         <item>desktop</item>
@@ -308,6 +309,7 @@
         <item>armhf</item>
         <item>arm64</item> <!-- saucy and later -->
         <item>i386</item>
+        <item>amd64</item>
     </string-array>
     <string-array name="ubuntu_components_values" translatable="false">
         <item>desktop</item>
@@ -333,6 +335,7 @@
         <item>armel</item>
         <item>armhf</item>
         <item>i386</item>
+        <item>amd64</item>
     </string-array>
     <string-array name="kali_components_values" translatable="false">
         <item>desktop</item>
