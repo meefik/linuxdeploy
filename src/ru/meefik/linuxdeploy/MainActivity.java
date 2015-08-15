@@ -148,7 +148,7 @@ public class MainActivity extends SherlockActivity {
 					isLight ? R.drawable.ic_action_stop_light
 							: R.drawable.ic_action_stop_dark);
 		}
-		
+
 		super.onCreateOptionsMenu(menu);
 
 		return true;
@@ -168,14 +168,8 @@ public class MainActivity extends SherlockActivity {
 								@Override
 								public void onClick(DialogInterface dialog,
 										int id) {
-									(new Thread() {
-										@Override
-										public void run() {
-											new ShellEnv(
-													getApplicationContext())
-													.execScript("start");
-										}
-									}).start();
+									new ExecScript(getApplicationContext(),
+											"start").start();
 									if (PrefStore.STARTUP
 											.contains("framebuffer")) {
 										Intent intent_fb = new Intent(
@@ -205,14 +199,8 @@ public class MainActivity extends SherlockActivity {
 								@Override
 								public void onClick(DialogInterface dialog,
 										int id) {
-									(new Thread() {
-										@Override
-										public void run() {
-											new ShellEnv(
-													getApplicationContext())
-													.execScript("stop");
-										}
-									}).start();
+									new ExecScript(getApplicationContext(),
+											"stop").start();
 								}
 							})
 					.setNegativeButton(android.R.string.no,
@@ -225,12 +213,7 @@ public class MainActivity extends SherlockActivity {
 							}).show();
 			break;
 		case R.id.menu_status:
-			(new Thread() {
-				@Override
-				public void run() {
-					new ShellEnv(getApplicationContext()).execScript("status");
-				}
-			}).start();
+			new ExecScript(getApplicationContext(), "status").start();
 			break;
 		case R.id.menu_properties:
 			Intent intent_properties = new Intent(this,
@@ -259,7 +242,7 @@ public class MainActivity extends SherlockActivity {
 			startActivity(intent_profiles);
 			break;
 		default:
-		    return super.onOptionsItemSelected(item);
+			return super.onOptionsItemSelected(item);
 		}
 		return false;
 	}
@@ -273,15 +256,6 @@ public class MainActivity extends SherlockActivity {
 		String profileName = PrefStore
 				.getCurrentProfile(getApplicationContext());
 		String ipaddress = PrefStore.getLocalIpAddress();
-		/*
-		 * String ports = ""; if (PrefStore.SSH_START != null &&
-		 * PrefStore.SSH_START.equals("y")) { ports = ", SSH: " +
-		 * PrefStore.SSH_PORT; } if (PrefStore.VNC_START != null &&
-		 * PrefStore.VNC_START.equals("y")) { try { ports += ", VNC: " +
-		 * String.valueOf
-		 * (Double.valueOf(PrefStore.VNC_DISPLAY).intValue()+5900); } catch
-		 * (NumberFormatException ex) { // ignore } }
-		 */
 		this.setTitle(profileName + "  [ " + ipaddress + " ]");
 
 		// show icon
@@ -308,14 +282,10 @@ public class MainActivity extends SherlockActivity {
 			wifiLock.release();
 
 		// update configuration file
-		if (PrefStore.PREF_CHANGE) {
-			(new Thread() {
-				@Override
-				public void run() {
-					new ShellEnv(getApplicationContext()).updateConfig();
-				}
-			}).start();
-			PrefStore.PREF_CHANGE = false;
+		if (PrefStore.CONF_CHANGE) {
+			PrefStore.CONF_CHANGE = false;
+			// update config file
+			EnvUtils.updateConf();
 		}
 	}
 

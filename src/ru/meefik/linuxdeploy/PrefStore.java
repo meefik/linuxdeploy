@@ -1,8 +1,13 @@
 package ru.meefik.linuxdeploy;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -15,6 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.Set;
 
 import android.annotation.SuppressLint;
@@ -86,7 +92,7 @@ public class PrefStore {
 	// miscellaneous
 	public static String CURRENT_PROFILE;
 	public static String EXTERNAL_STORAGE;
-	public static Boolean PREF_CHANGE = false;
+	public static Boolean CONF_CHANGE = false;
 	public static String MARCH = "unknown";
 	public static String VERSION = "unknown";
 	public static String SHELL = "/system/xbin/ash";
@@ -94,13 +100,112 @@ public class PrefStore {
 	public static final String APP_PREF_FILE_NAME = "app_settings";
 	public static final String PROFILES_FILE_NAME = "profiles";
 
+	// closeable helper
+	private static void close(Closeable c) {
+		if (c != null) {
+			try {
+				c.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	// update deploy.conf
+	public static Boolean storeConfig() {
+		Boolean result = false;
+		String confFile = PrefStore.ENV_DIR + "/etc/deploy.conf";
+		List<String> lines = new ArrayList<>();
+		lines.add("DEBUG_MODE=\"" + PrefStore.DEBUG_MODE + "\"");
+		lines.add("TRACE_MODE=\"" + PrefStore.TRACE_MODE + "\"");
+		lines.add("IMG_TARGET=\"" + PrefStore.IMG_TARGET + "\"");
+		lines.add("IMG_SIZE=\"" + PrefStore.IMG_SIZE + "\"");
+		lines.add("FS_TYPE=\"" + PrefStore.FS_TYPE + "\"");
+		lines.add("DEPLOY_TYPE=\"" + PrefStore.DEPLOY_TYPE + "\"");
+		lines.add("DISTRIB=\"" + PrefStore.DISTRIB + "\"");
+		lines.add("ARCH=\"" + PrefStore.ARCH + "\"");
+		lines.add("SUITE=\"" + PrefStore.SUITE + "\"");
+		lines.add("MIRROR=\"" + PrefStore.MIRROR + "\"");
+		lines.add("USER_NAME=\"" + PrefStore.USER_NAME + "\"");
+		lines.add("SERVER_DNS=\"" + PrefStore.SERVER_DNS + "\"");
+		lines.add("LOCALE=\"" + PrefStore.LOCALE + "\"");
+		lines.add("DESKTOP_ENV=\"" + PrefStore.DESKTOP_ENV + "\"");
+		lines.add("COMPONENTS=\"" + PrefStore.COMPONENTS + "\"");
+		lines.add("STARTUP=\"" + PrefStore.STARTUP + "\"");
+		lines.add("CUSTOM_SCRIPTS=\"" + PrefStore.CUSTOM_SCRIPTS + "\"");
+		lines.add("CUSTOM_MOUNTS=\"" + PrefStore.CUSTOM_MOUNTS + "\"");
+		lines.add("SSH_PORT=\"" + PrefStore.SSH_PORT + "\"");
+		lines.add("VNC_DISPLAY=\"" + PrefStore.VNC_DISPLAY + "\"");
+		lines.add("VNC_DEPTH=\"" + PrefStore.VNC_DEPTH + "\"");
+		lines.add("VNC_DPI=\"" + PrefStore.VNC_DPI + "\"");
+		lines.add("VNC_GEOMETRY=\"" + PrefStore.VNC_GEOMETRY + "\"");
+		lines.add("VNC_ARGS=\"" + PrefStore.VNC_ARGS + "\"");
+		lines.add("XSERVER_DISPLAY=\"" + PrefStore.XSERVER_DISPLAY + "\"");
+		lines.add("XSERVER_HOST=\"" + PrefStore.XSERVER_HOST + "\"");
+		lines.add("FB_DISPLAY=\"" + PrefStore.FB_DISPLAY + "\"");
+		lines.add("FB_DPI=\"" + PrefStore.FB_DPI + "\"");
+		lines.add("FB_DEV=\"" + PrefStore.FB_DEV + "\"");
+		lines.add("FB_INPUT=\"" + PrefStore.FB_INPUT + "\"");
+		lines.add("FB_ARGS=\"" + PrefStore.FB_ARGS + "\"");
+		lines.add("FB_FREEZE=\"" + PrefStore.FB_FREEZE + "\"");
+		BufferedWriter bw = null;
+		try {
+			bw = new BufferedWriter(new FileWriter(confFile));
+			for (String s : lines) {
+				bw.write(s + "\n");
+			}
+			result = true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			close(bw);
+		}
+		return result;
+	}
+
+	// update version file
+	public static Boolean setVersion() {
+		Boolean result = false;
+		String f = PrefStore.ENV_DIR + "/etc/version";
+		BufferedWriter bw = null;
+		try {
+			bw = new BufferedWriter(new FileWriter(f));
+			bw.write(PrefStore.VERSION);
+			result = true;
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			close(bw);
+		}
+		return result;
+	}
+
+	// check latest version
+	public static Boolean isLatestVersion() {
+		Boolean result = false;
+		String f = PrefStore.ENV_DIR + "/etc/version";
+		BufferedReader br = null;
+		try {
+			br = new BufferedReader(new FileReader(f));
+			String line = br.readLine();
+			if (PrefStore.VERSION.equals(line))
+				result = true;
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			close(br);
+		}
+		return result;
+	}
+
 	// get preferences
 	public static void get(Context c) {
-		EXTERNAL_STORAGE = Environment.getExternalStorageDirectory().getAbsolutePath();
+		EXTERNAL_STORAGE = Environment.getExternalStorageDirectory()
+				.getAbsolutePath();
 
 		SharedPreferences sp = c.getSharedPreferences(APP_PREF_FILE_NAME,
 				Context.MODE_PRIVATE);
-		
+
 		SharedPreferences.Editor prefEditor = sp.edit();
 
 		SCREEN_LOCK = sp.getBoolean("screenlock",
@@ -113,13 +218,16 @@ public class PrefStore {
 				c.getString(R.string.maxline)));
 		LANGUAGE = sp.getString("language", c.getString(R.string.language));
 		THEME = sp.getString("theme", c.getString(R.string.theme));
-		
+
 		ENV_DIR = sp.getString("installdir", c.getString(R.string.envdir));
-		if (ENV_DIR.equals("{replace}")) ENV_DIR = c.getApplicationInfo().dataDir+File.separator+"linux";
+		if (ENV_DIR.equals("{replace}"))
+			ENV_DIR = c.getApplicationInfo().dataDir + File.separator + "linux";
 		// Update ENV_DIR
 		prefEditor.putString("installdir", ENV_DIR);
-		
-		BUILTIN_SHELL = sp.getBoolean("builtinshell", c.getString(R.string.builtinshell).equals("true") ? true : false);
+
+		BUILTIN_SHELL = sp.getBoolean("builtinshell",
+				c.getString(R.string.builtinshell).equals("true") ? true
+						: false);
 		if (BUILTIN_SHELL) {
 			SHELL = ENV_DIR + "/bin/sh";
 		}
@@ -139,8 +247,9 @@ public class PrefStore {
 								: false) ? "y" : "n";
 		LOGGING = sp.getBoolean("logs",
 				c.getString(R.string.logs).equals("true") ? true : false);
-		LOG_FILE = sp.getString("logfile", EXTERNAL_STORAGE + "/linuxdeploy.log");
-		
+		LOG_FILE = sp.getString("logfile", EXTERNAL_STORAGE
+				+ "/linuxdeploy.log");
+
 		prefEditor.commit();
 
 		sp = c.getSharedPreferences(CURRENT_PROFILE, Context.MODE_PRIVATE);
@@ -166,7 +275,8 @@ public class PrefStore {
 				.getResources().getStringArray(R.array.default_components)));
 		if (!sp.contains("xcomponents")) {
 			// set default components
-			SharedPreferenceCompat.EditorCompat.putStringSet(prefEditor, "xcomponents", defcomp);
+			SharedPreferenceCompat.EditorCompat.putStringSet(prefEditor,
+					"xcomponents", defcomp);
 		}
 		Set<String> comp_set = SharedPreferenceCompat.getStringSet(sp,
 				"xcomponents", defcomp);
@@ -211,9 +321,9 @@ public class PrefStore {
 		FB_INPUT = sp.getString("fbinput", c.getString(R.string.fbinput));
 		FB_ARGS = sp.getString("fbargs", c.getString(R.string.fbargs));
 		FB_FREEZE = sp.getString("fbfreeze", c.getString(R.string.fbfreeze));
-		
+
 		prefEditor.commit();
-		
+
 		MARCH = getArch(System.getProperty("os.arch"));
 
 		try {
@@ -226,19 +336,25 @@ public class PrefStore {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static String getArch(String arch) {
 		String march = "";
 		if (arch.length() > 0) {
 			char a = arch.toLowerCase().charAt(0);
 			switch (a) {
-			case 'a': march = "arm"; break;
-			case 'm': march = "mips"; break;
-			case 'i': 
-			case 'x': march = "intel"; break;
+			case 'a':
+				march = "arm";
+				break;
+			case 'm':
+				march = "mips";
+				break;
+			case 'i':
+			case 'x':
+				march = "intel";
+				break;
 			}
 		}
-	    return march;
+		return march;
 	}
 
 	@SuppressLint("NewApi")
@@ -424,7 +540,7 @@ public class PrefStore {
 		}
 		prefEditor.putString("scripts", str.trim());
 		prefEditor.commit();
-		PREF_CHANGE = true;
+		CONF_CHANGE = true;
 	}
 
 	// Load mounts list
@@ -450,7 +566,7 @@ public class PrefStore {
 		}
 		prefEditor.putString("mounts", str.trim());
 		prefEditor.commit();
-		PREF_CHANGE = true;
+		CONF_CHANGE = true;
 	}
 
 	public static void copyFile(File sourceFile, File destFile)
@@ -502,13 +618,15 @@ public class PrefStore {
 				.equals(c.getResources().getStringArray(R.array.theme_values)[1]))
 			c.setTheme(R.style.LightTheme);
 	}
-	
-	public static int getResourceId(Context c, String variableName, String resourceName) {
-	    try {
-	        return c.getResources().getIdentifier(variableName, resourceName, c.getPackageName());
-	    } catch (Exception e) {
-	        return -1;
-	    } 
+
+	public static int getResourceId(Context c, String variableName,
+			String resourceName) {
+		try {
+			return c.getResources().getIdentifier(variableName, resourceName,
+					c.getPackageName());
+		} catch (Exception e) {
+			return -1;
+		}
 	}
 
 }

@@ -75,7 +75,7 @@ public class SettingsActivity extends SherlockPreferenceActivity implements
 	@Override
 	public boolean onPreferenceClick(Preference preference) {
 		if (preference.getKey().equals("installenv")) {
-			installEnvDialog();
+			updateEnvDialog();
 		}
 		if (preference.getKey().equals("removeenv")) {
 			removeEnvDialog();
@@ -89,7 +89,7 @@ public class SettingsActivity extends SherlockPreferenceActivity implements
 		Preference pref = this.findPreference(key);
 		this.setSummary(pref, true);
 		if (pref.getKey().equals("debug") || pref.getKey().equals("trace"))
-			PrefStore.PREF_CHANGE = true;
+			PrefStore.CONF_CHANGE = true;
 	}
 
 	private void initSummaries(PreferenceGroup pg) {
@@ -125,7 +125,7 @@ public class SettingsActivity extends SherlockPreferenceActivity implements
 		}
 	}
 
-	private void installEnvDialog() {
+	private void updateEnvDialog() {
 		new AlertDialog.Builder(this)
 				.setTitle(R.string.title_installenv_preference)
 				.setMessage(R.string.message_installenv_confirm_dialog)
@@ -135,16 +135,8 @@ public class SettingsActivity extends SherlockPreferenceActivity implements
 						new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int id) {
-								PrefStore.PREF_CHANGE = false;
-								(new Thread() {
-									@Override
-									public void run() {
-										ShellEnv sh = new ShellEnv(
-												getApplicationContext());
-										sh.updateEnv();
-										sh.updateConfig();
-									}
-								}).start();
+								PrefStore.CONF_CHANGE = false;
+								new UpdateEnv(getApplicationContext()).start();
 								finish();
 							}
 						})
@@ -167,14 +159,9 @@ public class SettingsActivity extends SherlockPreferenceActivity implements
 						new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int id) {
-								PrefStore.PREF_CHANGE = false;
-								(new Thread() {
-									@Override
-									public void run() {
-										new ShellEnv(getApplicationContext())
-												.execScript("uninstall");
-									}
-								}).start();
+								PrefStore.CONF_CHANGE = false;
+								new ExecScript(getApplicationContext(),
+										"uninstall").start();
 								finish();
 							}
 						})

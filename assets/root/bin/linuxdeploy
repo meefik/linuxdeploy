@@ -47,7 +47,8 @@ prepare_system()
 		fi
 		msg -n "Making new disk image ($IMG_SIZE MB) ... "
 		(set -e
-			dd if=/dev/zero of=$IMG_TARGET bs=1048576 seek=$IMG_SIZE count=0 || dd if=/dev/zero of=$IMG_TARGET bs=1048576 count=$IMG_SIZE
+			dd if=/dev/zero of=$IMG_TARGET bs=1048576 seek=$(expr $IMG_SIZE - 1) count=1 ||
+			dd if=/dev/zero of=$IMG_TARGET bs=1048576 count=$IMG_SIZE
 		exit 0)
 		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 	fi
@@ -62,7 +63,7 @@ prepare_system()
 		done
 		[ -z "$fs_support" ] && { msg "The Linux kernel does not support filesystems ext2/ext3/ext4!"; return 1; }
 		[ "$FS_TYPE" = "auto" ] && FS_TYPE=$fs_support
-		
+
 		msg -n "Making file system ($FS_TYPE) ... "
 		(set -e
 			is_loop=$(losetup -a | grep -c $IMG_TARGET || true)
@@ -105,7 +106,7 @@ configure_system()
 	fi
 
 	msg -n "$1 ... "
-	(set -e	
+	(set -e
 		case "$1" in
 		dns)
 			if [ -z "$SERVER_DNS" ]; then
@@ -184,7 +185,7 @@ configure_system()
 			SUDO_STR="$USER_NAME ALL=(ALL:ALL) NOPASSWD:ALL"
 			is_str=$(grep -c "$SUDO_STR" $MNT_TARGET/etc/sudoers || true)
 			[ "$is_str" -eq 0 ] && echo $SUDO_STR >> $MNT_TARGET/etc/sudoers
-			chmod 440 $MNT_TARGET/etc/sudoers		
+			chmod 440 $MNT_TARGET/etc/sudoers
 		;;
 		groups)
 			AIDS=$(cat ${ENV_DIR%/}/deploy/android-groups)
@@ -200,7 +201,7 @@ configure_system()
 				sed -i 's|^UID_MIN.*|UID_MIN 5000|g' $MNT_TARGET/etc/login.defs
 				sed -i 's|^GID_MIN.*|GID_MIN 5000|g' $MNT_TARGET/etc/login.defs
 			done
-			
+
 			# Add users in aid_inet group
 			case "$DISTRIB" in
 			debian|ubuntu|kali)
@@ -214,7 +215,7 @@ configure_system()
 			;;
 			opensuse)
 				INET_USERS="root messagebus"
-			;;			
+			;;
 			gentoo)
 				INET_USERS="root messagebus"
 			;;
@@ -890,7 +891,7 @@ mount_system()
 umount_system()
 {
 	msg -n "Release resources ... "
-	lsof_full=$(lsof | head -1 | grep -c ^COMMAND)
+	lsof_full=$(lsof | awk '{print $1}' | grep -c '^lsof')
 	(set -e
 		for i in 1 2 3
 		do
@@ -917,7 +918,7 @@ umount_system()
 		parts=$(cat /proc/mounts | awk '{print $2}' | grep "^$MNT_TARGET/$i$" | sort -r)
 		for p in $parts
 		do
-			pp=$(echo $p | sed "s|$MNT_TARGET/*|/|g")
+			pp=$(echo $p | sed "s|^$MNT_TARGET/|/|g")
 			msg -n "$pp ... "
 			if [ $(echo $pp | grep -ci "selinux") -gt 0 -a -e $selinux_state -a -e /sys/fs/selinux/enforce ]; then
 				cat $selinux_state > /sys/fs/selinux/enforce
@@ -962,20 +963,20 @@ start_system()
 		[ $? -ne 0 ] && return 1
 
 		update_system
-	
+
 		msg "Starting services: "
-		
+
 		for i in $STARTUP
 		do
 			start_system $i
 			[ $? -eq 0 ] || return 1
 		done
-		
+
 		[ -z "$STARTUP" ] && msg "...no active services"
-		
+
 		return 0
 	fi
-	
+
 	dbus_init()
 	{
 		# dbus (Debian/Ubuntu/Arch Linux/Kali Linux)
@@ -984,7 +985,7 @@ start_system()
 		[ -e "$MNT_TARGET/var/run/messagebus.pid" ] && rm $MNT_TARGET/var/run/messagebus.pid
 		chroot $MNT_TARGET dbus-daemon --system --fork || true
 	}
-	
+
 	case "$1" in
 	ssh)
 		msg -n "SSH :$SSH_PORT ... "
@@ -1039,7 +1040,7 @@ start_system()
 			[ $? -eq 0 ] && msg "done" || msg "fail"
 		else
 			msg "skip"
-		fi	
+		fi
 	;;
 	framebuffer)
 		msg -n "Frame Buffer ... "
@@ -1065,7 +1066,7 @@ start_system()
 					setprop ctl.stop surfaceflinger
 					chroot $MNT_TARGET su - $USER_NAME -c "xinit -- :$FB_DISPLAY -dpi $FB_DPI $FB_ARGS"
 					sync
-					reboot				
+					reboot
 				;;
 				pause)
 					pkill -STOP system_server
@@ -1082,7 +1083,7 @@ start_system()
 			[ $? -eq 0 ] && msg "done" || msg "fail"
 		else
 			msg "skip"
-		fi	
+		fi
 	;;
 	custom)
 		for script in $CUSTOM_SCRIPTS
@@ -1092,7 +1093,7 @@ start_system()
 				chroot $MNT_TARGET su - root -c "$script start"
 			exit 0)
 			[ $? -eq 0 ] && msg "done" || msg "fail"
-		done	
+		done
 	;;
 	esac
 
@@ -1103,15 +1104,15 @@ stop_system()
 {
 	if [ "$#" -eq 0 ]; then
 		msg "Stopping services: "
-		
+
 		for i in $STARTUP
 		do
 			stop_system $i
 			[ $? -eq 0 ] || return 1
 		done
-		
+
 		[ -z "$STARTUP" ] && msg "...no active services"
-		
+
 		umount_system
 		[ $? -ne 0 ] && return 1 || return 0
 	fi
@@ -1167,7 +1168,7 @@ stop_system()
 				chroot $MNT_TARGET su - root -c "$script stop"
 			exit 0)
 			[ $? -eq 0 ] && msg "done" || msg "fail"
-		done	
+		done
 	;;
 	esac
 
@@ -1183,9 +1184,9 @@ chroot_system()
 	fi
 
 	update_system
-	
+
 	[ -e "$MNT_TARGET/etc/motd" ] && msg "$(cat $MNT_TARGET/etc/motd)"
-	
+
 	SHELL=$1
 	if [ -z "$SHELL" ]; then
 		[ -e "$MNT_TARGET/bin/sh" ] && SHELL=/bin/sh
@@ -1316,7 +1317,7 @@ install_system()
 		then REPO="${MIRROR%/}/fedora/linux/releases/${SUITE}/Everything/${ARCH}/os"
 		else REPO="${MIRROR%/}/fedora-secondary/releases/${SUITE}/Everything/${ARCH}/os"
 		fi
-		
+
 		msg "Repository: $REPO"
 
 		msg -n "Preparing for deployment ... "
@@ -1474,7 +1475,6 @@ install_system()
 
 		msg -n "Unpacking stage3 archive ... "
 		(set -e
-			#bzip2 --decompress --stdout --force $STAGE3 | tar x -C $MNT_TARGET
 			tar xjpf $STAGE3 -C $MNT_TARGET
 			rm $STAGE3
 		exit 0)
@@ -1485,7 +1485,7 @@ install_system()
 
 		msg "Preconfigure system: "
 		configure_system qemu dns mtab groups repository
-		
+
 		msg -n "Updating portage tree ... "
 		(set -e
 			chroot $MNT_TARGET emerge --sync
@@ -1516,25 +1516,37 @@ install_system()
 				(set -e
 					wget -q -O - "$MIRROR" | tar xzpv -C $MNT_TARGET
 				exit 0) 1>&3 2>&3
-				[ $? -eq 0 ] || return 1 
+				[ $? -eq 0 ] || return 1
 			fi
 		fi
 		if [ -n "$(echo $MIRROR | grep -i 'bz2$')" ]; then
 			if [ -e "$MIRROR" ]; then
 				(set -e
-					#bzip2 --decompress --stdout --force "$MIRROR" | tar xpv -C $MNT_TARGET
 					tar xjpvf "$MIRROR" -C $MNT_TARGET
 				exit 0) 1>&3 2>&3
 				[ $? -eq 0 ] || return 1
 			fi
 			if [ -n "$(echo $MIRROR | grep -i '^http')" ]; then
 				(set -e
-					#wget -q -O - "$MIRROR" | bzip2 --decompress --stdout --force | tar xpv -C $MNT_TARGET
 					wget -q -O - "$MIRROR" | tar xjpv -C $MNT_TARGET
 				exit 0) 1>&3 2>&3
-				[ $? -eq 0 ] || return 1 
+				[ $? -eq 0 ] || return 1
 			fi
 		fi
+                if [ -n "$(echo $MIRROR | grep -i 'xz$')" ]; then
+                        if [ -e "$MIRROR" ]; then
+                                (set -e
+                                        tar xJpvf "$MIRROR" -C $MNT_TARGET
+                                exit 0) 1>&3 2>&3
+                                [ $? -eq 0 ] || return 1
+                        fi
+                        if [ -n "$(echo $MIRROR | grep -i '^http')" ]; then
+                                (set -e
+                                        wget -q -O - "$MIRROR" | tar xJpv -C $MNT_TARGET
+                                exit 0) 1>&3 2>&3
+                                [ $? -eq 0 ] || return 1
+                        fi
+                fi
 		[ "$(ls $MNT_TARGET | wc -l)" -le 1 ] && { msg " ...installation failed."; return 1; }
 	;;
 	*)
@@ -1557,8 +1569,8 @@ uninstall_system()
 	msg -n "Removing symlink ... "
 	(set -e
 		if [ -e "/system/bin/linuxdeploy" ]; then
-			rm -f /system/bin/linuxdeploy || 
-				{ mount -o rw,remount /system;	rm -f /system/bin/linuxdeploy; mount -o ro,remount /system;	}
+			rm -f /system/bin/linuxdeploy ||
+				{ mount -o rw,remount /system; rm -f /system/bin/linuxdeploy; mount -o ro,remount /system; }
 		fi
 	exit 0)
 	[ $? -eq 0 ] && msg "done" || msg "fail"
@@ -1670,14 +1682,14 @@ status_system()
 ################################################################################
 
 ENV_DIR="$(cd ${0%/*}/..; pwd)"
-
-cd $ENV_DIR
-
+MNT_TARGET="${ENV_DIR%/}/mnt"
 PATH=${ENV_DIR%/}/bin:/system/xbin:/system/bin:/usr/bin:/bin:/usr/sbin:/sbin
 TERM=vt100
 export PATH TERM
 unset LD_PRELOAD
 umask 0022
+
+cd $ENV_DIR
 
 # load config
 if [ -r "${ENV_DIR%/}/etc/deploy.conf" ]; then

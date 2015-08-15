@@ -158,16 +158,9 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 						new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int id) {
-								PrefStore.PREF_CHANGE = false;
-								(new Thread() {
-									@Override
-									public void run() {
-										new ShellEnv(getApplicationContext())
-												.updateConfig();
-										new ShellEnv(getApplicationContext())
-												.execScript("configure");
-									}
-								}).start();
+								PrefStore.CONF_CHANGE = false;
+								new ExecScript(getApplicationContext(),
+										"configure").start();
 								finish();
 							}
 						})
@@ -190,16 +183,9 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 						new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int id) {
-								PrefStore.PREF_CHANGE = false;
-								(new Thread() {
-									@Override
-									public void run() {
-										new ShellEnv(getApplicationContext())
-												.updateConfig();
-										new ShellEnv(getApplicationContext())
-												.execScript("install");
-									}
-								}).start();
+								PrefStore.CONF_CHANGE = false;
+								new ExecScript(getApplicationContext(),
+										"install").start();
 								finish();
 							}
 						})
@@ -217,7 +203,7 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 			String key) {
 		Preference pref = this.findPreference(key);
 		this.setSummary(pref, true);
-		PrefStore.PREF_CHANGE = true;
+		PrefStore.CONF_CHANGE = true;
 	}
 
 	private void initSummaries(PreferenceGroup pg) {
@@ -282,9 +268,9 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 						.findPreference("mirror");
 				MultiSelectListPreferenceCompat components = (MultiSelectListPreferenceCompat) this
 						.findPreference("xcomponents");
-		
+
 				String distributionStr = listPref.getValue();
-				
+
 				// suite
 				int suiteValuesId = PrefStore.getResourceId(this,
 						distributionStr + "_suite_values", "array");
@@ -297,7 +283,8 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 							+ "_suite", "string");
 					if (suiteId != -1) {
 						String suiteStr = getString(suiteId);
-						if (suiteStr.length() > 0) suite.setValue(suiteStr);
+						if (suiteStr.length() > 0)
+							suite.setValue(suiteStr);
 					}
 				}
 				suite.setSummary(suite.getEntry());
@@ -316,7 +303,8 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 									+ "_architecture", "string");
 					if (architectureId != -1) {
 						String architectureStr = getString(architectureId);
-						if (architectureStr.length() > 0) architecture.setValue(architectureStr);
+						if (architectureStr.length() > 0)
+							architecture.setValue(architectureStr);
 					}
 				}
 				architecture.setSummary(architecture.getEntry());
@@ -349,7 +337,7 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 									R.array.default_components))));
 				}
 				components.setEnabled(true);
-				
+
 				// RootFS
 				if (distributionStr.equals("rootfs")) {
 					// suite
@@ -378,14 +366,13 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 
 				String architectureStr = PrefStore.getArch(listPref.getValue());
 				String distributionStr = distribution.getValue();
-				
-				int mirrorId = PrefStore
-						.getResourceId(this, architectureStr + "_"
-								+ distributionStr + "_mirror", "string");
+
+				int mirrorId = PrefStore.getResourceId(this, architectureStr
+						+ "_" + distributionStr + "_mirror", "string");
 				if (mirrorId != -1) {
 					mirror.setText(getString(mirrorId));
 				}
-				
+
 				mirror.setSummary(mirror.getText());
 			}
 			if (listPref.getKey().equals("deploytype")) {
@@ -399,7 +386,8 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 				switch (listPref.getValue()) {
 				case "file":
 					if (init) {
-						diskimage.setText(PrefStore.EXTERNAL_STORAGE + "/linux.img");
+						diskimage.setText(PrefStore.EXTERNAL_STORAGE
+								+ "/linux.img");
 					}
 					disksize.setEnabled(true);
 					fstype.setEnabled(true);

@@ -283,7 +283,7 @@ public class ProfilesActivity extends SherlockActivity implements
 			String profile = listItems.get(pos).getKey();
 			if (!PrefStore.CURRENT_PROFILE.equals(profile)) {
 				PrefStore.setCurrentProfile(getApplicationContext(), profile);
-				PrefStore.PREF_CHANGE = true;
+				PrefStore.CONF_CHANGE = true;
 			}
 		}
 	}
