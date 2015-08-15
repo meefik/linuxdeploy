@@ -17,8 +17,7 @@ public class ExecService extends Service {
 		Context mContext = this;
 		MainActivity.notification(mContext, null);
 		String command = intent.getStringExtra("command");
-		ShellEnv env = new ShellEnv(mContext);
-		env.execScript(command);
+		new ExecScript(getApplicationContext(), command).start();
 		return super.onStartCommand(intent, flags, startId);
 	}
 
