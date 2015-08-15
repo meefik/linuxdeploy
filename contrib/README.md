@@ -9,9 +9,5 @@ debootstrap: http://packages.debian.org/wheezy/debootstrap
 
 mke2fs (e2fsprogs): http://packages.debian.org/wheezy/e2fsprogs
 
-bzip2: http://packages.debian.org/wheezy/bzip2
-
-dd (coreutils): http://packages.debian.org/wheezy/coreutils
-
-ar (binutils): http://packages.debian.org/wheezy/binutils
+tar: http://packages.debian.org/wheezy/tar
 
