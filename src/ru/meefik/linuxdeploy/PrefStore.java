@@ -229,7 +229,7 @@ public class PrefStore {
 				c.getString(R.string.builtinshell).equals("true") ? true
 						: false);
 		if (BUILTIN_SHELL) {
-			SHELL = ENV_DIR + "/bin/sh";
+			SHELL = ENV_DIR + "/bin/ash";
 		}
 		SYMLINK = sp.getBoolean("symlink", c.getString(R.string.symlink)
 				.equals("true") ? true : false);

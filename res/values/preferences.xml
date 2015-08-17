@@ -122,6 +122,15 @@
     <string name="intel_gentoo_mirror" translatable="false">http://mirror.yandex.ru/gentoo-distfiles/releases/x86/</string>
     <string name="intel_gentoo_architecture" translatable="false">i686</string>
     
+    <!-- Slackware -->
+    <string name="slackware_suite" translatable="false">latest</string>
+    <!-- arm -->
+    <string name="arm_slackware_mirror" translatable="false">http://ftp.arm.slackware.com/slackwarearm/slackwarearm-current/</string>
+    <string name="arm_slackware_architecture" translatable="false">arm</string>
+    <!-- intel -->
+    <string name="intel_slackware_mirror" translatable="false">http://mirrors.slackware.com/slackware/slackware-current/</string>
+    <string name="intel_slackware_architecture" translatable="false">x86</string>
+    
     <!-- RootFS -->
     <string name="rootfs_suite" translatable="false" />
     <!-- arm -->

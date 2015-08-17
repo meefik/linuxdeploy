@@ -281,8 +281,6 @@ public class EnvUtils {
 				+ "\"|g' " + PrefStore.ENV_DIR + "/bin/linuxdeploy");
 		params.add("sed -i 's|^#!.*|#!" + PrefStore.SHELL + "|g' "
 				+ PrefStore.ENV_DIR + "/bin/linuxdeploy");
-		params.add("sed -i 's|^#!.*|#!" + PrefStore.SHELL + " -e|g' "
-				+ PrefStore.ENV_DIR + "/bin/debootstrap");
 		// update symlink
 		if (PrefStore.SYMLINK) {
 			params.add("rm -f /system/bin/linuxdeploy");
