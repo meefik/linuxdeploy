@@ -70,7 +70,8 @@ public class MainActivity extends SherlockActivity {
 	}
 
 	public static void printLogMsg(String msg) {
-		if (msg.length() > 0) {
+		int msgLength = msg.length();
+		if (msgLength > 0) {
 			String[] tokens = msg.split("\\n");
 			for (int i = 0; i < tokens.length; i++) {
 				// update last record from List if fragment
@@ -87,7 +88,7 @@ public class MainActivity extends SherlockActivity {
 					logList.remove(0);
 			}
 			// set fragment
-			fragment = (msg.charAt(msg.length() - 1) != '\n');
+			fragment = (msg.charAt(msgLength - 1) != '\n');
 			// show log
 			showLog();
 			// save the message to file

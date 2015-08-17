@@ -229,6 +229,7 @@
         <item>archlinux</item>
         <item>opensuse</item>
         <item>gentoo</item>
+        <item>slackware</item>
         <item>rootfs</item>
     </string-array>
     <string-array name="distribution_entries" translatable="false">
@@ -239,6 +240,7 @@
         <item>Arch Linux</item>
         <item>openSUSE</item>
         <item>Gentoo</item>
+        <item>Slackware</item>
         <item>RootFS</item>
     </string-array>
     <string-array name="guitype_values" translatable="false">
@@ -328,8 +330,8 @@
 
     <string-array name="kali_suite_values" translatable="false">
         <item>kali</item>
-        <item>kali-dev</item>
-        <item>kali-rolling</item>
+        <item>moto</item>
+        <item>sana</item>
     </string-array>
     <string-array name="kali_architecture_values" translatable="false">
         <item>armel</item>
@@ -453,6 +455,22 @@
         <item>SSH server</item>
         <item>VNC server</item>
         <item>X server</item>
+    </string-array>
+    
+    <!-- Slackware -->
+
+    <string-array name="slackware_suite_values" translatable="false">
+        <item>latest</item>
+    </string-array>
+    <string-array name="slackware_architecture_values" translatable="false">
+        <item>arm</item>
+        <item>x86</item>
+    </string-array>
+    <string-array name="slackware_components_values" translatable="false">
+        <item>ssh</item>
+    </string-array>
+    <string-array name="slackware_components_entries">
+        <item>SSH server</item>
     </string-array>
     
     <!-- RootFS -->

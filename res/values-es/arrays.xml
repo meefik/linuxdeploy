@@ -96,4 +96,10 @@
         <item>X server</item>
     </string-array>
     
+    <!-- Slackware -->
+
+    <string-array name="slackware_components_entries">
+        <item>servidor SSH</item>
+    </string-array>
+    
 </resources>
