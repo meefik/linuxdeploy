@@ -343,7 +343,8 @@ public class PrefStore {
 			char a = arch.toLowerCase().charAt(0);
 			switch (a) {
 			case 'a':
-				march = "arm";
+				if (arch.equals("amd64")) march = "intel";
+				else march = "arm";
 				break;
 			case 'm':
 				march = "mips";

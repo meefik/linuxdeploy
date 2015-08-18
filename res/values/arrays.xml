@@ -227,8 +227,8 @@
         <item>kali</item>
         <item>fedora</item>
         <item>archlinux</item>
-        <item>opensuse</item>
         <item>gentoo</item>
+        <item>opensuse</item>
         <item>slackware</item>
         <item>rootfs</item>
     </string-array>
@@ -238,8 +238,8 @@
         <item>Kali Linux</item>
         <item>Fedora</item>
         <item>Arch Linux</item>
-        <item>openSUSE</item>
         <item>Gentoo</item>
+        <item>openSUSE</item>
         <item>Slackware</item>
         <item>RootFS</item>
     </string-array>
@@ -368,6 +368,7 @@
         <item>armhfp</item> <!-- f19 and later -->
         <item>aarch64</item> <!-- f21 and later -->
         <item>i386</item>
+        <item>x86_64</item>
     </string-array>
     <string-array name="fedora_components_values" translatable="false">
         <item>desktop</item>
@@ -392,6 +393,7 @@
         <item>armv6h</item>
         <item>armv7h</item>
         <item>i686</item>
+        <item>x86_64</item>
     </string-array>
     <string-array name="archlinux_components_values" translatable="false">
         <item>desktop</item>
@@ -415,6 +417,7 @@
     <string-array name="opensuse_architecture_values" translatable="false">
         <item>armv7hl</item>
         <item>i586</item>
+        <item>x86_64</item>
     </string-array>
     <string-array name="opensuse_components_values" translatable="false">
         <item>desktop</item>
@@ -443,6 +446,7 @@
         <item>armv7a_hardfp</item>
         <item>i486</item>
         <item>i686</item>
+        <item>amd64</item> <!-- need manually change the mirror url -->
     </string-array>
     <string-array name="gentoo_components_values" translatable="false">
         <item>desktop</item>
