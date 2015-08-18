@@ -949,7 +949,7 @@ umount_system()
 		parts=$(cat /proc/mounts | awk '{print $2}' | grep "^$MNT_TARGET/$i$" | sort -r)
 		for p in $parts
 		do
-			pp=$(echo $p | sed "s|^$MNT_TARGET/|/|g")
+			pp=$(echo $p | sed "s|^$MNT_TARGET/*|/|g")
 			msg -n "$pp ... "
 			if [ $(echo $pp | grep -ci "selinux") -gt 0 -a -e $selinux_state -a -e /sys/fs/selinux/enforce ]; then
 				cat $selinux_state > /sys/fs/selinux/enforce

@@ -1,6 +1,13 @@
 Changelog (English)
 ===================
 
+1.5.2
+Added support Slackware
+Added support Kali Linux 2.0 (sana)
+Added support tar.xz for RootFS installation
+Added support amd64 for Debian based distributions
+Modified update ENV mechanism
+
 1.5.1
 Added support for installation type in RAM
 Updated command "status"
@@ -288,6 +295,13 @@ Updated list packages of base system installation
 
 История изменений (Русский)
 ===========================
+
+1.5.2
+Добавлена поддержка Slackware
+Добавлена поддержка Kali Linux 2.0 (sana)
+Добавлена поддержка архивов tar.xz для установки типа RootFS
+Добавлена поддержка amd64 для основанных на Debian дистрибутивов
+Изменен механизм обновления рабочего окружения
 
 1.5.1
 Добавлена поддержка установки дистрибутивов в оперативную память
