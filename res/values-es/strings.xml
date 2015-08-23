@@ -94,6 +94,8 @@
     <string name="title_reconfigure_preference">Reconfigurar</string>
     <string name="summary_reconfigure_preference">Iniciar reconfiguración de GNU/Linux</string>
     <string name="message_reconfigure_confirm_dialog">¿Iniciar reconfiguración de GNU/Linux?</string>
+    <string name="title_export_preference">Export</string>
+    <string name="summary_export_preference">Export GNU/Linux as rootfs archive</string>
     <string name="deploy_preferences">Deploy</string>
     <string name="title_distribution_preference">Distribución</string>
     <string name="dialog_title_distribution_preference">Distribución</string>

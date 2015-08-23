@@ -10,6 +10,10 @@
             android:key="reconfigure"
             android:summary="@string/summary_reconfigure_preference"
             android:title="@string/title_reconfigure_preference" />
+        <PreferenceScreen
+            android:key="export"
+            android:summary="@string/summary_export_preference"
+            android:title="@string/title_export_preference" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/deploy_preferences" >
         <ListPreference

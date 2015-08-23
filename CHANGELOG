@@ -5,7 +5,8 @@ Changelog (English)
 Added support Slackware
 Added support Kali Linux 2.0 (sana)
 Added support tar.xz for RootFS installation
-Added support amd64 for Debian based distributions
+Added support x86_64 (amd64) distributions
+Added export a container as rootfs archive (tgz or tbz2)
 Modified update ENV mechanism
 
 1.5.1
@@ -300,7 +301,8 @@ Updated list packages of base system installation
 Добавлена поддержка Slackware
 Добавлена поддержка Kali Linux 2.0 (sana)
 Добавлена поддержка архивов tar.xz для установки типа RootFS
-Добавлена поддержка amd64 для основанных на Debian дистрибутивов
+Добавлена поддержка x86_64 (amd64) дистрибутивов
+Добавлена функция экспорта контейнера как rootfs архива (tgz или tbz2)
 Изменен механизм обновления рабочего окружения
 
 1.5.1
