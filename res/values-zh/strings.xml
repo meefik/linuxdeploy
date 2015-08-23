@@ -93,7 +93,9 @@
     <string name="message_install_confirm_dialog">开始 GNU/Linux 的安装？</string>
     <string name="title_reconfigure_preference">重新配置</string>
     <string name="summary_reconfigure_preference">重新配置 GNU/Linux</string>
-    <string name="message_reconfigure_confirm_dialog">开始重新配置 GNU/Linux ？</string>
+    <string name="message_reconfigure_confirm_dialog">开始重新配置 GNU/Linux？</string>
+    <string name="title_export_preference">Export</string>
+    <string name="summary_export_preference">Export GNU/Linux as rootfs archive</string>
     <string name="deploy_preferences">部署</string>
     <string name="title_distribution_preference">发行版</string>
     <string name="dialog_title_distribution_preference">发行版</string>

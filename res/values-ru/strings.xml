@@ -94,6 +94,8 @@
     <string name="title_reconfigure_preference">Переконфигурировать</string>
     <string name="summary_reconfigure_preference">Выполнить переконфигурацию GNU/Linux системы</string>
     <string name="message_reconfigure_confirm_dialog">Выполнить переконфигурацию GNU/Linux системы?</string>
+    <string name="title_export_preference">Экспортировать</string>
+    <string name="summary_export_preference">Экспортировать GNU/Linux как rootfs-архив</string>
     <string name="deploy_preferences">Развертывание</string>
     <string name="title_distribution_preference">Дистрибутив</string>
     <string name="dialog_title_distribution_preference">Дистрибутив</string>

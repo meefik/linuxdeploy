@@ -3,6 +3,8 @@ Sources
 
 ActionBarSherlock: http://actionbarsherlock.com
 
+MultiSelectListPreferenceCompat: https://github.com/h6ah4i/mulsellistprefcompat
+
 BusyBox: http://www.busybox.net/source.html
 
 debootstrap: http://packages.debian.org/wheezy/debootstrap
