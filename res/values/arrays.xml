@@ -329,7 +329,6 @@
     <!-- Kali Linux -->
 
     <string-array name="kali_suite_values" translatable="false">
-        <item>kali</item>
         <item>moto</item>
         <item>sana</item>
     </string-array>

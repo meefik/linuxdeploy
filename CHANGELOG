@@ -8,6 +8,7 @@ Added support tar.xz for RootFS installation
 Added support x86_64 (amd64) distributions
 Added export a container as rootfs archive (tgz or tbz2)
 Modified update ENV mechanism
+Updated command line interface
 
 1.5.1
 Added support for installation type in RAM
@@ -304,6 +305,7 @@ Updated list packages of base system installation
 Добавлена поддержка x86_64 (amd64) дистрибутивов
 Добавлена функция экспорта контейнера как rootfs архива (tgz или tbz2)
 Изменен механизм обновления рабочего окружения
+Обновлен интерфейс командной строки
 
 1.5.1
 Добавлена поддержка установки дистрибутивов в оперативную память
