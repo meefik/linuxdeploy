@@ -261,11 +261,11 @@ msg -n "$1 ... "
 			if [ -z "$(grep "$MIRROR.*$SUITE" $MNT_TARGET/etc/apt/sources.list)" ]; then
 				case "$DISTRIB" in
 				debian|kali)
-					echo "deb $MIRROR $SUITE main contrib non-free" >> $MNT_TARGET/etc/apt/sources.list
+					echo "deb $MIRROR $SUITE main contrib non-free" > $MNT_TARGET/etc/apt/sources.list
 					echo "deb-src $MIRROR $SUITE main contrib non-free" >> $MNT_TARGET/etc/apt/sources.list
 				;;
 				ubuntu)
-					echo "deb $MIRROR $SUITE main universe multiverse" >> $MNT_TARGET/etc/apt/sources.list
+					echo "deb $MIRROR $SUITE main universe multiverse" > $MNT_TARGET/etc/apt/sources.list
 					echo "deb-src $MIRROR $SUITE main universe multiverse" >> $MNT_TARGET/etc/apt/sources.list
 				;;
 				esac
