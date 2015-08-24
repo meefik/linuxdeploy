@@ -77,7 +77,7 @@
     <string name="intel_ubuntu_architecture" translatable="false">i386</string>
         
     <!-- Kali Linux -->
-    <string name="kali_suite" translatable="false">kali</string>
+    <string name="kali_suite" translatable="false">sana</string>
     <!-- arm -->
     <string name="arm_kali_mirror" translatable="false">http://http.kali.org/kali/</string>
     <string name="arm_kali_architecture" translatable="false">armhf</string>

@@ -524,7 +524,7 @@ if [ "$1" = "packages" -a -n "$COMPONENTS" ]; then
 					PKGS="$PKGS xinit xserver-xorg xserver-xorg-video-fbdev xserver-xorg-input-evdev"
 				;;
 				kali-linux)
-					PKGS="$PKGS kali-linux"
+					PKGS="$PKGS kali-linux-top10"
 				;;
 				esac
 			done
