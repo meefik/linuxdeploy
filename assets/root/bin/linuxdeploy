@@ -1682,30 +1682,6 @@ case "${rootfs_archive}" in
 esac
 }
 
-uninstall_system()
-{
-umount_system
-[ $? -ne 0 ] && return 1
-
-msg -n "Removing symlink ... "
-(set -e
-	if [ -e "/system/bin/linuxdeploy" ]; then
-		rm -f /system/bin/linuxdeploy ||
-			{ mount -o rw,remount /system; rm -f /system/bin/linuxdeploy; mount -o ro,remount /system; }
-	fi
-exit 0)
-[ $? -eq 0 ] && msg "done" || msg "fail"
-
-msg -n "Removing environment ... "
-(set -e
-	rm -rf ${ENV_DIR%/}/mnt ${ENV_DIR%/}/deploy ${ENV_DIR%/}/etc ${ENV_DIR%/}/bin
-	[ -d "${ENV_DIR}" ] && rmdir ${ENV_DIR}
-exit 0)
-[ $? -eq 0 ] && msg "done" || msg "fail"
-
-return 0
-}
-
 status_system()
 {
 msg -n "Linux Deploy version: "
@@ -1840,7 +1816,6 @@ COMMANDS:
    ${B}stop${N} - stop all services in the container
    ${B}shell${N} [app] - execute application in the container, be default /bin/bash
    ${B}export${N} <archive> - export the container as rootfs archive (tgz or tbz2)
-   ${B}uninstall${N} - uninstall itself, remove operating environment
    ${B}status${N} - show information about the system
 
 EOF
@@ -1941,11 +1916,6 @@ shell)
 export)
 	msg ">>> $1"
 	export_system "$2"
-	msg "<<< $1"
-;;
-uninstall)
-	msg ">>> $1"
-	uninstall_system
 	msg "<<< $1"
 ;;
 status)

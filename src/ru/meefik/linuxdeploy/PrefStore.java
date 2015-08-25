@@ -95,7 +95,6 @@ public class PrefStore {
 	public static Boolean CONF_CHANGE = false;
 	public static String MARCH = "unknown";
 	public static String VERSION = "unknown";
-	public static String SHELL = "/system/xbin/ash";
 	public static final String ROOT_ASSETS = "root";
 	public static final String APP_PREF_FILE_NAME = "app_settings";
 	public static final String PROFILES_FILE_NAME = "profiles";
@@ -228,9 +227,6 @@ public class PrefStore {
 		BUILTIN_SHELL = sp.getBoolean("builtinshell",
 				c.getString(R.string.builtinshell).equals("true") ? true
 						: false);
-		if (BUILTIN_SHELL) {
-			SHELL = ENV_DIR + "/bin/ash";
-		}
 		SYMLINK = sp.getBoolean("symlink", c.getString(R.string.symlink)
 				.equals("true") ? true : false);
 		CURRENT_PROFILE = sp.getString("profile", null);
