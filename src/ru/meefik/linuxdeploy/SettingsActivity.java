@@ -136,7 +136,8 @@ public class SettingsActivity extends SherlockPreferenceActivity implements
 							@Override
 							public void onClick(DialogInterface dialog, int id) {
 								PrefStore.CONF_CHANGE = false;
-								new UpdateEnv(getApplicationContext()).start();
+								new ExecScript(getApplicationContext(),
+										"update").start();
 								finish();
 							}
 						})
@@ -161,7 +162,7 @@ public class SettingsActivity extends SherlockPreferenceActivity implements
 							public void onClick(DialogInterface dialog, int id) {
 								PrefStore.CONF_CHANGE = false;
 								new ExecScript(getApplicationContext(),
-										"uninstall").start();
+										"remove").start();
 								finish();
 							}
 						})

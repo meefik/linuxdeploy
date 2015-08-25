@@ -219,7 +219,7 @@ public class EnvUtils {
 			sendLogs("fail\n");
 			return;
 		}
-		
+
 		// env directories
 		String[] dirs = { PrefStore.ENV_DIR + "/bin",
 				PrefStore.ENV_DIR + "/etc", PrefStore.ENV_DIR + "/deploy" };
@@ -268,19 +268,23 @@ public class EnvUtils {
 		// fallback permissions
 		for (String dir : dirs) {
 			params.add("chmod -R 755 " + dir);
-			params.add("find " + dir
-					+ " | while read f; do chmod 755 $f; done");
+			params.add("find " + dir + " | while read f; do chmod 755 $f; done");
 		}
 		// install BusyBox
+		params.add(PrefStore.ENV_DIR + "/bin/busybox --install -s "
+				+ PrefStore.ENV_DIR + "/bin");
+		// set Shell
 		if (PrefStore.BUILTIN_SHELL) {
-			params.add(PrefStore.ENV_DIR + "/bin/busybox --install -s "
-					+ PrefStore.ENV_DIR + "/bin");
+			params.add("sed -i 's|^#!.*|#!" + PrefStore.ENV_DIR
+					+ "/bin/ash|g' " + PrefStore.ENV_DIR + "/bin/linuxdeploy");
+		} else {
+			params.add("rm " + PrefStore.ENV_DIR + "/bin/ash");
+			params.add("sed -i 's|^#!.*|#!/system/xbin/ash|g' "
+					+ PrefStore.ENV_DIR + "/bin/linuxdeploy");
 		}
-		// set ENV_DIR and Shell
+		// set ENV_DIR
 		params.add("sed -i 's|^ENV_DIR=.*|ENV_DIR=\"" + PrefStore.ENV_DIR
 				+ "\"|g' " + PrefStore.ENV_DIR + "/bin/linuxdeploy");
-		params.add("sed -i 's|^#!.*|#!" + PrefStore.SHELL + "|g' "
-				+ PrefStore.ENV_DIR + "/bin/linuxdeploy");
 		// update symlink
 		if (PrefStore.SYMLINK) {
 			params.add("rm -f /system/bin/linuxdeploy");
@@ -303,6 +307,29 @@ public class EnvUtils {
 		}
 
 		sendLogs("done\n");
+	}
+
+	public static void removeEnv(Context c) {
+		sendLogs("Removing environment ... ");
+
+		// exec shell commands
+		List<String> params = new ArrayList<String>();
+		params.add(PrefStore.ENV_DIR + "/bin/linuxdeploy umount 1>/dev/null");
+		params.add("[ $? -ne 0 ] && exit 1");
+		params.add("if [ -e /system/bin/linuxdeploy ]; then "
+				+ "rm -f /system/bin/linuxdeploy || "
+				+ "{ mount -o rw,remount /system; rm -f /system/bin/linuxdeploy; mount -o ro,remount /system; };"
+				+ "fi");
+		params.add("rm -rf " + PrefStore.ENV_DIR + "/mnt " + PrefStore.ENV_DIR
+				+ "/deploy " + PrefStore.ENV_DIR + "/etc " + PrefStore.ENV_DIR
+				+ "/bin");
+		params.add("rmdir " + PrefStore.ENV_DIR);
+
+		if (exec(params)) {
+			sendLogs("done\n");
+		} else {
+			sendLogs("fail\n");
+		}
 	}
 
 	public static void updateConf() {
