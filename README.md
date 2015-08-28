@@ -20,7 +20,7 @@ Installing a new operating system takes about 30 minutes. The recommended minimu
 * Supported architectures: ARM, ARM64, x86, x86_64, emulation mode (ARM ~ x86)
 * Control interface: SSH, VNC, X, framebuffer
 * Desktop environment: XTerm, LXDE, Xfce, GNOME, KDE, other (manual configuration)
-* Supported languages: English, Russian, German, Italian, Spanish, Chinese
+* Supported languages: English, Russian, German, Italian, Spanish, Chinese, Vietnamese
 
 #### Install ####
 You can install the app from Google play: <https://play.google.com/store/apps/details?id=ru.meefik.linuxdeploy>.
@@ -73,7 +73,7 @@ Copyright (C) 2012-2015  Антон Скшидлевский
 * Поддерживаемые архитектуры: ARM, ARM64, x86, x86_64, режим эмуляции (ARM ~ x86)
 * Интерфейс управления: SSH, VNC, X, фрейм-буфер
 * Окружение рабочего стола: XTerm, LXDE, Xfce, GNOME, KDE, другое (ручная настройка)
-* Поддерживаемые языки: русский, английский, немецкий, итальянский, испанский, китайский
+* Поддерживаемые языки: русский, английский, немецкий, итальянский, испанский, китайский, вьетнамский
 
 #### Установка ####
 Вы можете установить это приложение из Google play: <https://play.google.com/store/apps/details?id=ru.meefik.linuxdeploy>.
