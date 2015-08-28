@@ -116,6 +116,8 @@
     <string name="dialog_title_fstype_preference">Dateisystem</string>
     <string name="title_username_preference">Benutzername</string>
     <string name="dialog_title_username_preference">Benutzername</string>
+    <string name="title_password_preference">User password</string>
+    <string name="dialog_title_password_preference">User password</string>
     <string name="title_serverdns_preference">DNS Server</string>
     <string name="dialog_title_serverdns_preference">Addrese vom DNS Server</string>
     <string name="summary_serverdns_preference">Automatische Erkennung</string>
