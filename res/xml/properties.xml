@@ -87,6 +87,13 @@
             android:summary="@string/username"
             android:title="@string/title_username_preference" />
         <EditTextPreference
+            android:defaultValue="@string/password"
+            android:dialogTitle="@string/dialog_title_password_preference"
+            android:maxLength="8"
+            android:key="password"
+            android:summary="@string/password"
+            android:title="@string/title_password_preference" />
+        <EditTextPreference
             android:defaultValue="@string/serverdns"
             android:dialogTitle="@string/dialog_title_serverdns_preference"
             android:key="serverdns"

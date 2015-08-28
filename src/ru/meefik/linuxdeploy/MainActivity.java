@@ -1,12 +1,5 @@
 package ru.meefik.linuxdeploy;
 
-import java.io.FileOutputStream;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-
 import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -17,7 +10,6 @@ import android.content.res.Configuration;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.TypedValue;
@@ -34,81 +26,30 @@ public class MainActivity extends SherlockActivity {
 
 	private static TextView logView;
 	private static ScrollView logScroll;
-	private static List<String> logList = new ArrayList<String>();
-	private static boolean fragment = false;
 	private static WifiLock wifiLock;
 	final static int NOTIFY_ID = 1;
-	static Handler handler;
-
-	private static String getTimeStamp() {
-		return "["
-				+ new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH)
-						.format(new Date()) + "] ";
-	}
 
 	private static void clearLog() {
-		logList.clear();
-		fragment = false;
+		Logger.clear();
 		logView.setText("");
 	}
 
-	private static void showLog() {
-		// read all logs from List
-		String log = "";
-		for (String str : logList)
-			log += str + "\n";
+	public static void showLog() {
 		// show log in TextView
-		logView.setText(log);
-		// scroll TextView to bottom
-		logScroll.post(new Runnable() {
+		logView.post(new Runnable() {
 			@Override
 			public void run() {
-				logScroll.fullScroll(View.FOCUS_DOWN);
-				logScroll.clearFocus();
+				logView.setText(Logger.get());
+				// scroll TextView to bottom
+				logScroll.post(new Runnable() {
+					@Override
+					public void run() {
+						logScroll.fullScroll(View.FOCUS_DOWN);
+						logScroll.clearFocus();
+					}
+				});
 			}
 		});
-	}
-
-	public static void printLogMsg(String msg) {
-		int msgLength = msg.length();
-		if (msgLength > 0) {
-			String[] tokens = msg.split("\\n");
-			for (int i = 0; i < tokens.length; i++) {
-				// update last record from List if fragment
-				if (i == 0 && fragment && logList.size() > 0) {
-					int idx = logList.size() - 1;
-					String last = logList.get(idx);
-					logList.set(idx, last + tokens[i]);
-					continue;
-				}
-				// add the message to List
-				logList.add(getTimeStamp() + tokens[i]);
-				// remove first line if overflow
-				if (logList.size() >= PrefStore.MAX_LINE)
-					logList.remove(0);
-			}
-			// set fragment
-			fragment = (msg.charAt(msgLength - 1) != '\n');
-			// show log
-			showLog();
-			// save the message to file
-			if (PrefStore.LOGGING) {
-				saveLogs(msg);
-			}
-		}
-	}
-
-	public static void saveLogs(String msg) {
-		byte[] data = msg.getBytes();
-		try {
-			FileOutputStream fos = new FileOutputStream(PrefStore.LOG_FILE,
-					true);
-			fos.write(data);
-			fos.flush();
-			fos.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	@Override
@@ -121,8 +62,7 @@ public class MainActivity extends SherlockActivity {
 
 		logView = (TextView) findViewById(R.id.LogView);
 		logScroll = (ScrollView) findViewById(R.id.LogScrollView);
-		handler = new Handler();
-
+		
 		// WiFi lock init
 		WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
 		wifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL,

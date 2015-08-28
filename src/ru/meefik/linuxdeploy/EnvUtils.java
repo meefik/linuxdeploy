@@ -1,12 +1,10 @@
 package ru.meefik.linuxdeploy;
 
-import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,40 +13,6 @@ import android.content.Context;
 import android.content.res.AssetManager;
 
 public class EnvUtils {
-
-	private static void sendLogs(InputStream stdstream) {
-		if (MainActivity.handler != null) {
-			try {
-				BufferedReader reader = new BufferedReader(
-						new InputStreamReader(stdstream));
-				int n;
-				char[] buffer = new char[1024];
-				while ((n = reader.read(buffer)) != -1) {
-					final String logLine = String.valueOf(buffer, 0, n);
-					MainActivity.handler.post(new Runnable() {
-						@Override
-						public void run() {
-							MainActivity.printLogMsg(logLine);
-						}
-					});
-				}
-				reader.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	private static void sendLogs(final String msg) {
-		if (MainActivity.handler != null) {
-			MainActivity.handler.post(new Runnable() {
-				@Override
-				public void run() {
-					MainActivity.printLogMsg(msg);
-				}
-			});
-		}
-	}
 
 	private static boolean extractFile(Context c, String rootAsset, String path) {
 		boolean result = true;
@@ -148,7 +112,7 @@ public class EnvUtils {
 		List<String> params = new ArrayList<String>();
 		params.add("ls /data/local 1>/dev/null");
 		if (!exec(params)) {
-			sendLogs("Require superuser privileges (root)!\n");
+			Logger.log("Require superuser privileges (root)!\n");
 			return false;
 		} else {
 			return true;
@@ -180,7 +144,7 @@ public class EnvUtils {
 			(new Thread() {
 				@Override
 				public void run() {
-					sendLogs(stdout);
+					Logger.log(stdout);
 				}
 			}).start();
 
@@ -188,7 +152,7 @@ public class EnvUtils {
 				(new Thread() {
 					@Override
 					public void run() {
-						sendLogs(stderr);
+						Logger.log(stderr);
 					}
 				}).start();
 			}
@@ -213,10 +177,10 @@ public class EnvUtils {
 			return;
 		}
 
-		sendLogs("Updating environment ... ");
+		Logger.log("Updating environment ... ");
 
 		if (PrefStore.ENV_DIR.length() == 0) {
-			sendLogs("fail\n");
+			Logger.log("fail\n");
 			return;
 		}
 
@@ -233,22 +197,22 @@ public class EnvUtils {
 
 		// extract assets
 		if (!extractDir(c, PrefStore.ROOT_ASSETS, "")) {
-			sendLogs("fail\n");
+			Logger.log("fail\n");
 			return;
 		}
 		if (!extractDir(c, PrefStore.MARCH + "/all", "")) {
-			sendLogs("fail\n");
+			Logger.log("fail\n");
 			return;
 		}
 		// PIE for Android L
 		if (android.os.Build.VERSION.SDK_INT >= 21) {
 			if (!extractDir(c, PrefStore.MARCH + "/pie", "")) {
-				sendLogs("fail\n");
+				Logger.log("fail\n");
 				return;
 			}
 		} else {
 			if (!extractDir(c, PrefStore.MARCH + "/nopie", "")) {
-				sendLogs("fail\n");
+				Logger.log("fail\n");
 				return;
 			}
 		}
@@ -296,21 +260,21 @@ public class EnvUtils {
 					+ "/bin/linuxdeploy /system/bin/linuxdeploy; mount -o ro,remount /system; }");
 		}
 		if (!exec(params)) {
-			sendLogs("fail\n");
+			Logger.log("fail\n");
 			return;
 		}
 
 		// update version
 		if (!PrefStore.setVersion()) {
-			sendLogs("fail\n");
+			Logger.log("fail\n");
 			return;
 		}
 
-		sendLogs("done\n");
+		Logger.log("done\n");
 	}
 
 	public static void removeEnv(Context c) {
-		sendLogs("Removing environment ... ");
+		Logger.log("Removing environment ... ");
 
 		// exec shell commands
 		List<String> params = new ArrayList<String>();
@@ -326,19 +290,19 @@ public class EnvUtils {
 		params.add("rmdir " + PrefStore.ENV_DIR);
 
 		if (exec(params)) {
-			sendLogs("done\n");
+			Logger.log("done\n");
 		} else {
-			sendLogs("fail\n");
+			Logger.log("fail\n");
 		}
 	}
 
 	public static void updateConf() {
-		sendLogs("Updating configuration file ... ");
+		Logger.log("Updating configuration file ... ");
 		// update config file
 		if (PrefStore.storeConfig()) {
-			sendLogs("done\n");
+			Logger.log("done\n");
 		} else {
-			sendLogs("fail\n");
+			Logger.log("fail\n");
 		}
 	}
 

@@ -116,6 +116,8 @@
     <string name="dialog_title_fstype_preference">Файловая система</string>
     <string name="title_username_preference">Имя пользователя</string>
     <string name="dialog_title_username_preference">Имя пользователя</string>
+    <string name="title_password_preference">Пароль пользователя</string>
+    <string name="dialog_title_password_preference">Пароль пользователя</string>
     <string name="title_serverdns_preference">DNS-сервер</string>
     <string name="dialog_title_serverdns_preference">Адрес DNS-сервера</string>
     <string name="summary_serverdns_preference">Автоматическое обнаружение</string>
