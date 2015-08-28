@@ -9,6 +9,8 @@ Added support x86_64 (amd64) distributions
 Added export a container as rootfs archive (tgz or tbz2)
 Modified update ENV mechanism
 Updated command line interface
+Added ability to change password from GUI
+Translated into Vietnamese
 
 1.5.1
 Added support for installation type in RAM
@@ -306,6 +308,8 @@ Updated list packages of base system installation
 Добавлена функция экспорта контейнера как rootfs архива (tgz или tbz2)
 Изменен механизм обновления рабочего окружения
 Обновлен интерфейс командной строки
+Добавлена возможность изменять пароль из интерфейса приложения
+Переведено на вьетнамский язык
 
 1.5.1
 Добавлена поддержка установки дистрибутивов в оперативную память

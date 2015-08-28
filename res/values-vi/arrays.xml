@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="theme_entries">
+        <item>Tối</item>
+        <item>Sáng</item>
+    </string-array>
+    <string-array name="deploytype_entries">
+        <item>Tệp tin</item>
+        <item>Phân vùng</item>
+        <item>RAM</item>
+        <item>Tuỳ chỉnh</item>
+    </string-array>
+    <string-array name="fstype_entries">
+        <item>Tự động</item>
+        <item>ext2</item>
+        <item>ext3</item>
+        <item>ext4</item>
+    </string-array>
+    <string-array name="desktopenv_entries">
+        <item>XTerm</item>
+        <item>LXDE</item>
+        <item>Xfce</item>
+        <item>GNOME</item>
+        <item>KDE</item>
+        <item>Khác</item>
+    </string-array>
+    <string-array name="fbfreeze_entries">
+        <item>Không đóng băng</item>
+        <item>Tạm dừng</item>
+        <item>Dừng lại</item>
+    </string-array>
+    
+
+    <!-- Debian -->
+
+    <string-array name="debian_components_entries">
+        <item>Môi trường Desktop</item>
+        <item>Máy chủ SSH</item>
+        <item>Máy chủ VNC</item>
+        <item>Máy chủ X</item>
+    </string-array>
+
+    <!-- Ubuntu -->
+
+    <string-array name="ubuntu_components_entries">
+        <item>Môi trường Desktop</item>
+        <item>Máy chủ SSH</item>
+        <item>Máy chủ VNC</item>
+        <item>Máy chủ X</item>
+    </string-array>
+    
+    <!-- Kali Linux -->
+
+    <string-array name="kali_components_entries">
+        <item>Môi trường Desktop</item>
+        <item>Máy chủ SSH</item>
+        <item>Máy chủ VNC</item>
+        <item>Máy chủ X</item>
+        <item>Các thành phần của Kali</item>
+    </string-array>
+    
+    <!-- Fedora -->
+
+    <string-array name="fedora_components_entries">
+        <item>Môi trường Desktop</item>
+        <item>Máy chủ SSH</item>
+        <item>Máy chủ VNC</item>
+        <item>Máy chủ X</item>
+    </string-array>
+    
+    <!-- Arch Linux -->
+
+    <string-array name="archlinux_components_entries">
+        <item>Môi trường Desktop</item>
+        <item>Máy chủ SSH</item>
+        <item>Máy chủ VNC</item>
+        <item>Máy chủ X</item>
+    </string-array>
+
+    <!-- openSUSE -->
+
+    <string-array name="opensuse_components_entries">
+        <item>Môi trường Desktop</item>
+        <item>Máy chủ SSH</item>
+        <item>Máy chủ VNC</item>
+        <item>Máy chủ X</item>
+    </string-array>
+    
+    <!-- Gentoo -->
+
+    <string-array name="gentoo_components_entries">
+        <item>Môi trường Desktop</item>
+        <item>Máy chủ SSH</item>
+        <item>Máy chủ VNC</item>
+        <item>Máy chủ X</item>
+    </string-array>
+    
+    <!-- Slackware -->
+
+    <string-array name="slackware_components_entries">
+        <item>Máy chủ SSH</item>
+    </string-array>
+    
+</resources>
