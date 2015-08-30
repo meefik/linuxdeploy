@@ -1293,7 +1293,7 @@ debian|ubuntu|kali)
 
 	[ -z "${DEBOOTSTRAP_DIR}" ] && DEBOOTSTRAP_DIR=${ENV_DIR%/}/deploy/debootstrap
 	export DEBOOTSTRAP_DIR
-	ash -e ${ENV_DIR%/}/bin/debootstrap --no-check-gpg --arch ${ARCH} --foreign --extractor=ar --include=${basic_packages} ${SUITE} ${MNT_TARGET} ${MIRROR} 1>&3 2>&3
+	${SHELL} -e ${ENV_DIR%/}/bin/debootstrap --no-check-gpg --arch ${ARCH} --foreign --extractor=ar --include=${basic_packages} ${SUITE} ${MNT_TARGET} ${MIRROR} 1>&3 2>&3
 	[ $? -ne 0 ] && return 1
 
 	msg "Preconfigure system: "
@@ -1622,7 +1622,7 @@ slackware)
 		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 		# install
 		if [ -e "${MNT_TARGET}/install/doinst.sh" ]; then
-			(cd ${MNT_TARGET}; chmod 755 ./install/doinst.sh; ash ./install/doinst.sh)
+			(cd ${MNT_TARGET}; chmod 755 ./install/doinst.sh; ${SHELL} ./install/doinst.sh)
 		fi
 		if [ -e "${MNT_TARGET}/install" ]; then
 			rm -rf ${MNT_TARGET}/install
@@ -1867,6 +1867,7 @@ EOF
 
 ENV_DIR="$(cd ${0%/*}/..; pwd)"
 [ -n "${LINUXDEPLOY_DIR}" ] && ENV_DIR="${LINUXDEPLOY_DIR}"
+[ -z "${SHELL}" ] && SHELL="ash"
 MNT_TARGET="${ENV_DIR%/}/mnt"
 PATH="${ENV_DIR%/}/bin:/system/xbin:/system/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 TERM="vt100"
