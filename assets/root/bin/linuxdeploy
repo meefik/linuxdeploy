@@ -528,7 +528,7 @@ if [ "$1" = "packages" -a -n "${COMPONENTS}" ]; then
 						pkgs="${pkgs} lxde menu-xdg hicolor-icon-theme gtk2-engines"
 					;;
 					xfce)
-						pkgs="${pkgs} xfce4 tango-icon-theme hicolor-icon-theme"
+						pkgs="${pkgs} xfce4 xfce4-terminal tango-icon-theme hicolor-icon-theme"
 					;;
 					gnome)
 						pkgs="${pkgs} gnome-core"
@@ -1865,10 +1865,10 @@ EOF
 
 ################################################################################
 
+# init env
 ENV_DIR="$(cd ${0%/*}/..; pwd)"
 [ -n "${LINUXDEPLOY_DIR}" ] && ENV_DIR="${LINUXDEPLOY_DIR}"
-[ -z "${SHELL}" ] && SHELL="ash"
-MNT_TARGET="${ENV_DIR%/}/mnt"
+[ -e "/bin/bash" ] && SHELL="bash" || SHELL="ash"
 PATH="${ENV_DIR%/}/bin:/system/xbin:/system/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 TERM="vt100"
 export PATH TERM
@@ -1878,15 +1878,20 @@ umask 0022
 cd ${ENV_DIR}
 
 # load config
-load_conf "${ENV_DIR%/}/etc/deploy.conf"
-[ $? -ne 0 ] && exit 1
+CONF_FILE="${ENV_DIR%/}/etc/deploy.conf"
+if [ -e "${CONF_FILE}" ]
+then
+	load_conf "${CONF_FILE}"
+	[ $? -ne 0 ] && exit 1
+fi
 
 # parse options
 while getopts :c:dt FLAG
 do
 	case ${FLAG} in
 	c)
-		load_conf ${OPTARG}
+		CONF_FILE=${OPTARG}
+		load_conf "${CONF_FILE}"
 		[ $? -ne 0 ] && exit 1
 	;;
 	d)
@@ -1898,6 +1903,8 @@ do
 	esac
 done
 shift $((OPTIND-1))
+
+[ ! -e "${CONF_FILE}" ] && exit 1
 
 # log level
 exec 3>&1

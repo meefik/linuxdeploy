@@ -118,6 +118,7 @@ public class PrefStore {
 		List<String> lines = new ArrayList<>();
 		lines.add("DEBUG_MODE=\"" + DEBUG_MODE + "\"");
 		lines.add("TRACE_MODE=\"" + TRACE_MODE + "\"");
+		lines.add("MNT_TARGET=\"${ENV_DIR%/}/mnt\"");
 		lines.add("IMG_TARGET=\"" + IMG_TARGET + "\"");
 		lines.add("IMG_SIZE=\"" + IMG_SIZE + "\"");
 		lines.add("FS_TYPE=\"" + FS_TYPE + "\"");
