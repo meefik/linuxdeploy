@@ -57,8 +57,8 @@
     <string name="dialog_title_language_preference">Chọn ngôn ngữ</string>
     <string name="title_fontsize_preference">Cỡ chữ</string>
     <string name="dialog_title_fontsize_preference">Cỡ chữ</string>
-    <string name="title_maxline_preference">Cỡ lăn (chuột)</string>
-    <string name="dialog_title_maxline_preference">Cỡ lăn (chuột)</string>
+    <string name="title_maxline_preference">Cuộn (dòng)</string>
+    <string name="dialog_title_maxline_preference">Cuộn (dòng)</string>
     <string name="title_theme_preference">Giao diện</string>
     <string name="dialog_title_theme_preference">Chọn giao diện</string>
     <string name="title_appicon_preference">Hiện biểu tượng</string>
@@ -172,7 +172,7 @@
     <string name="title_fbdisplay_preference">Hiển thị</string>
     <string name="dialog_title_fbdisplay_preference">FB: hiển thị số</string>
     <string name="title_fbdpi_preference">DPI</string>
-    <string name="dialog_title_fbdpi_preference">FB:   điểm ảnh trên inch (DPI)</string>
+    <string name="dialog_title_fbdpi_preference">FB: điểm ảnh trên inch (DPI)</string>
     <string name="title_fbdev_preference">Thiết bị Video</string>
     <string name="dialog_title_fbdev_preference">FB: đường dẫn thiết bị video</string>
     <string name="title_fbinput_preference">Thiết bị nhập liệu</string>
@@ -182,5 +182,5 @@
     <string name="title_fbfreeze_preference">Đóng băng giao diện người dùng Android</string>
     <string name="dialog_title_fbfreeze_preference">Đóng băng giao diện người dùng Android</string>
     <string name="about_text"><font size="32"><b>Linux Deploy</b></font>\n\nGPL v3\n\n[ <a href="https://github.com/meefik/linuxdeploy">github.com</a> , <a href="http://4pda.ru/forum/index.php?showtopic=378043">4pda.ru</a> ]\n\nChương trình này KHÔNG CÓ BẢO HÀNH. Đây là phần mềm miễn phí, và bạn được phép phân phối lại dưới một số điều kiện.\n\n&#169;2012-2015 Anton Skshidlevsky</string>
-    
+
 </resources>
