@@ -236,15 +236,9 @@ public class EnvUtils {
 		// install BusyBox
 		params.add(PrefStore.ENV_DIR + "/bin/busybox --install -s "
 				+ PrefStore.ENV_DIR + "/bin");
-		// set Shell
-		if (PrefStore.BUILTIN_SHELL) {
-			params.add("sed -i 's|^#!.*|#!" + PrefStore.ENV_DIR
-					+ "/bin/ash|g' " + PrefStore.ENV_DIR + "/bin/linuxdeploy");
-		} else {
-			params.add("rm " + PrefStore.ENV_DIR + "/bin/ash");
-			params.add("sed -i 's|^#!.*|#!/system/xbin/ash|g' "
-					+ PrefStore.ENV_DIR + "/bin/linuxdeploy");
-		}
+		// set shell
+		params.add("sed -i 's|^#!.*|#!" + PrefStore.SHELL
+				+ "|g' " + PrefStore.ENV_DIR + "/bin/linuxdeploy");
 		// set ENV_DIR
 		params.add("sed -i 's|^ENV_DIR=.*|ENV_DIR=\"" + PrefStore.ENV_DIR
 				+ "\"|g' " + PrefStore.ENV_DIR + "/bin/linuxdeploy");
