@@ -1866,6 +1866,7 @@ EOF
 ################################################################################
 
 ENV_DIR="$(cd ${0%/*}/..; pwd)"
+[ -n "${LINUXDEPLOY_DIR}" ] && ENV_DIR="${LINUXDEPLOY_DIR}"
 MNT_TARGET="${ENV_DIR%/}/mnt"
 PATH="${ENV_DIR%/}/bin:/system/xbin:/system/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 TERM="vt100"

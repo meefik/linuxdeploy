@@ -129,8 +129,7 @@ public class EnvUtils {
 			final InputStream stderr = process.getErrorStream();
 
 			params.add("exit $?");
-			params.add(0, "PATH=" + PrefStore.ENV_DIR
-					+ "/bin:$PATH; export PATH");
+			params.add(0, "export PATH=" + PrefStore.ENV_DIR + "/bin:$PATH");
 			if (PrefStore.TRACE_MODE.equals("y"))
 				params.add(0, "set -x");
 
