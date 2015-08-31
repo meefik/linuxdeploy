@@ -1,10 +1,12 @@
 package ru.meefik.linuxdeploy;
 
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -108,15 +110,37 @@ public class EnvUtils {
 	}
 
 	private static boolean isRooted() {
-		// exec shell command
-		List<String> params = new ArrayList<String>();
-		params.add("ls /data/local 1>/dev/null");
-		if (!exec(params)) {
-			Logger.log("Require superuser privileges (root)!\n");
-			return false;
-		} else {
-			return true;
+		boolean result = false;
+		try {
+			Process process = Runtime.getRuntime().exec("su");
+			final OutputStream stdin = process.getOutputStream();
+			final InputStream stdout = process.getInputStream();
+
+			DataOutputStream os = new DataOutputStream(stdin);
+			os.writeBytes("ls /data\n");
+			os.writeBytes("exit\n");
+			os.flush();
+			os.close();
+			
+			BufferedReader reader = new BufferedReader(new InputStreamReader(stdout));
+			int n = 0;
+			String line;
+			while ((line = reader.readLine()) != null) {
+				n++;
+			}
+			reader.close();
+			
+			if (n > 0) {
+				result = true;
+			} else {
+				Logger.log("Require superuser privileges (root).\n");
+			}
+			stdout.close();
+			stdin.close();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+		return result;
 	}
 
 	public static boolean exec(List<String> params) {
