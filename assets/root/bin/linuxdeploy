@@ -507,14 +507,14 @@ msg -n "$1 ... "
 exit 0)
 [ $? -eq 0 ] && msg "done" || msg "fail"
 
-if [ "$1" = "packages" -a -n "${COMPONENTS}" ]; then
+if [ "$1" = "packages" -a -n "${USE_COMPONENTS}" ]; then
 	msg "Installing additional packages: "
 	(set -e
 		case "${DISTRIB}" in
 		debian|ubuntu|kali)
 			local pkgs=""
 			[ -e "/sys/fs/selinux/enforce" ] && pkgs="${pkgs} selinux-basics"
-			for component in ${COMPONENTS}
+			for component in ${USE_COMPONENTS}
 			do
 				case "${component}" in
 				desktop)
@@ -561,7 +561,7 @@ if [ "$1" = "packages" -a -n "${COMPONENTS}" ]; then
 		;;
 		archlinux)
 			local pkgs=""
-			for component in ${COMPONENTS}
+			for component in ${USE_COMPONENTS}
 			do
 				case "${component}" in
 				desktop)
@@ -603,7 +603,7 @@ if [ "$1" = "packages" -a -n "${COMPONENTS}" ]; then
 		fedora)
 			local pkgs=""
 			local igrp=""
-			for component in ${COMPONENTS}
+			for component in ${USE_COMPONENTS}
 			do
 				case "${component}" in
 				desktop)
@@ -644,7 +644,7 @@ if [ "$1" = "packages" -a -n "${COMPONENTS}" ]; then
 		;;
 		opensuse)
 			local pkgs=""
-			for component in ${COMPONENTS}
+			for component in ${USE_COMPONENTS}
 			do
 				case "${component}" in
 				desktop)
@@ -684,7 +684,7 @@ if [ "$1" = "packages" -a -n "${COMPONENTS}" ]; then
 		;;
 		gentoo)
 			local pkgs=""
-			for component in ${COMPONENTS}
+			for component in ${USE_COMPONENTS}
 			do
 				case "${component}" in
 				desktop)
@@ -733,7 +733,7 @@ if [ "$1" = "packages" -a -n "${COMPONENTS}" ]; then
 		;;
 		slackware)
 			local pkgs=""
-			for component in ${COMPONENTS}
+			for component in ${USE_COMPONENTS}
 			do
 				case "${component}" in
 				ssh)
@@ -1291,9 +1291,10 @@ debian|ubuntu|kali)
 
 	local basic_packages="locales,sudo,man-db"
 
-	[ -z "${DEBOOTSTRAP_DIR}" ] && DEBOOTSTRAP_DIR=${ENV_DIR%/}/deploy/debootstrap
-	export DEBOOTSTRAP_DIR
-	${SHELL} -e ${ENV_DIR%/}/bin/debootstrap --no-check-gpg --arch ${ARCH} --foreign --extractor=ar --include=${basic_packages} ${SUITE} ${MNT_TARGET} ${MIRROR} 1>&3 2>&3
+	(set -e
+		DEBOOTSTRAP_DIR=${ENV_DIR%/}/deploy/debootstrap
+		. ${DEBOOTSTRAP_DIR}/debootstrap --no-check-gpg --arch ${ARCH} --foreign --extractor=ar --include=${basic_packages} ${SUITE} ${MNT_TARGET} ${MIRROR}
+	exit 0) 1>&3 2>&3
 	[ $? -ne 0 ] && return 1
 
 	msg "Preconfigure system: "
@@ -1622,7 +1623,7 @@ slackware)
 		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 		# install
 		if [ -e "${MNT_TARGET}/install/doinst.sh" ]; then
-			(cd ${MNT_TARGET}; chmod 755 ./install/doinst.sh; ${SHELL} ./install/doinst.sh)
+			(cd ${MNT_TARGET}; . ./install/doinst.sh)
 		fi
 		if [ -e "${MNT_TARGET}/install" ]; then
 			rm -rf ${MNT_TARGET}/install
@@ -1868,7 +1869,6 @@ EOF
 # init env
 ENV_DIR="$(cd ${0%/*}/..; pwd)"
 [ -n "${LINUXDEPLOY_DIR}" ] && ENV_DIR="${LINUXDEPLOY_DIR}"
-[ -e "/bin/bash" ] && SHELL="bash" || SHELL="ash"
 PATH="${ENV_DIR%/}/bin:/system/xbin:/system/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 TERM="vt100"
 export PATH TERM
