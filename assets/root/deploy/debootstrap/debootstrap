@@ -617,7 +617,7 @@ if am_doing_phase first_stage; then
 	first_stage_install
 
 	if ! am_doing_phase second_stage; then
-		cp "$0"				 "$TARGET/debootstrap/debootstrap"
+		cp $DEBOOTSTRAP_DIR/debootstrap	 "$TARGET/debootstrap/debootstrap"
 		cp $DEBOOTSTRAP_DIR/functions	 "$TARGET/debootstrap/functions"
 		cp $DEBOOTSTRAP_DIR/devices.tgz	 "$TARGET/debootstrap/devices.tgz"
 		cp $SCRIPT			 "$TARGET/debootstrap/suite-script"

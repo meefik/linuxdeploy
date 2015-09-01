@@ -68,7 +68,7 @@ public class PrefStore {
 	public static String SERVER_DNS;
 	public static String LOCALE;
 	public static String DESKTOP_ENV;
-	public static String COMPONENTS;
+	public static String USE_COMPONENTS;
 
 	// to startup
 	public static String STARTUP;
@@ -132,7 +132,7 @@ public class PrefStore {
 		lines.add("SERVER_DNS=\"" + SERVER_DNS + "\"");
 		lines.add("LOCALE=\"" + LOCALE + "\"");
 		lines.add("DESKTOP_ENV=\"" + DESKTOP_ENV + "\"");
-		lines.add("COMPONENTS=\"" + COMPONENTS + "\"");
+		lines.add("USE_COMPONENTS=\"" + USE_COMPONENTS + "\"");
 		lines.add("STARTUP=\"" + STARTUP + "\"");
 		lines.add("CUSTOM_SCRIPTS=\"" + CUSTOM_SCRIPTS + "\"");
 		lines.add("CUSTOM_MOUNTS=\"" + CUSTOM_MOUNTS + "\"");
@@ -290,7 +290,7 @@ public class PrefStore {
 		for (String str : comp_set) {
 			components += str + " ";
 		}
-		COMPONENTS = components.trim();
+		USE_COMPONENTS = components.trim();
 		String startup_ssh = sp.getBoolean("sshstartup",
 				c.getString(R.string.sshstartup).equals("true") ? true : false) ? "ssh"
 				: "";
