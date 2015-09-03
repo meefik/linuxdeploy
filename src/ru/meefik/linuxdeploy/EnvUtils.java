@@ -121,15 +121,16 @@ public class EnvUtils {
 			os.writeBytes("exit\n");
 			os.flush();
 			os.close();
-			
-			BufferedReader reader = new BufferedReader(new InputStreamReader(stdout));
+
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					stdout));
 			int n = 0;
 			String line;
 			while ((line = reader.readLine()) != null) {
 				n++;
 			}
 			reader.close();
-			
+
 			if (n > 0) {
 				result = true;
 			} else {
@@ -260,9 +261,13 @@ public class EnvUtils {
 		// install BusyBox
 		params.add(PrefStore.ENV_DIR + "/bin/busybox --install -s "
 				+ PrefStore.ENV_DIR + "/bin");
+		if (!PrefStore.BUILTIN_SHELL) {
+			params.add("rm " + PrefStore.ENV_DIR + "/bin/ash");
+			params.add("rm " + PrefStore.ENV_DIR + "/bin/chroot");
+		}
 		// set shell
-		params.add("sed -i 's|^#!.*|#!" + PrefStore.SHELL
-				+ "|g' " + PrefStore.ENV_DIR + "/bin/linuxdeploy");
+		params.add("sed -i 's|^#!.*|#!" + PrefStore.SHELL + "|g' "
+				+ PrefStore.ENV_DIR + "/bin/linuxdeploy");
 		// set ENV_DIR
 		params.add("sed -i 's|^ENV_DIR=.*|ENV_DIR=\"" + PrefStore.ENV_DIR
 				+ "\"|g' " + PrefStore.ENV_DIR + "/bin/linuxdeploy");
