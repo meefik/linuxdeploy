@@ -32,7 +32,9 @@ public class ExecScript extends Thread {
 		case "configure":
 		case "export":
 			// update config file
-			EnvUtils.updateConf();
+			if (PrefStore.isLatestVersion()) {
+				EnvUtils.updateConf();
+			}
 		default:
 			// update env when version is changed
 			if (!PrefStore.isLatestVersion()) {
