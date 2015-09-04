@@ -1058,6 +1058,7 @@ ssh)
 	msg -n "SSH :${SSH_PORT} ... "
 	if [ -z "$(ps | grep -E '/usr/s?bin/sshd' | grep -v grep)" ]; then
 		sed -i "s|^[# ]*Port .*|Port ${SSH_PORT}|g" ${MNT_TARGET}/etc/ssh/sshd_config
+		[ "${USER_NAME}" = "root" ] && sed -i "s|^[# ]*PermitRootLogin .*|PermitRootLogin yes|g" ${MNT_TARGET}/etc/ssh/sshd_config
 		(set -e
 			# Debian/Ubuntu/Kali Linux
 			if [ -e "${MNT_TARGET}/etc/init.d/ssh" ]; then
