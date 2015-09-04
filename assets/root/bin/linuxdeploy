@@ -26,6 +26,22 @@ i[3-6]86|x86*|amd64)
 esac
 }
 
+multiarch_support()
+{
+local binfmt_dir=""
+if [ -d "/proc/sys/fs/binfmt_misc" ]; then
+	binfmt_dir="/proc/sys/fs/binfmt_misc"
+elif [ -e "/proc/modules" -a "$(grep -c ^binfmt_misc /proc/modules)" -ne 0 ]; then
+	binfmt_dir="/data/local/binfmt_misc"
+fi
+if [ -n "${binfmt_dir}" ]; then
+	echo ${binfmt_dir}
+	return 0
+else
+	return 1
+fi
+}
+
 prepare_system()
 {
 msg -n "Checking mount points ... "
@@ -468,7 +484,7 @@ msg -n "$1 ... "
 		esac
 	;;
 	qemu)
-		[ -d "/proc/sys/fs/binfmt_misc" -o "$(grep -c ^binfmt_misc /proc/modules)" -ne 0 ] || exit 0
+		multiarch_support || exit 0
 		local platform=$(get_platform)
 		case "${platform}" in
 		arm)
@@ -889,15 +905,10 @@ shm)
 	fi
 ;;
 binfmt_misc)
-	local binfmt_dir=""
-	if [ -d "/proc/sys/fs/binfmt_misc" ]; then
-		binfmt_dir="/proc/sys/fs/binfmt_misc"
-	elif [ "$(grep -c ^binfmt_misc /proc/modules)" -ne 0 ]; then
-		binfmt_dir="/data/local/binfmt_misc"
-		[ -e "${binfmt_dir}" ] || mkdir ${binfmt_dir}
-	fi
+	local binfmt_dir=$(multiarch_support)
 	if [ -n "${binfmt_dir}" ]; then
 		msg -n "${binfmt_dir} ... "
+		[ -e "${binfmt_dir}" ] || mkdir ${binfmt_dir}
 		mount -t binfmt_misc binfmt_misc ${binfmt_dir}
 		local platform=$(get_platform)
 		case "${platform}" in
@@ -989,12 +1000,7 @@ do
 	done
 done
 
-local binfmt_dir=""
-if [ -d "/proc/sys/fs/binfmt_misc" ]; then
-	binfmt_dir="/proc/sys/fs/binfmt_misc"
-elif [ "$(grep -c ^binfmt_misc /proc/modules)" -ne 0 ]; then
-	binfmt_dir="/data/local/binfmt_misc"
-fi
+local binfmt_dir=$(multiarch_support)
 if [ -n "${binfmt_dir}" ]; then
 	msg -n "${binfmt_dir} ... "
 	local platform=$(get_platform)
@@ -1078,7 +1084,8 @@ ssh)
 	fi
 ;;
 vnc)
-	let local vncport=5900+${VNC_DISPLAY}
+	local vncport=5900
+	let vncport=${vncport}+${VNC_DISPLAY}
 	msg -n "VNC :${vncport} ... "
 	local xpid=$(cat ${MNT_TARGET}/tmp/xsession.pid)
 	[ -n "${xpid}" ] && local xsession=$(ps | grep "^${xpid} ")
@@ -1311,7 +1318,7 @@ debian|ubuntu|kali)
 archlinux)
 	msg "Installing Arch Linux distribution: "
 
-	local basic_packages="acl archlinux-keyring attr bash bzip2 ca-certificates coreutils cracklib curl db e2fsprogs expat filesystem findutils gawk gcc-libs gdbm glibc gmp gnupg gpgme grep keyutils krb5 libarchive libassuan libcap libgcrypt libgpg-error libgssglue libidn libksba libldap libsasl libssh2 libtirpc linux-api-headers lzo ncurses openssl pacman pacman-mirrorlist pam pambase perl pinentry pth readline run-parts sed shadow sudo tzdata util-linux xz which zlib"
+	local basic_packages="acl archlinux-keyring attr bash bzip2 ca-certificates coreutils cracklib curl db e2fsprogs expat filesystem findutils gawk gcc-libs gdbm glibc gmp gnupg gpgme grep keyutils krb5 libarchive libassuan libcap libgcrypt libgpg-error libgssglue libidn libksba libldap libsasl libssh2 libtirpc linux-api-headers lzo ncurses nettle openssl pacman pacman-mirrorlist pam pambase perl pinentry pth readline run-parts sed shadow sudo tzdata util-linux xz which zlib"
 
 	local platform=$(get_platform ${ARCH})
 	if [ "${platform}" = "intel" ]
@@ -1767,7 +1774,7 @@ msg -n "Loop devices: "
 [ -z "$(losetup -f)" ] && msg "no" || msg "yes"
 
 msg -n "Support binfmt_misc: "
-[ -d "/proc/sys/fs/binfmt_misc" -o "$(grep -c ^binfmt_misc /proc/modules)" -ne 0 ] && msg "yes" || msg "no"
+multiarch_support && msg "yes" || msg "no"
 
 msg -n "Supported FS: "
 local supported_fs=$(printf '%s ' $(grep -v nodev /proc/filesystems | sort))
@@ -1824,16 +1831,17 @@ done
 [ -z "${is_partitions}" ] && msg " ...no available partitions"
 
 echo "Configuration file: "
-cat ${ENV_DIR%/}/etc/deploy.conf
+cat ${CONF_FILE}
 }
 
 load_conf()
 {
 if [ -r "$1" ]; then
 	. $1
+	[ $? -ne 0 ] && exit 1
 else
 	echo "Configuration file not found."
-	return 1
+	exit 1
 fi
 }
 
@@ -1881,13 +1889,9 @@ umask 0022
 
 cd ${ENV_DIR}
 
-# load config
+# load default config
 CONF_FILE="${ENV_DIR%/}/etc/deploy.conf"
-if [ -e "${CONF_FILE}" ]
-then
-	load_conf "${CONF_FILE}"
-	[ $? -ne 0 ] && exit 1
-fi
+[ -e "${CONF_FILE}" ] && load_conf "${CONF_FILE}"
 
 # parse options
 while getopts :c:dt FLAG
@@ -1896,7 +1900,6 @@ do
 	c)
 		CONF_FILE=${OPTARG}
 		load_conf "${CONF_FILE}"
-		[ $? -ne 0 ] && exit 1
 	;;
 	d)
 		DEBUG_MODE="y"
@@ -1908,7 +1911,8 @@ do
 done
 shift $((OPTIND-1))
 
-[ ! -e "${CONF_FILE}" ] && exit 1
+# exit if config not found
+[ -e "${CONF_FILE}" ] || load_conf "${CONF_FILE}"
 
 # log level
 exec 3>&1
