@@ -12,6 +12,7 @@ Updated command line interface
 Added ability to change password from GUI
 Translated into Vietnamese
 Updated root checker
+Added support aarch64 for Arch Linux
 
 1.5.1
 Added support for installation type in RAM
@@ -312,6 +313,7 @@ Updated list packages of base system installation
 Добавлена возможность изменять пароль из интерфейса приложения
 Переведено на вьетнамский язык
 Изменен механизм проверки прав суперпользователя
+Добавлена поддержка aarch64 для Arch Linux
 
 1.5.1
 Добавлена поддержка установки дистрибутивов в оперативную память

@@ -393,6 +393,7 @@
         <item>arm</item>
         <item>armv6h</item>
         <item>armv7h</item>
+        <item>aarch64</item>
         <item>i686</item>
         <item>x86_64</item>
     </string-array>
