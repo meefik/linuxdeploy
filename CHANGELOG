@@ -13,6 +13,7 @@ Added ability to change password from GUI
 Translated into Vietnamese
 Updated root checker
 Added support aarch64 for Arch Linux
+Fixed autostart problem
 
 1.5.1
 Added support for installation type in RAM
@@ -314,6 +315,7 @@ Updated list packages of base system installation
 Переведено на вьетнамский язык
 Изменен механизм проверки прав суперпользователя
 Добавлена поддержка aarch64 для Arch Linux
+Исправлена проблема с автозапуском
 
 1.5.1
 Добавлена поддержка установки дистрибутивов в оперативную память

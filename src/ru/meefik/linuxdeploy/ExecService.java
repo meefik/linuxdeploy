@@ -14,10 +14,10 @@ public class ExecService extends Service {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		Context mContext = this;
+		Context mContext = getApplicationContext();
 		MainActivity.notification(mContext, null);
 		String command = intent.getStringExtra("command");
-		new ExecScript(getApplicationContext(), command).start();
+		new ExecScript(mContext, command).start();
 		return super.onStartCommand(intent, flags, startId);
 	}
 
