@@ -12,12 +12,13 @@ import java.util.List;
 import java.util.Locale;
 
 import android.os.Handler;
+import android.os.Looper;
 
 public class Logger {
 
 	private static volatile List<String> protocol = new ArrayList<>();
 	private static boolean fragment = false;
-	private static final Handler outputUpdater = new Handler();
+	private static final Handler outputUpdater = new Handler(Looper.getMainLooper());
 
 	private static String getTimeStamp() {
 		return "["

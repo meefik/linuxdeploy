@@ -35,6 +35,7 @@ public class MainActivity extends SherlockActivity {
 	}
 
 	public static void showLog() {
+		if (logView == null || logScroll == null) return;
 		// show log in TextView
 		logView.post(new Runnable() {
 			@Override
