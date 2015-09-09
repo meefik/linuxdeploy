@@ -52,7 +52,7 @@
     
     <!-- Kali Linux -->
 
-    <string-array name="kali_components_entries">
+    <string-array name="kalilinux_components_entries">
         <item>Окружение рабочего стола</item>
         <item>SSH сервер</item>
         <item>VNC сервер</item>

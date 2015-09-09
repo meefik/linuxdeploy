@@ -263,7 +263,7 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 				pref.setSummary(this
 						.getString(R.string.summary_disksize_preference));
 			}
-			if (editPref.getText().equals("{replace}")) {
+			if (editPref.getText().isEmpty()) {
 				if (editPref.getKey().equals("diskimage")) {
 					File extStore = Environment.getExternalStorageDirectory();
 					String imgFile = extStore.getAbsolutePath() + "/linux.img";
@@ -327,7 +327,7 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 					architecture.setEntries(architectureValuesId);
 					architecture.setEntryValues(architectureValuesId);
 				}
-				if (init || architecture.getValue().equals("{replace}")) {
+				if (init || architecture.getValue().isEmpty()) {
 					int architectureId = PrefStore.getResourceId(this,
 							PrefStore.MARCH + "_" + distributionStr
 									+ "_architecture", "string");
@@ -341,7 +341,7 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 				architecture.setEnabled(true);
 
 				// mirror
-				if (init || mirror.getText().equals("{replace}")) {
+				if (init || mirror.getText().isEmpty()) {
 					int mirrorId = PrefStore
 							.getResourceId(this, PrefStore.MARCH + "_"
 									+ distributionStr + "_mirror", "string");
@@ -438,7 +438,8 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 					break;
 				default:
 					if (init) {
-						diskimage.setText("/data/local/linux");
+						diskimage
+								.setText(PrefStore.EXTERNAL_STORAGE);
 					}
 					disksize.setEnabled(false);
 					fstype.setEnabled(false);

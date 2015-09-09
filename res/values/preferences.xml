@@ -9,20 +9,21 @@
     <string name="theme" translatable="false">dark</string>
     <string name="autostart" translatable="false">false</string>
     <string name="appicon" translatable="false">true</string>
-    <string name="envdir" translatable="false">{replace}</string>
+    <string name="envdir" translatable="false"></string>
     <string name="builtinshell" translatable="false">true</string>
     <string name="symlink" translatable="false">false</string>
     <string name="profile" translatable="false">Linux</string>
     <string name="debug" translatable="false">false</string>
     <string name="trace" translatable="false">false</string>
     <string name="logs" translatable="false">false</string>
-    <string name="logfile" translatable="false">{replace}</string>
+    <string name="logfile" translatable="false"></string>
     <string name="distribution" translatable="false">debian</string>
     <string name="suite" translatable="false">@string/debian_suite</string>
-    <string name="architecture" translatable="false">{replace}</string>
-    <string name="mirror" translatable="false">{replace}</string>
+    <string name="architecture" translatable="false"></string>
+    <string name="mirror" translatable="false"></string>
     <string name="deploytype" translatable="false">file</string>
-    <string name="diskimage" translatable="false">{replace}</string>
+    <string name="mountdir" translatable="false">/data/local/linux</string>
+    <string name="diskimage" translatable="false"></string>
     <string name="disksize" translatable="false">0</string>
     <string name="fstype" translatable="false">auto</string>
     <string name="username" translatable="false">android</string>
@@ -34,6 +35,7 @@
     <string name="customstartup" translatable="false">false</string>
     <string name="scripts" translatable="false">/etc/init.d/myscript</string>
     <string name="custommount" translatable="false">false</string>
+    <string name="mounts" translatable="false">{storage} /system</string>
     <string name="guistartup" translatable="false">true</string>
     <string name="guitype" translatable="false">vnc</string>
     <string name="sshstartup" translatable="false">true</string>
@@ -41,8 +43,8 @@
     <string name="vncdisplay" translatable="false">0</string>
     <string name="vncdepth" translatable="false">16</string>
     <string name="vncdpi" translatable="false">75</string>
-    <string name="vncwidth" translatable="false">{replace}</string>
-    <string name="vncheight" translatable="false">{replace}</string>
+    <string name="vncwidth" translatable="false"></string>
+    <string name="vncheight" translatable="false"></string>
     <string name="vncargs" translatable="false"></string>
     <string name="xdisplay" translatable="false">0</string>
     <string name="xhost" translatable="false">127.0.0.1</string>
@@ -78,13 +80,13 @@
     <string name="intel_ubuntu_architecture" translatable="false">i386</string>
         
     <!-- Kali Linux -->
-    <string name="kali_suite" translatable="false">sana</string>
+    <string name="kalilinux_suite" translatable="false">sana</string>
     <!-- arm -->
-    <string name="arm_kali_mirror" translatable="false">http://http.kali.org/kali/</string>
-    <string name="arm_kali_architecture" translatable="false">armhf</string>
+    <string name="arm_kalilinux_mirror" translatable="false">http://http.kali.org/kali/</string>
+    <string name="arm_kalilinux_architecture" translatable="false">armhf</string>
     <!-- intel -->
-    <string name="intel_kali_mirror" translatable="false">http://http.kali.org/kali/</string>
-    <string name="intel_kali_architecture" translatable="false">i386</string>
+    <string name="intel_kalilinux_mirror" translatable="false">http://http.kali.org/kali/</string>
+    <string name="intel_kalilinux_architecture" translatable="false">i386</string>
 
     <!-- Fedora -->
     <string name="fedora_suite" translatable="false">21</string>

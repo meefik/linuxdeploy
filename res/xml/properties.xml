@@ -56,7 +56,7 @@
             android:key="deploytype"
             android:summary="@string/deploytype"
             android:title="@string/title_deploytype_preference" />
-
+        
         <EditTextPreference
             android:defaultValue="@string/diskimage"
             android:dialogTitle="@string/dialog_title_diskimage_preference"
@@ -127,6 +127,13 @@
             android:title="@string/title_components_preference" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/startup_preferences" >
+        <EditTextPreference
+            android:defaultValue="@string/mountdir"
+            android:dialogTitle="@string/dialog_title_mountdir_preference"
+            android:key="mountdir"
+            android:summary="@string/mountdir"
+            android:title="@string/title_mountdir_preference" />
+        
         <CheckBoxPreference
             android:defaultValue="@string/sshstartup"
             android:key="sshstartup"

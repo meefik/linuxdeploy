@@ -66,8 +66,8 @@
     <string name="title_autostart_preference">开机启动</string>
     <string name="summary_autostart_preference">在 Android 启动时自动启动 GNU/Linux</string>
     <string name="env_preferences">系统环境</string>
-    <string name="title_installdir_preference">环境目录</string>
-    <string name="dialog_title_installdir_preference">环境目录</string>
+    <string name="title_envdir_preference">环境目录</string>
+    <string name="dialog_title_envdir_preference">环境目录</string>
     <string name="title_builtinshell_preference">内置终端</string>
     <string name="summary_builtinshell_preference">使用内置的 BusyBox</string>
     <string name="title_symlink_preference">建立符号链接</string>
@@ -129,6 +129,8 @@
     <string name="summary_components_preference">选择要安装的组件</string>
     <string name="title_components_preference">选择组件</string>
     <string name="startup_preferences">启动</string>
+    <string name="title_mountdir_preference">Chroot 目录</string>
+    <string name="dialog_title_mountdir_preference">Chroot 目录</string>
     <string name="title_sshstartup_preference">SSH</string>
     <string name="summary_sshstartup_preference">允许 SSH 服务器启动</string>
     <string name="title_sshproperties_preference">SSH 设置</string>
@@ -163,12 +165,12 @@
     <string name="dialog_title_vncheight_preference">VNC: 屏幕高度</string>
     <string name="title_vncargs_preference">VNC 参数</string>
     <string name="dialog_title_vncargs_preference">VNC: 服务器参数</string>
-    <string name="xserver_preferences">X Window</string>
+    <string name="xserver_preferences">X Server</string>
     <string name="title_xdisplay_preference">显示</string>
     <string name="dialog_title_xdisplay_preference">X: 窗口序号</string>
     <string name="title_xhost_preference">X11 服务器地址</string>
     <string name="dialog_title_xhost_preference">X: IP地址或域名</string>
-    <string name="fb_preferences">Frame Buffer</string>
+    <string name="fb_preferences">Framebuffer</string>
     <string name="title_fbdisplay_preference">显示</string>
     <string name="dialog_title_fbdisplay_preference">FB: 窗口序号</string>
     <string name="title_fbdpi_preference">DPI</string>
