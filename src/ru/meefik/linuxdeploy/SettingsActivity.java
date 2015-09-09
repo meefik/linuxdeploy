@@ -110,7 +110,7 @@ public class SettingsActivity extends SherlockPreferenceActivity implements
 			pref.setSummary(editPref.getText());
 
 			if (editPref.getKey().equals("logfile")
-					&& editPref.getText().equals("{replace}")) {
+					&& editPref.getText().isEmpty()) {
 				File extStore = Environment.getExternalStorageDirectory();
 				String logFile = extStore.getAbsolutePath()
 						+ "/linuxdeploy.log";

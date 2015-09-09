@@ -55,6 +55,7 @@ public class PrefStore {
 	public static String LOG_FILE;
 
 	// to deploy
+	public static String MNT_TARGET;
 	public static String IMG_TARGET;
 	public static String DEPLOY_TYPE;
 	public static String IMG_SIZE;
@@ -118,7 +119,7 @@ public class PrefStore {
 		List<String> lines = new ArrayList<>();
 		lines.add("DEBUG_MODE=\"" + DEBUG_MODE + "\"");
 		lines.add("TRACE_MODE=\"" + TRACE_MODE + "\"");
-		lines.add("MNT_TARGET=\"${ENV_DIR%/}/mnt\"");
+		lines.add("MNT_TARGET=\"" + MNT_TARGET + "\"");
 		lines.add("IMG_TARGET=\"" + IMG_TARGET + "\"");
 		lines.add("IMG_SIZE=\"" + IMG_SIZE + "\"");
 		lines.add("FS_TYPE=\"" + FS_TYPE + "\"");
@@ -221,11 +222,10 @@ public class PrefStore {
 		LANGUAGE = sp.getString("language", c.getString(R.string.language));
 		THEME = sp.getString("theme", c.getString(R.string.theme));
 
-		ENV_DIR = sp.getString("installdir", c.getString(R.string.envdir));
-		if (ENV_DIR.equals("{replace}"))
-			ENV_DIR = c.getApplicationInfo().dataDir + File.separator + "linux";
-		// Update ENV_DIR
-		prefEditor.putString("installdir", ENV_DIR);
+		ENV_DIR = sp.getString("envdir", c.getString(R.string.envdir));
+		if (ENV_DIR.isEmpty())
+			ENV_DIR = c.getApplicationInfo().dataDir + "/linux";
+		prefEditor.putString("envdir", ENV_DIR);
 
 		BUILTIN_SHELL = sp.getBoolean("builtinshell",
 				c.getString(R.string.builtinshell).equals("true") ? true
@@ -259,6 +259,7 @@ public class PrefStore {
 		sp = c.getSharedPreferences(CURRENT_PROFILE, Context.MODE_PRIVATE);
 		prefEditor = sp.edit();
 
+		MNT_TARGET = sp.getString("mountdir", c.getString(R.string.mountdir));
 		IMG_TARGET = sp.getString("diskimage", EXTERNAL_STORAGE + "/linux.img");
 		DEPLOY_TYPE = sp.getString("deploytype",
 				c.getString(R.string.deploytype));
@@ -271,7 +272,8 @@ public class PrefStore {
 		ARCH = sp.getString("architecture", c.getString(R.string.architecture));
 		USER_NAME = sp.getString("username", c.getString(R.string.username))
 				.toLowerCase(Locale.ENGLISH);
-		USER_PASSWORD = sp.getString("password", c.getString(R.string.password))
+		USER_PASSWORD = sp
+				.getString("password", c.getString(R.string.password))
 				.toLowerCase(Locale.ENGLISH);
 		SERVER_DNS = sp.getString("serverdns", c.getString(R.string.serverdns));
 		LOCALE = sp.getString("locale", c.getString(R.string.locale));
@@ -349,8 +351,10 @@ public class PrefStore {
 			char a = arch.toLowerCase().charAt(0);
 			switch (a) {
 			case 'a':
-				if (arch.equals("amd64")) march = "intel";
-				else march = "arm";
+				if (arch.equals("amd64"))
+					march = "intel";
+				else
+					march = "arm";
 				break;
 			case 'm':
 				march = "mips";
@@ -554,7 +558,8 @@ public class PrefStore {
 	public static List<String> getMountsList(Context c) {
 		SharedPreferences sp = c.getSharedPreferences(CURRENT_PROFILE,
 				Context.MODE_PRIVATE);
-		String str = sp.getString("mounts", EXTERNAL_STORAGE);
+		String str = sp.getString("mounts", c.getString(R.string.mounts)
+				.replace("{storage}", EXTERNAL_STORAGE));
 		List<String> list = new ArrayList<String>();
 		for (String i : str.split(" ")) {
 			list.add(i);

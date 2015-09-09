@@ -28,21 +28,14 @@ public class ExecScript extends Thread {
 			// remove env
 			EnvUtils.removeEnv(c);
 			break;
-		case "install":
-		case "configure":
-		case "export":
-			// update config file
-			if (PrefStore.isLatestVersion()) {
-				EnvUtils.updateConf();
-			}
 		default:
 			// update env when version is changed
 			if (!PrefStore.isLatestVersion()) {
 				// update env
 				EnvUtils.updateEnv(c);
-				// update config file
-				EnvUtils.updateConf();
 			}
+			// update config file
+			EnvUtils.updateConf();
 			// exec linuxdeploy command
 			List<String> params = new ArrayList<String>();
 			params.add("export LINUXDEPLOY_DIR=" + PrefStore.ENV_DIR);

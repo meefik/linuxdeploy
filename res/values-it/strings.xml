@@ -66,8 +66,8 @@
     <string name="title_autostart_preference">Avvio automatico</string>
     <string name="summary_autostart_preference">Esegui automaticamente GNU/Linux all\'avvio di Android</string>
     <string name="env_preferences">Ambiente operativo</string>
-    <string name="title_installdir_preference">Cartella ENV</string>
-    <string name="dialog_title_installdir_preference">Cartella ENV</string>
+    <string name="title_envdir_preference">Cartella ENV</string>
+    <string name="dialog_title_envdir_preference">Cartella ENV</string>
     <string name="title_builtinshell_preference">Shell integrata</string>
     <string name="summary_builtinshell_preference">Usa la versione di BusyBox integrata</string>
     <string name="title_symlink_preference">Crea collegamento</string>
@@ -129,6 +129,8 @@
     <string name="summary_components_preference">Seleziona componenti da installare</string>
     <string name="title_components_preference">Seleziona componenti</string>
     <string name="startup_preferences">Avvio</string>
+    <string name="title_mountdir_preference">Chroot cartella</string>
+    <string name="dialog_title_mountdir_preference">Chroot cartella</string>
     <string name="title_sshstartup_preference">SSH</string>
     <string name="summary_sshstartup_preference">Permetti l\'avvio del server SSH</string>
     <string name="title_sshproperties_preference">Impostazioni SSH</string>
@@ -163,12 +165,12 @@
     <string name="dialog_title_vncheight_preference">Altezza schermo VNC:</string>
     <string name="title_vncargs_preference">Opzioni VNC</string>
     <string name="dialog_title_vncargs_preference">Opzioni server VNC:</string>
-    <string name="xserver_preferences">Sistema finestre X</string>
+    <string name="xserver_preferences">X Server</string>
     <string name="title_xdisplay_preference">Schermo</string>
     <string name="dialog_title_xdisplay_preference">Numero schermo X:</string>
     <string name="title_xhost_preference">Indirizzo server X</string>
     <string name="dialog_title_xhost_preference">IP o nome host X:</string>
-    <string name="fb_preferences">Frame Buffer</string>
+    <string name="fb_preferences">Framebuffer</string>
     <string name="title_fbdisplay_preference">Schermo</string>
     <string name="dialog_title_fbdisplay_preference">Numero schermo FB:</string>
     <string name="title_fbdpi_preference">DPI</string>

@@ -208,16 +208,10 @@ public class EnvUtils {
 			return;
 		}
 
-		// env directories
-		String[] dirs = { PrefStore.ENV_DIR + "/bin",
-				PrefStore.ENV_DIR + "/etc", PrefStore.ENV_DIR + "/deploy" };
-
 		// clean env directory
-		File f = new File(PrefStore.ENV_DIR);
-		f.mkdirs();
-		for (String dir : dirs) {
-			cleanDirectory(new File(dir));
-		}
+		File envDir = new File(PrefStore.ENV_DIR);
+		cleanDirectory(envDir);
+		envDir.mkdirs();
 
 		// extract assets
 		if (!extractDir(c, PrefStore.ROOT_ASSETS, "")) {
@@ -242,9 +236,7 @@ public class EnvUtils {
 		}
 
 		// set permissions
-		for (String dir : dirs) {
-			setPermissions(new File(dir));
-		}
+		setPermissions(envDir);
 
 		// exec shell commands
 		List<String> params = new ArrayList<String>();
@@ -254,10 +246,9 @@ public class EnvUtils {
 			params.add("exec 2>/dev/null");
 		}
 		// fallback permissions
-		for (String dir : dirs) {
-			params.add("chmod -R 755 " + dir);
-			params.add("find " + dir + " | while read f; do chmod 755 $f; done");
-		}
+		params.add("chmod -R 755 " + PrefStore.ENV_DIR);
+		params.add("find " + PrefStore.ENV_DIR + " | while read f; do chmod 755 $f; done");
+
 		// install BusyBox
 		params.add(PrefStore.ENV_DIR + "/bin/busybox --install -s "
 				+ PrefStore.ENV_DIR + "/bin");
@@ -306,10 +297,7 @@ public class EnvUtils {
 				+ "rm -f /system/bin/linuxdeploy || "
 				+ "{ mount -o rw,remount /system; rm -f /system/bin/linuxdeploy; mount -o ro,remount /system; };"
 				+ "fi");
-		params.add("rm -rf " + PrefStore.ENV_DIR + "/mnt " + PrefStore.ENV_DIR
-				+ "/deploy " + PrefStore.ENV_DIR + "/etc " + PrefStore.ENV_DIR
-				+ "/bin");
-		params.add("rmdir " + PrefStore.ENV_DIR);
+		params.add("rm -rf " + PrefStore.ENV_DIR);
 
 		if (exec(params)) {
 			Logger.log("done\n");

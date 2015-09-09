@@ -66,8 +66,8 @@
     <string name="title_autostart_preference">Tự khởi động</string>
     <string name="summary_autostart_preference">Tự khởi động GNU/Linux khi mở nguồn</string>
     <string name="env_preferences">Môi trường điều hành</string>
-    <string name="title_installdir_preference">Đường dẫn ENV</string>
-    <string name="dialog_title_installdir_preference">Đường dẫn ENV</string>
+    <string name="title_envdir_preference">Đường dẫn ENV</string>
+    <string name="dialog_title_envdir_preference">Đường dẫn ENV</string>
     <string name="title_builtinshell_preference">Xây dựng trong shell</string>
     <string name="summary_builtinshell_preference">Sử dụng xây dựng trong BusyBox</string>
     <string name="title_symlink_preference">Tạo liên kết tượng trưng</string>
@@ -129,6 +129,8 @@
     <string name="summary_components_preference"> Chọn các thành phần để cài đặt</string>
     <string name="title_components_preference">Chọn các thành phần</string>
     <string name="startup_preferences">Khởi động</string>
+    <string name="title_mountdir_preference">Chroot đường dẫn</string>
+    <string name="dialog_title_mountdir_preference">Chroot đường dẫn</string>
     <string name="title_sshstartup_preference">SSH</string>
     <string name="summary_sshstartup_preference">Cho phép khởi động máy chủ SSH</string>
     <string name="title_sshproperties_preference">Tuỳ chọn SSH</string>
@@ -163,12 +165,12 @@
     <string name="dialog_title_vncheight_preference">VNC: chiều cao màn hình</string>
     <string name="title_vncargs_preference">Tuỳ chọn VNC</string>
     <string name="dialog_title_vncargs_preference">VNC:  tuỳ chọn máy chủ vnc</string>
-    <string name="xserver_preferences">Hệ thống X Window</string>
+    <string name="xserver_preferences">X Server</string>
     <string name="title_xdisplay_preference">Hiển thị</string>
     <string name="dialog_title_xdisplay_preference">X: số hiển thị</string>
     <string name="title_xhost_preference">Địa chỉ máy chủ X</string>
     <string name="dialog_title_xhost_preference">X: IP hoặc tên máy chủ</string>
-    <string name="fb_preferences">Khung đệm</string>
+    <string name="fb_preferences">Framebuffer</string>
     <string name="title_fbdisplay_preference">Hiển thị</string>
     <string name="dialog_title_fbdisplay_preference">FB: hiển thị số</string>
     <string name="title_fbdpi_preference">DPI</string>

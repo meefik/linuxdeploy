@@ -66,8 +66,8 @@
     <string name="title_autostart_preference">Autostart</string>
     <string name="summary_autostart_preference">Automatically run GNU/Linux when starting Android</string>
     <string name="env_preferences">Operating environment</string>
-    <string name="title_installdir_preference">ENV directory</string>
-    <string name="dialog_title_installdir_preference">ENV directory</string>
+    <string name="title_envdir_preference">ENV directory</string>
+    <string name="dialog_title_envdir_preference">ENV directory</string>
     <string name="title_builtinshell_preference">Built-in shell</string>
     <string name="summary_builtinshell_preference">Use the built-in BusyBox</string>
     <string name="title_symlink_preference">Create symlink</string>
@@ -129,6 +129,8 @@
     <string name="summary_components_preference">Select components to install</string>
     <string name="title_components_preference">Select components</string>
     <string name="startup_preferences">Startup</string>
+    <string name="title_mountdir_preference">Chroot directory</string>
+    <string name="dialog_title_mountdir_preference">Chroot directory</string>
     <string name="title_sshstartup_preference">SSH</string>
     <string name="summary_sshstartup_preference">Allow startup of SSH server</string>
     <string name="title_sshproperties_preference">SSH settings</string>
@@ -163,12 +165,12 @@
     <string name="dialog_title_vncheight_preference">VNC: screen height</string>
     <string name="title_vncargs_preference">VNC options</string>
     <string name="dialog_title_vncargs_preference">VNC: vncserver options</string>
-    <string name="xserver_preferences">X Window System</string>
+    <string name="xserver_preferences">X Server</string>
     <string name="title_xdisplay_preference">Display</string>
     <string name="dialog_title_xdisplay_preference">X: display number</string>
     <string name="title_xhost_preference">X server address</string>
     <string name="dialog_title_xhost_preference">X: IP or host name</string>
-    <string name="fb_preferences">Frame Buffer</string>
+    <string name="fb_preferences">Framebuffer</string>
     <string name="title_fbdisplay_preference">Display</string>
     <string name="dialog_title_fbdisplay_preference">FB: display number</string>
     <string name="title_fbdpi_preference">DPI</string>
