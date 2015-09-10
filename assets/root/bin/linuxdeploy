@@ -42,6 +42,24 @@ else
 fi
 }
 
+selinux_support()
+{
+if [ -e "/sys/fs/selinux/enforce" ]; then
+	return 0
+else
+	return 1
+fi
+}
+
+loop_support()
+{
+if [ -n "$(losetup -f)" ]; then
+	return 0
+else
+	return 1
+fi
+}
+
 container_mounted()
 {
 local is_mnt=$(grep -c " ${MNT_TARGET} " /proc/mounts)
@@ -50,18 +68,26 @@ local is_mnt=$(grep -c " ${MNT_TARGET} " /proc/mounts)
 
 ssh_started()
 {
-local sshd=$(ps | grep -E '/s?bin/sshd' | grep -v grep)
-[ -z "${sshd}" ] && return 1 || return 0
+local is_started=""
+for path in /run/sshd.pid /var/run/sshd.pid
+do
+	if [ -e "${MNT_TARGET}${path}" ]; then
+		local pid=$(cat ${MNT_TARGET}${path})
+		[ -n "${pid}" ] && is_started=$(ps | awk '{if ($1 == '${pid}') print $1}')
+		break
+	fi
+done
+[ -z "${is_started}" ] && return 1 || return 0
 }
 
 gui_started()
 {
-local xsession=""
+local is_started=""
 if [ -e "${MNT_TARGET}/tmp/xsession.pid" ]; then
-	local xpid=$(cat ${MNT_TARGET}/tmp/xsession.pid)
-	[ -n "${xpid}" ] && xsession=$(ps | awk '{if ($1 == '${xpid}') print $1}')
+	local pid=$(cat ${MNT_TARGET}/tmp/xsession.pid)
+	[ -n "${pid}" ] && is_started=$(ps | awk '{if ($1 == '${pid}') print $1}')
 fi
-[ -z "${xsession}" ] && return 1 || return 0
+[ -z "${is_started}" ] && return 1 || return 0
 }
 
 prepare_container()
@@ -101,10 +127,8 @@ if [ "${DEPLOY_TYPE}" = "file" ]; then
 		[ "${IMG_SIZE}" -lt 512 ] && IMG_SIZE=512
 	fi
 	msg -n "Making new disk image (${IMG_SIZE} MB) ... "
-	(set -e
-		dd if=/dev/zero of=${IMG_TARGET} bs=1048576 seek=$(expr ${IMG_SIZE} - 1) count=1 ||
-		dd if=/dev/zero of=${IMG_TARGET} bs=1048576 count=${IMG_SIZE}
-	exit 0)
+	dd if=/dev/zero of=${IMG_TARGET} bs=1048576 seek=$(expr ${IMG_SIZE} - 1) count=1 ||
+	dd if=/dev/zero of=${IMG_TARGET} bs=1048576 count=${IMG_SIZE}
 	[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 fi
 
@@ -121,11 +145,10 @@ if [ "${DEPLOY_TYPE}" = "file" -o "${DEPLOY_TYPE}" = "partition" ]; then
 	[ "${FS_TYPE}" = "auto" ] && FS_TYPE=${fs_support}
 
 	msg -n "Making file system (${FS_TYPE}) ... "
-	(set -e
-		is_loop=$(losetup -a | grep -c ${IMG_TARGET} || true)
-		is_raw=$(grep -c ${IMG_TARGET} /proc/mounts || true)
-		[ "${is_loop}" -eq 0 -a "${is_raw}" -eq 0 ] && mke2fs -qF -t ${FS_TYPE} -O ^has_journal ${IMG_TARGET}
-	exit 0)
+	local loop_exist=$(losetup -a | grep -c ${IMG_TARGET})
+	local img_mounted=$(grep -c ${IMG_TARGET} /proc/mounts)
+	[ "${loop_exist}" -ne 0 -o "${img_mounted}" -ne 0 ] && { msg "fail"; return 1; }
+	mke2fs -qF -t ${FS_TYPE} -O ^has_journal ${IMG_TARGET}
 	[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 fi
 
@@ -136,10 +159,8 @@ if [ "${DEPLOY_TYPE}" = "ram" ]; then
 		let IMG_SIZE="${ram_free}/1024"
 	fi
 	msg -n "Making new disk image (${IMG_SIZE} MB) ... "
-	(set -e
-		mkdir ${IMG_TARGET} || true
-		mount -t tmpfs -o size=${IMG_SIZE}M tmpfs ${IMG_TARGET}
-	exit 0)
+	[ -d "${IMG_TARGET}" ] || mkdir ${IMG_TARGET}
+	mount -t tmpfs -o size=${IMG_SIZE}M tmpfs ${IMG_TARGET}
 	[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 fi
 
@@ -186,18 +207,17 @@ sys)
 	fi
 ;;
 selinux)
+	selinux_support || return 0
 	msg -n "/sys/fs/selinux ... "
 	local target=${MNT_TARGET}/sys/fs/selinux
 	local is_mnt=$(grep -c " ${target} " /proc/mounts)
-	if [ "${is_mnt}" -eq 0 -a -d "/sys/fs/selinux" ]; then
-		if [ -e /sys/fs/selinux/enforce ]; then
+	if [ "${is_mnt}" -eq 0 ]; then
+		if [ -e "/sys/fs/selinux/enforce" ]; then
 			cat /sys/fs/selinux/enforce > ${ENV_DIR%/}/etc/selinux_state
 			echo 0 > /sys/fs/selinux/enforce
 		fi
-		(set -e
-			mount -t selinuxfs selinuxfs ${target}
-			mount -o remount,ro,bind ${target}
-		exit 0)
+		mount -t selinuxfs selinuxfs ${target} &&
+		mount -o remount,ro,bind ${target}
 		[ $? -eq 0 ] && msg "done" || msg "fail"
 	else
 		msg "skip"
@@ -254,32 +274,31 @@ shm)
 ;;
 binfmt_misc)
 	local binfmt_dir=$(multiarch_support)
-	if [ -n "${binfmt_dir}" ]; then
-		msg -n "${binfmt_dir} ... "
-		[ -e "${binfmt_dir}" ] || mkdir ${binfmt_dir}
-		[ -e "${binfmt_dir}/register" ] || mount -t binfmt_misc binfmt_misc ${binfmt_dir}
-		case "$(get_platform)" in
-		arm)
-			if [ ! -e "${binfmt_dir}/qemu-i386" ]; then
-				echo ':qemu-i386:M::\x7fELF\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x03\x00:\xff\xff\xff\xff\xff\xfe\xfe\xff\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff:/usr/local/bin/qemu-i386-static:' > ${binfmt_dir}/register
-				[ $? -eq 0 ] && msg "done" || msg "fail"
-			else
-				msg "skip"
-			fi
-		;;
-		intel)
-			if [ ! -e "${binfmt_dir}/qemu-arm" ]; then
-				echo ':qemu-arm:M::\x7fELF\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x28\x00:\xff\xff\xff\xff\xff\xff\xff\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff:/usr/local/bin/qemu-arm-static:' > ${binfmt_dir}/register
-				[ $? -eq 0 ] && msg "done" || msg "fail"
-			else
-				msg "skip"
-			fi
-		;;
-		*)
+	[ -n "${binfmt_dir}" ] || return 0
+	msg -n "${binfmt_dir} ... "
+	[ -e "${binfmt_dir}" ] || mkdir ${binfmt_dir}
+	[ -e "${binfmt_dir}/register" ] || mount -t binfmt_misc binfmt_misc ${binfmt_dir}
+	case "$(get_platform)" in
+	arm)
+		if [ ! -e "${binfmt_dir}/qemu-i386" ]; then
+			echo ':qemu-i386:M::\x7fELF\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x03\x00:\xff\xff\xff\xff\xff\xfe\xfe\xff\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff:/usr/local/bin/qemu-i386-static:' > ${binfmt_dir}/register
+			[ $? -eq 0 ] && msg "done" || msg "fail"
+		else
 			msg "skip"
-		;;
-		esac
-	fi
+		fi
+	;;
+	intel)
+		if [ ! -e "${binfmt_dir}/qemu-arm" ]; then
+			echo ':qemu-arm:M::\x7fELF\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x28\x00:\xff\xff\xff\xff\xff\xff\xff\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff:/usr/local/bin/qemu-arm-static:' > ${binfmt_dir}/register
+			[ $? -eq 0 ] && msg "done" || msg "fail"
+		else
+			msg "skip"
+		fi
+	;;
+	*)
+		msg "skip"
+	;;
+	esac
 ;;
 custom)
 	for disk in ${CUSTOM_MOUNTS}
@@ -329,25 +348,27 @@ return 0
 
 umount_container()
 {
+container_mounted || { msg "The container is not mounted." ; return 1; }
+
 msg -n "Release resources ... "
+local is_release=0
 local lsof_full=$(lsof | awk '{print $1}' | grep -c '^lsof')
-(set -e
-	for i in 1 2 3
-	do
-		if [ "${lsof_full}" -eq 0 ]; then
-			local pids=$(lsof | grep ${MNT_TARGET} | awk '{print $1}' | uniq || true)
-		else
-			local pids=$(lsof | grep ${MNT_TARGET} | awk '{print $2}' | uniq || true)
-		fi
-		if [ -n "${pids}" ]; then
-			kill -9 ${pids} || true
-		else
-			break
-		fi
-		[ "${i}" -ge 3 ] && exit 1 || sleep 1
-	done
-exit 0)
-[ $? -eq 0 ] && msg "done" || msg "fail"
+for i in 1 2 3
+do
+	if [ "${lsof_full}" -eq 0 ]; then
+		local pids=$(lsof | grep ${MNT_TARGET} | awk '{print $1}' | uniq)
+	else
+		local pids=$(lsof | grep ${MNT_TARGET} | awk '{print $2}' | uniq)
+	fi
+	if [ -n "${pids}" ]; then
+		kill -9 ${pids}
+		sleep 1
+	else
+		is_release=1
+		break
+	fi
+done
+[ "${is_release}" -eq 1 ] && msg "done" || msg "fail"
 
 msg "Unmounting partitions: "
 local is_mounted=0
@@ -358,7 +379,8 @@ do
 	do
 		local pp=$(echo ${p} | sed "s|^${MNT_TARGET}/*|/|g")
 		msg -n "${pp} ... "
-		if [ $(echo ${pp} | grep -ci "selinux") -gt 0 -a -e ${ENV_DIR%/}/etc/selinux_state -a -e /sys/fs/selinux/enforce ]; then
+		local selinux=$(echo ${pp} | grep -ci "selinux")
+		if [ "${selinux}" -gt 0 -a -e "/sys/fs/selinux/enforce" -a -e "${ENV_DIR%/}/etc/selinux_state" ]; then
 			cat ${ENV_DIR%/}/etc/selinux_state > /sys/fs/selinux/enforce
 		fi
 		umount ${p}
@@ -387,10 +409,10 @@ fi
 [ "${is_mounted}" -ne 1 ] && msg " ...nothing mounted"
 
 msg -n "Disassociating loop device ... "
-(set -e
-	loop=$(losetup -a | grep ${IMG_TARGET} | awk -F: '{print $1}' || true)
-	[ -n "${loop}" ] && losetup -d ${loop}
-exit 0)
+local loop=$(losetup -a | grep ${IMG_TARGET} | awk -F: '{print $1}')
+if [ -n "${loop}" ]; then
+	losetup -d ${loop}
+fi
 [ $? -eq 0 ] && msg "done" || msg "fail"
 
 return 0
@@ -423,28 +445,23 @@ dbus_init()
 [ -e "${MNT_TARGET}/run/dbus/pid" ] && rm ${MNT_TARGET}/run/dbus/pid
 # dbus (Fedora)
 [ -e "${MNT_TARGET}/var/run/messagebus.pid" ] && rm ${MNT_TARGET}/var/run/messagebus.pid
-chroot ${MNT_TARGET} dbus-daemon --system --fork || true
+chroot ${MNT_TARGET} dbus-daemon --system --fork
 }
 
 case "$1" in
 ssh)
 	msg -n "SSH [:${SSH_PORT}] ... "
 	ssh_started && { msg "skip"; return 0; }
+	# update sshd_config
 	sed -i "s|^[# ]*Port .*|Port ${SSH_PORT}|g" ${MNT_TARGET}/etc/ssh/sshd_config
 	[ "${USER_NAME}" = "root" ] && sed -i "s|^[# ]*PermitRootLogin .*|PermitRootLogin yes|g" ${MNT_TARGET}/etc/ssh/sshd_config
-	(set -e
-		# Debian/Ubuntu/Kali Linux
-		if [ -e "${MNT_TARGET}/etc/init.d/ssh" ]; then
-			chroot ${MNT_TARGET} su - root -c '/etc/init.d/ssh start'
-			exit 0
-		fi
-		# Arch Linux/Fedora/openSUSE/Gentoo
-		if [ -z "$(ls ${MNT_TARGET}/etc/ssh/ | grep key)" ]; then
-			chroot ${MNT_TARGET} su - root -c 'ssh-keygen -A' || true
-			echo
-		fi
-		chroot ${MNT_TARGET} su - root -c '`which sshd`'
-	exit 0)
+	# generate keys
+	if [ -z "$(ls ${MNT_TARGET}/etc/ssh/ | grep key)" ]; then
+		chroot ${MNT_TARGET} su - root -c 'ssh-keygen -A'
+		echo
+	fi
+	# exec sshd
+	chroot ${MNT_TARGET} su - root -c '`which sshd`'
 	[ $? -eq 0 ] && msg "done" || msg "fail"
 ;;
 vnc)
@@ -452,28 +469,25 @@ vnc)
 	let vncport=${vncport}+${VNC_DISPLAY}
 	msg -n "VNC [:${vncport}] ... "
 	gui_started && { msg "skip"; return 0; }
-	(set -e
-		dbus_init
-		# TightVNC Server
-		which Xtightvnc && VNC_ARGS="${VNC_ARGS} -compatiblekbd" || true
-		[ -e "${MNT_TARGET}/tmp/.X${VNC_DISPLAY}-lock" ] && rm ${MNT_TARGET}/tmp/.X${VNC_DISPLAY}-lock
-		[ -e "${MNT_TARGET}/tmp/.X11-unix/X${VNC_DISPLAY}" ] && rm ${MNT_TARGET}/tmp/.X11-unix/X${VNC_DISPLAY}
-		chroot ${MNT_TARGET} su - ${USER_NAME} -c "vncserver :${VNC_DISPLAY} -depth ${VNC_DEPTH} -geometry ${VNC_GEOMETRY} -dpi ${VNC_DPI} ${VNC_ARGS}"
-	exit 0)
+	dbus_init
+	# remove locks
+	[ -e "${MNT_TARGET}/tmp/.X${VNC_DISPLAY}-lock" ] && rm ${MNT_TARGET}/tmp/.X${VNC_DISPLAY}-lock
+	[ -e "${MNT_TARGET}/tmp/.X11-unix/X${VNC_DISPLAY}" ] && rm ${MNT_TARGET}/tmp/.X11-unix/X${VNC_DISPLAY}
+	# exec vncserver
+	chroot ${MNT_TARGET} su - ${USER_NAME} -c "vncserver :${VNC_DISPLAY} -depth ${VNC_DEPTH} -geometry ${VNC_GEOMETRY} -dpi ${VNC_DPI} ${VNC_ARGS}"
 	[ $? -eq 0 ] && msg "done" || msg "fail"
 ;;
 xserver)
 	msg -n "X Server [${XSERVER_HOST}:${XSERVER_DISPLAY}] ... "
 	gui_started && { msg "skip"; return 0; }
-	(set -e
-		dbus_init
-		chroot ${MNT_TARGET} su - ${USER_NAME} -c "export DISPLAY=${XSERVER_HOST}:${XSERVER_DISPLAY}; ~/.xinitrc &"
-	exit 0)
+	dbus_init
+	chroot ${MNT_TARGET} su - ${USER_NAME} -c "export DISPLAY=${XSERVER_HOST}:${XSERVER_DISPLAY}; ~/.xinitrc &"
 	[ $? -eq 0 ] && msg "done" || msg "fail"
 ;;
 framebuffer)
 	msg -n "Framebuffer [:${FB_DISPLAY}] ... "
 	gui_started && { msg "skip"; return 0; }
+	# find touchscreen
 	if [ ! -e "${FB_INPUT}" ]; then
 		for event in $(ls /sys/class/input | grep event)
 		do
@@ -483,10 +497,11 @@ framebuffer)
 			fi
 		done
 	fi
+	# update xorg.conf
 	sed -i "s|Option.*\"fbdev\".*#linuxdeploy|Option \"fbdev\" \"${FB_DEV}\" #linuxdeploy|g" ${MNT_TARGET}/etc/X11/xorg.conf
 	sed -i "s|Option.*\"Device\".*#linuxdeploy|Option \"Device\" \"${FB_INPUT}\" #linuxdeploy|g" ${MNT_TARGET}/etc/X11/xorg.conf
+	dbus_init
 	(set -e
-		dbus_init
 		sync
 		case "${FB_FREEZE}" in
 		stop)
@@ -513,9 +528,7 @@ custom)
 	for script in ${CUSTOM_SCRIPTS}
 	do
 		msg -n "${script} ... "
-		(set -e
-			chroot ${MNT_TARGET} su - root -c "${script} start"
-		exit 0)
+		chroot ${MNT_TARGET} su - root -c "${script} start"
 		[ $? -eq 0 ] && msg "done" || msg "fail"
 	done
 ;;
@@ -526,6 +539,8 @@ return 0
 
 stop_container()
 {
+container_mounted || { msg "The container is already stopped." ; return 1; }
+
 if [ $# -eq 0 ]; then
 	msg "Stopping services: "
 
@@ -541,56 +556,63 @@ if [ $# -eq 0 ]; then
 	[ $? -ne 0 ] && return 1 || return 0
 fi
 
+sshd_kill()
+{
+local pid=""
+for path in /run/sshd.pid /var/run/sshd.pid
+do
+	if [ -e "${MNT_TARGET}${path}" ]; then
+		pid=$(cat ${MNT_TARGET}${path})
+		break
+	fi
+done
+if [ -n "${pid}" ]; then
+	kill -9 ${pid} || return 1
+fi
+return 0
+}
+
+xsession_kill()
+{
+local pid=""
+if [ -e "${MNT_TARGET}/tmp/xsession.pid" ]; then
+	pid=$(cat ${MNT_TARGET}/tmp/xsession.pid)
+fi
+if [ -n "${pid}" ]; then
+	kill -9 ${pid} || return 1
+fi
+return 0
+}
+
 case "$1" in
 ssh)
 	msg -n "SSH ... "
-	(set -e
-		# Debian/Ubuntu/Kali Linux
-		if [ -e "${MNT_TARGET}/etc/init.d/ssh" ]; then
-			chroot ${MNT_TARGET} su - root -c "/etc/init.d/ssh stop"
-		fi
-		# Arch Linux/Fedora/openSUSE/Gentoo
-		if [ -e "${MNT_TARGET}/var/run/sshd.pid" ]; then
-			chroot ${MNT_TARGET} su - root -c 'kill -9 $(cat /var/run/sshd.pid)'
-		fi
-		# kill active sessions
-		sleep 1
-		pkill -9 'sshd' || true
-	exit 0)
+	sshd_kill
 	[ $? -eq 0 ] && msg "done" || msg "fail"
 ;;
 vnc)
 	msg -n "VNC ... "
-	(set -e
-		chroot ${MNT_TARGET} su - ${USER_NAME} -c "vncserver -kill :${VNC_DISPLAY}"
-		sleep 1
-		pkill -9 'X.*vnc' || true
-	exit 0)
+	xsession_kill
+	chroot ${MNT_TARGET} su - ${USER_NAME} -c "vncserver -kill :${VNC_DISPLAY}"
 	[ $? -eq 0 ] && msg "done" || msg "fail"
 ;;
 xserver)
 	msg -n "X Server ... "
-	(set -e
-		chroot ${MNT_TARGET} su - ${USER_NAME} -c 'kill -9 $(cat /tmp/xsession.pid)'
-	exit 0)
+	xsession_kill
 	[ $? -eq 0 ] && msg "done" || msg "fail"
 ;;
 framebuffer)
 	msg -n "Framebuffer ... "
-	(set -e
-		pkill -CONT surfaceflinger
-		pkill -CONT system_server
-		chroot ${MNT_TARGET} su - ${USER_NAME} -c 'kill -9 $(cat /tmp/xsession.pid)'
-	exit 0)
+	pkill -CONT surfaceflinger
+	pkill -CONT system_server
+	xsession_kill
 	[ $? -eq 0 ] && msg "done" || msg "fail"
 ;;
 custom)
 	for script in ${CUSTOM_SCRIPTS}
 	do
 		msg -n "${script} ... "
-		(set -e
-			chroot ${MNT_TARGET} su - root -c "${script} stop"
-		exit 0)
+		chroot ${MNT_TARGET} su - root -c "${script} stop"
 		[ $? -eq 0 ] && msg "done" || msg "fail"
 	done
 ;;
@@ -608,7 +630,7 @@ configure_container dns mtab
 
 [ -e "${MNT_TARGET}/etc/motd" ] && msg "$(cat ${MNT_TARGET}/etc/motd)"
 
-SHELL=$*
+SHELL="$*"
 if [ -z "${SHELL}" ]; then
 	[ -e "${MNT_TARGET}/bin/sh" ] && SHELL=/bin/sh
 	[ -e "${MNT_TARGET}/bin/bash" ] && SHELL=/bin/bash
@@ -1071,7 +1093,7 @@ msg "Installing additional components: "
 	case "${DISTRIB}" in
 	debian|ubuntu|kalilinux)
 		local pkgs=""
-		[ -e "/sys/fs/selinux/enforce" ] && pkgs="${pkgs} selinux-basics"
+		selinux_support && pkgs="${pkgs} selinux-basics"
 		for component in ${USE_COMPONENTS}
 		do
 			case "${component}" in
@@ -1779,10 +1801,10 @@ let swap_free=${swap_free}/1024
 msg "${swap_free}/${swap_total} MB"
 
 msg -n "SELinux: "
-[ -e "/sys/fs/selinux/enforce" ] && msg "yes" || msg "no"
+selinux_support && msg "yes" || msg "no"
 
 msg -n "Loop devices: "
-[ -z "$(losetup -f)" ] && msg "no" || msg "yes"
+loop_support && msg "yes" || msg "no"
 
 msg -n "Support binfmt_misc: "
 multiarch_support && msg "yes" || msg "no"
@@ -1940,54 +1962,35 @@ exec 3>&1
 # exec command
 case "$1" in
 prepare)
-	msg ">>> $1"
 	prepare_container
-	msg "<<< $1"
 ;;
 install)
-	msg ">>> $1"
 	install_container
-	msg "<<< $1"
 ;;
 configure)
-	msg ">>> $1"
 	configure_container
-	msg "<<< $1"
 ;;
 mount)
-	msg ">>> $1"
 	mount_container
-	msg "<<< $1"
 ;;
 umount)
-	msg ">>> $1"
 	umount_container
-	msg "<<< $1"
 ;;
 start)
-	msg ">>> $1"
 	start_container
-	msg "<<< $1"
 ;;
 stop)
-	msg ">>> $1"
 	stop_container
-	msg "<<< $1"
 ;;
 shell)
-	msg ">>> $1"
-	chroot_container "$2"
-	msg "<<< $1"
+	shift
+	chroot_container "$*"
 ;;
 export)
-	msg ">>> $1"
 	export_container "$2"
-	msg "<<< $1"
 ;;
 status)
-	msg ">>> $1"
 	status_container
-	msg "<<< $1"
 ;;
 *)
 	helper

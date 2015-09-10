@@ -247,7 +247,8 @@ public class EnvUtils {
 		}
 		// fallback permissions
 		params.add("chmod -R 755 " + PrefStore.ENV_DIR);
-		params.add("find " + PrefStore.ENV_DIR + " | while read f; do chmod 755 $f; done");
+		params.add("find " + PrefStore.ENV_DIR
+				+ " | while read f; do chmod 755 $f; done");
 
 		// install BusyBox
 		params.add(PrefStore.ENV_DIR + "/bin/busybox --install -s "

@@ -39,7 +39,9 @@ public class ExecScript extends Thread {
 			// exec linuxdeploy command
 			List<String> params = new ArrayList<String>();
 			params.add("export LINUXDEPLOY_DIR=" + PrefStore.ENV_DIR);
+			params.add("echo '>>> " + arg + "'");
 			params.add(PrefStore.ENV_DIR + "/bin/linuxdeploy " + arg);
+			params.add("echo '<<< " + arg + "'");
 			EnvUtils.exec(params);
 		}
 	}

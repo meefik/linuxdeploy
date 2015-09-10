@@ -438,8 +438,7 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 					break;
 				default:
 					if (init) {
-						diskimage
-								.setText(PrefStore.EXTERNAL_STORAGE);
+						diskimage.setText(PrefStore.EXTERNAL_STORAGE);
 					}
 					disksize.setEnabled(false);
 					fstype.setEnabled(false);
