@@ -18,7 +18,7 @@ Installing a new operating system takes about 30 minutes. The recommended minimu
 * Installation type: image file, disk partition, RAM, directory
 * Supported file systems: ext2, ext3, ext4
 * Supported architectures: ARM, ARM64, x86, x86_64, emulation mode (ARM ~ x86)
-* Control interface: SSH, VNC, X, framebuffer
+* Control interface: CLI, SSH, VNC, X, framebuffer
 * Desktop environment: XTerm, LXDE, Xfce, GNOME, KDE, other (manual configuration)
 * Supported languages: English, Russian, German, Italian, Spanish, Chinese, Vietnamese
 
@@ -71,7 +71,7 @@ Copyright (C) 2012-2015  Антон Скшидлевский
 * Тип установки: файл образа, раздел диска, оперативная память, директория
 * Поддерживаемые файловые системы: ext2, ext3, ext4
 * Поддерживаемые архитектуры: ARM, ARM64, x86, x86_64, режим эмуляции (ARM ~ x86)
-* Интерфейс управления: SSH, VNC, X, фрейм-буфер
+* Интерфейс управления: CLI, SSH, VNC, X, фрейм-буфер
 * Окружение рабочего стола: XTerm, LXDE, Xfce, GNOME, KDE, другое (ручная настройка)
 * Поддерживаемые языки: русский, английский, немецкий, итальянский, испанский, китайский, вьетнамский
 
