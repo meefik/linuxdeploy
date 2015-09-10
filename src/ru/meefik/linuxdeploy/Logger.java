@@ -18,7 +18,8 @@ public class Logger {
 
 	private static volatile List<String> protocol = new ArrayList<>();
 	private static boolean fragment = false;
-	private static final Handler outputUpdater = new Handler(Looper.getMainLooper());
+	private static final Handler outputUpdater = new Handler(
+			Looper.getMainLooper());
 
 	private static String getTimeStamp() {
 		return "["
