@@ -15,6 +15,11 @@
             android:key="xhost"
             android:summary="@string/xhost"
             android:title="@string/title_xhost_preference" />
+        <CheckBoxPreference
+            android:defaultValue="@string/xserverxsdl"
+            android:key="xserverxsdl"
+            android:summary="@string/summary_xserverxsdl_preference"
+            android:title="@string/title_xserverxsdl_preference" />
     </PreferenceCategory>
 
 </PreferenceScreen>

@@ -170,6 +170,8 @@
     <string name="dialog_title_xdisplay_preference">Numero schermo X:</string>
     <string name="title_xhost_preference">Indirizzo server X</string>
     <string name="dialog_title_xhost_preference">IP o nome host X:</string>
+    <string name="title_xserverxsdl_preference">XServer XSDL</string>
+    <string name="summary_xserverxsdl_preference">Automatically open XServer XSDL</string>
     <string name="fb_preferences">Framebuffer</string>
     <string name="title_fbdisplay_preference">Schermo</string>
     <string name="dialog_title_fbdisplay_preference">Numero schermo FB:</string>

@@ -114,30 +114,20 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 		if (preference.getKey().equals("guiproperties")) {
 			ListPreference guitype = (ListPreference) this
 					.findPreference("guitype");
+			Intent intent = new Intent(getApplicationContext(),
+					PropertiesActivity.class);
+			Bundle b = new Bundle();
 			if (guitype.getValue().equals("vnc")) {
-				Intent intent = new Intent(getApplicationContext(),
-						PropertiesActivity.class);
-				Bundle b = new Bundle();
 				b.putInt("pref", 2);
-				intent.putExtras(b);
-				startActivity(intent);
 			}
 			if (guitype.getValue().equals("xserver")) {
-				Intent intent = new Intent(getApplicationContext(),
-						PropertiesActivity.class);
-				Bundle b = new Bundle();
 				b.putInt("pref", 3);
-				intent.putExtras(b);
-				startActivity(intent);
 			}
 			if (guitype.getValue().equals("framebuffer")) {
-				Intent intent = new Intent(getApplicationContext(),
-						PropertiesActivity.class);
-				Bundle b = new Bundle();
 				b.putInt("pref", 4);
-				intent.putExtras(b);
-				startActivity(intent);
 			}
+			intent.putExtras(b);
+			startActivity(intent);
 		}
 		if (preference.getKey().equals("scriptseditor")) {
 			Intent intent = new Intent(getApplicationContext(),

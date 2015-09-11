@@ -170,6 +170,8 @@
     <string name="dialog_title_xdisplay_preference">X: номер дисплея</string>
     <string name="title_xhost_preference">Адрес X-сервера</string>
     <string name="dialog_title_xhost_preference">X: IP или имя хоста</string>
+    <string name="title_xserverxsdl_preference">XServer XSDL</string>
+    <string name="summary_xserverxsdl_preference">Автоматически открывать XServer XSDL</string>
     <string name="fb_preferences">Framebuffer</string>
     <string name="title_fbdisplay_preference">Номер дисплея</string>
     <string name="dialog_title_fbdisplay_preference">FB: номер дисплея</string>

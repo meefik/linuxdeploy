@@ -15,7 +15,8 @@ public class ExecScript extends Thread {
 		this.arg = arg;
 		PrefStore.get(c);
 	}
-
+	
+	@Override
 	public void run() {
 		switch (arg) {
 		case "update":
