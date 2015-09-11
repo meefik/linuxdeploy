@@ -35,7 +35,7 @@
     <string name="customstartup" translatable="false">false</string>
     <string name="scripts" translatable="false">/etc/init.d/myscript</string>
     <string name="custommount" translatable="false">false</string>
-    <string name="mounts" translatable="false">{storage} /system</string>
+    <string name="mounts" translatable="false">/system {storage}</string>
     <string name="guistartup" translatable="false">true</string>
     <string name="guitype" translatable="false">vnc</string>
     <string name="sshstartup" translatable="false">true</string>
@@ -48,6 +48,7 @@
     <string name="vncargs" translatable="false"></string>
     <string name="xdisplay" translatable="false">0</string>
     <string name="xhost" translatable="false">127.0.0.1</string>
+    <string name="xserverxsdl" translatable="false">false</string>
     <string name="fbdisplay" translatable="false">0</string>
     <string name="fbdpi" translatable="false">100</string>
     <string name="fbdev" translatable="false">/dev/graphics/fb0</string>

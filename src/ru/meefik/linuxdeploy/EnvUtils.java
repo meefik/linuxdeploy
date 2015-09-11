@@ -133,8 +133,6 @@ public class EnvUtils {
 
 			if (n > 0) {
 				result = true;
-			} else {
-				Logger.log("Require superuser privileges (root).\n");
 			}
 			stdout.close();
 			stdin.close();
@@ -196,16 +194,17 @@ public class EnvUtils {
 		return result;
 	}
 
-	public static void updateEnv(Context c) {
+	public static boolean updateEnv(Context c) {
 		if (!isRooted()) {
-			return;
+			Logger.log("Require superuser privileges (root).\n");
+			return false;
 		}
 
 		Logger.log("Updating environment ... ");
 
 		if (PrefStore.ENV_DIR.length() == 0) {
 			Logger.log("fail\n");
-			return;
+			return false;
 		}
 
 		// clean env directory
@@ -216,22 +215,22 @@ public class EnvUtils {
 		// extract assets
 		if (!extractDir(c, PrefStore.ROOT_ASSETS, "")) {
 			Logger.log("fail\n");
-			return;
+			return false;
 		}
 		if (!extractDir(c, PrefStore.MARCH + "/all", "")) {
 			Logger.log("fail\n");
-			return;
+			return false;
 		}
 		// PIE for Android L
 		if (android.os.Build.VERSION.SDK_INT >= 21) {
 			if (!extractDir(c, PrefStore.MARCH + "/pie", "")) {
 				Logger.log("fail\n");
-				return;
+				return false;
 			}
 		} else {
 			if (!extractDir(c, PrefStore.MARCH + "/nopie", "")) {
 				Logger.log("fail\n");
-				return;
+				return false;
 			}
 		}
 
@@ -275,19 +274,20 @@ public class EnvUtils {
 		}
 		if (!exec(params)) {
 			Logger.log("fail\n");
-			return;
+			return false;
 		}
 
 		// update version
 		if (!PrefStore.setVersion()) {
 			Logger.log("fail\n");
-			return;
+			return false;
 		}
 
 		Logger.log("done\n");
+		return true;
 	}
 
-	public static void removeEnv(Context c) {
+	public static boolean removeEnv(Context c) {
 		Logger.log("Removing environment ... ");
 
 		// exec shell commands
@@ -302,18 +302,22 @@ public class EnvUtils {
 
 		if (exec(params)) {
 			Logger.log("done\n");
+			return true;
 		} else {
 			Logger.log("fail\n");
+			return false;
 		}
 	}
 
-	public static void updateConf() {
+	public static boolean updateConf() {
 		Logger.log("Updating configuration file ... ");
 		// update config file
 		if (PrefStore.storeConfig()) {
 			Logger.log("done\n");
+			return true;
 		} else {
 			Logger.log("fail\n");
+			return false;
 		}
 	}
 

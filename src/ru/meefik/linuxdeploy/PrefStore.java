@@ -83,6 +83,7 @@ public class PrefStore {
 	public static String VNC_ARGS;
 	public static String XSERVER_DISPLAY;
 	public static String XSERVER_HOST;
+	public static Boolean XSERVER_XSDL;
 	public static String FB_DISPLAY;
 	public static String FB_DPI;
 	public static String FB_DEV;
@@ -212,9 +213,9 @@ public class PrefStore {
 		SharedPreferences.Editor prefEditor = sp.edit();
 
 		SCREEN_LOCK = sp.getBoolean("screenlock",
-				c.getString(R.string.screenlock).equals("true") ? true : false);
+				c.getString(R.string.screenlock).equals("true"));
 		WIFI_LOCK = sp.getBoolean("wifilock", c.getString(R.string.wifilock)
-				.equals("true") ? true : false);
+				.equals("true"));
 		FONT_SIZE = Integer.parseInt(sp.getString("fontsize",
 				c.getString(R.string.fontsize)));
 		MAX_LINE = Integer.parseInt(sp.getString("maxline",
@@ -228,29 +229,27 @@ public class PrefStore {
 		prefEditor.putString("envdir", ENV_DIR);
 
 		BUILTIN_SHELL = sp.getBoolean("builtinshell",
-				c.getString(R.string.builtinshell).equals("true") ? true
-						: false);
+				c.getString(R.string.builtinshell).equals("true"));
 		if (BUILTIN_SHELL) {
 			SHELL = ENV_DIR + "/bin/ash";
 		} else {
 			SHELL = "/system/xbin/ash";
 		}
 		SYMLINK = sp.getBoolean("symlink", c.getString(R.string.symlink)
-				.equals("true") ? true : false);
+				.equals("true"));
 		CURRENT_PROFILE = sp.getString("profile", null);
 		if (CURRENT_PROFILE == null)
 			setCurrentProfile(c, String.valueOf(System.currentTimeMillis()));
 
 		DEBUG_MODE = sp.getBoolean("debug",
-				c.getString(R.string.debug).equals("true") ? true : false) ? "y"
+				c.getString(R.string.debug).equals("true")) ? "y"
 				: "n";
 		TRACE_MODE = sp.getBoolean("debug",
-				c.getString(R.string.debug).equals("true") ? true : false)
+				c.getString(R.string.debug).equals("true"))
 				&& sp.getBoolean("trace",
-						c.getString(R.string.trace).equals("true") ? true
-								: false) ? "y" : "n";
+						c.getString(R.string.trace).equals("true")) ? "y" : "n";
 		LOGGING = sp.getBoolean("logs",
-				c.getString(R.string.logs).equals("true") ? true : false);
+				c.getString(R.string.logs).equals("true"));
 		LOG_FILE = sp.getString("logfile", EXTERNAL_STORAGE
 				+ "/linuxdeploy.log");
 
@@ -294,23 +293,21 @@ public class PrefStore {
 		}
 		USE_COMPONENTS = components.trim();
 		String startup_ssh = sp.getBoolean("sshstartup",
-				c.getString(R.string.sshstartup).equals("true") ? true : false) ? "ssh"
+				c.getString(R.string.sshstartup).equals("true")) ? "ssh"
 				: "";
 		String startup_gui = sp.getBoolean("guistartup",
-				c.getString(R.string.guistartup).equals("true") ? true : false) ? sp
+				c.getString(R.string.guistartup).equals("true")) ? sp
 				.getString("guitype", c.getString(R.string.guitype)) : "";
 		String startup_custom = sp.getBoolean("customstartup",
-				c.getString(R.string.customstartup).equals("true") ? true
-						: false) ? "custom" : "";
+				c.getString(R.string.customstartup).equals("true")) ? "custom" : "";
 		STARTUP = (startup_ssh + " " + startup_gui + " " + startup_custom)
 				.trim();
 		CUSTOM_SCRIPTS = sp.getBoolean("customstartup",
-				c.getString(R.string.customstartup).equals("true") ? true
-						: false) ? sp.getString("scripts",
+				c.getString(R.string.customstartup).equals("true")) ? sp.getString("scripts",
 				c.getString(R.string.scripts)).trim() : "";
 		CUSTOM_MOUNTS = sp
 				.getBoolean("custommounts", c.getString(R.string.custommount)
-						.equals("true") ? true : false) ? sp.getString(
+						.equals("true")) ? sp.getString(
 				"mounts", EXTERNAL_STORAGE).trim() : "";
 		SSH_PORT = sp.getString("sshport", c.getString(R.string.sshport));
 		VNC_DISPLAY = sp.getString("vncdisplay",
@@ -323,6 +320,7 @@ public class PrefStore {
 		XSERVER_DISPLAY = sp.getString("xdisplay",
 				c.getString(R.string.xdisplay));
 		XSERVER_HOST = sp.getString("xhost", c.getString(R.string.xhost));
+		XSERVER_XSDL = sp.getBoolean("xserverxsdl", c.getString(R.string.xserverxsdl).equals("true"));
 		FB_DISPLAY = sp.getString("fbdisplay", c.getString(R.string.fbdisplay));
 		FB_DPI = sp.getString("fbdpi", c.getString(R.string.fbdpi));
 		FB_DEV = sp.getString("fbdev", c.getString(R.string.fbdev));

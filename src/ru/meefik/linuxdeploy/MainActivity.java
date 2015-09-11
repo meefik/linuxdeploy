@@ -6,10 +6,12 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.TypedValue;
@@ -35,7 +37,8 @@ public class MainActivity extends SherlockActivity {
 	}
 
 	public static void showLog() {
-		if (logView == null || logScroll == null) return;
+		if (logView == null || logScroll == null)
+			return;
 		// show log in TextView
 		logView.post(new Runnable() {
 			@Override
@@ -63,7 +66,7 @@ public class MainActivity extends SherlockActivity {
 
 		logView = (TextView) findViewById(R.id.LogView);
 		logScroll = (ScrollView) findViewById(R.id.LogScrollView);
-		
+
 		// WiFi lock init
 		WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
 		wifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL,
@@ -112,12 +115,26 @@ public class MainActivity extends SherlockActivity {
 										int id) {
 									new ExecScript(getApplicationContext(),
 											"start").start();
-									if (PrefStore.STARTUP
-											.contains("framebuffer")) {
-										Intent intent_fb = new Intent(
-												getApplicationContext(),
-												FullscreenActivity.class);
-										startActivity(intent_fb);
+									// actions
+									Handler h = new Handler();
+									if (PrefStore.STARTUP.contains("xserver") && PrefStore.XSERVER_XSDL) {
+										h.postDelayed(new Runnable() {
+											public void run() {
+												PackageManager pm = getPackageManager();
+												Intent intent = pm.getLaunchIntentForPackage("x.org.server");
+												if (intent != null) startActivity(intent);
+											}
+										}, 1000);
+									}
+									if (PrefStore.STARTUP.contains("framebuffer")) {
+										h.postDelayed(new Runnable() {
+											public void run() {
+												Intent intent = new Intent(
+														getApplicationContext(),
+														FullscreenActivity.class);
+												if (intent != null) startActivity(intent);
+											}
+										}, 1000);
 									}
 								}
 							})

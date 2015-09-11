@@ -170,6 +170,8 @@
     <string name="dialog_title_xdisplay_preference">X: display number</string>
     <string name="title_xhost_preference">X server address</string>
     <string name="dialog_title_xhost_preference">X: IP or host name</string>
+    <string name="title_xserverxsdl_preference">XServer XSDL</string>
+    <string name="summary_xserverxsdl_preference">Automatically open XServer XSDL</string>
     <string name="fb_preferences">Framebuffer</string>
     <string name="title_fbdisplay_preference">Display</string>
     <string name="dialog_title_fbdisplay_preference">FB: display number</string>

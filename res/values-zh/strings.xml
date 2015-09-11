@@ -170,6 +170,8 @@
     <string name="dialog_title_xdisplay_preference">X: 窗口序号</string>
     <string name="title_xhost_preference">X11 服务器地址</string>
     <string name="dialog_title_xhost_preference">X: IP地址或域名</string>
+    <string name="title_xserverxsdl_preference">XServer XSDL</string>
+    <string name="summary_xserverxsdl_preference">Automatically open XServer XSDL</string>
     <string name="fb_preferences">Framebuffer</string>
     <string name="title_fbdisplay_preference">显示</string>
     <string name="dialog_title_fbdisplay_preference">FB: 窗口序号</string>
