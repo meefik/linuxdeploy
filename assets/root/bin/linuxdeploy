@@ -44,7 +44,7 @@ fi
 
 selinux_support()
 {
-if [ -e "/sys/fs/selinux/enforce" ]; then
+if [ -e "/sys/fs/selinux" ]; then
 	return 0
 else
 	return 1
@@ -69,24 +69,24 @@ local is_mnt=$(grep -c " ${MNT_TARGET} " /proc/mounts)
 ssh_started()
 {
 local is_started=""
-for path in /run/sshd.pid /var/run/sshd.pid
+for f in /var/run/sshd.pid /run/sshd.pid
 do
-	if [ -e "${MNT_TARGET}${path}" ]; then
-		local pid=$(cat ${MNT_TARGET}${path})
-		[ -n "${pid}" ] && is_started=$(ps | awk '{if ($1 == '${pid}') print $1}')
-		break
+	local pidfile="${MNT_TARGET}${f}"
+	local pid=$([ -e "${pidfile}" ] && cat ${pidfile})
+	if [ -n "${pid}" ]; then
+		is_started=$(ps | awk '{if ($1 == '${pid}') print $1}')
+		[ -n "${is_started}" ] && return 0
 	fi
 done
-[ -z "${is_started}" ] && return 1 || return 0
+return 1
 }
 
 gui_started()
 {
 local is_started=""
-if [ -e "${MNT_TARGET}/tmp/xsession.pid" ]; then
-	local pid=$(cat ${MNT_TARGET}/tmp/xsession.pid)
-	[ -n "${pid}" ] && is_started=$(ps | awk '{if ($1 == '${pid}') print $1}')
-fi
+local pidfile="${MNT_TARGET}/tmp/xsession.pid"
+local pid=$([ -e "${pidfile}" ] && cat ${pidfile})
+[ -n "${pid}" ] && is_started=$(ps | awk '{if ($1 == '${pid}') print $1}')
 [ -z "${is_started}" ] && return 1 || return 0
 }
 
@@ -452,16 +452,17 @@ case "$1" in
 ssh)
 	msg -n "SSH [:${SSH_PORT}] ... "
 	ssh_started && { msg "skip"; return 0; }
-	# update sshd_config
-	sed -i "s|^[# ]*Port .*|Port ${SSH_PORT}|g" ${MNT_TARGET}/etc/ssh/sshd_config
-	[ "${USER_NAME}" = "root" ] && sed -i "s|^[# ]*PermitRootLogin .*|PermitRootLogin yes|g" ${MNT_TARGET}/etc/ssh/sshd_config
+	# prepare var
+	[ -e "${MNT_TARGET}/var/run" -a ! -e "${MNT_TARGET}/var/run/sshd" ] && mkdir ${MNT_TARGET}/var/run/sshd
+	[ -e "${MNT_TARGET}/run" -a ! -e "${MNT_TARGET}/run/sshd" ] && mkdir ${MNT_TARGET}/run/sshd
 	# generate keys
 	if [ -z "$(ls ${MNT_TARGET}/etc/ssh/ | grep key)" ]; then
 		chroot ${MNT_TARGET} su - root -c 'ssh-keygen -A'
 		echo
 	fi
 	# exec sshd
-	chroot ${MNT_TARGET} su - root -c '`which sshd`'
+	local sshd='`which sshd`'
+	chroot ${MNT_TARGET} su - root -c "${sshd} -p ${SSH_PORT}"
 	[ $? -eq 0 ] && msg "done" || msg "fail"
 ;;
 vnc)
@@ -487,16 +488,6 @@ xserver)
 framebuffer)
 	msg -n "Framebuffer [:${FB_DISPLAY}] ... "
 	gui_started && { msg "skip"; return 0; }
-	# find touchscreen
-	if [ ! -e "${FB_INPUT}" ]; then
-		for event in $(ls /sys/class/input | grep event)
-		do
-			if [ -n "$(grep touchscreen /sys/class/input/${event}/device/name)" ]; then
-				FB_INPUT="/dev/input/${event}"
-				break
-			fi
-		done
-	fi
 	# update xorg.conf
 	sed -i "s|Option.*\"fbdev\".*#linuxdeploy|Option \"fbdev\" \"${FB_DEV}\" #linuxdeploy|g" ${MNT_TARGET}/etc/X11/xorg.conf
 	sed -i "s|Option.*\"Device\".*#linuxdeploy|Option \"Device\" \"${FB_INPUT}\" #linuxdeploy|g" ${MNT_TARGET}/etc/X11/xorg.conf
