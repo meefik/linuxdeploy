@@ -66,8 +66,8 @@
     <string name="title_autostart_preference">Автозапуск</string>
     <string name="summary_autostart_preference">Автоматически запускать GNU/Linux при загрузке Android</string>
     <string name="env_preferences">Рабочее окружение</string>
-    <string name="title_envdir_preference">Директория окружения</string>
-    <string name="dialog_title_envdir_preference">Директория окружения</string>
+    <string name="title_installdir_preference">Директория окружения</string>
+    <string name="dialog_title_installdir_preference">Директория окружения</string>
     <string name="title_builtinshell_preference">Встроенный интерпретатор</string>
     <string name="summary_builtinshell_preference">Использовать встроенный BusyBox</string>
     <string name="title_symlink_preference">Создать симлинк</string>

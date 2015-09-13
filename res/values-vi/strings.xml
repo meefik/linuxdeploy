@@ -66,8 +66,8 @@
     <string name="title_autostart_preference">Tự khởi động</string>
     <string name="summary_autostart_preference">Tự khởi động GNU/Linux khi mở nguồn</string>
     <string name="env_preferences">Môi trường điều hành</string>
-    <string name="title_envdir_preference">Đường dẫn ENV</string>
-    <string name="dialog_title_envdir_preference">Đường dẫn ENV</string>
+    <string name="title_installdir_preference">Đường dẫn ENV</string>
+    <string name="dialog_title_installdir_preference">Đường dẫn ENV</string>
     <string name="title_builtinshell_preference">Xây dựng trong shell</string>
     <string name="summary_builtinshell_preference">Sử dụng xây dựng trong BusyBox</string>
     <string name="title_symlink_preference">Tạo liên kết tượng trưng</string>

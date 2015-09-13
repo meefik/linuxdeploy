@@ -223,10 +223,10 @@ public class PrefStore {
 		LANGUAGE = sp.getString("language", c.getString(R.string.language));
 		THEME = sp.getString("theme", c.getString(R.string.theme));
 
-		ENV_DIR = sp.getString("envdir", c.getString(R.string.envdir));
+		ENV_DIR = sp.getString("installdir", c.getString(R.string.installdir));
 		if (ENV_DIR.isEmpty())
 			ENV_DIR = c.getApplicationInfo().dataDir + "/linux";
-		prefEditor.putString("envdir", ENV_DIR);
+		prefEditor.putString("installdir", ENV_DIR);
 
 		BUILTIN_SHELL = sp.getBoolean("builtinshell",
 				c.getString(R.string.builtinshell).equals("true"));
