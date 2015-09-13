@@ -66,8 +66,8 @@
     <string name="title_autostart_preference">Avvio automatico</string>
     <string name="summary_autostart_preference">Esegui automaticamente GNU/Linux all\'avvio di Android</string>
     <string name="env_preferences">Ambiente operativo</string>
-    <string name="title_envdir_preference">Cartella ENV</string>
-    <string name="dialog_title_envdir_preference">Cartella ENV</string>
+    <string name="title_installdir_preference">Cartella ENV</string>
+    <string name="dialog_title_installdir_preference">Cartella ENV</string>
     <string name="title_builtinshell_preference">Shell integrata</string>
     <string name="summary_builtinshell_preference">Usa la versione di BusyBox integrata</string>
     <string name="title_symlink_preference">Crea collegamento</string>

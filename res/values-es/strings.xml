@@ -66,8 +66,8 @@
     <string name="title_autostart_preference">AutoArranque</string>
     <string name="summary_autostart_preference">Automaticamente iniciar GNU/Linux cuando se encienda Android</string>
     <string name="env_preferences">Entorno Sistema operativo</string>
-    <string name="title_envdir_preference">directorio ENV (entorno)</string>
-    <string name="dialog_title_envdir_preference">directorio ENV (entorno)</string>
+    <string name="title_installdir_preference">directorio ENV (entorno)</string>
+    <string name="dialog_title_installdir_preference">directorio ENV (entorno)</string>
     <string name="title_builtinshell_preference">Shell incorporado</string>
     <string name="summary_builtinshell_preference">Incorporar BusyBox</string>
     <string name="title_symlink_preference">Crear symlink</string>

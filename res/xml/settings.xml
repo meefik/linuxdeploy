@@ -60,11 +60,11 @@
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/env_preferences" >
         <EditTextPreference
-            android:defaultValue="@string/envdir"
-            android:dialogTitle="@string/dialog_title_envdir_preference"
-            android:key="envdir"
-            android:summary="@string/envdir"
-            android:title="@string/title_envdir_preference" />
+            android:defaultValue="@string/installdir"
+            android:dialogTitle="@string/dialog_title_installdir_preference"
+            android:key="installdir"
+            android:summary="@string/installdir"
+            android:title="@string/title_installdir_preference" />
         
         <CheckBoxPreference
             android:defaultValue="@string/builtinshell"
