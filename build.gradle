@@ -18,7 +18,6 @@ repositories {
 dependencies {
     compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
     compile 'com.h6ah4i.android.compat:mulsellistprefcompat:1.0.0'
-    compile 'com.android.support:support-v4:23.0.0'
     compile fileTree(dir: 'libs', include: '*.jar')
 }
 
