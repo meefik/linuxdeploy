@@ -206,11 +206,17 @@ public class EnvUtils {
 			Logger.log("fail\n");
 			return false;
 		}
+		
+		// env directories
+		String[] dirs = { PrefStore.ENV_DIR + "/bin",
+				PrefStore.ENV_DIR + "/etc", PrefStore.ENV_DIR + "/share" };
 
 		// clean env directory
 		File envDir = new File(PrefStore.ENV_DIR);
-		cleanDirectory(envDir);
 		envDir.mkdirs();
+		for (String dir : dirs) {
+			cleanDirectory(new File(dir));
+		}
 
 		// extract assets
 		if (!extractDir(c, PrefStore.ROOT_ASSETS, "")) {
@@ -235,7 +241,9 @@ public class EnvUtils {
 		}
 
 		// set permissions
-		setPermissions(envDir);
+		for (String dir : dirs) {
+			setPermissions(new File(dir));
+		}
 
 		// exec shell commands
 		List<String> params = new ArrayList<String>();
@@ -245,10 +253,10 @@ public class EnvUtils {
 			params.add("exec 2>/dev/null");
 		}
 		// fallback permissions
-		params.add("chmod -R 755 " + PrefStore.ENV_DIR);
-		params.add("find " + PrefStore.ENV_DIR
-				+ " | while read f; do chmod 755 $f; done");
-
+		for (String dir : dirs) {
+			params.add("chmod -R 755 " + dir);
+			params.add("find " + dir + " | while read f; do chmod 755 $f; done");
+		}
 		// install BusyBox
 		params.add(PrefStore.ENV_DIR + "/bin/busybox --install -s "
 				+ PrefStore.ENV_DIR + "/bin");
