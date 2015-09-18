@@ -92,7 +92,7 @@ local pid=$([ -e "${pidfile}" ] && cat ${pidfile})
 
 prepare_container()
 {
-container_mounted && { msg "The container is already mounted."; return 1; }
+container_mounted && { msg "The container is already mounted."; return 0; }
 
 msg -n "Checking installation path ... "
 case "${DEPLOY_TYPE}" in
@@ -348,7 +348,7 @@ return 0
 
 umount_container()
 {
-container_mounted || { msg "The container is not mounted." ; return 1; }
+container_mounted || { msg "The container is not mounted." ; return 0; }
 
 msg -n "Release resources ... "
 local is_release=0
@@ -530,7 +530,7 @@ return 0
 
 stop_container()
 {
-container_mounted || { msg "The container is already stopped." ; return 1; }
+container_mounted || { msg "The container is already stopped." ; return 0; }
 
 if [ $# -eq 0 ]; then
 	msg "Stopping services: "
