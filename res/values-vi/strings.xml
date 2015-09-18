@@ -2,13 +2,17 @@
 <resources>
 
     <string name="app_name">Linux Deploy</string>
-    <string name="app_version">version %1$s</string>
+    <string name="app_version">phiên bản %1$s</string>
     <string name="menu_start">BẮT ĐẦU</string>
     <string name="menu_stop">DỪNG</string>
     <string name="menu_properties">Thuộc tính</string>
     <string name="menu_settings">Cài đặt</string>
     <string name="menu_about">Thông tin</string>
     <string name="menu_donate">Ủng hộ</string>
+    <string name="menu_forum">Thảo luận</string>
+    <string name="menu_doc">Tài liệu</string>
+    <string name="menu_issues">Vấn đề</string>
+    <string name="menu_source">Mã nguồn</string>
     <string name="menu_exit">Thoát</string>
     <string name="menu_status">Trạng thái</string>
     <string name="menu_clear">Xoá màn hình</string>
@@ -186,6 +190,6 @@
     <string name="dialog_title_fbargs_preference">FB: tuỳ chọn X</string>
     <string name="title_fbfreeze_preference">Đóng băng giao diện người dùng Android</string>
     <string name="dialog_title_fbfreeze_preference">Đóng băng giao diện người dùng Android</string>
-    <string name="about_text">[ <a href="https://github.com/meefik/linuxdeploy">github.com</a> , <a href="http://4pda.ru/forum/index.php?showtopic=378043">4pda.ru</a> ]\n\nChương trình này KHÔNG CÓ BẢO HÀNH. Đây là phần mềm miễn phí, và bạn được phép phân phối lại dưới một số điều kiện.\n\nLicensed under the GPL version 3 or later.\n\n&#169;2012-2015 Anton Skshidlevsky</string>
+    <string name="about_text">Chương trình này KHÔNG CÓ BẢO HÀNH. Đây là phần mềm miễn phí, và bạn được phép phân phối lại dưới một số điều kiện.\n\nLicensed under the GPL version 3 or later.\n\n&#169;2012&#8211;2015 Anton Skshidlevsky</string>
 
 </resources>

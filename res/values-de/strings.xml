@@ -9,6 +9,10 @@
     <string name="menu_settings">Einstellungen</string>
     <string name="menu_about">&#220;ber</string>
     <string name="menu_donate">Spenden</string>
+    <string name="menu_forum">Gespräche</string>
+    <string name="menu_doc">Dokumentation</string>
+    <string name="menu_issues">Fragen</string>
+    <string name="menu_source">Quellcode</string>
     <string name="menu_exit">Schlie&#223;en</string>
     <string name="menu_status">Status</string>
     <string name="menu_clear">Leeren</string>
@@ -96,7 +100,7 @@
     <string name="summary_reconfigure_preference">Starte GNU/Linux reconfiguration</string>
     <string name="message_reconfigure_confirm_dialog">Starte die reconfiguration von GNU/Linux System?</string>
     <string name="title_export_preference">Export</string>
-    <string name="summary_export_preference">Export GNU/Linux as rootfs archive</string>
+    <string name="summary_export_preference">Export GNU/Linux als rootfs Archiv</string>
     <string name="deploy_preferences">Deploy</string>
     <string name="title_distribution_preference">Distribution</string>
     <string name="dialog_title_distribution_preference">Distribution</string>
@@ -117,8 +121,8 @@
     <string name="dialog_title_fstype_preference">Dateisystem</string>
     <string name="title_username_preference">Benutzername</string>
     <string name="dialog_title_username_preference">Benutzername</string>
-    <string name="title_password_preference">User password</string>
-    <string name="dialog_title_password_preference">User password</string>
+    <string name="title_password_preference">Benutzerpasswort</string>
+    <string name="dialog_title_password_preference">Benutzerpasswort</string>
     <string name="title_serverdns_preference">DNS Server</string>
     <string name="dialog_title_serverdns_preference">Addrese vom DNS Server</string>
     <string name="summary_serverdns_preference">Automatische Erkennung</string>
@@ -186,6 +190,6 @@
     <string name="dialog_title_fbargs_preference">FB: X Eigenschaften</string>
     <string name="title_fbfreeze_preference">Freeze Android UI</string>
     <string name="dialog_title_fbfreeze_preference">Freeze Android UI</string>
-    <string name="about_text">[ <a href="https://github.com/meefik/linuxdeploy">github.com</a> , <a href="http://4pda.ru/forum/index.php?showtopic=378043">4pda.ru</a> ]\n\nThis program comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions.\n\nLicensed under the GPL version 3 or later.\n\n&#169; 2012-2015 Anton Skshidlevsky</string>
+    <string name="about_text">This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions.\n\nLicensed under the GPL version 3 or later.\n\n&#169; 2012&#8211;2015 Anton Skshidlevsky</string>
 
 </resources>
