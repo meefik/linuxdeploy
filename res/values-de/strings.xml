@@ -2,6 +2,7 @@
 <resources>
 
     <string name="app_name">Linux Deploy</string>
+    <string name="app_version">version %1$s</string>
     <string name="menu_start">START</string>
     <string name="menu_stop">STOP</string>
     <string name="menu_properties">Eigenschaften</string>
@@ -185,6 +186,6 @@
     <string name="dialog_title_fbargs_preference">FB: X Eigenschaften</string>
     <string name="title_fbfreeze_preference">Freeze Android UI</string>
     <string name="dialog_title_fbfreeze_preference">Freeze Android UI</string>
-    <string name="about_text"><font size="32"><b>Linux Deploy</b></font>\n\nGPL v3\n\n[ <a href="https://github.com/meefik/linuxdeploy">github.com</a> , <a href="http://4pda.ru/forum/index.php?showtopic=378043">4pda.ru</a> ]\n\nThis program comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions.\n\n&#169; 2012-2015 Anton Skshidlevsky</string>
+    <string name="about_text">[ <a href="https://github.com/meefik/linuxdeploy">github.com</a> , <a href="http://4pda.ru/forum/index.php?showtopic=378043">4pda.ru</a> ]\n\nThis program comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions.\n\nLicensed under the GPL version 3 or later.\n\n&#169; 2012-2015 Anton Skshidlevsky</string>
 
 </resources>

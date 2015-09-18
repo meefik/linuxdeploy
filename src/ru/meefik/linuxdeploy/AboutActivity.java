@@ -19,8 +19,10 @@ public class AboutActivity extends SherlockActivity {
 		PrefStore.updateLocale(this);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		setContentView(R.layout.activity_about);
-		TextView tv = (TextView) findViewById(R.id.AboutTextView);
-		tv.setMovementMethod(LinkMovementMethod.getInstance());
+		TextView atv = (TextView) findViewById(R.id.AboutTextView);
+		atv.setMovementMethod(LinkMovementMethod.getInstance());
+		TextView vtv = (TextView) findViewById(R.id.VersionView);
+		vtv.setText(getString(R.string.app_version, PrefStore.VERSION));
 	}
 
 	@Override
