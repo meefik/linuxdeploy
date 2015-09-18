@@ -2,13 +2,17 @@
 <resources>
 
     <string name="app_name">Linux Deploy</string>
-    <string name="app_version">version %1$s</string>
+    <string name="app_version">版本 %1$s</string>
     <string name="menu_start">启动</string>
     <string name="menu_stop">停止</string>
     <string name="menu_properties">属性</string>
     <string name="menu_settings">设置</string>
     <string name="menu_about">关于</string>
     <string name="menu_donate">捐赠</string>
+    <string name="menu_forum">討論</string>
+    <string name="menu_doc">文件</string>
+    <string name="menu_issues">問題</string>
+    <string name="menu_source">源代碼</string>
     <string name="menu_exit">退出</string>
     <string name="menu_status">状态</string>
     <string name="menu_clear">清空</string>
@@ -95,8 +99,8 @@
     <string name="title_reconfigure_preference">重新配置</string>
     <string name="summary_reconfigure_preference">重新配置 GNU/Linux</string>
     <string name="message_reconfigure_confirm_dialog">开始重新配置 GNU/Linux？</string>
-    <string name="title_export_preference">Export</string>
-    <string name="summary_export_preference">Export GNU/Linux as rootfs archive</string>
+    <string name="title_export_preference">出口</string>
+    <string name="summary_export_preference">出口的 GNU/Linux 的根文件系統歸檔</string>
     <string name="deploy_preferences">部署</string>
     <string name="title_distribution_preference">发行版</string>
     <string name="dialog_title_distribution_preference">发行版</string>
@@ -117,8 +121,8 @@
     <string name="dialog_title_fstype_preference">文件系统</string>
     <string name="title_username_preference">用户名</string>
     <string name="dialog_title_username_preference">用户名</string>
-    <string name="title_password_preference">User password</string>
-    <string name="dialog_title_password_preference">User password</string>
+    <string name="title_password_preference">用戶密碼</string>
+    <string name="dialog_title_password_preference">用戶密碼</string>
     <string name="title_serverdns_preference">DNS 服务器</string>
     <string name="dialog_title_serverdns_preference">DNS 服务器地址</string>
     <string name="summary_serverdns_preference">自动</string>
@@ -172,7 +176,7 @@
     <string name="title_xhost_preference">X11 服务器地址</string>
     <string name="dialog_title_xhost_preference">X: IP地址或域名</string>
     <string name="title_xserverxsdl_preference">XServer XSDL</string>
-    <string name="summary_xserverxsdl_preference">Automatically open XServer XSDL</string>
+    <string name="summary_xserverxsdl_preference">自動打開 XServer XSDL</string>
     <string name="fb_preferences">Framebuffer</string>
     <string name="title_fbdisplay_preference">显示</string>
     <string name="dialog_title_fbdisplay_preference">FB: 窗口序号</string>
@@ -186,6 +190,6 @@
     <string name="dialog_title_fbargs_preference">FB: X11 参数</string>
     <string name="title_fbfreeze_preference">冻结 Android 界面</string>
     <string name="dialog_title_fbfreeze_preference">冻结 Android 界面</string>
-    <string name="about_text">[ <a href="https://github.com/meefik/linuxdeploy">github.com</a> , <a href="http://4pda.ru/forum/index.php?showtopic=378043">4pda.ru</a> ]\n\nThis program comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions.\n\nLicensed under the GPL version 3 or later.\n\n&#169; 2012-2015 Anton Skshidlevsky</string>
+    <string name="about_text">This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions.\n\nLicensed under the GPL version 3 or later.\n\n&#169; 2012&#8211;2015 Anton Skshidlevsky</string>
 
 </resources>

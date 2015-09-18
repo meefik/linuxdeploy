@@ -2,13 +2,17 @@
 <resources>
 
     <string name="app_name">Linux Deploy</string>
-    <string name="app_version">version %1$s</string>
+    <string name="app_version">versión %1$s</string>
     <string name="menu_start">INICIAR</string>
     <string name="menu_stop">PARAR</string>
     <string name="menu_properties">Propiedades</string>
     <string name="menu_settings">Configuración</string>
     <string name="menu_about">Sobre</string>
     <string name="menu_donate">Donar</string>
+    <string name="menu_forum">Discusiones</string>
+    <string name="menu_doc">Documentación</string>
+    <string name="menu_issues">Cuestiones</string>
+    <string name="menu_source">Código fuente</string>
     <string name="menu_exit">Salir</string>
     <string name="menu_status">Estado</string>
     <string name="menu_clear">Limpiar</string>
@@ -95,9 +99,9 @@
     <string name="title_reconfigure_preference">Reconfigurar</string>
     <string name="summary_reconfigure_preference">Iniciar reconfiguración de GNU/Linux</string>
     <string name="message_reconfigure_confirm_dialog">¿Iniciar reconfiguración de GNU/Linux?</string>
-    <string name="title_export_preference">Export</string>
-    <string name="summary_export_preference">Export GNU/Linux as rootfs archive</string>
-    <string name="deploy_preferences">Deploy</string>
+    <string name="title_export_preference">Exportación</string>
+    <string name="summary_export_preference">Exportación de GNU/Linux como archivo rootfs</string>
+    <string name="deploy_preferences">Desplegar</string>
     <string name="title_distribution_preference">Distribución</string>
     <string name="dialog_title_distribution_preference">Distribución</string>
     <string name="title_suite_preference">Suite Distribución</string>
@@ -117,8 +121,8 @@
     <string name="dialog_title_fstype_preference">Sistema de archivo</string>
     <string name="title_username_preference">Nombre usuario</string>
     <string name="dialog_title_username_preference">Nombre usuario</string>
-    <string name="title_password_preference">User password</string>
-    <string name="dialog_title_password_preference">User password</string>
+    <string name="title_password_preference">Contraseña de usuario</string>
+    <string name="dialog_title_password_preference">Contraseña de usuario</string>
     <string name="title_serverdns_preference">Servidor DNS</string>
     <string name="dialog_title_serverdns_preference">Dirección de servidor DNS</string>
     <string name="summary_serverdns_preference">Detección automatica</string>
@@ -172,7 +176,7 @@
     <string name="title_xhost_preference">X server Dirección</string>
     <string name="dialog_title_xhost_preference">X: IP o hombre host</string>
     <string name="title_xserverxsdl_preference">XServer XSDL</string>
-    <string name="summary_xserverxsdl_preference">Automatically open XServer XSDL</string>
+    <string name="summary_xserverxsdl_preference">Abrir automáticamente XServer XSDL</string>
     <string name="fb_preferences">Framebuffer</string>
     <string name="title_fbdisplay_preference">Pantalla</string>
     <string name="dialog_title_fbdisplay_preference">FB: numero pantalla</string>
@@ -186,6 +190,6 @@
     <string name="dialog_title_fbargs_preference">FB: X opciones</string>
     <string name="title_fbfreeze_preference">Congelar Android UI</string>
     <string name="dialog_title_fbfreeze_preference">Congelar Android UI</string>
-    <string name="about_text">[ <a href="https://github.com/meefik/linuxdeploy">github.com</a> , <a href="http://4pda.ru/forum/index.php?showtopic=378043">4pda.ru</a> ]\n\nEste programa viene sin ABSOLUTAMENTE NINGUNA GARANTÍA. Esto es software libre, y le invitamos a redistribuirlo bajo ciertas condiciones.\n\nLicensed under the GPL version 3 or later.\n\n&#169; 2012-2015 Anton Skshidlevsky</string>
+    <string name="about_text">Este programa viene sin ABSOLUTAMENTE NINGUNA GARANTÍA. Esto es software libre, y le invitamos a redistribuirlo bajo ciertas condiciones.\n\nLicensed under the GPL version 3 or later.\n\n&#169; 2012&#8211;2015 Anton Skshidlevsky</string>
 
 </resources>

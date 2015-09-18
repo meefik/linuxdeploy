@@ -9,6 +9,10 @@
     <string name="menu_settings">Настройки</string>
     <string name="menu_about">О программе</string>
     <string name="menu_donate">Поддержать</string>
+    <string name="menu_forum">Обсуждения</string>
+    <string name="menu_doc">Документация</string>
+    <string name="menu_issues">Вопросы</string>
+    <string name="menu_source">Исходный код</string>
     <string name="menu_exit">Выход</string>
     <string name="menu_status">Состояние</string>
     <string name="menu_clear">Очистить</string>
@@ -186,6 +190,6 @@
     <string name="dialog_title_fbargs_preference">FB: опции X-сервера</string>
     <string name="title_fbfreeze_preference">Заморозить Android UI</string>
     <string name="dialog_title_fbfreeze_preference">Заморозить Android UI</string>
-    <string name="about_text">[ <a href="https://github.com/meefik/linuxdeploy">github.com</a> , <a href="http://4pda.ru/forum/index.php?showtopic=378043">4pda.ru</a> ]\n\nЭта программа поставляется БЕЗ ВСЯКИХ ГАРАНТИЙ, а автор не несет ответственности за любые возможные последствия ее использования. Это свободное программное обеспечение, и вы можете распространять его при определенных условиях.\n\nЛицензировано под GPL версии 3 или более поздней.\n\n&#169; 2012-2015 Антон Скшидлевский</string>
+    <string name="about_text">Эта программа поставляется БЕЗ ВСЯКИХ ГАРАНТИЙ, а автор не несет ответственности за любые возможные последствия ее использования. Это свободное программное обеспечение, и вы можете распространять его при определенных условиях.\n\nЛицензировано под GPL версии 3 или более поздней.\n\n&#169; 2012&#8211;2015 Антон Скшидлевский</string>
 
 </resources>

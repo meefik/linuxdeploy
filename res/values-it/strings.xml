@@ -2,13 +2,17 @@
 <resources>
 
     <string name="app_name">Linux Deploy</string>
-    <string name="app_version">version %1$s</string>
+    <string name="app_version">versione %1$s</string>
     <string name="menu_start">AVVIA</string>
     <string name="menu_stop">FERMA</string>
     <string name="menu_properties">Propertietà</string>
     <string name="menu_settings">Impostazioni</string>
     <string name="menu_about">Circa</string>
     <string name="menu_donate">Dona</string>
+    <string name="menu_forum">Discussioni</string>
+    <string name="menu_doc">Documentazione</string>
+    <string name="menu_issues">Problemi di</string>
+    <string name="menu_source">Codice sorgente</string>
     <string name="menu_exit">Esci</string>
     <string name="menu_status">Stato</string>
     <string name="menu_clear">Pulisci</string>
@@ -95,8 +99,8 @@
     <string name="title_reconfigure_preference">Riconfigura</string>
     <string name="summary_reconfigure_preference">Avvia la riconfigurazione di GNU/Linux</string>
     <string name="message_reconfigure_confirm_dialog">Avviare la riconfigurazione del sistema GNU/Linux?</string>
-    <string name="title_export_preference">Export</string>
-    <string name="summary_export_preference">Export GNU/Linux as rootfs archive</string>
+    <string name="title_export_preference">Esportazione</string>
+    <string name="summary_export_preference">Esportazione GNU/Linux come archivio rootfs</string>
     <string name="deploy_preferences">Distribuzione</string>
     <string name="title_distribution_preference">Distribuzione</string>
     <string name="dialog_title_distribution_preference">Distribuzione</string>
@@ -117,8 +121,8 @@
     <string name="dialog_title_fstype_preference">File system</string>
     <string name="title_username_preference">Nome utente</string>
     <string name="dialog_title_username_preference">Nome utente</string>
-    <string name="title_password_preference">User password</string>
-    <string name="dialog_title_password_preference">User password</string>
+    <string name="title_password_preference">Password utente</string>
+    <string name="dialog_title_password_preference">Password utente</string>
     <string name="title_serverdns_preference">Server DNS</string>
     <string name="dialog_title_serverdns_preference">Indirizzo del server DNS</string>
     <string name="summary_serverdns_preference">Rilevamento automatico</string>
@@ -172,7 +176,7 @@
     <string name="title_xhost_preference">Indirizzo server X</string>
     <string name="dialog_title_xhost_preference">IP o nome host X:</string>
     <string name="title_xserverxsdl_preference">XServer XSDL</string>
-    <string name="summary_xserverxsdl_preference">Automatically open XServer XSDL</string>
+    <string name="summary_xserverxsdl_preference">Aprire automaticamente XServer XSDL</string>
     <string name="fb_preferences">Framebuffer</string>
     <string name="title_fbdisplay_preference">Schermo</string>
     <string name="dialog_title_fbdisplay_preference">Numero schermo FB:</string>
@@ -186,6 +190,6 @@
     <string name="dialog_title_fbargs_preference">Opzioni X FB:</string>
     <string name="title_fbfreeze_preference">Congela interfaccia grafica di Android</string>
     <string name="dialog_title_fbfreeze_preference">Congela interfaccia grafica di Android</string>
-    <string name="about_text">[ <a href="https://github.com/meefik/linuxdeploy">github.com</a> , <a href="http://4pda.ru/forum/index.php?showtopic=378043">4pda.ru</a> ]\n\nQuesto programma è distribuito SENZA ALCUNA GARANZIA. È un software libero, e potete ridistribuirlo sotto determinate condizioni.\n\nLicensed under the GPL version 3 or later.\n\n&#169; 2012-2015 Anton Skshidlevsky</string>
+    <string name="about_text">Questo programma è distribuito SENZA ALCUNA GARANZIA. È un software libero, e potete ridistribuirlo sotto determinate condizioni.\n\nLicensed under the GPL version 3 or later.\n\n&#169; 2012&#8211;2015 Anton Skshidlevsky</string>
 
 </resources>

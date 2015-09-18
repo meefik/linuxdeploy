@@ -3,8 +3,32 @@
     <item
         android:id="@+id/menu_donate"
         android:orderInCategory="100"
-        android:showAsAction="always"
+        android:showAsAction="never"
         android:title="@string/menu_donate">
+    </item>
+    <item
+        android:id="@+id/menu_forum"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/menu_forum">
+    </item>
+    <item
+        android:id="@+id/menu_doc"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/menu_doc">
+    </item>
+    <item
+        android:id="@+id/menu_issues"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/menu_issues">
+    </item>
+    <item
+        android:id="@+id/menu_source"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/menu_source">
     </item>
 
 </menu>
