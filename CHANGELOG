@@ -6,6 +6,7 @@ Added an option to change the chroot directory
 Added unchroot script
 Implemented integration with Android
 Implemented integration with XServer XSDL
+Translated into Slovak
 
 1.5.2
 Added support Slackware
@@ -314,6 +315,7 @@ Updated list packages of base system installation
 Добавлен скрипт unchroot
 Реализована интеграция с Android
 Реализована интеграция с XServer XSDL
+Переведено на словацкий
 
 1.5.2
 Добавлена поддержка Slackware
