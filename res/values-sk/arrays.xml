@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="theme_entries">
+        <item>Tmavá</item>
+        <item>Svetlá</item>
+    </string-array>
+    <string-array name="deploytype_entries">
+        <item>Do súboru</item>
+        <item>Na oddiel</item>
+        <item>Do pamäte RAM</item>
+        <item>Vlastný</item>
+    </string-array>
+    <string-array name="fstype_entries">
+        <item>Automatický</item>
+        <item>ext2</item>
+        <item>ext3</item>
+        <item>ext4</item>
+    </string-array>
+    <string-array name="desktopenv_entries">
+        <item>XTerm</item>
+        <item>LXDE</item>
+        <item>Xfce</item>
+        <item>GNOME</item>
+        <item>KDE</item>
+        <item>Iné</item>
+    </string-array>
+    <string-array name="fbfreeze_entries">
+        <item>Nezmraziť</item>
+        <item>Pozastaviť</item>
+        <item>Zastaviť</item>
+    </string-array>
+    <string-array name="debian_components_entries">
+        <item>Pracovné prostredie</item>
+        <item>Server SSH</item>
+        <item>Server VNC</item>
+        <item>X server</item>
+    </string-array>
+    <string-array name="ubuntu_components_entries">
+        <item>Pracovné prostredie</item>
+        <item>Server SSH</item>
+        <item>Server VNC</item>
+        <item>X server</item>
+    </string-array>
+    <string-array name="kalilinux_components_entries">
+        <item>Pracovné prostredie</item>
+        <item>Server SSH</item>
+        <item>Server VNC</item>
+        <item>X server</item>
+        <item>Súčasti distribúcie Kali</item>
+    </string-array>
+    <string-array name="fedora_components_entries">
+        <item>Pracovné prostredie</item>
+        <item>Server SSH</item>
+        <item>Server VNC</item>
+        <item>X server</item>
+    </string-array>
+    <string-array name="archlinux_components_entries">
+        <item>Pracovné prostredie</item>
+        <item>Server SSH</item>
+        <item>Server VNC</item>
+        <item>X server</item>
+    </string-array>
+    <string-array name="opensuse_components_entries">
+        <item>Pracovné prostredie</item>
+        <item>Server SSH</item>
+        <item>Server VNC</item>
+        <item>X server</item>
+    </string-array>
+    <string-array name="gentoo_components_entries">
+        <item>Pracovné prostredie</item>
+        <item>Server SSH</item>
+        <item>Server VNC</item>
+        <item>X server</item>
+    </string-array>
+    <string-array name="slackware_components_entries">
+        <item>Server SSH</item>
+    </string-array>
+
+</resources>
