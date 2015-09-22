@@ -60,7 +60,7 @@
     <string name="summary_wifilock_preference">Halte WLAN aktiv, solange die App ausgef&#252;hrt wird.</string>
     <string name="title_language_preference">Sprachen</string>
     <string name="dialog_title_language_preference">Sprache ausw&#228;hlen</string>
-    <string name="title_fontsize_preference">Schriftgr&#246;&#223;e</string>App
+    <string name="title_fontsize_preference">Schriftgr&#246;&#223;e</string>
     <string name="dialog_title_fontsize_preference">Schriftgr&#246;&#223;e</string>
     <string name="title_maxline_preference">Scroll Gr&#246;&#223;e</string>
     <string name="dialog_title_maxline_preference">Scroll Gr&#246;&#223;e</string>
