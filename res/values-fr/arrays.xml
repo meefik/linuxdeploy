@@ -1,0 +1,491 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="language_entries" translatable="false">
+        <item>English</item>
+        <item>Русский</item>
+        <item>Deutsch</item>
+        <item>Italiano</item>
+        <item>Español</item>
+        <item>简体中文</item>
+        <item>Tiếng Việt</item>
+        <item>Slovenský</item>
+    </string-array>
+    <string-array name="language_values" translatable="false">
+        <item>en</item>
+        <item>ru</item>
+        <item>de</item>
+        <item>it</item>
+        <item>es</item>
+        <item>zh</item>
+        <item>vi</item>
+        <item>sk</item>
+    </string-array>
+    <string-array name="theme_entries">
+        <item>Dark</item>
+        <item>Light</item>
+    </string-array>
+    <string-array name="theme_values" translatable="false">
+        <item>dark</item>
+        <item>light</item>
+    </string-array>
+    <string-array name="deploytype_values" translatable="false">
+        <item>file</item>
+        <item>partition</item>
+        <item>ram</item>
+        <item>custom</item>
+    </string-array>
+    <string-array name="deploytype_entries">
+        <item>File</item>
+        <item>Partition</item>
+        <item>RAM</item>
+        <item>Custom</item>
+    </string-array>
+    <string-array name="fstype_values" translatable="false">
+        <item>auto</item>
+        <item>ext2</item>
+        <item>ext3</item>
+        <item>ext4</item>
+    </string-array>
+    <string-array name="fstype_entries">
+        <item>Auto</item>
+        <item>ext2</item>
+        <item>ext3</item>
+        <item>ext4</item>
+    </string-array>
+    <string-array name="locale_values" translatable="false">
+        <item>aa_DJ.UTF-8</item>
+        <item>af_ZA.UTF-8</item>
+        <item>an_ES.UTF-8</item>
+        <item>ar_AE.UTF-8</item>
+        <item>ar_BH.UTF-8</item>
+        <item>ar_DZ.UTF-8</item>
+        <item>ar_EG.UTF-8</item>
+        <item>ar_IQ.UTF-8</item>
+        <item>ar_JO.UTF-8</item>
+        <item>ar_KW.UTF-8</item>
+        <item>ar_LB.UTF-8</item>
+        <item>ar_LY.UTF-8</item>
+        <item>ar_MA.UTF-8</item>
+        <item>ar_OM.UTF-8</item>
+        <item>ar_QA.UTF-8</item>
+        <item>ar_SA.UTF-8</item>
+        <item>ar_SD.UTF-8</item>
+        <item>ar_SY.UTF-8</item>
+        <item>ar_TN.UTF-8</item>
+        <item>ar_YE.UTF-8</item>
+        <item>ast_ES.UTF-8</item>
+        <item>be_BY.UTF-8</item>
+        <item>bg_BG.UTF-8</item>
+        <item>br_FR.UTF-8</item>
+        <item>bs_BA.UTF-8</item>
+        <item>ca_AD.UTF-8</item>
+        <item>ca_ES.UTF-8</item>
+        <item>ca_FR.UTF-8</item>
+        <item>ca_IT.UTF-8</item>
+        <item>cs_CZ.UTF-8</item>
+        <item>cy_GB.UTF-8</item>
+        <item>da_DK.UTF-8</item>
+        <item>de_AT.UTF-8</item>
+        <item>de_BE.UTF-8</item>
+        <item>de_CH.UTF-8</item>
+        <item>de_DE.UTF-8</item>
+        <item>de_LI.UTF-8</item>
+        <item>de_LU.UTF-8</item>
+        <item>el_CY.UTF-8</item>
+        <item>el_GR.UTF-8</item>
+        <item>en_AU.UTF-8</item>
+        <item>en_BW.UTF-8</item>
+        <item>en_CA.UTF-8</item>
+        <item>en_DK.UTF-8</item>
+        <item>en_GB.UTF-8</item>
+        <item>en_HK.UTF-8</item>
+        <item>en_IE.UTF-8</item>
+        <item>en_NZ.UTF-8</item>
+        <item>en_PH.UTF-8</item>
+        <item>en_SG.UTF-8</item>
+        <item>en_US.UTF-8</item>
+        <item>en_ZA.UTF-8</item>
+        <item>en_ZW.UTF-8</item>
+        <item>eo.UTF-8</item>
+        <item>es_AR.UTF-8</item>
+        <item>es_BO.UTF-8</item>
+        <item>es_CL.UTF-8</item>
+        <item>es_CO.UTF-8</item>
+        <item>es_CR.UTF-8</item>
+        <item>es_DO.UTF-8</item>
+        <item>es_EC.UTF-8</item>
+        <item>es_ES.UTF-8</item>
+        <item>es_GT.UTF-8</item>
+        <item>es_HN.UTF-8</item>
+        <item>es_MX.UTF-8</item>
+        <item>es_NI.UTF-8</item>
+        <item>es_PA.UTF-8</item>
+        <item>es_PE.UTF-8</item>
+        <item>es_PR.UTF-8</item>
+        <item>es_PY.UTF-8</item>
+        <item>es_SV.UTF-8</item>
+        <item>es_US.UTF-8</item>
+        <item>es_UY.UTF-8</item>
+        <item>es_VE.UTF-8</item>
+        <item>et_EE.UTF-8</item>
+        <item>eu_ES.UTF-8</item>
+        <item>eu_FR.UTF-8</item>
+        <item>fi_FI.UTF-8</item>
+        <item>fo_FO.UTF-8</item>
+        <item>fr_BE.UTF-8</item>
+        <item>fr_CA.UTF-8</item>
+        <item>fr_CH.UTF-8</item>
+        <item>fr_FR.UTF-8</item>
+        <item>fr_LU.UTF-8</item>
+        <item>ga_IE.UTF-8</item>
+        <item>gd_GB.UTF-8</item>
+        <item>gl_ES.UTF-8</item>
+        <item>gv_GB.UTF-8</item>
+        <item>he_IL.UTF-8</item>
+        <item>hr_HR.UTF-8</item>
+        <item>hsb_DE.UTF-8</item>
+        <item>hu_HU.UTF-8</item>
+        <item>id_ID.UTF-8</item>
+        <item>is_IS.UTF-8</item>
+        <item>it_CH.UTF-8</item>
+        <item>it_IT.UTF-8</item>
+        <item>iw_IL.UTF-8</item>
+        <item>ja_JP.UTF-8</item>
+        <item>ka_GE.UTF-8</item>
+        <item>kk_KZ.UTF-8</item>
+        <item>kl_GL.UTF-8</item>
+        <item>ko_KR.UTF-8</item>
+        <item>ku_TR.UTF-8</item>
+        <item>kw_GB.UTF-8</item>
+        <item>lg_UG.UTF-8</item>
+        <item>lt_LT.UTF-8</item>
+        <item>lv_LV.UTF-8</item>
+        <item>mg_MG.UTF-8</item>
+        <item>mi_NZ.UTF-8</item>
+        <item>mk_MK.UTF-8</item>
+        <item>ms_MY.UTF-8</item>
+        <item>mt_MT.UTF-8</item>
+        <item>nb_NO.UTF-8</item>
+        <item>nl_BE.UTF-8</item>
+        <item>nl_NL.UTF-8</item>
+        <item>nn_NO.UTF-8</item>
+        <item>oc_FR.UTF-8</item>
+        <item>om_KE.UTF-8</item>
+        <item>pl_PL.UTF-8</item>
+        <item>pt_BR.UTF-8</item>
+        <item>pt_PT.UTF-8</item>
+        <item>ro_RO.UTF-8</item>
+        <item>ru_RU.UTF-8</item>
+        <item>ru_UA.UTF-8</item>
+        <item>sk_SK.UTF-8</item>
+        <item>sl_SI.UTF-8</item>
+        <item>so_DJ.UTF-8</item>
+        <item>so_KE.UTF-8</item>
+        <item>so_SO.UTF-8</item>
+        <item>sq_AL.UTF-8</item>
+        <item>st_ZA.UTF-8</item>
+        <item>sv_FI.UTF-8</item>
+        <item>sv_SE.UTF-8</item>
+        <item>tg_TJ.UTF-8</item>
+        <item>th_TH.UTF-8</item>
+        <item>tl_PH.UTF-8</item>
+        <item>tr_CY.UTF-8</item>
+        <item>tr_TR.UTF-8</item>
+        <item>uk_UA.UTF-8</item>
+        <item>uz_UZ.UTF-8</item>
+        <item>wa_BE.UTF-8</item>
+        <item>xh_ZA.UTF-8</item>
+        <item>yi_US.UTF-8</item>
+        <item>zh_CN.UTF-8</item>
+        <item>zh_HK.UTF-8</item>
+        <item>zh_SG.UTF-8</item>
+        <item>zh_TW.UTF-8</item>
+        <item>zu_ZA.UTF-8</item>
+    </string-array>
+    <string-array name="vncdepth_values" translatable="false">
+        <item>8</item>
+        <item>15</item>
+        <item>16</item>
+        <item>24</item>
+    </string-array>
+    <string-array name="desktopenv_values" translatable="false">
+        <item>xterm</item>
+        <item>lxde</item>
+        <item>xfce</item>
+        <item>gnome</item>
+        <item>kde</item>
+        <item>other</item>
+    </string-array>
+    <string-array name="desktopenv_entries">
+        <item>XTerm</item>
+        <item>LXDE</item>
+        <item>Xfce</item>
+        <item>GNOME</item>
+        <item>KDE</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="distribution_values" translatable="false">
+        <item>debian</item>
+        <item>ubuntu</item>
+        <item>kalilinux</item>
+        <item>fedora</item>
+        <item>archlinux</item>
+        <item>gentoo</item>
+        <item>opensuse</item>
+        <item>slackware</item>
+        <item>rootfs</item>
+    </string-array>
+    <string-array name="distribution_entries" translatable="false">
+        <item>Debian</item>
+        <item>Ubuntu</item>
+        <item>Kali Linux</item>
+        <item>Fedora</item>
+        <item>Arch Linux</item>
+        <item>Gentoo</item>
+        <item>openSUSE</item>
+        <item>Slackware</item>
+        <item>RootFS</item>
+    </string-array>
+    <string-array name="guitype_values" translatable="false">
+        <item>vnc</item>
+        <item>xserver</item>
+        <item>framebuffer</item>
+    </string-array>
+    <string-array name="guitype_entries" translatable="false">
+        <item>VNC</item>
+        <item>X Server</item>
+        <item>Framebuffer</item>
+    </string-array>
+    <string-array name="fbfreeze_values" translatable="false">
+        <item>none</item>
+        <item>pause</item>
+        <item>stop</item>
+    </string-array>
+    <string-array name="fbfreeze_entries">
+        <item>Don\'t freeze</item>
+        <item>Pause</item>
+        <item>Stop</item>
+    </string-array>
+    
+
+    <!-- Debian -->
+
+    <string-array name="debian_suite_values" translatable="false">
+        <item>stable</item>
+        <item>testing</item>
+        <item>unstable</item>
+        <item>squeeze</item>
+        <item>wheezy</item>
+        <item>jessie</item>
+        <item>sid</item>
+    </string-array>
+    <string-array name="debian_architecture_values" translatable="false">
+        <item>armel</item>
+        <item>armhf</item>
+        <item>arm64</item> <!-- jessie and later -->
+        <item>i386</item>
+        <item>amd64</item>
+    </string-array>
+    <string-array name="debian_components_values" translatable="false">
+        <item>desktop</item>
+        <item>ssh</item>
+        <item>vnc</item>
+        <item>xserver</item>
+    </string-array>
+    <string-array name="debian_components_entries">
+        <item>Desktop Environment</item>
+        <item>SSH server</item>
+        <item>VNC server</item>
+        <item>X server</item>
+    </string-array>
+
+    <!-- Ubuntu -->
+
+    <string-array name="ubuntu_suite_values" translatable="false">
+        <item>lucid</item>
+        <item>precise</item>
+        <item>trusty</item>
+        <item>utopic</item>
+        <item>vivid</item>
+        <item>wily</item>
+    </string-array>
+    <string-array name="ubuntu_architecture_values" translatable="false">
+        <item>armel</item>
+        <item>armhf</item>
+        <item>arm64</item> <!-- saucy and later -->
+        <item>i386</item>
+        <item>amd64</item>
+    </string-array>
+    <string-array name="ubuntu_components_values" translatable="false">
+        <item>desktop</item>
+        <item>ssh</item>
+        <item>vnc</item>
+        <item>xserver</item>
+    </string-array>
+    <string-array name="ubuntu_components_entries">
+        <item>Desktop Environment</item>
+        <item>SSH server</item>
+        <item>VNC server</item>
+        <item>X server</item>
+    </string-array>
+    
+    <!-- Kali Linux -->
+
+    <string-array name="kalilinux_suite_values" translatable="false">
+        <item>moto</item>
+        <item>sana</item>
+    </string-array>
+    <string-array name="kalilinux_architecture_values" translatable="false">
+        <item>armel</item>
+        <item>armhf</item>
+        <item>i386</item>
+        <item>amd64</item>
+    </string-array>
+    <string-array name="kalilinux_components_values" translatable="false">
+        <item>desktop</item>
+        <item>ssh</item>
+        <item>vnc</item>
+        <item>xserver</item>
+        <item>kali-linux</item>
+    </string-array>
+    <string-array name="kalilinux_components_entries">
+        <item>Desktop Environment</item>
+        <item>SSH server</item>
+        <item>VNC server</item>
+        <item>X server</item>
+        <item>Kali components</item>
+    </string-array>
+    
+    <!-- Fedora -->
+
+    <string-array name="fedora_suite_values" translatable="false">
+        <item>18</item>
+        <item>19</item>
+        <item>20</item>
+        <item>21</item>
+        <item>22</item>
+    </string-array>
+    <string-array name="fedora_architecture_values" translatable="false">
+        <item>arm</item> <!-- f18 only -->
+        <item>armhfp</item> <!-- f19 and later -->
+        <item>aarch64</item> <!-- f21 and later -->
+        <item>i386</item>
+        <item>x86_64</item>
+    </string-array>
+    <string-array name="fedora_components_values" translatable="false">
+        <item>desktop</item>
+        <item>ssh</item>
+        <item>vnc</item>
+        <item>xserver</item>
+    </string-array>
+    <string-array name="fedora_components_entries">
+        <item>Desktop Environment</item>
+        <item>SSH server</item>
+        <item>VNC server</item>
+        <item>X server</item>
+    </string-array>
+    
+    <!-- Arch Linux -->
+
+    <string-array name="archlinux_suite_values" translatable="false">
+        <item>latest</item>
+    </string-array>
+    <string-array name="archlinux_architecture_values" translatable="false">
+        <item>arm</item>
+        <item>armv6h</item>
+        <item>armv7h</item>
+        <item>aarch64</item>
+        <item>i686</item>
+        <item>x86_64</item>
+    </string-array>
+    <string-array name="archlinux_components_values" translatable="false">
+        <item>desktop</item>
+        <item>ssh</item>
+        <item>vnc</item>
+        <item>xserver</item>
+    </string-array>
+    <string-array name="archlinux_components_entries">
+        <item>Desktop Environment</item>
+        <item>SSH server</item>
+        <item>VNC server</item>
+        <item>X server</item>
+    </string-array>
+
+    <!-- openSUSE -->
+
+    <string-array name="opensuse_suite_values" translatable="false">
+        <item>12.3</item>
+        <item>13.2</item>
+    </string-array>
+    <string-array name="opensuse_architecture_values" translatable="false">
+        <item>armv7hl</item>
+        <item>i586</item>
+        <item>x86_64</item>
+    </string-array>
+    <string-array name="opensuse_components_values" translatable="false">
+        <item>desktop</item>
+        <item>ssh</item>
+        <item>vnc</item>
+        <item>xserver</item>
+    </string-array>
+    <string-array name="opensuse_components_entries">
+        <item>Desktop Environment</item>
+        <item>SSH server</item>
+        <item>VNC server</item>
+        <item>X server</item>
+    </string-array>
+    
+    <!-- Gentoo -->
+
+    <string-array name="gentoo_suite_values" translatable="false">
+        <item>latest</item>
+    </string-array>
+    <string-array name="gentoo_architecture_values" translatable="false">
+        <item>armv4tl</item>
+        <item>armv5tel</item>
+        <item>armv6j</item>
+        <item>armv6j_hardfp</item>
+        <item>armv7a</item>
+        <item>armv7a_hardfp</item>
+        <item>i486</item>
+        <item>i686</item>
+        <item>amd64</item> <!-- need manually change the mirror url -->
+    </string-array>
+    <string-array name="gentoo_components_values" translatable="false">
+        <item>desktop</item>
+        <item>ssh</item>
+        <item>vnc</item>
+        <item>xserver</item>
+    </string-array>
+    <string-array name="gentoo_components_entries">
+        <item>Desktop Environment</item>
+        <item>SSH server</item>
+        <item>VNC server</item>
+        <item>X server</item>
+    </string-array>
+    
+    <!-- Slackware -->
+
+    <string-array name="slackware_suite_values" translatable="false">
+        <item>latest</item>
+    </string-array>
+    <string-array name="slackware_architecture_values" translatable="false">
+        <item>arm</item>
+        <item>x86</item>
+    </string-array>
+    <string-array name="slackware_components_values" translatable="false">
+        <item>ssh</item>
+    </string-array>
+    <string-array name="slackware_components_entries">
+        <item>SSH server</item>
+    </string-array>
+    
+    <!-- RootFS -->
+
+    <string-array name="rootfs_suite_values" translatable="false" />
+    <string-array name="rootfs_architecture_values" translatable="false" />
+    <string-array name="rootfs_components_values" translatable="false" />
+    <string-array name="rootfs_components_entries" translatable="false" />
+
+</resources>
