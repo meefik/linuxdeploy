@@ -294,10 +294,10 @@
         <item>xserver</item>
     </string-array>
     <string-array name="debian_components_entries">
-        <item>Desktop Environment</item>
-        <item>SSH server</item>
-        <item>VNC server</item>
-        <item>X server</item>
+        <item>Environnement Bureau</item>
+        <item>Serveur SSH</item>
+        <item>Serveur VNC</item>
+        <item>Serveur X</item>
     </string-array>
 
     <!-- Ubuntu -->
@@ -324,10 +324,10 @@
         <item>xserver</item>
     </string-array>
     <string-array name="ubuntu_components_entries">
-        <item>Desktop Environment</item>
-        <item>SSH server</item>
-        <item>VNC server</item>
-        <item>X server</item>
+        <item>Environnement Bureau</item>
+        <item>Serveur SSH</item>
+        <item>Serveur VNC</item>
+        <item>Serveur X</item>
     </string-array>
     
     <!-- Kali Linux -->
@@ -350,11 +350,11 @@
         <item>kali-linux</item>
     </string-array>
     <string-array name="kalilinux_components_entries">
-        <item>Desktop Environment</item>
-        <item>SSH server</item>
-        <item>VNC server</item>
-        <item>X server</item>
-        <item>Kali components</item>
+        <item>Environnement Bureau</item>
+        <item>Serveur SSH</item>
+        <item>Serveur VNC</item>
+        <item>Serveur X</item>
+        <item>Composants Kali</item>
     </string-array>
     
     <!-- Fedora -->
@@ -380,10 +380,10 @@
         <item>xserver</item>
     </string-array>
     <string-array name="fedora_components_entries">
-        <item>Desktop Environment</item>
-        <item>SSH server</item>
-        <item>VNC server</item>
-        <item>X server</item>
+        <item>Environnement Bureau</item>
+        <item>Serveur SSH</item>
+        <item>Serveur VNC</item>
+        <item>Serveur X</item>
     </string-array>
     
     <!-- Arch Linux -->
@@ -406,10 +406,10 @@
         <item>xserver</item>
     </string-array>
     <string-array name="archlinux_components_entries">
-        <item>Desktop Environment</item>
-        <item>SSH server</item>
-        <item>VNC server</item>
-        <item>X server</item>
+        <item>Environnement Bureau</item>
+        <item>Serveur SSH</item>
+        <item>Serveur VNC</item>
+        <item>Serveur X</item>
     </string-array>
 
     <!-- openSUSE -->
@@ -430,10 +430,10 @@
         <item>xserver</item>
     </string-array>
     <string-array name="opensuse_components_entries">
-        <item>Desktop Environment</item>
-        <item>SSH server</item>
-        <item>VNC server</item>
-        <item>X server</item>
+        <item>Environnement Bureau</item>
+        <item>Serveur SSH</item>
+        <item>Serveur VNC</item>
+        <item>Serveur X</item>
     </string-array>
     
     <!-- Gentoo -->
@@ -459,10 +459,10 @@
         <item>xserver</item>
     </string-array>
     <string-array name="gentoo_components_entries">
-        <item>Desktop Environment</item>
-        <item>SSH server</item>
-        <item>VNC server</item>
-        <item>X server</item>
+        <item>Environnement Bureau</item>
+        <item>Serveur SSH</item>
+        <item>Serveur VNC</item>
+        <item>Serveur X</item>
     </string-array>
     
     <!-- Slackware -->
@@ -478,7 +478,7 @@
         <item>ssh</item>
     </string-array>
     <string-array name="slackware_components_entries">
-        <item>SSH server</item>
+        <item>Serveur SSH</item>
     </string-array>
     
     <!-- RootFS -->
