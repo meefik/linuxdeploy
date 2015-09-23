@@ -22,8 +22,8 @@
         <item>sk</item>
     </string-array>
     <string-array name="theme_entries">
-        <item>Dark</item>
-        <item>Light</item>
+        <item>Sombre</item>
+        <item>Clair</item>
     </string-array>
     <string-array name="theme_values" translatable="false">
         <item>dark</item>
@@ -36,10 +36,10 @@
         <item>custom</item>
     </string-array>
     <string-array name="deploytype_entries">
-        <item>File</item>
+        <item>Fichier</item>
         <item>Partition</item>
         <item>RAM</item>
-        <item>Custom</item>
+        <item>Sur mesure</item>
     </string-array>
     <string-array name="fstype_values" translatable="false">
         <item>auto</item>
@@ -223,7 +223,7 @@
         <item>Xfce</item>
         <item>GNOME</item>
         <item>KDE</item>
-        <item>Other</item>
+        <item>Autre</item>
     </string-array>
     <string-array name="distribution_values" translatable="false">
         <item>debian</item>
@@ -263,7 +263,7 @@
         <item>stop</item>
     </string-array>
     <string-array name="fbfreeze_entries">
-        <item>Don\'t freeze</item>
+        <item>Ne pas freezer</item>
         <item>Pause</item>
         <item>Stop</item>
     </string-array>
