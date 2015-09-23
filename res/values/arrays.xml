@@ -8,6 +8,8 @@
         <item>Italiano</item>
         <item>Español</item>
         <item>简体中文</item>
+        <item>Tiếng Việt</item>
+        <item>Slovenský</item>
     </string-array>
     <string-array name="language_values" translatable="false">
         <item>en</item>
@@ -16,6 +18,8 @@
         <item>it</item>
         <item>es</item>
         <item>zh</item>
+        <item>vi</item>
+        <item>sk</item>
     </string-array>
     <string-array name="theme_entries">
         <item>Dark</item>
@@ -224,7 +228,7 @@
     <string-array name="distribution_values" translatable="false">
         <item>debian</item>
         <item>ubuntu</item>
-        <item>kali</item>
+        <item>kalilinux</item>
         <item>fedora</item>
         <item>archlinux</item>
         <item>gentoo</item>
@@ -328,25 +332,24 @@
     
     <!-- Kali Linux -->
 
-    <string-array name="kali_suite_values" translatable="false">
-        <item>kali</item>
+    <string-array name="kalilinux_suite_values" translatable="false">
         <item>moto</item>
         <item>sana</item>
     </string-array>
-    <string-array name="kali_architecture_values" translatable="false">
+    <string-array name="kalilinux_architecture_values" translatable="false">
         <item>armel</item>
         <item>armhf</item>
         <item>i386</item>
         <item>amd64</item>
     </string-array>
-    <string-array name="kali_components_values" translatable="false">
+    <string-array name="kalilinux_components_values" translatable="false">
         <item>desktop</item>
         <item>ssh</item>
         <item>vnc</item>
         <item>xserver</item>
         <item>kali-linux</item>
     </string-array>
-    <string-array name="kali_components_entries">
+    <string-array name="kalilinux_components_entries">
         <item>Desktop Environment</item>
         <item>SSH server</item>
         <item>VNC server</item>
@@ -392,6 +395,7 @@
         <item>arm</item>
         <item>armv6h</item>
         <item>armv7h</item>
+        <item>aarch64</item>
         <item>i686</item>
         <item>x86_64</item>
     </string-array>

@@ -17,10 +17,10 @@ Installing a new operating system takes about 30 minutes. The recommended minimu
 * Supported distributions: Debian, Ubuntu, Kali Linux, Arch Linux, Fedora, Gentoo, openSUSE, Slackware, RootFS (tgz, tbz2, txz)
 * Installation type: image file, disk partition, RAM, directory
 * Supported file systems: ext2, ext3, ext4
-* Supported architectures: ARM, x86, x86_64
-* Control interface: SSH, VNC, X, framebuffer
-* Desktop environment: XTerm, LXDE, Xfce, GNOME, KDE
-* Supported languages: English, Russian, German, Italian, Spanish, Chinese
+* Supported architectures: ARM, ARM64, x86, x86_64, emulation mode (ARM ~ x86)
+* Control interface: CLI, SSH, VNC, X, framebuffer
+* Desktop environment: XTerm, LXDE, Xfce, GNOME, KDE, other (manual configuration)
+* Supported languages: English, Russian, German, Italian, Spanish, Chinese, Vietnamese, Slovak
 
 #### Install ####
 You can install the app from Google play: <https://play.google.com/store/apps/details?id=ru.meefik.linuxdeploy>.
@@ -70,10 +70,10 @@ Copyright (C) 2012-2015  Антон Скшидлевский
 * Поддерживаемые дистрибутивы: Debian, Ubuntu, Kali Linux, Arch Linux, Fedora, Gentoo, openSUSE, Slackware, RootFS (tgz, tbz2, txz)
 * Тип установки: файл образа, раздел диска, оперативная память, директория
 * Поддерживаемые файловые системы: ext2, ext3, ext4
-* Поддерживаемые архитектуры: ARM, x86, x86_64
-* Интерфейс управления: SSH, VNC, X, фрейм-буфер
-* Окружение рабочего стола: XTerm, LXDE, Xfce, GNOME, KDE
-* Поддерживаемые языки: русский, английский, немецкий, итальянский, испанский, китайский
+* Поддерживаемые архитектуры: ARM, ARM64, x86, x86_64, режим эмуляции (ARM ~ x86)
+* Интерфейс управления: CLI, SSH, VNC, X, фрейм-буфер
+* Окружение рабочего стола: XTerm, LXDE, Xfce, GNOME, KDE, другое (ручная настройка)
+* Поддерживаемые языки: русский, английский, немецкий, итальянский, испанский, китайский, вьетнамский, словацкий
 
 #### Установка ####
 Вы можете установить это приложение из Google play: <https://play.google.com/store/apps/details?id=ru.meefik.linuxdeploy>.

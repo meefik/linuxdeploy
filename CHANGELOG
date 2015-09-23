@@ -1,12 +1,26 @@
 Changelog (English)
 ===================
 
+1.5.3
+Added an option to change the chroot directory
+Added unchroot script
+Implemented integration with Android
+Implemented integration with XServer XSDL
+Translated into Slovak
+
 1.5.2
 Added support Slackware
 Added support Kali Linux 2.0 (sana)
 Added support tar.xz for RootFS installation
-Added support amd64 for Debian based distributions
+Added support x86_64 (amd64) distributions
+Added export a container as rootfs archive (tgz or tbz2)
 Modified update ENV mechanism
+Updated command line interface
+Added ability to change password from GUI
+Translated into Vietnamese
+Updated root checker
+Added support aarch64 for Arch Linux
+Fixed autostart problem
 
 1.5.1
 Added support for installation type in RAM
@@ -296,12 +310,26 @@ Updated list packages of base system installation
 История изменений (Русский)
 ===========================
 
+1.5.3
+Добавлена опция изменения chroot директории
+Добавлен скрипт unchroot
+Реализована интеграция с Android
+Реализована интеграция с XServer XSDL
+Переведено на словацкий
+
 1.5.2
 Добавлена поддержка Slackware
 Добавлена поддержка Kali Linux 2.0 (sana)
 Добавлена поддержка архивов tar.xz для установки типа RootFS
-Добавлена поддержка amd64 для основанных на Debian дистрибутивов
+Добавлена поддержка x86_64 (amd64) дистрибутивов
+Добавлена функция экспорта контейнера как rootfs архива (tgz или tbz2)
 Изменен механизм обновления рабочего окружения
+Обновлен интерфейс командной строки
+Добавлена возможность изменять пароль из интерфейса приложения
+Переведено на вьетнамский язык
+Изменен механизм проверки прав суперпользователя
+Добавлена поддержка aarch64 для Arch Linux
+Исправлена проблема с автозапуском
 
 1.5.1
 Добавлена поддержка установки дистрибутивов в оперативную память

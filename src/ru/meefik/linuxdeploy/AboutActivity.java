@@ -19,8 +19,10 @@ public class AboutActivity extends SherlockActivity {
 		PrefStore.updateLocale(this);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		setContentView(R.layout.activity_about);
-		TextView tv = (TextView) findViewById(R.id.AboutTextView);
-		tv.setMovementMethod(LinkMovementMethod.getInstance());
+		TextView atv = (TextView) findViewById(R.id.AboutTextView);
+		atv.setMovementMethod(LinkMovementMethod.getInstance());
+		TextView vtv = (TextView) findViewById(R.id.VersionView);
+		vtv.setText(getString(R.string.app_version, PrefStore.VERSION));
 	}
 
 	@Override
@@ -38,14 +40,30 @@ public class AboutActivity extends SherlockActivity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		String url = null;
 		switch (item.getItemId()) {
 		case android.R.id.home:
 			finish();
 			break;
 		case R.id.menu_donate:
-			Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://meefik.github.io/donate"));
-			startActivity(browserIntent);
+			url = "http://meefik.github.io/donate";
 			break;
+		case R.id.menu_forum:
+			url = "http://4pda.ru/forum/index.php?showtopic=378043";
+			break;
+		case R.id.menu_doc:
+			url = "https://github.com/meefik/linuxdeploy/wiki";
+			break;
+		case R.id.menu_issues:
+			url = "https://github.com/meefik/linuxdeploy/issues";
+			break;
+		case R.id.menu_source:
+			url = "https://github.com/meefik/linuxdeploy";
+			break;
+		}
+		if (url != null) {
+			Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+			startActivity(browserIntent);
 		}
 		return false;
 	}

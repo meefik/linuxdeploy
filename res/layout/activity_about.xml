@@ -15,7 +15,7 @@
         android:orientation="vertical" >
 
         <ImageView
-            android:id="@+id/imageView1"
+            android:id="@+id/ImageView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -23,10 +23,28 @@
             android:src="@raw/tux_about" />
 
         <TextView
-            android:id="@+id/AboutTextView"
+            android:id="@+id/TitleView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
+            android:gravity="center"
+            android:text="@string/app_name"
+            android:textSize="32sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/VersionView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text=""
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/AboutTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
             android:clickable="true"
             android:gravity="center"
             android:text="@string/about_text" />

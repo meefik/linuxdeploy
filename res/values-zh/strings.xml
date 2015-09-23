@@ -2,12 +2,17 @@
 <resources>
 
     <string name="app_name">Linux Deploy</string>
+    <string name="app_version">版本 %1$s</string>
     <string name="menu_start">启动</string>
     <string name="menu_stop">停止</string>
     <string name="menu_properties">属性</string>
     <string name="menu_settings">设置</string>
     <string name="menu_about">关于</string>
     <string name="menu_donate">捐赠</string>
+    <string name="menu_forum">论坛</string>
+    <string name="menu_doc">文件</string>
+    <string name="menu_issues">问题</string>
+    <string name="menu_source">源代码</string>
     <string name="menu_exit">退出</string>
     <string name="menu_status">状态</string>
     <string name="menu_clear">清空</string>
@@ -93,7 +98,9 @@
     <string name="message_install_confirm_dialog">开始 GNU/Linux 的安装？</string>
     <string name="title_reconfigure_preference">重新配置</string>
     <string name="summary_reconfigure_preference">重新配置 GNU/Linux</string>
-    <string name="message_reconfigure_confirm_dialog">开始重新配置 GNU/Linux ？</string>
+    <string name="message_reconfigure_confirm_dialog">开始重新配置 GNU/Linux？</string>
+    <string name="title_export_preference">导出</string>
+    <string name="summary_export_preference">导出 GNU/Linux 的根文件系统归档</string>
     <string name="deploy_preferences">部署</string>
     <string name="title_distribution_preference">发行版</string>
     <string name="dialog_title_distribution_preference">发行版</string>
@@ -114,6 +121,8 @@
     <string name="dialog_title_fstype_preference">文件系统</string>
     <string name="title_username_preference">用户名</string>
     <string name="dialog_title_username_preference">用户名</string>
+    <string name="title_password_preference">用户密码</string>
+    <string name="dialog_title_password_preference">用户密码</string>
     <string name="title_serverdns_preference">DNS 服务器</string>
     <string name="dialog_title_serverdns_preference">DNS 服务器地址</string>
     <string name="summary_serverdns_preference">自动</string>
@@ -125,6 +134,8 @@
     <string name="summary_components_preference">选择要安装的组件</string>
     <string name="title_components_preference">选择组件</string>
     <string name="startup_preferences">启动</string>
+    <string name="title_mountdir_preference">Chroot 目录</string>
+    <string name="dialog_title_mountdir_preference">Chroot 目录</string>
     <string name="title_sshstartup_preference">SSH</string>
     <string name="summary_sshstartup_preference">允许 SSH 服务器启动</string>
     <string name="title_sshproperties_preference">SSH 设置</string>
@@ -159,12 +170,14 @@
     <string name="dialog_title_vncheight_preference">VNC: 屏幕高度</string>
     <string name="title_vncargs_preference">VNC 参数</string>
     <string name="dialog_title_vncargs_preference">VNC: 服务器参数</string>
-    <string name="xserver_preferences">X Window</string>
+    <string name="xserver_preferences">X Server</string>
     <string name="title_xdisplay_preference">显示</string>
     <string name="dialog_title_xdisplay_preference">X: 窗口序号</string>
     <string name="title_xhost_preference">X11 服务器地址</string>
     <string name="dialog_title_xhost_preference">X: IP地址或域名</string>
-    <string name="fb_preferences">Frame Buffer</string>
+    <string name="title_xserverxsdl_preference">XServer XSDL</string>
+    <string name="summary_xserverxsdl_preference">自动打开 XServer XSDL</string>
+    <string name="fb_preferences">Framebuffer</string>
     <string name="title_fbdisplay_preference">显示</string>
     <string name="dialog_title_fbdisplay_preference">FB: 窗口序号</string>
     <string name="title_fbdpi_preference">DPI</string>
@@ -177,6 +190,6 @@
     <string name="dialog_title_fbargs_preference">FB: X11 参数</string>
     <string name="title_fbfreeze_preference">冻结 Android 界面</string>
     <string name="dialog_title_fbfreeze_preference">冻结 Android 界面</string>
-    <string name="about_text"><font size="32"><b>Linux Deploy</b></font>\n\nGPL v3\n\n[ <a href="https://github.com/meefik/linuxdeploy">github.com</a> , <a href="http://4pda.ru/forum/index.php?showtopic=378043">4pda.ru</a> ]\n\nThis program comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions.\n\n&#169; 2012-2015 Anton Skshidlevsky</string>
+    <string name="about_text">本程序不承担任何担保责任。这是一个自由软件，您可以在特定的条件下重现分发。\n\n根据 GPLv3 或更新的协议颁发许可。\n\n&#169; 2012&#8211;2015 Anton Skshidlevsky</string>
 
 </resources>

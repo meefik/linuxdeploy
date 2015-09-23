@@ -17,6 +17,7 @@ import android.preference.Preference;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
+import android.widget.EditText;
 
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.MenuItem;
@@ -99,6 +100,9 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 		if (preference.getKey().equals("reconfigure")) {
 			reconfigureDialog();
 		}
+		if (preference.getKey().equals("export")) {
+			exportDialog();
+		}
 		if (preference.getKey().equals("sshproperties")) {
 			Intent intent = new Intent(getApplicationContext(),
 					PropertiesActivity.class);
@@ -110,30 +114,20 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 		if (preference.getKey().equals("guiproperties")) {
 			ListPreference guitype = (ListPreference) this
 					.findPreference("guitype");
+			Intent intent = new Intent(getApplicationContext(),
+					PropertiesActivity.class);
+			Bundle b = new Bundle();
 			if (guitype.getValue().equals("vnc")) {
-				Intent intent = new Intent(getApplicationContext(),
-						PropertiesActivity.class);
-				Bundle b = new Bundle();
 				b.putInt("pref", 2);
-				intent.putExtras(b);
-				startActivity(intent);
 			}
 			if (guitype.getValue().equals("xserver")) {
-				Intent intent = new Intent(getApplicationContext(),
-						PropertiesActivity.class);
-				Bundle b = new Bundle();
 				b.putInt("pref", 3);
-				intent.putExtras(b);
-				startActivity(intent);
 			}
 			if (guitype.getValue().equals("framebuffer")) {
-				Intent intent = new Intent(getApplicationContext(),
-						PropertiesActivity.class);
-				Bundle b = new Bundle();
 				b.putInt("pref", 4);
-				intent.putExtras(b);
-				startActivity(intent);
 			}
+			intent.putExtras(b);
+			startActivity(intent);
 		}
 		if (preference.getKey().equals("scriptseditor")) {
 			Intent intent = new Intent(getApplicationContext(),
@@ -148,11 +142,34 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 		return true;
 	}
 
+	private void installDialog() {
+		new AlertDialog.Builder(this)
+				.setTitle(R.string.title_install_preference)
+				.setMessage(R.string.message_install_confirm_dialog)
+				.setCancelable(false)
+				.setPositiveButton(android.R.string.yes,
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int id) {
+								PrefStore.CONF_CHANGE = false;
+								new ExecScript(getApplicationContext(),
+										"install").start();
+								finish();
+							}
+						})
+				.setNegativeButton(android.R.string.no,
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int id) {
+								dialog.cancel();
+							}
+						}).show();
+	}
+
 	private void reconfigureDialog() {
 		new AlertDialog.Builder(this)
 				.setTitle(R.string.title_reconfigure_preference)
 				.setMessage(R.string.message_reconfigure_confirm_dialog)
-				.setIcon(android.R.drawable.ic_dialog_alert)
 				.setCancelable(false)
 				.setPositiveButton(android.R.string.yes,
 						new DialogInterface.OnClickListener() {
@@ -173,19 +190,22 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 						}).show();
 	}
 
-	private void installDialog() {
+	private void exportDialog() {
+		final EditText input = new EditText(this);
+		final String rootfsArchive = PrefStore.EXTERNAL_STORAGE
+				+ "/linux-rootfs.tar.gz";
+		input.setText(rootfsArchive);
 		new AlertDialog.Builder(this)
-				.setTitle(R.string.title_install_preference)
-				.setMessage(R.string.message_install_confirm_dialog)
-				.setIcon(android.R.drawable.ic_dialog_alert)
+				.setTitle(R.string.title_export_preference)
 				.setCancelable(false)
+				.setView(input)
 				.setPositiveButton(android.R.string.yes,
 						new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int id) {
 								PrefStore.CONF_CHANGE = false;
 								new ExecScript(getApplicationContext(),
-										"install").start();
+										"export " + input.getText()).start();
 								finish();
 							}
 						})
@@ -233,7 +253,7 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 				pref.setSummary(this
 						.getString(R.string.summary_disksize_preference));
 			}
-			if (editPref.getText().equals("{replace}")) {
+			if (editPref.getText().isEmpty()) {
 				if (editPref.getKey().equals("diskimage")) {
 					File extStore = Environment.getExternalStorageDirectory();
 					String imgFile = extStore.getAbsolutePath() + "/linux.img";
@@ -297,7 +317,7 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 					architecture.setEntries(architectureValuesId);
 					architecture.setEntryValues(architectureValuesId);
 				}
-				if (init || architecture.getValue().equals("{replace}")) {
+				if (init || architecture.getValue().isEmpty()) {
 					int architectureId = PrefStore.getResourceId(this,
 							PrefStore.MARCH + "_" + distributionStr
 									+ "_architecture", "string");
@@ -311,7 +331,7 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 				architecture.setEnabled(true);
 
 				// mirror
-				if (init || mirror.getText().equals("{replace}")) {
+				if (init || mirror.getText().isEmpty()) {
 					int mirrorId = PrefStore
 							.getResourceId(this, PrefStore.MARCH + "_"
 									+ distributionStr + "_mirror", "string");
@@ -408,7 +428,7 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 					break;
 				default:
 					if (init) {
-						diskimage.setText("/data/local/linux");
+						diskimage.setText(PrefStore.EXTERNAL_STORAGE);
 					}
 					disksize.setEnabled(false);
 					fstype.setEnabled(false);

@@ -20,7 +20,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map.Entry;
-import java.util.Properties;
 import java.util.Set;
 
 import android.annotation.SuppressLint;
@@ -56,6 +55,7 @@ public class PrefStore {
 	public static String LOG_FILE;
 
 	// to deploy
+	public static String MNT_TARGET;
 	public static String IMG_TARGET;
 	public static String DEPLOY_TYPE;
 	public static String IMG_SIZE;
@@ -65,10 +65,11 @@ public class PrefStore {
 	public static String MIRROR;
 	public static String ARCH;
 	public static String USER_NAME;
+	public static String USER_PASSWORD;
 	public static String SERVER_DNS;
 	public static String LOCALE;
 	public static String DESKTOP_ENV;
-	public static String COMPONENTS;
+	public static String USE_COMPONENTS;
 
 	// to startup
 	public static String STARTUP;
@@ -82,6 +83,7 @@ public class PrefStore {
 	public static String VNC_ARGS;
 	public static String XSERVER_DISPLAY;
 	public static String XSERVER_HOST;
+	public static Boolean XSERVER_XSDL;
 	public static String FB_DISPLAY;
 	public static String FB_DPI;
 	public static String FB_DEV;
@@ -92,10 +94,10 @@ public class PrefStore {
 	// miscellaneous
 	public static String CURRENT_PROFILE;
 	public static String EXTERNAL_STORAGE;
+	public static String SHELL;
 	public static Boolean CONF_CHANGE = false;
 	public static String MARCH = "unknown";
 	public static String VERSION = "unknown";
-	public static String SHELL = "/system/xbin/ash";
 	public static final String ROOT_ASSETS = "root";
 	public static final String APP_PREF_FILE_NAME = "app_settings";
 	public static final String PROFILES_FILE_NAME = "profiles";
@@ -116,38 +118,40 @@ public class PrefStore {
 		Boolean result = false;
 		String confFile = PrefStore.ENV_DIR + "/etc/deploy.conf";
 		List<String> lines = new ArrayList<>();
-		lines.add("DEBUG_MODE=\"" + PrefStore.DEBUG_MODE + "\"");
-		lines.add("TRACE_MODE=\"" + PrefStore.TRACE_MODE + "\"");
-		lines.add("IMG_TARGET=\"" + PrefStore.IMG_TARGET + "\"");
-		lines.add("IMG_SIZE=\"" + PrefStore.IMG_SIZE + "\"");
-		lines.add("FS_TYPE=\"" + PrefStore.FS_TYPE + "\"");
-		lines.add("DEPLOY_TYPE=\"" + PrefStore.DEPLOY_TYPE + "\"");
-		lines.add("DISTRIB=\"" + PrefStore.DISTRIB + "\"");
-		lines.add("ARCH=\"" + PrefStore.ARCH + "\"");
-		lines.add("SUITE=\"" + PrefStore.SUITE + "\"");
-		lines.add("MIRROR=\"" + PrefStore.MIRROR + "\"");
-		lines.add("USER_NAME=\"" + PrefStore.USER_NAME + "\"");
-		lines.add("SERVER_DNS=\"" + PrefStore.SERVER_DNS + "\"");
-		lines.add("LOCALE=\"" + PrefStore.LOCALE + "\"");
-		lines.add("DESKTOP_ENV=\"" + PrefStore.DESKTOP_ENV + "\"");
-		lines.add("COMPONENTS=\"" + PrefStore.COMPONENTS + "\"");
-		lines.add("STARTUP=\"" + PrefStore.STARTUP + "\"");
-		lines.add("CUSTOM_SCRIPTS=\"" + PrefStore.CUSTOM_SCRIPTS + "\"");
-		lines.add("CUSTOM_MOUNTS=\"" + PrefStore.CUSTOM_MOUNTS + "\"");
-		lines.add("SSH_PORT=\"" + PrefStore.SSH_PORT + "\"");
-		lines.add("VNC_DISPLAY=\"" + PrefStore.VNC_DISPLAY + "\"");
-		lines.add("VNC_DEPTH=\"" + PrefStore.VNC_DEPTH + "\"");
-		lines.add("VNC_DPI=\"" + PrefStore.VNC_DPI + "\"");
-		lines.add("VNC_GEOMETRY=\"" + PrefStore.VNC_GEOMETRY + "\"");
-		lines.add("VNC_ARGS=\"" + PrefStore.VNC_ARGS + "\"");
-		lines.add("XSERVER_DISPLAY=\"" + PrefStore.XSERVER_DISPLAY + "\"");
-		lines.add("XSERVER_HOST=\"" + PrefStore.XSERVER_HOST + "\"");
-		lines.add("FB_DISPLAY=\"" + PrefStore.FB_DISPLAY + "\"");
-		lines.add("FB_DPI=\"" + PrefStore.FB_DPI + "\"");
-		lines.add("FB_DEV=\"" + PrefStore.FB_DEV + "\"");
-		lines.add("FB_INPUT=\"" + PrefStore.FB_INPUT + "\"");
-		lines.add("FB_ARGS=\"" + PrefStore.FB_ARGS + "\"");
-		lines.add("FB_FREEZE=\"" + PrefStore.FB_FREEZE + "\"");
+		lines.add("DEBUG_MODE=\"" + DEBUG_MODE + "\"");
+		lines.add("TRACE_MODE=\"" + TRACE_MODE + "\"");
+		lines.add("MNT_TARGET=\"" + MNT_TARGET + "\"");
+		lines.add("IMG_TARGET=\"" + IMG_TARGET + "\"");
+		lines.add("IMG_SIZE=\"" + IMG_SIZE + "\"");
+		lines.add("FS_TYPE=\"" + FS_TYPE + "\"");
+		lines.add("DEPLOY_TYPE=\"" + DEPLOY_TYPE + "\"");
+		lines.add("DISTRIB=\"" + DISTRIB + "\"");
+		lines.add("ARCH=\"" + ARCH + "\"");
+		lines.add("SUITE=\"" + SUITE + "\"");
+		lines.add("MIRROR=\"" + MIRROR + "\"");
+		lines.add("USER_NAME=\"" + USER_NAME + "\"");
+		lines.add("USER_PASSWORD=\"" + USER_PASSWORD + "\"");
+		lines.add("SERVER_DNS=\"" + SERVER_DNS + "\"");
+		lines.add("LOCALE=\"" + LOCALE + "\"");
+		lines.add("DESKTOP_ENV=\"" + DESKTOP_ENV + "\"");
+		lines.add("USE_COMPONENTS=\"" + USE_COMPONENTS + "\"");
+		lines.add("STARTUP=\"" + STARTUP + "\"");
+		lines.add("CUSTOM_SCRIPTS=\"" + CUSTOM_SCRIPTS + "\"");
+		lines.add("CUSTOM_MOUNTS=\"" + CUSTOM_MOUNTS + "\"");
+		lines.add("SSH_PORT=\"" + SSH_PORT + "\"");
+		lines.add("VNC_DISPLAY=\"" + VNC_DISPLAY + "\"");
+		lines.add("VNC_DEPTH=\"" + VNC_DEPTH + "\"");
+		lines.add("VNC_DPI=\"" + VNC_DPI + "\"");
+		lines.add("VNC_GEOMETRY=\"" + VNC_GEOMETRY + "\"");
+		lines.add("VNC_ARGS=\"" + VNC_ARGS + "\"");
+		lines.add("XSERVER_DISPLAY=\"" + XSERVER_DISPLAY + "\"");
+		lines.add("XSERVER_HOST=\"" + XSERVER_HOST + "\"");
+		lines.add("FB_DISPLAY=\"" + FB_DISPLAY + "\"");
+		lines.add("FB_DPI=\"" + FB_DPI + "\"");
+		lines.add("FB_DEV=\"" + FB_DEV + "\"");
+		lines.add("FB_INPUT=\"" + FB_INPUT + "\"");
+		lines.add("FB_ARGS=\"" + FB_ARGS + "\"");
+		lines.add("FB_FREEZE=\"" + FB_FREEZE + "\"");
 		BufferedWriter bw = null;
 		try {
 			bw = new BufferedWriter(new FileWriter(confFile));
@@ -209,9 +213,9 @@ public class PrefStore {
 		SharedPreferences.Editor prefEditor = sp.edit();
 
 		SCREEN_LOCK = sp.getBoolean("screenlock",
-				c.getString(R.string.screenlock).equals("true") ? true : false);
+				c.getString(R.string.screenlock).equals("true"));
 		WIFI_LOCK = sp.getBoolean("wifilock", c.getString(R.string.wifilock)
-				.equals("true") ? true : false);
+				.equals("true"));
 		FONT_SIZE = Integer.parseInt(sp.getString("fontsize",
 				c.getString(R.string.fontsize)));
 		MAX_LINE = Integer.parseInt(sp.getString("maxline",
@@ -219,34 +223,33 @@ public class PrefStore {
 		LANGUAGE = sp.getString("language", c.getString(R.string.language));
 		THEME = sp.getString("theme", c.getString(R.string.theme));
 
-		ENV_DIR = sp.getString("installdir", c.getString(R.string.envdir));
-		if (ENV_DIR.equals("{replace}"))
-			ENV_DIR = c.getApplicationInfo().dataDir + File.separator + "linux";
-		// Update ENV_DIR
+		ENV_DIR = sp.getString("installdir", c.getString(R.string.installdir));
+		if (ENV_DIR.isEmpty())
+			ENV_DIR = c.getApplicationInfo().dataDir + "/linux";
 		prefEditor.putString("installdir", ENV_DIR);
 
 		BUILTIN_SHELL = sp.getBoolean("builtinshell",
-				c.getString(R.string.builtinshell).equals("true") ? true
-						: false);
+				c.getString(R.string.builtinshell).equals("true"));
 		if (BUILTIN_SHELL) {
 			SHELL = ENV_DIR + "/bin/ash";
+		} else {
+			SHELL = "/system/xbin/ash";
 		}
 		SYMLINK = sp.getBoolean("symlink", c.getString(R.string.symlink)
-				.equals("true") ? true : false);
+				.equals("true"));
 		CURRENT_PROFILE = sp.getString("profile", null);
 		if (CURRENT_PROFILE == null)
 			setCurrentProfile(c, String.valueOf(System.currentTimeMillis()));
 
 		DEBUG_MODE = sp.getBoolean("debug",
-				c.getString(R.string.debug).equals("true") ? true : false) ? "y"
+				c.getString(R.string.debug).equals("true")) ? "y"
 				: "n";
 		TRACE_MODE = sp.getBoolean("debug",
-				c.getString(R.string.debug).equals("true") ? true : false)
+				c.getString(R.string.debug).equals("true"))
 				&& sp.getBoolean("trace",
-						c.getString(R.string.trace).equals("true") ? true
-								: false) ? "y" : "n";
+						c.getString(R.string.trace).equals("true")) ? "y" : "n";
 		LOGGING = sp.getBoolean("logs",
-				c.getString(R.string.logs).equals("true") ? true : false);
+				c.getString(R.string.logs).equals("true"));
 		LOG_FILE = sp.getString("logfile", EXTERNAL_STORAGE
 				+ "/linuxdeploy.log");
 
@@ -255,6 +258,7 @@ public class PrefStore {
 		sp = c.getSharedPreferences(CURRENT_PROFILE, Context.MODE_PRIVATE);
 		prefEditor = sp.edit();
 
+		MNT_TARGET = sp.getString("mountdir", c.getString(R.string.mountdir));
 		IMG_TARGET = sp.getString("diskimage", EXTERNAL_STORAGE + "/linux.img");
 		DEPLOY_TYPE = sp.getString("deploytype",
 				c.getString(R.string.deploytype));
@@ -266,6 +270,9 @@ public class PrefStore {
 		MIRROR = sp.getString("mirror", c.getString(R.string.mirror));
 		ARCH = sp.getString("architecture", c.getString(R.string.architecture));
 		USER_NAME = sp.getString("username", c.getString(R.string.username))
+				.toLowerCase(Locale.ENGLISH);
+		USER_PASSWORD = sp
+				.getString("password", c.getString(R.string.password))
 				.toLowerCase(Locale.ENGLISH);
 		SERVER_DNS = sp.getString("serverdns", c.getString(R.string.serverdns));
 		LOCALE = sp.getString("locale", c.getString(R.string.locale));
@@ -284,25 +291,23 @@ public class PrefStore {
 		for (String str : comp_set) {
 			components += str + " ";
 		}
-		COMPONENTS = components.trim();
+		USE_COMPONENTS = components.trim();
 		String startup_ssh = sp.getBoolean("sshstartup",
-				c.getString(R.string.sshstartup).equals("true") ? true : false) ? "ssh"
+				c.getString(R.string.sshstartup).equals("true")) ? "ssh"
 				: "";
 		String startup_gui = sp.getBoolean("guistartup",
-				c.getString(R.string.guistartup).equals("true") ? true : false) ? sp
+				c.getString(R.string.guistartup).equals("true")) ? sp
 				.getString("guitype", c.getString(R.string.guitype)) : "";
 		String startup_custom = sp.getBoolean("customstartup",
-				c.getString(R.string.customstartup).equals("true") ? true
-						: false) ? "custom" : "";
+				c.getString(R.string.customstartup).equals("true")) ? "custom" : "";
 		STARTUP = (startup_ssh + " " + startup_gui + " " + startup_custom)
 				.trim();
 		CUSTOM_SCRIPTS = sp.getBoolean("customstartup",
-				c.getString(R.string.customstartup).equals("true") ? true
-						: false) ? sp.getString("scripts",
+				c.getString(R.string.customstartup).equals("true")) ? sp.getString("scripts",
 				c.getString(R.string.scripts)).trim() : "";
 		CUSTOM_MOUNTS = sp
 				.getBoolean("custommounts", c.getString(R.string.custommount)
-						.equals("true") ? true : false) ? sp.getString(
+						.equals("true")) ? sp.getString(
 				"mounts", EXTERNAL_STORAGE).trim() : "";
 		SSH_PORT = sp.getString("sshport", c.getString(R.string.sshport));
 		VNC_DISPLAY = sp.getString("vncdisplay",
@@ -315,6 +320,7 @@ public class PrefStore {
 		XSERVER_DISPLAY = sp.getString("xdisplay",
 				c.getString(R.string.xdisplay));
 		XSERVER_HOST = sp.getString("xhost", c.getString(R.string.xhost));
+		XSERVER_XSDL = sp.getBoolean("xserverxsdl", c.getString(R.string.xserverxsdl).equals("true"));
 		FB_DISPLAY = sp.getString("fbdisplay", c.getString(R.string.fbdisplay));
 		FB_DPI = sp.getString("fbdpi", c.getString(R.string.fbdpi));
 		FB_DEV = sp.getString("fbdev", c.getString(R.string.fbdev));
@@ -343,8 +349,10 @@ public class PrefStore {
 			char a = arch.toLowerCase().charAt(0);
 			switch (a) {
 			case 'a':
-				if (arch.equals("amd64")) march = "intel";
-				else march = "arm";
+				if (arch.equals("amd64"))
+					march = "intel";
+				else
+					march = "arm";
 				break;
 			case 'm':
 				march = "mips";
@@ -548,7 +556,8 @@ public class PrefStore {
 	public static List<String> getMountsList(Context c) {
 		SharedPreferences sp = c.getSharedPreferences(CURRENT_PROFILE,
 				Context.MODE_PRIVATE);
-		String str = sp.getString("mounts", EXTERNAL_STORAGE);
+		String str = sp.getString("mounts", c.getString(R.string.mounts)
+				.replace("{storage}", EXTERNAL_STORAGE));
 		List<String> list = new ArrayList<String>();
 		for (String i : str.split(" ")) {
 			list.add(i);

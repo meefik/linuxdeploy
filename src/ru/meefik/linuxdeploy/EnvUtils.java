@@ -16,40 +16,6 @@ import android.content.res.AssetManager;
 
 public class EnvUtils {
 
-	private static void sendLogs(InputStream stdstream) {
-		if (MainActivity.handler != null) {
-			try {
-				BufferedReader reader = new BufferedReader(
-						new InputStreamReader(stdstream));
-				int n;
-				char[] buffer = new char[1024];
-				while ((n = reader.read(buffer)) != -1) {
-					final String logLine = String.valueOf(buffer, 0, n);
-					MainActivity.handler.post(new Runnable() {
-						@Override
-						public void run() {
-							MainActivity.printLogMsg(logLine);
-						}
-					});
-				}
-				reader.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	private static void sendLogs(final String msg) {
-		if (MainActivity.handler != null) {
-			MainActivity.handler.post(new Runnable() {
-				@Override
-				public void run() {
-					MainActivity.printLogMsg(msg);
-				}
-			});
-		}
-	}
-
 	private static boolean extractFile(Context c, String rootAsset, String path) {
 		boolean result = true;
 		AssetManager assetManager = c.getAssets();
@@ -144,15 +110,36 @@ public class EnvUtils {
 	}
 
 	private static boolean isRooted() {
-		// exec shell command
-		List<String> params = new ArrayList<String>();
-		params.add("ls /data/local 1>/dev/null");
-		if (!exec(params)) {
-			sendLogs("Require superuser privileges (root)!\n");
-			return false;
-		} else {
-			return true;
+		boolean result = false;
+		try {
+			Process process = Runtime.getRuntime().exec("su");
+			final OutputStream stdin = process.getOutputStream();
+			final InputStream stdout = process.getInputStream();
+
+			DataOutputStream os = new DataOutputStream(stdin);
+			os.writeBytes("ls /data\n");
+			os.writeBytes("exit\n");
+			os.flush();
+			os.close();
+
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					stdout));
+			int n = 0;
+			String line;
+			while ((line = reader.readLine()) != null) {
+				n++;
+			}
+			reader.close();
+
+			if (n > 0) {
+				result = true;
+			}
+			stdout.close();
+			stdin.close();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+		return result;
 	}
 
 	public static boolean exec(List<String> params) {
@@ -165,8 +152,7 @@ public class EnvUtils {
 			final InputStream stderr = process.getErrorStream();
 
 			params.add("exit $?");
-			params.add(0, "PATH=" + PrefStore.ENV_DIR
-					+ "/bin:$PATH; export PATH");
+			params.add(0, "export PATH=" + PrefStore.ENV_DIR + "/bin:$PATH");
 			if (PrefStore.TRACE_MODE.equals("y"))
 				params.add(0, "set -x");
 
@@ -180,7 +166,7 @@ public class EnvUtils {
 			(new Thread() {
 				@Override
 				public void run() {
-					sendLogs(stdout);
+					Logger.log(stdout);
 				}
 			}).start();
 
@@ -188,7 +174,7 @@ public class EnvUtils {
 				(new Thread() {
 					@Override
 					public void run() {
-						sendLogs(stderr);
+						Logger.log(stderr);
 					}
 				}).start();
 			}
@@ -208,48 +194,49 @@ public class EnvUtils {
 		return result;
 	}
 
-	public static void updateEnv(Context c) {
+	public static boolean updateEnv(Context c) {
 		if (!isRooted()) {
-			return;
+			Logger.log("Require superuser privileges (root).\n");
+			return false;
 		}
 
-		sendLogs("Updating environment ... ");
+		Logger.log("Updating environment ... ");
 
 		if (PrefStore.ENV_DIR.length() == 0) {
-			sendLogs("fail\n");
-			return;
+			Logger.log("fail\n");
+			return false;
 		}
 		
 		// env directories
 		String[] dirs = { PrefStore.ENV_DIR + "/bin",
-				PrefStore.ENV_DIR + "/etc", PrefStore.ENV_DIR + "/deploy" };
+				PrefStore.ENV_DIR + "/etc", PrefStore.ENV_DIR + "/share" };
 
 		// clean env directory
-		File f = new File(PrefStore.ENV_DIR);
-		f.mkdirs();
+		File envDir = new File(PrefStore.ENV_DIR);
+		envDir.mkdirs();
 		for (String dir : dirs) {
 			cleanDirectory(new File(dir));
 		}
 
 		// extract assets
 		if (!extractDir(c, PrefStore.ROOT_ASSETS, "")) {
-			sendLogs("fail\n");
-			return;
+			Logger.log("fail\n");
+			return false;
 		}
 		if (!extractDir(c, PrefStore.MARCH + "/all", "")) {
-			sendLogs("fail\n");
-			return;
+			Logger.log("fail\n");
+			return false;
 		}
 		// PIE for Android L
 		if (android.os.Build.VERSION.SDK_INT >= 21) {
 			if (!extractDir(c, PrefStore.MARCH + "/pie", "")) {
-				sendLogs("fail\n");
-				return;
+				Logger.log("fail\n");
+				return false;
 			}
 		} else {
 			if (!extractDir(c, PrefStore.MARCH + "/nopie", "")) {
-				sendLogs("fail\n");
-				return;
+				Logger.log("fail\n");
+				return false;
 			}
 		}
 
@@ -268,19 +255,21 @@ public class EnvUtils {
 		// fallback permissions
 		for (String dir : dirs) {
 			params.add("chmod -R 755 " + dir);
-			params.add("find " + dir
-					+ " | while read f; do chmod 755 $f; done");
+			params.add("find " + dir + " | while read f; do chmod 755 $f; done");
 		}
 		// install BusyBox
-		if (PrefStore.BUILTIN_SHELL) {
-			params.add(PrefStore.ENV_DIR + "/bin/busybox --install -s "
-					+ PrefStore.ENV_DIR + "/bin");
+		params.add(PrefStore.ENV_DIR + "/bin/busybox --install -s "
+				+ PrefStore.ENV_DIR + "/bin");
+		if (!PrefStore.BUILTIN_SHELL) {
+			params.add("rm " + PrefStore.ENV_DIR + "/bin/ash");
+			params.add("rm " + PrefStore.ENV_DIR + "/bin/chroot");
 		}
-		// set ENV_DIR and Shell
-		params.add("sed -i 's|^ENV_DIR=.*|ENV_DIR=\"" + PrefStore.ENV_DIR
-				+ "\"|g' " + PrefStore.ENV_DIR + "/bin/linuxdeploy");
+		// set shell
 		params.add("sed -i 's|^#!.*|#!" + PrefStore.SHELL + "|g' "
 				+ PrefStore.ENV_DIR + "/bin/linuxdeploy");
+		// set ENV_DIR
+		params.add("sed -i 's|^ENV_DIR=.*|ENV_DIR=\"" + PrefStore.ENV_DIR
+				+ "\"|g' " + PrefStore.ENV_DIR + "/bin/linuxdeploy");
 		// update symlink
 		if (PrefStore.SYMLINK) {
 			params.add("rm -f /system/bin/linuxdeploy");
@@ -292,26 +281,51 @@ public class EnvUtils {
 					+ "/bin/linuxdeploy /system/bin/linuxdeploy; mount -o ro,remount /system; }");
 		}
 		if (!exec(params)) {
-			sendLogs("fail\n");
-			return;
+			Logger.log("fail\n");
+			return false;
 		}
 
 		// update version
 		if (!PrefStore.setVersion()) {
-			sendLogs("fail\n");
-			return;
+			Logger.log("fail\n");
+			return false;
 		}
 
-		sendLogs("done\n");
+		Logger.log("done\n");
+		return true;
 	}
 
-	public static void updateConf() {
-		sendLogs("Updating configuration file ... ");
+	public static boolean removeEnv(Context c) {
+		Logger.log("Removing environment ... ");
+
+		// exec shell commands
+		List<String> params = new ArrayList<String>();
+		params.add(PrefStore.ENV_DIR + "/bin/linuxdeploy umount 1>/dev/null");
+		params.add("[ $? -ne 0 ] && exit 1");
+		params.add("if [ -e /system/bin/linuxdeploy ]; then "
+				+ "rm -f /system/bin/linuxdeploy || "
+				+ "{ mount -o rw,remount /system; rm -f /system/bin/linuxdeploy; mount -o ro,remount /system; };"
+				+ "fi");
+		params.add("rm -rf " + PrefStore.ENV_DIR);
+
+		if (exec(params)) {
+			Logger.log("done\n");
+			return true;
+		} else {
+			Logger.log("fail\n");
+			return false;
+		}
+	}
+
+	public static boolean updateConf() {
+		Logger.log("Updating configuration file ... ");
 		// update config file
 		if (PrefStore.storeConfig()) {
-			sendLogs("done\n");
+			Logger.log("done\n");
+			return true;
 		} else {
-			sendLogs("fail\n");
+			Logger.log("fail\n");
+			return false;
 		}
 	}
 
