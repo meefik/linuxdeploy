@@ -1,7 +1,5 @@
 package ru.meefik.linuxdeploy;
 
-import java.io.File;
-
 import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.DialogInterface;
@@ -9,7 +7,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Environment;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -108,15 +105,6 @@ public class SettingsActivity extends SherlockPreferenceActivity implements
 		if (pref instanceof EditTextPreference) {
 			EditTextPreference editPref = (EditTextPreference) pref;
 			pref.setSummary(editPref.getText());
-
-			if (editPref.getKey().equals("logfile")
-					&& editPref.getText().isEmpty()) {
-				File extStore = Environment.getExternalStorageDirectory();
-				String logFile = extStore.getAbsolutePath()
-						+ "/linuxdeploy.log";
-				((EditTextPreference) pref).setText(logFile);
-				((EditTextPreference) pref).setSummary(logFile);
-			}
 		}
 
 		if (pref instanceof ListPreference) {

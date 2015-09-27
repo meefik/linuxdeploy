@@ -31,7 +31,7 @@ public class ExecScript extends Thread {
 			break;
 		default:
 			// update env when version is changed
-			if (!PrefStore.isLatestVersion()) {
+			if (!EnvUtils.isLatestVersion()) {
 				// update env
 				EnvUtils.updateEnv(c);
 			}
