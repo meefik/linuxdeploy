@@ -75,7 +75,7 @@ public class MainActivity extends SherlockActivity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		PrefStore.updateLocale(getApplicationContext());
+		PrefStore.updateLocale(this);
 		getSupportMenuInflater().inflate(R.menu.activity_main, menu);
 
 		boolean isLight = PrefStore.THEME.equals("light");
@@ -210,7 +210,7 @@ public class MainActivity extends SherlockActivity {
 	public void onResume() {
 		super.onResume();
 
-		PrefStore.get(getApplicationContext());
+		PrefStore.get(this);
 
 		String profileName = PrefStore
 				.getCurrentProfile(getApplicationContext());

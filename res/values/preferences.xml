@@ -5,7 +5,7 @@
     <string name="wifilock" translatable="false">false</string>
     <string name="fontsize" translatable="false">10</string>
     <string name="maxline" translatable="false">100</string>
-    <string name="language" translatable="false">en</string>
+    <string name="language" translatable="false"></string>
     <string name="theme" translatable="false">dark</string>
     <string name="autostart" translatable="false">false</string>
     <string name="appicon" translatable="false">true</string>
