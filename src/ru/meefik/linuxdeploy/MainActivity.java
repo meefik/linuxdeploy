@@ -33,7 +33,7 @@ public class MainActivity extends SherlockActivity {
 
 	private static void clearLog() {
 		Logger.clear();
-		logView.setText("");
+		logView.setText(R.string.help_text);
 	}
 
 	public static void showLog() {
@@ -224,7 +224,11 @@ public class MainActivity extends SherlockActivity {
 		logView.setTextSize(TypedValue.COMPLEX_UNIT_SP, PrefStore.FONT_SIZE);
 
 		// Restore log
-		showLog();
+		if (Logger.get().isEmpty()) {
+			logView.setText(R.string.help_text);
+		} else {
+			showLog();
+		}
 
 		// Screen lock
 		if (PrefStore.SCREEN_LOCK)
