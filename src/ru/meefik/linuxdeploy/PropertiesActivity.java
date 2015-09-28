@@ -251,25 +251,6 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 				pref.setSummary(this
 						.getString(R.string.summary_disksize_preference));
 			}
-			if (editPref.getText().length() == 0) {
-				if (editPref.getKey().equals("diskimage")) {
-					String imgFile = PrefStore.EXTERNAL_STORAGE + "/linux.img";
-					((EditTextPreference) pref).setText(imgFile);
-					((EditTextPreference) pref).setSummary(imgFile);
-				}
-				if (editPref.getKey().equals("vncwidth")) {
-					String vncWidth = String.valueOf(PrefStore
-							.getWidth(getApplicationContext()));
-					((EditTextPreference) pref).setText(vncWidth);
-					((EditTextPreference) pref).setSummary(vncWidth);
-				}
-				if (editPref.getKey().equals("vncheight")) {
-					String vncHeight = String.valueOf(PrefStore
-							.getHeight(getApplicationContext()));
-					((EditTextPreference) pref).setText(vncHeight);
-					((EditTextPreference) pref).setSummary(vncHeight);
-				}
-			}
 		}
 
 		if (pref instanceof ListPreference) {
@@ -400,8 +381,7 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 				switch (listPref.getValue()) {
 				case "file":
 					if (init) {
-						diskimage.setText(PrefStore.EXTERNAL_STORAGE
-								+ "/linux.img");
+						diskimage.setText(PrefStore.EXTERNAL_STORAGE + "/linux.img");
 					}
 					disksize.setEnabled(true);
 					fstype.setEnabled(true);
@@ -415,7 +395,7 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 					break;
 				case "ram":
 					if (init) {
-						diskimage.setText("/data/local/tmp");
+						diskimage.setText("/data/local/ram");
 					}
 					disksize.setEnabled(true);
 					fstype.setEnabled(false);
