@@ -224,7 +224,7 @@ public class MainActivity extends SherlockActivity {
 		logView.setTextSize(TypedValue.COMPLEX_UNIT_SP, PrefStore.FONT_SIZE);
 
 		// Restore log
-		if (Logger.get().isEmpty()) {
+		if (Logger.get().length() == 0) {
 			logView.setText(R.string.help_text);
 		} else {
 			showLog();
