@@ -1,6 +1,5 @@
 package ru.meefik.linuxdeploy;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -10,7 +9,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
-import android.os.Environment;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -253,10 +251,9 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 				pref.setSummary(this
 						.getString(R.string.summary_disksize_preference));
 			}
-			if (editPref.getText().isEmpty()) {
+			if (editPref.getText().length() == 0) {
 				if (editPref.getKey().equals("diskimage")) {
-					File extStore = Environment.getExternalStorageDirectory();
-					String imgFile = extStore.getAbsolutePath() + "/linux.img";
+					String imgFile = PrefStore.EXTERNAL_STORAGE + "/linux.img";
 					((EditTextPreference) pref).setText(imgFile);
 					((EditTextPreference) pref).setSummary(imgFile);
 				}
@@ -317,7 +314,7 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 					architecture.setEntries(architectureValuesId);
 					architecture.setEntryValues(architectureValuesId);
 				}
-				if (init || architecture.getValue().isEmpty()) {
+				if (init || architecture.getValue().length() == 0) {
 					int architectureId = PrefStore.getResourceId(this,
 							PrefStore.MARCH + "_" + distributionStr
 									+ "_architecture", "string");
@@ -331,7 +328,7 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 				architecture.setEnabled(true);
 
 				// mirror
-				if (init || mirror.getText().isEmpty()) {
+				if (init || mirror.getText().length() == 0) {
 					int mirrorId = PrefStore
 							.getResourceId(this, PrefStore.MARCH + "_"
 									+ distributionStr + "_mirror", "string");
@@ -366,10 +363,7 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 					architecture.setEnabled(false);
 					// mirror
 					if (init) {
-						File extStore = Environment
-								.getExternalStorageDirectory();
-						String archiveFile = extStore.getAbsolutePath()
-								+ "/linux-rootfs.tar.gz";
+						String archiveFile = PrefStore.EXTERNAL_STORAGE + "/linux-rootfs.tar.gz";
 						mirror.setText(archiveFile);
 					}
 					mirror.setSummary(mirror.getText());

@@ -116,14 +116,14 @@ public class PrefStore {
 		MAX_LINE = Integer.parseInt(pref.getString("maxline",
 				c.getString(R.string.maxline)));
 		LANGUAGE = pref.getString("language", c.getString(R.string.language));
-		if (LANGUAGE.isEmpty()) {
+		if (LANGUAGE.length() == 0) {
 			LANGUAGE = getDefaultLanguage(c);
 			editor.putString("language", LANGUAGE);
 		}
 		THEME = pref.getString("theme", c.getString(R.string.theme));
 
 		ENV_DIR = pref.getString("installdir", c.getString(R.string.installdir));
-		if (ENV_DIR.isEmpty()) {
+		if (ENV_DIR.length() == 0) {
 			ENV_DIR = c.getApplicationInfo().dataDir + "/linux";
 			editor.putString("installdir", ENV_DIR);
 		}
@@ -151,7 +151,7 @@ public class PrefStore {
 		LOGGING = pref.getBoolean("logs",
 				c.getString(R.string.logs).equals("true"));
 		LOG_FILE = pref.getString("logfile", c.getString(R.string.logfile));
-		if (LOG_FILE.isEmpty()) {
+		if (LOG_FILE.length() == 0) {
 			LOG_FILE = EXTERNAL_STORAGE + "/linuxdeploy.log";
 			editor.putString("logfile", LOG_FILE);
 		}
@@ -163,7 +163,7 @@ public class PrefStore {
 
 		MNT_TARGET = pref.getString("mountdir", c.getString(R.string.mountdir));
 		IMG_TARGET = pref.getString("diskimage", c.getString(R.string.diskimage));
-		if (IMG_TARGET.isEmpty()) {
+		if (IMG_TARGET.length() == 0) {
 			IMG_TARGET = EXTERNAL_STORAGE + "/linux.img";
 			editor.putString("diskimage", IMG_TARGET);
 		}
@@ -498,7 +498,7 @@ public class PrefStore {
 	public static void updateLocale(Context c) {
 		SharedPreferences pref = c.getSharedPreferences(APP_PREF_FILE_NAME, Context.MODE_PRIVATE);
 		LANGUAGE = pref.getString("language", c.getString(R.string.language));
-		if (LANGUAGE.isEmpty()) {
+		if (LANGUAGE.length() == 0) {
 			LANGUAGE = getDefaultLanguage(c);
 		}
 		Locale locale = new Locale(LANGUAGE);
