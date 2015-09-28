@@ -421,6 +421,7 @@ public class EnvUtils {
 	}
 
 	public static boolean updateConf() {
+		if (!EnvUtils.isLatestVersion()) return false;
 		Logger.log("Updating configuration file ... ");
 		// update config file
 		if (storeConfig()) {

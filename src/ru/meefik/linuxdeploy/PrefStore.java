@@ -218,8 +218,17 @@ public class PrefStore {
 				c.getString(R.string.vncdisplay));
 		VNC_DEPTH = pref.getString("vncdepth", c.getString(R.string.vncdepth));
 		VNC_DPI = pref.getString("vncdpi", c.getString(R.string.vncdpi));
-		VNC_GEOMETRY = pref.getString("vncwidth", String.valueOf(getWidth(c)))
-				+ "x" + pref.getString("vncheight", String.valueOf(getHeight(c)));
+		String vncWidth = pref.getString("vncwidth", c.getString(R.string.vncwidth));
+		if (vncWidth.length() == 0) {
+			vncWidth = String.valueOf(getWidth(c));
+			editor.putString("vncwidth", vncWidth);
+		}
+		String vncHeight = pref.getString("vncheight", c.getString(R.string.vncheight));
+		if (vncHeight.length() == 0) {
+			vncHeight = String.valueOf(getHeight(c));
+			editor.putString("vncheight", vncHeight);
+		}
+		VNC_GEOMETRY = vncWidth + "x" + vncHeight;
 		VNC_ARGS = pref.getString("vncargs", c.getString(R.string.vncargs));
 		XSERVER_DISPLAY = pref.getString("xdisplay",
 				c.getString(R.string.xdisplay));
