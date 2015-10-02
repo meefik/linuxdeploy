@@ -92,7 +92,7 @@ local pid=$([ -e "${pidfile}" ] && cat ${pidfile})
 
 prepare_container()
 {
-container_mounted && { msg "The container is already mounted."; return 0; }
+container_mounted && { msg "The container is already mounted."; return 1; }
 
 msg -n "Checking installation path ... "
 case "${DEPLOY_TYPE}" in
