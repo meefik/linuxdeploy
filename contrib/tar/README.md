@@ -5,7 +5,7 @@ tar - the GNU version of the tar archiving utility.
 
 #### Build instruction ####
 
-1) Prepare chroot environment (QEMU, Debian 8.0, armel).
+1) Prepare chroot environment (QEMU, Debian 7.0, armel).
 
 2) Get tar:
 
@@ -14,8 +14,9 @@ tar - the GNU version of the tar archiving utility.
 
 3) Build tar:
 
-    cd ./tar-1.27.1
-    ./configure --without-posix-acls
+    cd ./tar-1.26
+    export FORCE_UNSAFE_CONFIGURE=1
+    ./configure
     make CFLAGS=-static LDFLAGS=-static
     strip -s ./src/tar
 

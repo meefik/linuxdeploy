@@ -1,5 +1,5 @@
---- debootstrap.orig	2013-04-04 18:58:36.000000000 +0400
-+++ debootstrap	2013-05-19 23:57:50.596593154 +0400
+--- debootstrap.orig	2015-10-02 23:14:11.180424159 +0300
++++ debootstrap	2015-10-02 23:12:13.630918463 +0300
 @@ -17,7 +17,7 @@
  	fi
  fi
@@ -9,9 +9,12 @@
  
  . $DEBOOTSTRAP_DIR/functions
  exec 4>&1
-@@ -619,7 +619,8 @@
+@@ -617,9 +617,9 @@
+ 	first_stage_install
+ 
  	if ! am_doing_phase second_stage; then
- 		cp "$0"				 "$TARGET/debootstrap/debootstrap"
+-		cp "$0"				 "$TARGET/debootstrap/debootstrap"
++		cp $DEBOOTSTRAP_DIR/debootstrap	 "$TARGET/debootstrap/debootstrap"
  		cp $DEBOOTSTRAP_DIR/functions	 "$TARGET/debootstrap/functions"
 -		cp $DEBOOTSTRAP_DIR/devices.tar.gz	 "$TARGET/debootstrap/devices.tar.gz"
 +		cp $DEBOOTSTRAP_DIR/devices.tgz	 "$TARGET/debootstrap/devices.tgz"
