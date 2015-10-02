@@ -190,7 +190,7 @@
     <string name="dialog_title_fbargs_preference">FB: X11 参数</string>
     <string name="title_fbfreeze_preference">冻结 Android 界面</string>
     <string name="dialog_title_fbfreeze_preference">冻结 Android 界面</string>
-    <string name="help_text">\n<b>Help</b>\n\nThis application installs the selected GNU/Linux distribution and executes it in a chroot-container.\n\nProcedure:\n1. Get superuser privileges (root).\n2. Install BusyBox.\n3. Check the connection to Internet.\n4. Specify the installation options.\n5. Start the installation (\"Properties => Install\").\n6. Wait until the installation is complete.\n7. Tap \"START\" button to run the container.\n8. Connect to the container through CLI, SSH, VNC, or others.\n\nFor more information, see \"About\".</string>
+    <string name="help_text">\n<b>帮助</b>\n\n此应用程序会在一个chroot容器中安装和运行选定的 GNU/Linux 发行版。\n\n步骤：\n1. 获取超级用户（即root）权限\n2. 安装 BusyBox\n3. 检查网络连接\n4. 设置安装选项\n5. 开始安装（点击\"属性\" => \"安装\"）\n6. 等待安装完成\n7. 点击\"开始\"按钮启动容器\n8. 通过 CLI、SSH、VNC 或其他方式连接容器\n\n更多内容，详见\"关于\"。</string>
     <string name="about_text">本程序不承担任何担保责任。这是一个自由软件，您可以在特定的条件下重现分发。\n\n根据 GPLv3 或更新的协议颁发许可。\n\n&#169; 2012&#8211;2015 Anton Skshidlevsky</string>
 
 </resources>
