@@ -112,8 +112,22 @@ public class PrefStore {
 		WIFI_LOCK = pref.getBoolean("wifilock", c.getString(R.string.wifilock)
 				.equals("true"));
 		
-		FONT_SIZE = pref.getInt("fontsize", Integer.parseInt(c.getString(R.string.fontsize)));
-		MAX_LINE = pref.getInt("maxline", Integer.parseInt(c.getString(R.string.maxline)));
+		String fontSize = pref.getString("fontsize", c.getString(R.string.fontsize));
+		try {
+			FONT_SIZE = Integer.parseInt(fontSize);
+		} catch(Exception e) {
+			fontSize = c.getString(R.string.fontsize);
+			FONT_SIZE = Integer.parseInt(fontSize);
+			editor.putString("fontsize", fontSize);
+		}
+		String maxLine = pref.getString("maxline", c.getString(R.string.maxline));
+		try {
+			MAX_LINE = Integer.parseInt(maxLine);
+		} catch(Exception e) {
+			maxLine = c.getString(R.string.maxline);
+			MAX_LINE = Integer.parseInt(maxLine);
+			editor.putString("maxline", maxLine);
+		}
 		LANGUAGE = pref.getString("language", c.getString(R.string.language));
 		if (LANGUAGE.length() == 0) {
 			LANGUAGE = getDefaultLanguage(c);
