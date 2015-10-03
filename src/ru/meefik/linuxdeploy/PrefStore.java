@@ -111,10 +111,9 @@ public class PrefStore {
 				c.getString(R.string.screenlock).equals("true"));
 		WIFI_LOCK = pref.getBoolean("wifilock", c.getString(R.string.wifilock)
 				.equals("true"));
-		FONT_SIZE = Integer.parseInt(pref.getString("fontsize",
-				c.getString(R.string.fontsize)));
-		MAX_LINE = Integer.parseInt(pref.getString("maxline",
-				c.getString(R.string.maxline)));
+		
+		FONT_SIZE = pref.getInt("fontsize", Integer.parseInt(c.getString(R.string.fontsize)));
+		MAX_LINE = pref.getInt("maxline", Integer.parseInt(c.getString(R.string.maxline)));
 		LANGUAGE = pref.getString("language", c.getString(R.string.language));
 		if (LANGUAGE.length() == 0) {
 			LANGUAGE = getDefaultLanguage(c);
