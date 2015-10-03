@@ -31,7 +31,7 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 		PrefStore.updateLocale(this);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-		PreferenceManager prefMgr = this.getPreferenceManager();
+		PreferenceManager prefMgr = getPreferenceManager();
 		prefMgr.setSharedPreferencesName(PrefStore.CURRENT_PROFILE);
 
 		Bundle b = getIntent().getExtras();
@@ -40,31 +40,31 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 			pref = b.getInt("pref");
 		switch (pref) {
 		case 1:
-			this.addPreferencesFromResource(R.xml.properties_ssh);
+			addPreferencesFromResource(R.xml.properties_ssh);
 			break;
 		case 2:
-			this.addPreferencesFromResource(R.xml.properties_vnc);
+			addPreferencesFromResource(R.xml.properties_vnc);
 			break;
 		case 3:
-			this.addPreferencesFromResource(R.xml.properties_xserver);
+			addPreferencesFromResource(R.xml.properties_xserver);
 			break;
 		case 4:
-			this.addPreferencesFromResource(R.xml.properties_framebuffer);
+			addPreferencesFromResource(R.xml.properties_framebuffer);
 			break;
 		default:
-			this.addPreferencesFromResource(R.xml.properties);
+			addPreferencesFromResource(R.xml.properties);
 		}
 
-		this.initSummaries(this.getPreferenceScreen());
+		initSummaries(getPreferenceScreen());
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
 
-		String titleMsg = this.getString(R.string.title_activity_properties)
+		String titleMsg = getString(R.string.title_activity_properties)
 				+ ": " + PrefStore.getCurrentProfile(getApplicationContext());
-		this.setTitle(titleMsg);
+		setTitle(titleMsg);
 
 		getPreferenceScreen().getSharedPreferences()
 				.registerOnSharedPreferenceChangeListener(this);
@@ -110,8 +110,7 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 			startActivity(intent);
 		}
 		if (preference.getKey().equals("guiproperties")) {
-			ListPreference guitype = (ListPreference) this
-					.findPreference("guitype");
+			ListPreference guitype = (ListPreference) findPreference("guitype");
 			Intent intent = new Intent(getApplicationContext(),
 					PropertiesActivity.class);
 			Bundle b = new Bundle();
@@ -219,8 +218,8 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
 			String key) {
-		Preference pref = this.findPreference(key);
-		this.setSummary(pref, true);
+		Preference pref = findPreference(key);
+		setSummary(pref, true);
 		PrefStore.CONF_CHANGE = true;
 	}
 
@@ -228,9 +227,9 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 		for (int i = 0; i < pg.getPreferenceCount(); ++i) {
 			Preference p = pg.getPreference(i);
 			if (p instanceof PreferenceGroup)
-				this.initSummaries((PreferenceGroup) p);
+				initSummaries((PreferenceGroup) p);
 			else
-				this.setSummary(p, false);
+				setSummary(p, false);
 			if (p instanceof PreferenceScreen)
 				p.setOnPreferenceClickListener(this);
 		}
@@ -243,13 +242,11 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 
 			if (editPref.getKey().equals("serverdns")
 					&& editPref.getText().length() == 0) {
-				pref.setSummary(this
-						.getString(R.string.summary_serverdns_preference));
+				pref.setSummary(getString(R.string.summary_serverdns_preference));
 			}
 			if (editPref.getKey().equals("disksize")
 					&& editPref.getText().equals("0")) {
-				pref.setSummary(this
-						.getString(R.string.summary_disksize_preference));
+				pref.setSummary(getString(R.string.summary_disksize_preference));
 			}
 		}
 
@@ -258,14 +255,11 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 			pref.setSummary(listPref.getEntry());
 
 			if (listPref.getKey().equals("distribution")) {
-				ListPreference suite = (ListPreference) this
-						.findPreference("suite");
-				ListPreference architecture = (ListPreference) this
-						.findPreference("architecture");
-				EditTextPreference mirror = (EditTextPreference) this
-						.findPreference("mirror");
-				MultiSelectListPreferenceCompat components = (MultiSelectListPreferenceCompat) this
-						.findPreference("xcomponents");
+				ListPreference suite = (ListPreference) findPreference("suite");
+				ListPreference architecture = (ListPreference) findPreference("architecture");
+				EditTextPreference mirror = (EditTextPreference) findPreference("mirror");
+				MultiSelectListPreferenceCompat components = (MultiSelectListPreferenceCompat) 
+						findPreference("xcomponents");
 
 				String distributionStr = listPref.getValue();
 
@@ -354,10 +348,8 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 				}
 			}
 			if (listPref.getKey().equals("architecture") && init) {
-				ListPreference distribution = (ListPreference) this
-						.findPreference("distribution");
-				EditTextPreference mirror = (EditTextPreference) this
-						.findPreference("mirror");
+				ListPreference distribution = (ListPreference) findPreference("distribution");
+				EditTextPreference mirror = (EditTextPreference) findPreference("mirror");
 
 				String architectureStr = PrefStore.getArch(listPref.getValue());
 				String distributionStr = distribution.getValue();
@@ -371,12 +363,9 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 				mirror.setSummary(mirror.getText());
 			}
 			if (listPref.getKey().equals("deploytype")) {
-				EditTextPreference diskimage = (EditTextPreference) this
-						.findPreference("diskimage");
-				EditTextPreference disksize = (EditTextPreference) this
-						.findPreference("disksize");
-				ListPreference fstype = (ListPreference) this
-						.findPreference("fstype");
+				EditTextPreference diskimage = (EditTextPreference) findPreference("diskimage");
+				EditTextPreference disksize = (EditTextPreference) findPreference("disksize");
+				ListPreference fstype = (ListPreference) findPreference("fstype");
 
 				switch (listPref.getValue()) {
 				case "file":

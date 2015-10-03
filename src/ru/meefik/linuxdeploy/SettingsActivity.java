@@ -32,14 +32,14 @@ public class SettingsActivity extends SherlockPreferenceActivity implements
 		prefMgr.setSharedPreferencesName(PrefStore.APP_PREF_FILE_NAME);
 		addPreferencesFromResource(R.xml.settings);
 
-		this.initSummaries(this.getPreferenceScreen());
+		initSummaries(getPreferenceScreen());
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
 
-		this.setTitle(R.string.title_activity_settings);
+		setTitle(R.string.title_activity_settings);
 		getPreferenceScreen().getSharedPreferences()
 				.registerOnSharedPreferenceChangeListener(this);
 	}
@@ -83,8 +83,8 @@ public class SettingsActivity extends SherlockPreferenceActivity implements
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
 			String key) {
-		Preference pref = this.findPreference(key);
-		this.setSummary(pref, true);
+		Preference pref = findPreference(key);
+		setSummary(pref, true);
 		if (pref.getKey().equals("debug") || pref.getKey().equals("trace"))
 			PrefStore.CONF_CHANGE = true;
 	}
@@ -93,9 +93,9 @@ public class SettingsActivity extends SherlockPreferenceActivity implements
 		for (int i = 0; i < pg.getPreferenceCount(); ++i) {
 			Preference p = pg.getPreference(i);
 			if (p instanceof PreferenceGroup)
-				this.initSummaries((PreferenceGroup) p);
+				initSummaries((PreferenceGroup) p);
 			else
-				this.setSummary(p, false);
+				setSummary(p, false);
 			if (p instanceof PreferenceScreen)
 				p.setOnPreferenceClickListener(this);
 		}
