@@ -61,8 +61,8 @@
     <string name="dialog_title_maxlines_preference">Veľkosť rolovania</string>
     <string name="title_theme_preference">Téma</string>
     <string name="dialog_title_theme_preference">Zvoľte tému</string>
-    <string name="title_timestamp_preference">Timestamp</string>
-    <string name="summary_timestamp_preference">Show timestamp</string>
+    <string name="title_timestamp_preference">Časová značka</string>
+    <string name="summary_timestamp_preference">Zobrazí časovú značku</string>
     <string name="title_appicon_preference">Zobraziť ikonu</string>
     <string name="summary_appicon_preference">Zobrazí ikonu v lište upozornení</string>
     <string name="title_autostart_preference">Automatické spustenie</string>
@@ -70,8 +70,8 @@
     <string name="env_preferences">Operačné prostredie</string>
     <string name="title_busyboxdir_preference">Adresár BusyBox</string>
     <string name="dialog_title_busyboxdir_preference">Adresár BusyBox</string>
-    <string name="title_usecli_preference">Use CLI</string>
-    <string name="summary_usecli_preference">Set up a command line interface</string>
+    <string name="title_usecli_preference">Použiť CLI</string>
+    <string name="summary_usecli_preference">Nastaví rozhranie príkazového riadku</string>
     <string name="title_installenv_preference">Aktualizácia prostredia</string>
     <string name="summary_installenv_preference">Aktualizuje operačné prostredie</string>
     <string name="message_installenv_confirm_dialog">Aktualizovať operačné prostredie?</string>
@@ -186,6 +186,6 @@
     <string name="title_fbfreeze_preference">Zmraziť používateľské rozhranie Androidu</string>
     <string name="dialog_title_fbfreeze_preference">Zmrazenie používateľského rozhrania Androidu</string>
     <string name="help_text">\n<b>Pomocník</b>\n\nTáto aplikácia nainštaluje vybratú distribúciu systému GNU/Linux a spustí ju v kontajneri chroot.\n\nPostup:\n1. Získajte práva superužívateľa (root).\n2. Nainštalujte aplikáciu <a href="https://play.google.com/store/apps/details?id=ru.meefik.busybox">BusyBox</a>.\n3. Skontrolujte pripojenie na internet.\n4. Určte voľby inštalácie.\n5. Spustite inštaláciu (\"Vlastnosti => Inštalácia\").\n6. Počkajte, kým sa dokončí inštalácia.\n7. Ťuknite na tlačidlo \"SPUSTIŤ\" na spustenie kontajnera.\n8. Pripojte sa ku kontajneru pomocou CLI, SSH, VNC, alebo iným spôsobom.\n\nPre viac informácií si prezrite \"O aplikácii\".</string>
-    <string name="about_text">This application installs the selected GNU/Linux distribution and executes it in a chroot-container.\n\nFor more information see <a href="https://github.com/meefik/linuxdeploy">project page</a>, <a href="http://4pda.ru/forum/index.php?showtopic=378043">forum</a> or <a href="http://meefik.ru">developer site</a>.\n\n&#169; 2012&#8211;2015 Anton Skshidlevsky, GPLv3</string>
+    <string name="about_text">Táto aplikácia nainštaluje vybratú distribúciu systému GNU/Linux a spustí ju v kontajneri chroot.\n\nPre viac informácií si prezrite <a href="https://github.com/meefik/linuxdeploy">stránku projektu</a>, <a href="http://4pda.ru/forum/index.php?showtopic=378043">fórum</a> alebo <a href="http://meefik.ru">stránku vývojára</a>.\n\n&#169; 2012&#8211;2015 Anton Skshidlevsky, GPLv3</string>
 
 </resources>
