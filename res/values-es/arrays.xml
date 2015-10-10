@@ -8,8 +8,8 @@
     <string-array name="deploytype_entries">
         <item>Archivo</item>
         <item>Partición</item>
+        <item>Directorio</item>
         <item>RAM</item>
-        <item>Personalizado</item>
     </string-array>
     <string-array name="fstype_entries">
         <item>Auto</item>

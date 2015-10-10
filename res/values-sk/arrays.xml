@@ -8,8 +8,8 @@
     <string-array name="deploytype_entries">
         <item>Do súboru</item>
         <item>Na oddiel</item>
+        <item>Adresár</item>
         <item>Do pamäte RAM</item>
-        <item>Vlastný</item>
     </string-array>
     <string-array name="fstype_entries">
         <item>Automatický</item>

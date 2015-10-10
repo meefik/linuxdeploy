@@ -22,9 +22,8 @@ public class ScriptsActivity extends SherlockActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		PrefStore.updateTheme(this);
 		super.onCreate(savedInstanceState);
-		PrefStore.updateLocale(this);
+		PrefStore.setLocale(this);
 		setContentView(R.layout.activity_scripts);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		listView = (ListView) findViewById(R.id.scriptsView);
@@ -33,9 +32,14 @@ public class ScriptsActivity extends SherlockActivity {
 		listView.setAdapter(adapter);
 	}
 	
+    @Override
+    public void setTheme(int resid) {
+        super.setTheme(PrefStore.getTheme(this));
+    }
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		PrefStore.updateLocale(getApplicationContext());
+		PrefStore.setLocale(this);
 		getSupportMenuInflater().inflate(R.menu.activity_scripts, menu);
 		return true;
 	}
@@ -137,9 +141,9 @@ public class ScriptsActivity extends SherlockActivity {
 	public void onResume() {
 		super.onResume();
 		
-		String titleMsg = this.getString(R.string.title_activity_scripts)
-				+ ": " + PrefStore.getCurrentProfile(getApplicationContext());
-		this.setTitle(titleMsg);
+		String titleMsg = getString(R.string.title_activity_scripts)
+				+ ": " + PrefStore.getCurrentProfileTitle(getApplicationContext());
+		setTitle(titleMsg);
 		
 		listItems.addAll(PrefStore.getScriptsList(getApplicationContext()));
 	}

@@ -8,8 +8,8 @@
     <string-array name="deploytype_entries">
         <item>文件</item>
         <item>分区</item>
+        <item>目錄的</item>
         <item>RAM</item>
-        <item>自定义</item>
     </string-array>
     <string-array name="fstype_entries">
         <item>自动</item>

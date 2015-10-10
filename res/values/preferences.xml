@@ -4,18 +4,18 @@
     <string name="screenlock" translatable="false">true</string>
     <string name="wifilock" translatable="false">false</string>
     <string name="fontsize" translatable="false">10</string>
-    <string name="maxline" translatable="false">100</string>
+    <string name="maxlines" translatable="false">100</string>
     <string name="language" translatable="false"></string>
     <string name="theme" translatable="false">dark</string>
+    <string name="timestamp" translatable="false">true</string>
     <string name="autostart" translatable="false">false</string>
     <string name="appicon" translatable="false">true</string>
-    <string name="installdir" translatable="false"></string>
-    <string name="builtinshell" translatable="false">true</string>
-    <string name="symlink" translatable="false">false</string>
+    <string name="busyboxdir" translatable="false">/system/xbin</string>
+    <string name="usecli" translatable="false">false</string>
     <string name="profile" translatable="false">Linux</string>
     <string name="debug" translatable="false">false</string>
     <string name="trace" translatable="false">false</string>
-    <string name="logs" translatable="false">false</string>
+    <string name="logger" translatable="false">false</string>
     <string name="logfile" translatable="false"></string>
     <string name="distribution" translatable="false">debian</string>
     <string name="suite" translatable="false">@string/debian_suite</string>

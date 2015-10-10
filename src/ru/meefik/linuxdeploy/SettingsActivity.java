@@ -22,18 +22,22 @@ public class SettingsActivity extends SherlockPreferenceActivity implements
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		PrefStore.updateTheme(this);
 		super.onCreate(savedInstanceState);
-		PrefStore.updateLocale(this);
+		PrefStore.setLocale(this);
 
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		PreferenceManager prefMgr = getPreferenceManager();
-		prefMgr.setSharedPreferencesName(PrefStore.APP_PREF_FILE_NAME);
+		prefMgr.setSharedPreferencesName(PrefStore.APP_PREF_NAME);
 		addPreferencesFromResource(R.xml.settings);
 
 		initSummaries(getPreferenceScreen());
 	}
+	
+    @Override
+    public void setTheme(int resid) {
+        super.setTheme(PrefStore.getTheme(this));
+    }
 
 	@Override
 	public void onResume() {
@@ -85,8 +89,6 @@ public class SettingsActivity extends SherlockPreferenceActivity implements
 			String key) {
 		Preference pref = findPreference(key);
 		setSummary(pref, true);
-		if (pref.getKey().equals("debug") || pref.getKey().equals("trace"))
-			PrefStore.CONF_CHANGE = true;
 	}
 
 	private void initSummaries(PreferenceGroup pg) {
@@ -105,6 +107,11 @@ public class SettingsActivity extends SherlockPreferenceActivity implements
 		if (pref instanceof EditTextPreference) {
 			EditTextPreference editPref = (EditTextPreference) pref;
 			pref.setSummary(editPref.getText());
+			
+            if (editPref.getKey().equals("logfile")
+                    && editPref.getText().length() == 0) {
+                pref.setSummary(PrefStore.getLogFile(this));
+            }
 		}
 
 		if (pref instanceof ListPreference) {
@@ -123,7 +130,6 @@ public class SettingsActivity extends SherlockPreferenceActivity implements
 						new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int id) {
-								PrefStore.CONF_CHANGE = false;
 								new ExecScript(getApplicationContext(),
 										"update").start();
 								finish();
@@ -148,7 +154,6 @@ public class SettingsActivity extends SherlockPreferenceActivity implements
 						new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int id) {
-								PrefStore.CONF_CHANGE = false;
 								new ExecScript(getApplicationContext(),
 										"remove").start();
 								finish();

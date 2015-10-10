@@ -26,13 +26,12 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		PrefStore.updateTheme(this);
 		super.onCreate(savedInstanceState);
-		PrefStore.updateLocale(this);
+		PrefStore.setLocale(this);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		PreferenceManager prefMgr = getPreferenceManager();
-		prefMgr.setSharedPreferencesName(PrefStore.CURRENT_PROFILE);
+		prefMgr.setSharedPreferencesName(PrefStore.getCurrentProfile(this));
 
 		Bundle b = getIntent().getExtras();
 		int pref = 0;
@@ -57,13 +56,18 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 
 		initSummaries(getPreferenceScreen());
 	}
+	
+    @Override
+    public void setTheme(int resid) {
+        super.setTheme(PrefStore.getTheme(this));
+    }
 
 	@Override
 	public void onResume() {
 		super.onResume();
 
 		String titleMsg = getString(R.string.title_activity_properties)
-				+ ": " + PrefStore.getCurrentProfile(getApplicationContext());
+				+ ": " + PrefStore.getCurrentProfileTitle(getApplicationContext());
 		setTitle(titleMsg);
 
 		getPreferenceScreen().getSharedPreferences()
@@ -189,7 +193,7 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 
 	private void exportDialog() {
 		final EditText input = new EditText(this);
-		final String rootfsArchive = PrefStore.EXTERNAL_STORAGE
+		final String rootfsArchive = PrefStore.getStorage()
 				+ "/linux-rootfs.tar.gz";
 		input.setText(rootfsArchive);
 		new AlertDialog.Builder(this)
@@ -248,6 +252,18 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 					&& editPref.getText().equals("0")) {
 				pref.setSummary(getString(R.string.summary_disksize_preference));
 			}
+			if (editPref.getKey().equals("diskimage")
+			        && editPref.getText().length() == 0) {
+			    pref.setSummary(PrefStore.getTargetPath(this));
+			}
+            if (editPref.getKey().equals("vncwidth")
+                    && editPref.getText().length() == 0) {
+                pref.setSummary(PrefStore.getScreenWidth(this).toString());
+            }
+            if (editPref.getKey().equals("vncheight")
+                    && editPref.getText().length() == 0) {
+                pref.setSummary(PrefStore.getScreenHeight(this).toString());
+            }
 		}
 
 		if (pref instanceof ListPreference) {
@@ -291,7 +307,7 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 				}
 				if (init || architecture.getValue().length() == 0) {
 					int architectureId = PrefStore.getResourceId(this,
-							PrefStore.MARCH + "_" + distributionStr
+							PrefStore.getArch() + "_" + distributionStr
 									+ "_architecture", "string");
 					if (architectureId != -1) {
 						String architectureStr = getString(architectureId);
@@ -305,7 +321,7 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 				// mirror
 				if (init || mirror.getText().length() == 0) {
 					int mirrorId = PrefStore
-							.getResourceId(this, PrefStore.MARCH + "_"
+							.getResourceId(this, PrefStore.getArch() + "_"
 									+ distributionStr + "_mirror", "string");
 					if (mirrorId != -1) {
 						mirror.setText(getString(mirrorId));
@@ -338,7 +354,7 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 					architecture.setEnabled(false);
 					// mirror
 					if (init) {
-						String archiveFile = PrefStore.EXTERNAL_STORAGE + "/linux-rootfs.tar.gz";
+						String archiveFile = PrefStore.getStorage() + "/linux-rootfs.tar.gz";
 						mirror.setText(archiveFile);
 					}
 					mirror.setSummary(mirror.getText());
@@ -370,7 +386,7 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 				switch (listPref.getValue()) {
 				case "file":
 					if (init) {
-						diskimage.setText(PrefStore.EXTERNAL_STORAGE + "/linux.img");
+						diskimage.setText(PrefStore.getStorage() + "/linux.img");
 					}
 					disksize.setEnabled(true);
 					fstype.setEnabled(true);
@@ -391,14 +407,13 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 					break;
 				default:
 					if (init) {
-						diskimage.setText(PrefStore.EXTERNAL_STORAGE);
+						diskimage.setText(PrefStore.getStorage());
 					}
 					disksize.setEnabled(false);
 					fstype.setEnabled(false);
 				}
 			}
 		}
-
 	}
 
 }
