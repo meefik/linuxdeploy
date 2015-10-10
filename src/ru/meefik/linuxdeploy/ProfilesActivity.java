@@ -33,9 +33,8 @@ public class ProfilesActivity extends SherlockActivity implements
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		PrefStore.updateTheme(this);
 		super.onCreate(savedInstanceState);
-		PrefStore.updateLocale(this);
+		PrefStore.setLocale(this);
 		setContentView(R.layout.activity_profiles);
 
 		listView = (ListView) findViewById(R.id.profilesView);
@@ -55,10 +54,15 @@ public class ProfilesActivity extends SherlockActivity implements
 					}
 				});
 	}
+	
+    @Override
+    public void setTheme(int resid) {
+        super.setTheme(PrefStore.getTheme(this));
+    }
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		PrefStore.updateLocale(getApplicationContext());
+		PrefStore.setLocale(this);
 		getSupportMenuInflater().inflate(R.menu.activity_profiles, menu);
 		return true;
 	}
@@ -281,7 +285,7 @@ public class ProfilesActivity extends SherlockActivity implements
 		int last = listItems.size() - 1;
 		if (pos >= 0 && pos <= last) {
 			String profile = listItems.get(pos).getKey();
-			if (!PrefStore.CURRENT_PROFILE.equals(profile)) {
+			if (!PrefStore.getCurrentProfile(this).equals(profile)) {
 				PrefStore.setCurrentProfile(getApplicationContext(), profile);
 				PrefStore.CONF_CHANGE = true;
 			}
@@ -291,8 +295,7 @@ public class ProfilesActivity extends SherlockActivity implements
 	@Override
 	public void onResume() {
 		super.onResume();
-		this.setTitle(R.string.title_activity_profiles);
-
+		setTitle(R.string.title_activity_profiles);
 		listItems.clear();
 		listItems.addAll(PrefStore.getProfiles(getApplicationContext()));
 		Collections.sort(listItems, new Comparator<Profile<String, String>>() {
@@ -304,9 +307,9 @@ public class ProfilesActivity extends SherlockActivity implements
 		});
 		if (listItems.size() == 0)
 			listItems.add(new Profile<String, String>(
-					PrefStore.CURRENT_PROFILE, getString(R.string.profile)));
+					PrefStore.getCurrentProfile(this), getString(R.string.profile)));
 		adapter.notifyDataSetChanged();
-		listView.setItemChecked(getPosition(PrefStore.CURRENT_PROFILE), true);
+		listView.setItemChecked(getPosition(PrefStore.getCurrentProfile(this)), true);
 	}
 
 	private int getPosition(String key) {

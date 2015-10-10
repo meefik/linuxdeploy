@@ -8,11 +8,6 @@
     <string name="menu_properties">属性</string>
     <string name="menu_settings">设置</string>
     <string name="menu_about">关于</string>
-    <string name="menu_donate">捐赠</string>
-    <string name="menu_forum">论坛</string>
-    <string name="menu_doc">文件</string>
-    <string name="menu_issues">问题</string>
-    <string name="menu_source">源代码</string>
     <string name="menu_exit">退出</string>
     <string name="menu_status">状态</string>
     <string name="menu_clear">清空</string>
@@ -62,21 +57,21 @@
     <string name="dialog_title_language_preference">选择语言</string>
     <string name="title_fontsize_preference">字体大小</string>
     <string name="dialog_title_fontsize_preference">字体大小</string>
-    <string name="title_maxline_preference">滚动大小</string>
-    <string name="dialog_title_maxline_preference">滚动大小</string>
+    <string name="title_maxlines_preference">滚动大小</string>
+    <string name="dialog_title_maxlines_preference">滚动大小</string>
     <string name="title_theme_preference">主题</string>
     <string name="dialog_title_theme_preference">选择主题</string>
     <string name="title_appicon_preference">显示图标</string>
     <string name="summary_appicon_preference">在通知栏显示图标</string>
+    <string name="title_timestamp_preference">Timestamp</string>
+    <string name="summary_timestamp_preference">Show timestamp</string>
     <string name="title_autostart_preference">开机启动</string>
     <string name="summary_autostart_preference">在 Android 启动时自动启动 GNU/Linux</string>
     <string name="env_preferences">系统环境</string>
-    <string name="title_installdir_preference">环境目录</string>
-    <string name="dialog_title_installdir_preference">环境目录</string>
-    <string name="title_builtinshell_preference">内置终端</string>
-    <string name="summary_builtinshell_preference">使用内置的 BusyBox</string>
-    <string name="title_symlink_preference">建立符号链接</string>
-    <string name="summary_symlink_preference">在 Android 上建立 Linux 的符号链接</string>
+    <string name="title_busyboxdir_preference">BusyBox 目录</string>
+    <string name="dialog_title_busyboxdir_preference">BusyBox 目录</string>
+    <string name="title_usecli_preference">Use CLI</string>
+    <string name="summary_usecli_preference">Set up a command line interface</string>
     <string name="title_installenv_preference">更新环境</string>
     <string name="summary_installenv_preference">更新操作环境</string>
     <string name="message_installenv_confirm_dialog">更新操作环境？</string>
@@ -88,8 +83,8 @@
     <string name="summary_debug_preference">显示调试信息</string>
     <string name="title_trace_preference">跟踪模式</string>
     <string name="summary_trace_preference">启用跟踪模式</string>
-    <string name="title_logs_preference">日志</string>
-    <string name="summary_logs_preference">将日志储存到文件</string>
+    <string name="title_logger_preference">日志</string>
+    <string name="summary_logger_preference">将日志储存到文件</string>
     <string name="title_logfile_preference">日志文件</string>
     <string name="dialog_title_logfile_preference">日志文件</string>
     <string name="action_preferences">操作</string>
@@ -190,7 +185,7 @@
     <string name="dialog_title_fbargs_preference">FB: X11 参数</string>
     <string name="title_fbfreeze_preference">冻结 Android 界面</string>
     <string name="dialog_title_fbfreeze_preference">冻结 Android 界面</string>
-    <string name="help_text">\n<b>帮助</b>\n\n此应用程序会在一个chroot容器中安装和运行选定的 GNU/Linux 发行版。\n\n步骤：\n1. 获取超级用户（即root）权限\n2. 安装 BusyBox\n3. 检查网络连接\n4. 设置安装选项\n5. 开始安装（点击\"属性\" => \"安装\"）\n6. 等待安装完成\n7. 点击\"开始\"按钮启动容器\n8. 通过 CLI、SSH、VNC 或其他方式连接容器\n\n更多内容，详见\"关于\"。</string>
-    <string name="about_text">本程序不承担任何担保责任。这是一个自由软件，您可以在特定的条件下重现分发。\n\n根据 GPLv3 或更新的协议颁发许可。\n\n&#169; 2012&#8211;2015 Anton Skshidlevsky</string>
+    <string name="help_text">\n<b>帮助</b>\n\n此应用程序会在一个chroot容器中安装和运行选定的 GNU/Linux 发行版。\n\n步骤：\n1. 获取超级用户（即root）权限\n2. 安装 <a href="https://play.google.com/store/apps/details?id=ru.meefik.busybox">BusyBox</a>\n3. 检查网络连接\n4. 设置安装选项\n5. 开始安装（点击\"属性\" => \"安装\"）\n6. 等待安装完成\n7. 点击\"开始\"按钮启动容器\n8. 通过 CLI、SSH、VNC 或其他方式连接容器\n\n更多内容，详见\"关于\"。</string>
+    <string name="about_text">This application installs the selected GNU/Linux distribution and executes it in a chroot-container.\n\nFor more information see <a href="https://github.com/meefik/linuxdeploy">project page</a>, <a href="http://4pda.ru/forum/index.php?showtopic=378043">forum</a> or <a href="http://meefik.ru">developer site</a>.\n\n&#169; 2012&#8211;2015 Anton Skshidlevsky, GPLv3</string>
 
 </resources>

@@ -31,12 +31,12 @@
             android:title="@string/title_fontsize_preference" />
         
         <EditTextPreference
-            android:defaultValue="@string/maxline"
-            android:dialogTitle="@string/dialog_title_maxline_preference"
+            android:defaultValue="@string/maxlines"
+            android:dialogTitle="@string/dialog_title_maxlines_preference"
             android:inputType="numberDecimal"
-            android:key="maxline"
-            android:summary="@string/maxline"
-            android:title="@string/title_maxline_preference" />
+            android:key="maxlines"
+            android:summary="@string/maxlines"
+            android:title="@string/title_maxlines_preference" />
 
         <ListPreference
             android:defaultValue="@string/theme"
@@ -47,6 +47,11 @@
             android:summary="@string/theme"
             android:title="@string/title_theme_preference" />
 
+        <CheckBoxPreference
+            android:defaultValue="@string/timestamp"
+            android:key="timestamp"
+            android:summary="@string/summary_timestamp_preference"
+            android:title="@string/title_timestamp_preference" />
         <CheckBoxPreference
             android:defaultValue="@string/appicon"
             android:key="appicon"
@@ -60,23 +65,17 @@
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/env_preferences" >
         <EditTextPreference
-            android:defaultValue="@string/installdir"
-            android:dialogTitle="@string/dialog_title_installdir_preference"
-            android:key="installdir"
-            android:summary="@string/installdir"
-            android:title="@string/title_installdir_preference" />
-        
-        <CheckBoxPreference
-            android:defaultValue="@string/builtinshell"
-            android:key="builtinshell"
-            android:summary="@string/summary_builtinshell_preference"
-            android:title="@string/title_builtinshell_preference" />
+            android:defaultValue="@string/busyboxdir"
+            android:dialogTitle="@string/dialog_title_busyboxdir_preference"
+            android:key="busyboxdir"
+            android:summary="@string/busyboxdir"
+            android:title="@string/title_busyboxdir_preference" />
 
         <CheckBoxPreference
-            android:defaultValue="@string/symlink"
-            android:key="symlink"
-            android:summary="@string/summary_symlink_preference"
-            android:title="@string/title_symlink_preference" />
+            android:defaultValue="@string/usecli"
+            android:key="usecli"
+            android:summary="@string/summary_usecli_preference"
+            android:title="@string/title_usecli_preference" />
 
         <PreferenceScreen
             android:key="installenv"
@@ -100,14 +99,14 @@
             android:summary="@string/summary_trace_preference"
             android:title="@string/title_trace_preference" />
         <CheckBoxPreference
-            android:defaultValue="@string/logs"
-            android:key="logs"
-            android:summary="@string/summary_logs_preference"
-            android:title="@string/title_logs_preference" />
+            android:defaultValue="@string/logger"
+            android:key="logger"
+            android:summary="@string/summary_logger_preference"
+            android:title="@string/title_logger_preference" />
 
         <EditTextPreference
             android:defaultValue="@string/logfile"
-            android:dependency="logs"
+            android:dependency="logger"
             android:dialogTitle="@string/dialog_title_logfile_preference"
             android:key="logfile"
             android:summary="@string/logfile"

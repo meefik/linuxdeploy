@@ -8,11 +8,11 @@
     <string-array name="deploytype_entries">
         <item>Fichier</item>
         <item>Partition</item>
+        <item>Répertoire</item>
         <item>RAM</item>
-        <item>Sur mesure</item>
     </string-array>
     <string-array name="fstype_entries">
-        <item>Auto</item>
+        <item>Automatique</item>
         <item>ext2</item>
         <item>ext3</item>
         <item>ext4</item>

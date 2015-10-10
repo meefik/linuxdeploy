@@ -8,8 +8,8 @@
     <string-array name="deploytype_entries">
         <item>Файл</item>
         <item>Раздел</item>
+        <item>Директория</item>
         <item>Оперативная память</item>
-        <item>Пользовательский</item>
     </string-array>
     <string-array name="fstype_entries">
         <item>Автоопределение</item>

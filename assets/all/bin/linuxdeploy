@@ -1,0 +1,6 @@
+#!/bin/bash
+# Linux Deploy
+# (C) 2012-2015 Anton Skshidlevsky <meefik@gmail.com>, GPLv3
+
+ENV_DIR="$(cd ${0%/*}/..; pwd)"
+. ${ENV_DIR}/share/main.sh

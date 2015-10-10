@@ -8,11 +8,6 @@
     <string name="menu_properties">Properties</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_about">About</string>
-    <string name="menu_donate">Donate</string>
-    <string name="menu_forum">Discussions</string>
-    <string name="menu_doc">Documentation</string>
-    <string name="menu_issues">Issues</string>
-    <string name="menu_source">Source code</string>
     <string name="menu_exit">Exit</string>
     <string name="menu_status">Status</string>
     <string name="menu_clear">Clear</string>
@@ -62,21 +57,21 @@
     <string name="dialog_title_language_preference">Choose language</string>
     <string name="title_fontsize_preference">Font size</string>
     <string name="dialog_title_fontsize_preference">Font size</string>
-    <string name="title_maxline_preference">Scroll size</string>
-    <string name="dialog_title_maxline_preference">Scroll size</string>
+    <string name="title_maxlines_preference">Scroll size</string>
+    <string name="dialog_title_maxlines_preference">Scroll size</string>
     <string name="title_theme_preference">Theme</string>
     <string name="dialog_title_theme_preference">Choose theme</string>
+    <string name="title_timestamp_preference">Timestamp</string>
+    <string name="summary_timestamp_preference">Show timestamp</string>
     <string name="title_appicon_preference">Show icon</string>
     <string name="summary_appicon_preference">Display icon in notification bar</string>
     <string name="title_autostart_preference">Autostart</string>
     <string name="summary_autostart_preference">Automatically run GNU/Linux when starting Android</string>
     <string name="env_preferences">Operating environment</string>
-    <string name="title_installdir_preference">ENV directory</string>
-    <string name="dialog_title_installdir_preference">ENV directory</string>
-    <string name="title_builtinshell_preference">Built-in shell</string>
-    <string name="summary_builtinshell_preference">Use the built-in BusyBox</string>
-    <string name="title_symlink_preference">Create symlink</string>
-    <string name="summary_symlink_preference">Create a symbolic link on linuxdeploy in Android</string>
+    <string name="title_busyboxdir_preference">BusyBox directory</string>
+    <string name="dialog_title_busyboxdir_preference">BusyBox directory</string>
+    <string name="title_usecli_preference">Use CLI</string>
+    <string name="summary_usecli_preference">Set up a command line interface</string>
     <string name="title_installenv_preference">Update ENV</string>
     <string name="summary_installenv_preference">Update the operating environment</string>
     <string name="message_installenv_confirm_dialog">Update the operating environment?</string>
@@ -88,8 +83,8 @@
     <string name="summary_debug_preference">Show debugging information</string>
     <string name="title_trace_preference">Trace mode</string>
     <string name="summary_trace_preference">Enable tracing mode</string>
-    <string name="title_logs_preference">Logging</string>
-    <string name="summary_logs_preference">Save logs to a file</string>
+    <string name="title_logger_preference">Logging</string>
+    <string name="summary_logger_preference">Save logs to a file</string>
     <string name="title_logfile_preference">Log file</string>
     <string name="dialog_title_logfile_preference">Log file</string>
     <string name="action_preferences">Action</string>
@@ -190,7 +185,7 @@
     <string name="dialog_title_fbargs_preference">FB: X options</string>
     <string name="title_fbfreeze_preference">Freeze Android UI</string>
     <string name="dialog_title_fbfreeze_preference">Freeze Android UI</string>
-    <string name="help_text">\n<b>Help</b>\n\nThis application installs the selected GNU/Linux distribution and executes it in a chroot-container.\n\nProcedure:\n1. Get superuser privileges (root).\n2. Install BusyBox.\n3. Check the connection to Internet.\n4. Specify the installation options.\n5. Start the installation (\"Properties => Install\").\n6. Wait until the installation is complete.\n7. Tap \"START\" button to run the container.\n8. Connect to the container through CLI, SSH, VNC, or others.\n\nFor more information, see \"About\".</string>
-    <string name="about_text">This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions.\n\nLicensed under the GPL version 3 or later.\n\n&#169; 2012&#8211;2015 Anton Skshidlevsky</string>
+    <string name="help_text">\n<b>Help</b>\n\nThis application installs the selected GNU/Linux distribution and executes it in a chroot-container.\n\nProcedure:\n1. Get superuser privileges (root).\n2. Install <a href="https://play.google.com/store/apps/details?id=ru.meefik.busybox">BusyBox</a>.\n3. Check the connection to Internet.\n4. Specify the installation options.\n5. Start the installation (\"Properties => Install\").\n6. Wait until the installation is complete.\n7. Tap \"START\" button to run the container.\n8. Connect to the container through CLI, SSH, VNC, or others.\n\nFor more information, see \"About\".</string>
+    <string name="about_text">This application installs the selected GNU/Linux distribution and executes it in a chroot-container.\n\nFor more information see <a href="https://github.com/meefik/linuxdeploy">project page</a>, <a href="http://4pda.ru/forum/index.php?showtopic=378043">forum</a> or <a href="http://meefik.ru">developer site</a>.\n\n&#169; 2012&#8211;2015 Anton Skshidlevsky, GPLv3</string>
 
 </resources>

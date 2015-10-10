@@ -8,11 +8,6 @@
     <string name="menu_properties">Thuộc tính</string>
     <string name="menu_settings">Cài đặt</string>
     <string name="menu_about">Thông tin</string>
-    <string name="menu_donate">Ủng hộ</string>
-    <string name="menu_forum">Thảo luận</string>
-    <string name="menu_doc">Tài liệu</string>
-    <string name="menu_issues">Vấn đề</string>
-    <string name="menu_source">Mã nguồn</string>
     <string name="menu_exit">Thoát</string>
     <string name="menu_status">Trạng thái</string>
     <string name="menu_clear">Xoá màn hình</string>
@@ -62,21 +57,21 @@
     <string name="dialog_title_language_preference">Chọn ngôn ngữ</string>
     <string name="title_fontsize_preference">Cỡ chữ</string>
     <string name="dialog_title_fontsize_preference">Cỡ chữ</string>
-    <string name="title_maxline_preference">Cuộn (dòng)</string>
-    <string name="dialog_title_maxline_preference">Cuộn (dòng)</string>
+    <string name="title_maxlines_preference">Cuộn (dòng)</string>
+    <string name="dialog_title_maxlines_preference">Cuộn (dòng)</string>
     <string name="title_theme_preference">Giao diện</string>
     <string name="dialog_title_theme_preference">Chọn giao diện</string>
+    <string name="title_timestamp_preference">Timestamp</string>
+    <string name="summary_timestamp_preference">Show timestamp</string>
     <string name="title_appicon_preference">Hiện biểu tượng</string>
     <string name="summary_appicon_preference">Hiện biểu tượng trên thanh thông báo</string>
     <string name="title_autostart_preference">Tự khởi động</string>
     <string name="summary_autostart_preference">Tự khởi động GNU/Linux khi mở nguồn</string>
     <string name="env_preferences">Môi trường điều hành</string>
-    <string name="title_installdir_preference">Đường dẫn ENV</string>
-    <string name="dialog_title_installdir_preference">Đường dẫn ENV</string>
-    <string name="title_builtinshell_preference">Xây dựng trong shell</string>
-    <string name="summary_builtinshell_preference">Sử dụng xây dựng trong BusyBox</string>
-    <string name="title_symlink_preference">Tạo liên kết tượng trưng</string>
-    <string name="summary_symlink_preference">Tạo một liên kết tượng trưng trên linuxdeploy trong Android</string>
+    <string name="title_busyboxdir_preference">Đường dẫn BusyBox</string>
+    <string name="dialog_title_busyboxdir_preference">Đường dẫn BusyBox</string>
+    <string name="title_usecli_preference">Use CLI</string>
+    <string name="summary_usecli_preference">Set up a command line interface</string>
     <string name="title_installenv_preference">Cập nhật ENV</string>
     <string name="summary_installenv_preference">Cập nhật môi trường điều hành</string>
     <string name="message_installenv_confirm_dialog">Cập nhật môi trường điều hành chứ?</string>
@@ -88,8 +83,8 @@
     <string name="summary_debug_preference">Hiện thông tin gỡ lỗi</string>
     <string name="title_trace_preference">Chế độ dấu vết</string>
     <string name="summary_trace_preference">Bật chế độ dấu vết</string>
-    <string name="title_logs_preference">Nhật kí</string>
-    <string name="summary_logs_preference">Lưu nhật kí vào một tệp tin</string>
+    <string name="title_logger_preference">Nhật kí</string>
+    <string name="summary_logger_preference">Lưu nhật kí vào một tệp tin</string>
     <string name="title_logfile_preference">Tệp nhật kí</string>
     <string name="dialog_title_logfile_preference">Tệp nhật kí</string>
     <string name="action_preferences">Hành động</string>
@@ -190,7 +185,7 @@
     <string name="dialog_title_fbargs_preference">FB: tuỳ chọn X</string>
     <string name="title_fbfreeze_preference">Đóng băng giao diện người dùng Android</string>
     <string name="dialog_title_fbfreeze_preference">Đóng băng giao diện người dùng Android</string>
-    <string name="help_text">\n<b>Help</b>\n\nThis application installs the selected GNU/Linux distribution and executes it in a chroot-container.\n\nProcedure:\n1. Get superuser privileges (root).\n2. Install BusyBox.\n3. Check the connection to Internet.\n4. Specify the installation options.\n5. Start the installation (\"Properties => Install\").\n6. Wait until the installation is complete.\n7. Tap \"START\" button to run the container.\n8. Connect to the container through CLI, SSH, VNC, or others.\n\nFor more information, see \"About\".</string>
-    <string name="about_text">Chương trình này KHÔNG CÓ BẢO HÀNH. Đây là phần mềm miễn phí, và bạn được phép phân phối lại dưới một số điều kiện.\n\nLicensed under the GPL version 3 or later.\n\n&#169;2012&#8211;2015 Anton Skshidlevsky</string>
+    <string name="help_text">\n<b>Help</b>\n\nThis application installs the selected GNU/Linux distribution and executes it in a chroot-container.\n\nProcedure:\n1. Get superuser privileges (root).\n2. Install <a href="https://play.google.com/store/apps/details?id=ru.meefik.busybox">BusyBox</a>.\n3. Check the connection to Internet.\n4. Specify the installation options.\n5. Start the installation (\"Properties => Install\").\n6. Wait until the installation is complete.\n7. Tap \"START\" button to run the container.\n8. Connect to the container through CLI, SSH, VNC, or others.\n\nFor more information, see \"About\".</string>
+    <string name="about_text">This application installs the selected GNU/Linux distribution and executes it in a chroot-container.\n\nFor more information see <a href="https://github.com/meefik/linuxdeploy">project page</a>, <a href="http://4pda.ru/forum/index.php?showtopic=378043">forum</a> or <a href="http://meefik.ru">developer site</a>.\n\n&#169; 2012&#8211;2015 Anton Skshidlevsky, GPLv3</string>
 
 </resources>

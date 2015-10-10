@@ -1,7 +1,7 @@
-#!/bin/bash
+################################################################################
 #
-# Linux Deploy for Android
-# (C) 2012-2015 Anton Skshidlevsky <meefik@gmail.com>
+# Linux Deploy
+# (C) 2012-2015 Anton Skshidlevsky <meefik@gmail.com>, GPLv3
 #
 ################################################################################
 
@@ -106,7 +106,7 @@ partition)
 		msg "fail"; return 1
 	fi
 ;;
-ram)
+directory|ram)
 	if [ -e "${IMG_TARGET}" -a ! -d "${IMG_TARGET}" ]; then
 		msg "fail"; return 1
 	fi

@@ -1,49 +1,36 @@
 package ru.meefik.linuxdeploy;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.Context;
 
 public class ExecScript extends Thread {
 
-	private Context c;
-	private String arg;
+    private Context c;
+    private String arg;
 
-	public ExecScript(Context c, String arg) {
-		this.c = c;
-		this.arg = arg;
-		PrefStore.get(c);
-	}
-	
-	@Override
-	public void run() {
-		switch (arg) {
-		case "update":
-			// update env
-			EnvUtils.updateEnv(c);
-			// update config file
-			EnvUtils.updateConf();
-			break;
-		case "remove":
-			// remove env
-			EnvUtils.removeEnv(c);
-			break;
-		default:
-			// update env when version is changed
-			if (!EnvUtils.isLatestVersion()) {
-				// update env
-				EnvUtils.updateEnv(c);
-			}
-			// update config file
-			EnvUtils.updateConf();
-			// exec linuxdeploy command
-			List<String> params = new ArrayList<String>();
-			params.add("export LINUXDEPLOY_DIR=" + PrefStore.ENV_DIR);
-			params.add("echo '>>> " + arg + "'");
-			params.add(PrefStore.ENV_DIR + "/bin/linuxdeploy " + arg);
-			params.add("echo '<<< " + arg + "'");
-			EnvUtils.exec(params);
-		}
-	}
+    public ExecScript(Context c, String arg) {
+        this.c = c;
+        this.arg = arg;
+    }
+
+    @Override
+    public void run() {
+        switch (arg) {
+        case "update":
+            if (!EnvUtils.updateEnv(c)) break;
+            EnvUtils.updateConf(c);
+            if (PrefStore.isUseCli(c)) {
+                EnvUtils.makeSymlink(c);
+            }
+            break;
+        case "remove":
+            EnvUtils.removeEnv(c);
+            break;
+        default:
+            if (!EnvUtils.isLatestVersion(c)) {
+                if (!EnvUtils.updateEnv(c)) break;
+            }
+            EnvUtils.updateConf(c);
+            EnvUtils.linuxdeploy(c, arg);
+        }
+    }
 }
