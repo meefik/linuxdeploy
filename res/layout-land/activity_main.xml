@@ -7,6 +7,7 @@
         android:id="@+id/LogScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_margin="2dp"
         android:fillViewport="true"
         android:focusable="false" >
 
@@ -14,9 +15,7 @@
             android:id="@+id/LogView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="2dp"
             android:textIsSelectable="true"
-            android:textSize="10sp"
             android:typeface="monospace" />
     </ScrollView>
 
