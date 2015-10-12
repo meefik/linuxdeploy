@@ -245,6 +245,7 @@ public class MainActivity extends SherlockActivity {
      * @param log message
      */
     public static void showLog(final String log) {
+        if (output == null || scroll == null) return;
         // show log in TextView
         output.post(new Runnable() {
             @Override
