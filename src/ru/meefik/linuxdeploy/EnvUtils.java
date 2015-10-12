@@ -409,10 +409,7 @@ public class EnvUtils {
     public static boolean removeEnv(Context c) {
         Logger.log(c, "Removing environment ... ");
 
-        // clean env directory
-        File envDir = new File(PrefStore.getEnvDir(c));
-        cleanDirectory(envDir);
-
+        // remove symlink
         File ldSymlink = new File("/system/bin/linuxdeploy");
         if (ldSymlink.exists()) {
             // exec shell commands
@@ -421,11 +418,12 @@ public class EnvUtils {
                     + "rm -f /system/bin/linuxdeploy || "
                     + "{ mount -o rw,remount /system; rm -f /system/bin/linuxdeploy; mount -o ro,remount /system; };"
                     + "fi");
-            if (exec(c, "su", params)) {
-                Logger.log(c, "fail\n");
-                return false;
-            }
+            exec(c, "su", params);
         }
+        
+        // clean env directory
+        File envDir = new File(PrefStore.getEnvDir(c));
+        cleanDirectory(envDir);
 
         Logger.log(c, "done\n");
         return true;
