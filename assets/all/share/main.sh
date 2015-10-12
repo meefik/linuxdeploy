@@ -1908,9 +1908,7 @@ EOF
 ################################################################################
 
 # init env
-ENV_DIR="$(cd ${0%/*}/..; pwd)"
-[ -n "${LINUXDEPLOY_DIR}" ] && ENV_DIR="${LINUXDEPLOY_DIR}"
-PATH="${ENV_DIR%/}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/system/xbin:/system/bin"
+PATH="${ENV_DIR}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${PATH}"
 TERM="linux"
 export PATH TERM
 unset LD_PRELOAD
