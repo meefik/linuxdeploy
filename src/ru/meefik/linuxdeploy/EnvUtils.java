@@ -236,6 +236,9 @@ public class EnvUtils {
         try {
             bw = new BufferedWriter(new FileWriter(scriptFile));
             bw.write("#!" + PrefStore.getShell(c) + "\n");
+            bw.write("PATH=" + PrefStore.getEnvDir(c) + "/bin:" +
+                    "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:" +
+                    PrefStore.getBusyboxDir(c) + ":$PATH\n");
             bw.write("ENV_DIR=\"" + PrefStore.getEnvDir(c) + "\"\n");
             bw.write(". ${ENV_DIR}/share/main.sh\n");
             result = true;
@@ -309,8 +312,7 @@ public class EnvUtils {
                 }).start();
             }
 
-            process.waitFor();
-            if (process.exitValue() == 0) result = true;
+            if (process.waitFor() == 0) result = true;
         } catch (Exception e) {
             result = false;
             e.printStackTrace();
@@ -503,14 +505,14 @@ public class EnvUtils {
      * @return true, if no errors
      */
     public static boolean linuxdeploy(Context c, String arg) {
-        Logger.log(c, ">>> " + arg + "\n");
         List<String> params = new ArrayList<String>();
         String opts = "";
         if (PrefStore.isDebugMode(c)) opts = "-d ";
         if (PrefStore.isTraceMode(c)) opts = "-t ";
+        params.add("printf '>>> " + arg + "\n'");
         params.add("linuxdeploy " + opts + arg);
+        params.add("printf '<<< " + arg + "\n'");
         boolean result = exec(c, "su", params);
-        Logger.log(c, "<<< " + arg + "\n");
         return result;
     }
 
