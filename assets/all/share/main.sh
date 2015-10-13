@@ -1908,7 +1908,6 @@ EOF
 ################################################################################
 
 # init env
-PATH="${ENV_DIR}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${PATH}"
 TERM="linux"
 export PATH TERM
 unset LD_PRELOAD
