@@ -496,17 +496,15 @@ framebuffer)
 		sync
 		case "${FB_FREEZE}" in
 		stop)
+			chroot ${MNT_TARGET} su - ${USER_NAME} -c "xinit -- :${FB_DISPLAY} -dpi ${FB_DPI} ${FB_ARGS} &"
 			setprop ctl.stop surfaceflinger
-			chroot ${MNT_TARGET} su - ${USER_NAME} -c "xinit -- :${FB_DISPLAY} -dpi ${FB_DPI} ${FB_ARGS}"
-			sync
-			reboot
+			sleep 10
+			setprop ctl.stop zygote
 		;;
 		pause)
+			chroot ${MNT_TARGET} su - ${USER_NAME} -c "xinit -- :${FB_DISPLAY} -dpi ${FB_DPI} ${FB_ARGS} &"
 			pkill -STOP system_server
 			pkill -STOP surfaceflinger
-			chroot ${MNT_TARGET} su - ${USER_NAME} -c "xinit -- :${FB_DISPLAY} -dpi ${FB_DPI} ${FB_ARGS}"
-			pkill -CONT surfaceflinger
-			pkill -CONT system_server
 		;;
 		*)
 			chroot ${MNT_TARGET} su - ${USER_NAME} -c "xinit -- :${FB_DISPLAY} -dpi ${FB_DPI} ${FB_ARGS} &"
@@ -594,8 +592,16 @@ xserver)
 ;;
 framebuffer)
 	msg -n "Framebuffer ... "
-	pkill -CONT surfaceflinger
-	pkill -CONT system_server
+	case "${FB_FREEZE}" in
+	stop)
+		setprop ctl.start surfaceflinger
+		setprop ctl.start zygote
+	;;
+	pause)
+		pkill -CONT surfaceflinger
+		pkill -CONT system_server
+	;;
+	esac
 	xsession_kill
 	[ $? -eq 0 ] && msg "done" || msg "fail"
 ;;
