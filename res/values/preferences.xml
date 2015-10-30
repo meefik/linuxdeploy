@@ -52,9 +52,10 @@
     <string name="fbdisplay" translatable="false">0</string>
     <string name="fbdpi" translatable="false">100</string>
     <string name="fbdev" translatable="false">/dev/graphics/fb0</string>
-    <string name="fbinput" translatable="false">/dev/input/event2</string>
-    <string name="fbargs" translatable="false"></string>
+    <string name="fbinput" translatable="false">/dev/input/event0</string>
+    <string name="fbargs" translatable="false">-sharevts vt0</string>
     <string name="fbfreeze" translatable="false">none</string>
+    <string name="fbrefresh" translatable="false">true</string>
     
     <string-array name="default_components" translatable="false">
         <item>desktop</item>

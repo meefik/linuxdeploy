@@ -183,6 +183,8 @@
     <string name="dialog_title_fbinput_preference">FB: input device path</string>
     <string name="title_fbargs_preference">X options</string>
     <string name="dialog_title_fbargs_preference">FB: X options</string>
+    <string name="title_fbrefresh_preference">Force refresh</string>
+    <string name="summary_fbrefresh_preference">Force refresh frambuffer</string>
     <string name="title_fbfreeze_preference">Freeze Android UI</string>
     <string name="dialog_title_fbfreeze_preference">Freeze Android UI</string>
     <string name="help_text">\n<b>Help</b>\n\nThis application installs the selected GNU/Linux distribution and executes it in a chroot-container.\n\nProcedure:\n1. Get superuser privileges (root).\n2. Install <a href="https://play.google.com/store/apps/details?id=ru.meefik.busybox">BusyBox</a>.\n3. Check the connection to Internet.\n4. Specify the installation options.\n5. Start the installation (\"Properties => Install\").\n6. Wait until the installation is complete.\n7. Tap \"START\" button to run the container.\n8. Connect to the container through CLI, SSH, VNC, or others.\n\nFor more information, see \"About\".</string>
