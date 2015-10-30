@@ -63,15 +63,15 @@
     <string name="dialog_title_theme_preference">选择主题</string>
     <string name="title_appicon_preference">显示图标</string>
     <string name="summary_appicon_preference">在通知栏显示图标</string>
-    <string name="title_timestamp_preference">Timestamp</string>
-    <string name="summary_timestamp_preference">Show timestamp</string>
+    <string name="title_timestamp_preference">时间戳</string>
+    <string name="summary_timestamp_preference">显示时间戳</string>
     <string name="title_autostart_preference">开机启动</string>
     <string name="summary_autostart_preference">在 Android 启动时自动启动 GNU/Linux</string>
     <string name="env_preferences">系统环境</string>
     <string name="title_busyboxdir_preference">BusyBox 目录</string>
     <string name="dialog_title_busyboxdir_preference">BusyBox 目录</string>
-    <string name="title_usecli_preference">Use CLI</string>
-    <string name="summary_usecli_preference">Set up a command line interface</string>
+    <string name="title_usecli_preference">使用命令行界面</string>
+    <string name="summary_usecli_preference">配置命令行界面</string>
     <string name="title_installenv_preference">更新环境</string>
     <string name="summary_installenv_preference">更新操作环境</string>
     <string name="message_installenv_confirm_dialog">更新操作环境？</string>
@@ -186,6 +186,6 @@
     <string name="title_fbfreeze_preference">冻结 Android 界面</string>
     <string name="dialog_title_fbfreeze_preference">冻结 Android 界面</string>
     <string name="help_text">\n<b>帮助</b>\n\n此应用程序会在一个chroot容器中安装和运行选定的 GNU/Linux 发行版。\n\n步骤：\n1. 获取超级用户（即root）权限\n2. 安装 <a href="https://play.google.com/store/apps/details?id=ru.meefik.busybox">BusyBox</a>\n3. 检查网络连接\n4. 设置安装选项\n5. 开始安装（点击\"属性\" => \"安装\"）\n6. 等待安装完成\n7. 点击\"开始\"按钮启动容器\n8. 通过 CLI、SSH、VNC 或其他方式连接容器\n\n更多内容，详见\"关于\"。</string>
-    <string name="about_text">This application installs the selected GNU/Linux distribution and executes it in a chroot-container.\n\nFor more information see <a href="https://github.com/meefik/linuxdeploy">project page</a>, <a href="http://4pda.ru/forum/index.php?showtopic=378043">forum</a> or <a href="http://meefik.ru">developer site</a>.\n\n&#169; 2012&#8211;2015 Anton Skshidlevsky, GPLv3</string>
+    <string name="about_text">此应用安装所选的 GNU/Linux 发行版，并在 chroot 的容器中运行它。\n\n参见<a href="https://github.com/meefik/linuxdeploy">项目主页</a>，<a href="http://4pda.ru/forum/index.php?showtopic=378043">论坛</a>，或<a href="http://meefik.ru">开发者主页</a>来获取更多信息。.\n\n&#169; 2012&#8211;2015 Anton Skshidlevsky, GPLv3</string>
 
 </resources>
