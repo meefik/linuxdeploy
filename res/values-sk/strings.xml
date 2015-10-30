@@ -183,6 +183,8 @@
     <string name="dialog_title_fbinput_preference">FB: cesta k vstupnému zariadeniu</string>
     <string name="title_fbargs_preference">Voľby X</string>
     <string name="dialog_title_fbargs_preference">FB: voľby X</string>
+    <string name="title_fbrefresh_preference">Force refresh</string>
+    <string name="summary_fbrefresh_preference">Force refresh frambuffer</string>
     <string name="title_fbfreeze_preference">Zmraziť používateľské rozhranie Androidu</string>
     <string name="dialog_title_fbfreeze_preference">Zmrazenie používateľského rozhrania Androidu</string>
     <string name="help_text">\n<b>Pomocník</b>\n\nTáto aplikácia nainštaluje vybratú distribúciu systému GNU/Linux a spustí ju v kontajneri chroot.\n\nPostup:\n1. Získajte práva superužívateľa (root).\n2. Nainštalujte aplikáciu <a href="https://play.google.com/store/apps/details?id=ru.meefik.busybox">BusyBox</a>.\n3. Skontrolujte pripojenie na internet.\n4. Určte voľby inštalácie.\n5. Spustite inštaláciu (\"Vlastnosti => Inštalácia\").\n6. Počkajte, kým sa dokončí inštalácia.\n7. Ťuknite na tlačidlo \"SPUSTIŤ\" na spustenie kontajnera.\n8. Pripojte sa ku kontajneru pomocou CLI, SSH, VNC, alebo iným spôsobom.\n\nPre viac informácií si prezrite \"O aplikácii\".</string>

@@ -34,6 +34,12 @@
             android:key="fbargs"
             android:summary="@string/fbargs"
             android:title="@string/title_fbargs_preference" />
+        
+        <CheckBoxPreference
+            android:defaultValue="@string/fbrefresh"
+            android:key="fbrefresh"
+            android:summary="@string/summary_fbrefresh_preference"
+            android:title="@string/title_fbrefresh_preference" />
 
         <ListPreference
             android:defaultValue="@string/fbfreeze"

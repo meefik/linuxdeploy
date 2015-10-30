@@ -782,6 +782,18 @@ public class PrefStore {
                 Context.MODE_PRIVATE);
         return pref.getString("fbargs", c.getString(R.string.fbargs));
     }
+    
+    /**
+     * Get fb refresh mode
+     * 
+     * @param c context
+     * @return 0 or 1
+     */
+    public static String getFbRefreshMode(Context c) {
+        SharedPreferences pref = c.getSharedPreferences(getCurrentProfile(c),
+                Context.MODE_PRIVATE);
+        return pref.getBoolean("fbrefresh", c.getString(R.string.fbrefresh).equals("true")) ? "1" : "0";
+    }
 
     /**
      * Get Android freeze mode

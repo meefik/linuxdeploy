@@ -5,6 +5,7 @@ Changelog (English)
 Fixed a problem with user password that contains uppercase letters
 Added support system BusyBox, a built-in is no longer supported
 Added option to display a time stamp
+Improved support for framebuffer
 
 1.5.3
 Added an option to change the chroot directory
@@ -320,6 +321,7 @@ Updated list packages of base system installation
 Исправлена проблема с установкой пароля, содержащего заглавные буквы
 Добавлена поддержка системного BusyBox, встроенный больше не поддерживается
 Добавлена опция отображения отметки времени
+Улучшена поддержка кадрового буфера
 
 1.5.3
 Добавлена опция изменения chroot директории

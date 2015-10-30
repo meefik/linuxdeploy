@@ -448,6 +448,22 @@ dbus_init()
 chroot ${MNT_TARGET} dbus-daemon --system --fork
 }
 
+fb_refresh()
+{
+[ "${FB_REFRESH}" = "1" ] || return 0
+local fbdev="${FB_DEV##*/}"
+local fbrotate="/sys/class/graphics/${fbdev}/rotate"
+[ -e "${fbrotate}" ] || return 0
+local pid_file="${MNT_TARGET}/tmp/xsession.pid"
+touch ${pid_file}
+chmod 666 ${pid_file}
+while [ -e "${pid_file}" ]
+do
+    echo 0 > ${fbrotate}
+    sleep 0.01
+done
+}
+
 case "$1" in
 ssh)
 	msg -n "SSH [:${SSH_PORT}] ... "
@@ -492,6 +508,7 @@ framebuffer)
 	sed -i "s|Option.*\"fbdev\".*#linuxdeploy|Option \"fbdev\" \"${FB_DEV}\" #linuxdeploy|g" ${MNT_TARGET}/etc/X11/xorg.conf
 	sed -i "s|Option.*\"Device\".*#linuxdeploy|Option \"Device\" \"${FB_INPUT}\" #linuxdeploy|g" ${MNT_TARGET}/etc/X11/xorg.conf
 	dbus_init
+	fb_refresh &
 	(set -e
 		sync
 		case "${FB_FREEZE}" in
@@ -566,6 +583,7 @@ xsession_kill()
 local pid=""
 if [ -e "${MNT_TARGET}/tmp/xsession.pid" ]; then
 	pid=$(cat ${MNT_TARGET}/tmp/xsession.pid)
+	rm ${MNT_TARGET}/tmp/xsession.pid
 fi
 if [ -n "${pid}" ]; then
 	kill -9 ${pid} || return 1
@@ -1122,7 +1140,7 @@ msg "Installing additional components: "
 				pkgs="${pkgs} tightvncserver"
 			;;
 			xserver)
-				pkgs="${pkgs} xinit xserver-xorg xserver-xorg-video-fbdev xserver-xorg-input-evdev"
+				pkgs="${pkgs} xinit xserver-xorg xserver-xorg-video-fbdev xserver-xorg-input-evdev florence"
 			;;
 			kali-linux)
 				pkgs="${pkgs} kali-linux-top10"
@@ -1889,7 +1907,7 @@ Linux Deploy ${version}
 (c) 2012-2015 Anton Skshidlevsky, GPLv3
 
 USAGE:
-   linuxdeploy [OPTIONS] COMMAND [ARGS]
+   linuxdeploy [OPTIONS] COMMAND ...
 
 OPTIONS:
    -c FILE - configuration file

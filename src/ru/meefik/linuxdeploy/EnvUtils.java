@@ -475,6 +475,7 @@ public class EnvUtils {
         lines.add("FB_DEV=\"" + PrefStore.getFbDev(c) + "\"");
         lines.add("FB_INPUT=\"" + PrefStore.getFbInput(c) + "\"");
         lines.add("FB_ARGS=\"" + PrefStore.getFbArgs(c) + "\"");
+        lines.add("FB_REFRESH=\"" + PrefStore.getFbRefreshMode(c) + "\"");
         lines.add("FB_FREEZE=\"" + PrefStore.getFbFreezeMode(c) + "\"");
         BufferedWriter bw = null;
         try {
