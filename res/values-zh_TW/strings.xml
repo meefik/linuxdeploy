@@ -183,8 +183,8 @@
     <string name="dialog_title_fbinput_preference">FB: 輸入裝置路徑</string>
     <string name="title_fbargs_preference">X11 參數</string>
     <string name="dialog_title_fbargs_preference">FB: X11 參數</string>
-    <string name="title_fbrefresh_preference">Force refresh</string>
-    <string name="summary_fbrefresh_preference">Force refresh frambuffer</string>
+    <string name="title_fbrefresh_preference">強制重新整理</string>
+    <string name="summary_fbrefresh_preference">強制重新整理 frambuffer</string>
     <string name="title_fbfreeze_preference">凍結 Android 介面</string>
     <string name="dialog_title_fbfreeze_preference">凍結 Android 介面</string>
     <string name="help_text">\n<b>幫助</b>\n\n此應用程式會在一個chroot容器中安裝和運行選定的 GNU/Linux 發行版。\n\n步驟：\n1. 獲取超級使用者（即root）許可權\n2. 安裝 <a href="https://play.google.com/store/apps/details?id=ru.meefik.busybox">BusyBox</a>\n3. 檢查網路連線\n4. 設定安裝選項\n5. 開始安裝（點選\"屬性\" => \"安裝\"）\n6. 等待安裝完成\n7. 點選\"開始\"按鈕啟動容器\n8. 通過 CLI、SSH、VNC 或其他方式連線容器\n\n更多內容，詳見\"關於\"。</string>
