@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="con" path="org.springsource.ide.eclipse.gradle.classpathcontainer"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
-	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
+	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry excluding="com/actionbarsherlock/actionbarsherlock/|com.actionbarsherlock/actionbarsherlock/|com/h6ah4i/android/compat/|com.h6ah4i.android.compat/" kind="src" path="build/intermediates/exploded-aar"/>
 	<classpathentry kind="src" path="gen"/>
-	<classpathentry kind="src" path="/actionbarsherlock"/>
+	<classpathentry kind="src" path="build/intermediates/exploded-aar/com.actionbarsherlock/actionbarsherlock"/>
+	<classpathentry kind="src" path="build/intermediates/exploded-aar/com.h6ah4i.android.compat"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

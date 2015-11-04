@@ -20,3 +20,16 @@ local.properties
 # Generic save file patterns
 *~
 .*.swp
+
+# Gradle
+/build/
+/.gradle/
+/gradle/
+gradlew
+gradlew.bat
+
+# IDEA (Android Studio) metadata
+/.idea/
+*.iml
+
+
