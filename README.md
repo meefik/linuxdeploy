@@ -7,11 +7,11 @@ Licensed under the [GPL version 3](http://www.gnu.org/licenses/) or later.
 
 This application is open source software for quick and easy installation of the operating system (OS) GNU / Linux on your Android device.
 
-The application creates a disk image on the flash card, mount it and install there OS distribution. Applications of the new system are run in a chroot environment and working in parallel with platform Android. All changes made on the device are reversible, ie the application and components can be removed completely. Installation of a distribution kit is carried out on a network from the official mirrors online. The application are required superuser rights (ROOT).
+The application creates a disk image on a flash card, mounts it and installs an OS distribution. Applications of the new system are run in a chroot environment and working together with the Android platform. All changes made on the device are reversible, i.e. the application and components can be removed completely. Installation of a distribution is done by downloading files from official mirrors online over the internet. The application requires superuser rights (ROOT).
 
-The program interface supports English and Russian. Through the interface you can manage the process of installing the OS, and after installation, you can start and stop services of the new system (there is support for running your scripts). The installation process is displayed as text reports in the main application window. During the installation, the program will adjust the work environment, which includes the base system, SSH server, VNC server and desktop environment. Also through the program interface to manage server settings SSH and VNC.
+The program interface supports English and Russian. You can manage the process of installing the OS, and after installation, you can start and stop services of the new system (there is support for running your scripts) through the UI. The installation process is reported as text in the main application window. During the installation, the program will adjust the environment, which includes the base system, SSH server, VNC server and desktop environment. The program interface can also manage SSH and VNC settings.
 
-Installing a new operating system takes about 30 minutes. The recommended minimum size of a disk image 1024 MB (for LXDE), without a GUI - 512 MB. When you install Linux in disk image on the flash card with the FAT32 file system, image size should not exceed 4095 MB! After the initial setup a default password for SSH and VNC - changeme. The password can be changed standard tools OS.
+Installing a new operating system takes about 30 minutes. The recommended minimum size of a disk image is 1024 MB (with LXDE), and without a GUI - 512 MB. When you install Linux on the flash card with the FAT32 file system, the image size should not exceed 4095 MB! After the initial setup the default password for SSH and VNC is changeme. The password can be changed through standard OS tools.
 
 #### Features: ####
 * Supported distributions: Debian, Ubuntu, Kali Linux, Arch Linux, Fedora, Gentoo, openSUSE, Slackware, RootFS (tgz, tbz2, txz)
@@ -23,7 +23,7 @@ Installing a new operating system takes about 30 minutes. The recommended minimu
 * Supported languages: English, Russian, German, French, Italian, Spanish, Chinese, Vietnamese, Slovak
 
 #### Install ####
-You can install the app from Google play: <https://play.google.com/store/apps/details?id=ru.meefik.linuxdeploy>.
+You can install the app from Google Play: <https://play.google.com/store/apps/details?id=ru.meefik.linuxdeploy>.
 
 #### Update ####
 After updating the program you must perform: Settings -> Update ENV.
@@ -45,9 +45,9 @@ Installation time and use space on disk (Debian wheezy/armhf on Samsung Galaxy S
 * **KDE** ~ 1:20 / 1.3 GB
 
 #### Source code ####
-Source code: <https://github.com/meefik/linuxdeploy>. This source code are written with use Android SDK/NDK and Eclipse ADT plugin.
+Source code: <https://github.com/meefik/linuxdeploy>. The source code is written using the Android SDK/NDK and the Eclipse ADT plugin.
 
-#### Donation ####
+#### Donations ####
 <http://meefik.github.io/donate.html>
 
 
