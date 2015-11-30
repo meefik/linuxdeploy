@@ -1,0 +1,103 @@
+#!/bin/sh
+# Linux Deploy Component
+# (c) Anton Skshidlevsky <meefik@gmail.com>, GPLv3
+
+NAME="dbus"
+DESC="DBus daemon"
+DEPENDS=""
+TARGET="*:*:*"
+
+do_install()
+{
+    msg "Installing ${NAME} ... "
+    local packages=""
+    case "${DISTRIB}:${ARCH}:${SUITE}" in
+    debian:*:*|ubuntu:*:*|kalilinux:*:*)
+        packages="dbus"
+        apt_install ${packages}
+    ;;
+    archlinux:*:*)
+        packages="dbus"
+        pacman_install ${packages}
+    ;;
+    fedora:*:*)
+        packages="dbus"
+        yum_install ${packages}
+    ;;
+    opensuse:*:*)
+        packages="dbus"
+        zypper_install ${packages}
+    ;;
+    gentoo:*:*)
+        packages="dbus"
+        emerge_install ${packages}
+    ;;
+    esac
+}
+
+do_configure()
+{
+    msg "Configuring ${NAME} ... "
+    case "${DISTRIB}" in
+    debian|ubuntu|kalilinux|archlinux)
+        mkdir "${CHROOT_DIR}/run/dbus"
+        chmod 755 "${CHROOT_DIR}/run/dbus"
+    ;;
+    fedora)
+        mkdir "${CHROOT_DIR}/var/run/dbus"
+        chmod 755 "${CHROOT_DIR}/var/run/dbus"
+        chroot_exec sh -c 'dbus-uuidgen > /etc/machine-id'
+    ;;
+    slackware:*:*)
+        packages="openssh"
+        slackpkg_install ${packages}
+    ;;
+    esac
+}
+
+is_started()
+{
+    local is_started=""
+    local f
+    for f in /run/dbus/pid /var/run/messagebus.pid
+    do
+        local pidfile="${CHROOT_DIR}${f}"
+        local pid=$([ -e "${pidfile}" ] && cat "${pidfile}")
+        if [ -n "${pid}" ]; then
+            is_started=$(ps | awk '{if ($1 == '${pid}') print $1}')
+            if [ -n "${is_started}" ]; then
+                return 0
+            fi
+        fi
+    done
+    return 1
+}
+
+do_start()
+{
+    msg -n "${NAME} ... "
+    is_started && { msg "skip"; return 0; }
+    [ -e "${CHROOT_DIR}/run/dbus/pid" ] && rm "${CHROOT_DIR}/run/dbus/pid"
+    [ -e "${CHROOT_DIR}/var/run/messagebus.pid" ] && rm "${CHROOT_DIR}/var/run/messagebus.pid"
+    chroot_exec dbus-daemon --system --fork &
+    is_ok "fail" "done" || return 1
+}
+
+do_stop()
+{
+    msg -n "${NAME} ... "
+    local pid=""
+    local path
+    for path in /run/dbus/pid /var/run/messagebus.pid
+    do
+        if [ -e "${CHROOT_DIR}${path}" ]; then
+            pid=$(cat "${CHROOT_DIR}${path}")
+            break
+        fi
+    done
+    if [ -n "${pid}" ]; then
+        kill -9 ${pid}
+        is_ok "fail" || return 1
+    fi
+    msg "done"
+}
