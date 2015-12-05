@@ -1,9 +1,7 @@
 Linux Deploy (English)
 =====================
 
-Copyright (C) 2012-2015  Anton Skshidlevsky
-
-Licensed under the [GPL version 3](http://www.gnu.org/licenses/) or later.
+Copyright (C) 2012-2015  Anton Skshidlevsky, [GPLv3](http://opensource.org/licenses/gpl-3.0.html)
 
 This application is open source software for quick and easy installation of the operating system (OS) GNU / Linux on your Android device.
 
@@ -54,9 +52,7 @@ Source code: <https://github.com/meefik/linuxdeploy>. The source code is written
 Linux Deploy (Русский)
 ======================
 
-Copyright (C) 2012-2015  Антон Скшидлевский
-
-Лицензировано под [GPL версии 3](http://www.gnu.org/licenses/) или более поздней.
+Copyright (C) 2012-2015  Антон Скшидлевский, [GPLv3](http://opensource.org/licenses/gpl-3.0.html)
 
 Это приложение с открытым исходным кодом для простой и быстрой установки операционной системы (ОС) GNU/Linux на Android устройство.
 
