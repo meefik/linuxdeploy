@@ -51,6 +51,11 @@ get_platform()
     esac
 }
 
+get_uuid()
+{
+    cat /proc/sys/kernel/random/uuid
+}
+
 multiarch_support()
 {
     if [ -d "/proc/sys/fs/binfmt_misc" ]; then
@@ -81,27 +86,16 @@ loop_support()
 user_home()
 {
     [ -e "${CHROOT_DIR}/etc/passwd" ] || return 1
-    echo $(grep -m1 "^${USER_NAME}:" "${CHROOT_DIR}/etc/passwd" | awk -F: '{print $6}')
+    local user_name="$1"
+    [ -n "${user_name}" ] || return 1
+    echo $(grep -m1 "^${user_name}:" "${CHROOT_DIR}/etc/passwd" | awk -F: '{print $6}')
 }
 
-user_id()
+is_mounted()
 {
-    [ -e "${CHROOT_DIR}/etc/passwd" ] || return 1
-    echo $(grep -m1 "^${USER_NAME}:" "${CHROOT_DIR}/etc/passwd" | awk -F: '{print $3}')
-}
-
-group_id()
-{
-    [ -e "${CHROOT_DIR}/etc/passwd" ] || return 1
-    echo $(grep -m1 "^${USER_NAME}:" "${CHROOT_DIR}/etc/passwd" | awk -F: '{print $4}')
-}
-
-container_mounted()
-{
-    if [ "${FAKEROOT}" = "1" ]; then
-        return 0
-    fi
-    local is_mnt=$(grep -c " ${CHROOT_DIR} " /proc/mounts)
+    local mount_point="$1"
+    [ -n "${mount_point}" ] || return 1
+    local is_mnt=$(grep -c " ${mount_point} " /proc/mounts)
     if [ "${is_mnt}" -ne 0 ]; then
         return 0
     else
@@ -109,7 +103,16 @@ container_mounted()
     fi
 }
 
-rootfs_archive()
+container_mounted()
+{
+    if [ "${CHROOT_DIR}" = "${TARGET_PATH}" ]; then
+        return 0
+    else
+        is_mounted "${CHROOT_DIR}"
+    fi
+}
+
+is_archive()
 {
     local src="$1"
     [ -n "${src}" ] || return 1
@@ -119,119 +122,24 @@ rootfs_archive()
     return 1
 }
 
-apt_install()
-{
-    local packages="$*"
-    [ -z "${packages}" ] && return 1
-    (set -e
-        export DEBIAN_FRONTEND=noninteractive
-        chroot_exec apt-get update -yq
-        chroot_exec apt-get install -yf
-        chroot_exec apt-get install ${packages} --no-install-recommends -yq
-        chroot_exec apt-get clean
-    exit 0) 1>&3 2>&3
-    return $?
-}
-
-pacman_install()
-{
-    local packages="$*"
-    [ -z "${packages}" ] && return 1
-    (set -e
-        #rm -f ${CHROOT_DIR}/var/lib/pacman/db.lck || true
-        chroot_exec pacman -Syq --noconfirm ${packages}
-        rm -f "${CHROOT_DIR}"/var/cache/pacman/pkg/* || true
-    exit 0) 1>&3 2>&3
-    return $?
-}
-
-yum_install()
-{
-    local packages="$*"
-    [ -z "${packages}" ] && return 1
-    (set -e
-        chroot_exec yum install ${packages} --nogpgcheck --skip-broken -y
-        chroot_exec yum clean all
-    exit 0) 1>&3 2>&3
-    return $?
-}
-
-yum_groupinstall()
-{
-    local groupname="$*"
-    [ -z "${groupname}" ] && return 1
-    (set -e
-        chroot_exec yum groupinstall "${groupname}" --nogpgcheck --skip-broken -y
-        chroot_exec yum clean all
-    exit 0) 1>&3 2>&3
-    return $?
-}
-
-zypper_install()
-{
-    local packages="$*"
-    [ -z "${packages}" ] && return 1
-    (set -e
-        chroot_exec zypper --no-gpg-checks --non-interactive install ${packages}
-        chroot_exec zypper clean
-    exit 0) 1>&3 2>&3
-    return $?
-}
-
-emerge_install()
-{
-    local packages="$*"
-    [ -z "${packages}" ] && return 1
-    (set -e
-        chroot_exec emerge --autounmask-write ${packages} || {
-            mv "${CHROOT_DIR}/etc/portage/._cfg0000_package.use" "${CHROOT_DIR}/etc/portage/package.use"
-            chroot_exec emerge ${packages}
-        }
-    exit 0) 1>&3 2>&3
-    return $?
-}
-
-slackpkg_install()
-{
-    local packages="$*"
-    [ -z "${packages}" ] && return 1
-    (set -e
-        chroot_exec slackpkg update || true
-        chroot_exec slackpkg -checkgpg=off -batch=on -default_answer=y install ${packages}
-    exit 0) 1>&3 2>&3
-    return $?
-}
-
-target_check()
-{
-    local target="$@"
-    [ -n "${target}" ] || return 0
-    local item
-    for item in ${target}
-    do
-        case "${DISTRIB}:${ARCH}:${SUITE}" in
-        ${item})
-            return 0
-        ;;
-        esac
-    done
-    return 1
-}
-
 chroot_exec()
 {
     unset TMPDIR LD_PRELOAD LD_DEBUG
     if [ "${FAKEROOT}" = "1" ]; then
-        local mounts emulator
-        if [ -n "${MOUNTS}" ]; then
-            mounts="-b ${MOUNTS// / -b }"
+        if [ -z "${PROOT_TMP_DIR}" ]; then
+            export PROOT_TMP_DIR="${TEMP_DIR}"
         fi
+        local mounts="-b /proc -b /dev -b /sys"
+        if [ -n "${MOUNTS}" ]; then
+            mounts="${mounts} -b ${MOUNTS// / -b }"
+        fi
+        local emulator
         if [ -n "${EMULATOR}" ]; then
             emulator="-q ${EMULATOR}"
         fi
-        proot -r "${CHROOT_DIR}" -w / -b /dev -b /proc -b /sys ${mounts} ${emulator} -0 $@
+        proot -r "${CHROOT_DIR}" -w / ${mounts} ${emulator} -0 "$@"
     else
-        chroot "${CHROOT_DIR}" $@
+        chroot "${CHROOT_DIR}" "$@"
     fi
 }
 
@@ -242,7 +150,7 @@ chroot_exec()
 params_read()
 {
     local conf_file="$1"
-    [ -f "${conf_file}" ] || return 1
+    [ -e "${conf_file}" ] || return 1
     local item key val
     while read item
     do
@@ -317,306 +225,157 @@ params_check()
 }
 
 ################################################################################
-# Configs
-################################################################################
-
-config_path()
-{
-    local conf_file="$1"
-    if [ -z "${conf_file}" ]; then
-        conf_file="${CONFIG_DIR}/linux"
-    elif [ -n "${conf_file##*/*}" ]; then
-        conf_file="${CONFIG_DIR}/${conf_file}"
-    fi
-    echo "${conf_file}"
-}
-
-config_list()
-{
-    local conf_file="$1"
-    local conf DISTRIB ARCH SUITE DEPLOY
-    for conf in $(ls "${CONFIG_DIR}/")
-    do
-        local current='-'
-        [ "${conf_file##*/}" = "${conf}" ] && current='*'
-        unset DISTRIB ARCH SUITE DEPLOY
-        eval $(grep '^DISTRIB=' "${CONFIG_DIR}/${conf}")
-        eval $(grep '^ARCH=' "${CONFIG_DIR}/${conf}")
-        eval $(grep '^SUITE=' "${CONFIG_DIR}/${conf}")
-        eval $(grep '^INCLUDE=' "${CONFIG_DIR}/${conf}")
-        local formated_desc=$(printf "%-2s %-15s %-10s %-10s %-10s %.28s\n" "${current}" "${conf}" "${DISTRIB}" "${ARCH}" "${SUITE}" "${INCLUDE}")
-        msg "${formated_desc}"
-    done
-}
-
-config_delete()
-{
-    local conf_file="$1"
-    if [ -f "${conf_file}" ]; then
-        rm "${conf_file}"
-    else
-        return 1
-    fi
-}
-
-config_update()
-{
-    local source_conf="$1"; shift
-    local target_conf="$1"; shift
-    params_read "${source_conf}"
-    params_parse "$@"
-    params_write "${target_conf}"
-}
-
-################################################################################
 # Components
 ################################################################################
+
+target_check()
+{
+    local target="$@"
+    [ -n "${target}" ] || return 0
+    local item
+    for item in ${target}
+    do
+        case "${DISTRIB}:${ARCH}:${SUITE}" in
+        ${item})
+            return 0
+        ;;
+        esac
+    done
+    return 1
+}
+
+is_exclude()
+{
+    local component="$1"
+    [ -n "${component}" ] || return 1
+    for item in ${EXCLUDE_COMPONENTS}
+    do
+        case "${component}" in
+        ${item}*)
+            return 0
+        ;;
+        esac
+    done
+    return 1
+}
 
 component_depends()
 {
     local components="$@"
-    [ -z "${components}" ] && return 0
-    local component TARGET DEPENDS
+    [ -n "${components}" ] || return 0
+    local component conf_file TARGET DEPENDS
     for component in ${components}
     do
+        component="${component%/}"
         # check deadlocks
-        [ -z "${depends_list##* ${component} *}" ] && continue
-        depends_list="${depends_list}${component} "
+        [ -z "${IGNORE_DEPENDS##* ${component} *}" ] && continue
+        IGNORE_DEPENDS="${IGNORE_DEPENDS}${component} "
         # check component exist
-        local conf_file="${INCLUDE_DIR}/${component}"
+        conf_file="${REPO_DIR}/${component}/deploy.conf"
         [ -e "${conf_file}" ] || continue
         # read component variables
         eval $(grep '^TARGET=' "${conf_file}")
         eval $(grep '^DEPENDS=' "${conf_file}")
         # check compatibility
         target_check ${TARGET} || continue
-        # process depends
-        component_depends ${DEPENDS}
-        # output
-        echo ${component}
+        if [ "${REVERSE_DEPENDS}" = "1" ]; then
+            # output
+            echo ${component}
+            # process depends
+            component_depends ${DEPENDS}
+        else
+            # process depends
+            component_depends ${DEPENDS}
+            # output
+            echo ${component}
+        fi
     done
 }
 
 component_exec()
 {
     local components="$@"
-    if [ "${INCLUDE_DEPENDS}" = "1" ]; then
-        local depends_list=" " # space is required
-        if [ "${REVERSE_DEPENDS}" = "1" ]; then
-            components=$(component_depends ${components} | tac | xargs)
-        else
-            components=$(component_depends ${components} | xargs)
-        fi
+    if [ "${WITHOUT_DEPENDS}" != "1" ]; then
+        components=$(IGNORE_DEPENDS=" " component_depends ${components})
     fi
-    [ -z "${components}" ] && return 1
-
-    local component
-    for component in ${components}
-    do
-        local conf_file="${INCLUDE_DIR}/${component}"
-        [ ! -e "${conf_file}" ] && return 1
-        ( unset NAME DESC DEPENDS TARGET PARAMS
-          . "${conf_file}"
-          eval ${DO_ACTION} )
-    done
-
-    return 0
+    [ -n "${components}" ] || return 1
+    (set -e
+        for COMPONENT in ${components}
+        do
+            COMPONENT_DIR="${REPO_DIR}/${COMPONENT}"
+            [ -d "${COMPONENT_DIR}" ] || continue
+            unset NAME DESC TARGET PARAMS DEPENDS EXTENDS
+            TARGET='*:*:*'
+            # read config
+            . "${COMPONENT_DIR}/deploy.conf"
+            # default functions
+            do_install() { return 0; }
+            do_configure() { return 0; }
+            do_start() { return 0; }
+            do_stop() { return 0; }
+            do_help() { return 0; }
+            # load extends
+            for component in ${EXTENDS} ${COMPONENT}
+            do
+                if [ -e "${REPO_DIR}/${component}/deploy.sh" ]; then
+                    . "${REPO_DIR}/${component}/deploy.sh"
+                fi
+            done
+            # exclude components
+            is_exclude ${COMPONENT} && continue
+            # check parameters
+            [ "${WITHOUT_CHECK}" != "1" ] && params_check ${PARAMS}
+            # exec action
+            [ "${DEBUG_MODE}" = "1" ] && msg "## ${COMPONENT} : ${DO_ACTION}"
+            set +e
+            eval ${DO_ACTION} || exit 1
+            set -e
+        done
+    exit 0)
+    is_ok || return 1
 }
 
 component_list()
 {
-    params_check DISTRIB ARCH SUITE || return 1
-    local component TARGET DESC
-    for component in $(ls "${INCLUDE_DIR}/")
+    local components="$@"
+    local conf_file component output TARGET DESC
+    if [ -z "${components}" ]; then
+        components=$(find "${REPO_DIR}/" -type f -name "deploy.conf" | sort)
+    else
+        components=$(IGNORE_DEPENDS=" " component_depends ${components} | while read c; do echo "${REPO_DIR}/${c}/deploy.conf"; done)
+    fi
+    for conf_file in $components
     do
-        # read component variables
-        local conf_file="${INCLUDE_DIR}/${component}"
-        eval $(grep '^TARGET=' "${conf_file}")
-        # check compatibility
-        target_check ${TARGET} || continue
-        eval $(grep '^DESC=' "${conf_file}")
-        local startup=$(grep -c '^do_start()' "${conf_file}")
-        local include_flag="-"
-        local startup_flag="-"
-        local deploy_conf=" ${INCLUDE} "
-        [ -z "${deploy_conf##* ${component} *}" ] && include_flag="i"
-        [ "${startup}" -gt 0 ] && startup_flag="x"
+        [ -e "${conf_file}" ] || continue
+        component="${conf_file%/*}"
+        component="${component//${REPO_DIR}\//}"
+        TARGET='*:*:*'
+        DESC=''
+        # check for compatibility
+        if [ "${WITHOUT_CHECK}" != "1" ]; then
+            eval $(grep '^TARGET=' "${conf_file}")
+            target_check ${TARGET} || continue
+        fi
         # output
-        local target_desc=$(printf "%-1s%-1s  %-30s %.43s\n" "${include_flag}" "${startup_flag}" "${component}" "${DESC}")
-        msg "${target_desc}"
+        eval $(grep '^DESC=' "${conf_file}")
+        output=$(printf "%-30s %.49s\n" "${component}" "${DESC}")
+        msg "${output}"
     done
-}
-
-component_deploy()
-{
-    local components="$@"
-    [ -z "${components}" ] && return 0
-
-    params_check CHROOT_DIR DISTRIB ARCH SUITE || return 1
-    container_mounted || container_mount || return 1
-
-    msg "Deployment components: "
-    local INCLUDE_DEPENDS=1
-    local REVERSE_DEPENDS=0
-    component_exec "${components}"
-}
-
-component_start()
-{
-    local components="$@"
-    [ -z "${components}" ] && return 1
-
-    params_check CHROOT_DIR DISTRIB ARCH SUITE || return 1
-    container_mounted || return 1
-
-    local INCLUDE_DEPENDS=1
-    local REVERSE_DEPENDS=0
-    local DO_ACTION='params_check ${PARAMS} && do_start'
-    component_exec "${components}" || return 1
-}
-
-component_stop()
-{
-    local components="$@"
-    [ -z "${components}" ] && return 1
-
-    params_check CHROOT_DIR DISTRIB ARCH SUITE || return 1
-    container_mounted || return 1
-
-    local INCLUDE_DEPENDS=1
-    local REVERSE_DEPENDS=1
-    local DO_ACTION='params_check ${PARAMS} && do_stop'
-    component_exec "${components}" || return 1
-}
-
-component_help()
-{
-    local components="$@"
-    [ -z "${components}" ] && return 0
-
-    local INCLUDE_DEPENDS=1
-    local DO_ACTION='do_help'
-    component_exec "${components}"
 }
 
 ################################################################################
 # Containers
 ################################################################################
 
-container_prepare()
-{
-    params_check CHROOT_DIR TARGET_TYPE TARGET_PATH || return 1
-
-    if [ "${FAKEROOT}" != "1" ]; then
-        container_mounted && { msg "The container is already mounted."; return 1; }
-    fi
-
-    msg -n "Checking installation path ... "
-    case "${TARGET_TYPE}" in
-    file)
-        if [ -e "${TARGET_PATH}" -a ! -f "${TARGET_PATH}" ]; then
-            msg "fail"; return 1
-        fi
-    ;;
-    partition)
-        if [ ! -b "${TARGET_PATH}" ]; then
-            msg "fail"; return 1
-        fi
-    ;;
-    directory|ram)
-        if [ -e "${TARGET_PATH}" -a ! -d "${TARGET_PATH}" ]; then
-            msg "fail"; return 1
-        fi
-    ;;
-    esac
-    msg "done"
-
-    if [ "${TARGET_TYPE}" = "file" ]; then
-        local file_size=0
-        if [ -f "${TARGET_PATH}" ]; then
-            file_size=$(stat -c %s ${TARGET_PATH})
-        fi
-        if [ -z "${DISK_SIZE}" -o "${DISK_SIZE}" -le 0 ]; then
-            local block_size=$(stat -c %s -f "${TARGET_PATH%/*}")
-            local available_size=$(stat -c %a -f "${TARGET_PATH%/*}")
-            let available_size="${block_size}*${available_size}+${file_size}"
-            let DISK_SIZE="(${available_size}-${available_size}/10)/1048576"
-            if [ "${DISK_SIZE}" -gt 4095 ]; then
-                DISK_SIZE=4095
-            fi
-            if [ "${DISK_SIZE}" -lt 512 ]; then
-                DISK_SIZE=512
-            fi
-        fi
-        let file_size="${file_size}/1048576"
-        if [ "${DISK_SIZE}" != "${file_size}" ]; then
-            msg -n "Making new disk image (${DISK_SIZE} MB) ... "
-            dd if=/dev/zero of="${TARGET_PATH}" bs=1048576 seek="$(expr ${DISK_SIZE} - 1)" count=1 ||
-            dd if=/dev/zero of="${TARGET_PATH}" bs=1048576 count="${DISK_SIZE}"
-            is_ok "fail" "done" || return 1
-        fi
-    fi
-
-    if [ "${TARGET_TYPE}" = "file" -o "${TARGET_TYPE}" = "partition" ]; then
-        local fs fs_support
-        for fs in ext4 ext3 ext2
-        do
-            if [ "$(grep -c ${fs} /proc/filesystems)" -gt 0 ]; then
-                fs_support=${fs}
-                break
-            fi
-        done
-        if [ -z "${fs_support}" ]; then
-            msg "The filesystems ext2, ext3 or ext4 is not supported."; return 1
-        fi
-        if [ -z "${FS_TYPE}" -o "${FS_TYPE}" = "auto" ]; then
-            FS_TYPE="${fs_support}"
-        fi
-
-        msg -n "Making file system (${FS_TYPE}) ... "
-        local loop_exist=$(losetup -a | grep -c "${TARGET_PATH}")
-        local img_mounted=$(grep -c "${TARGET_PATH}" /proc/mounts)
-        if [ "${loop_exist}" -ne 0 -o "${img_mounted}" -ne 0 ]; then
-            msg "fail"; return 1
-        fi
-        mke2fs -qF -t "${FS_TYPE}" -O ^has_journal "${TARGET_PATH}"
-        is_ok "fail" "done" || return 1
-    fi
-
-    if [ "${TARGET_TYPE}" = "directory" ]; then
-        if [ -d "${TARGET_PATH}" ]; then
-            chmod -R 755 "${TARGET_PATH}"
-            rm -rf "${TARGET_PATH}"
-        fi
-        mkdir -p "${TARGET_PATH}"
-    fi
-
-    if [ "${TARGET_TYPE}" = "ram" ]; then
-        umount "${TARGET_PATH}"
-        if [ -z "${DISK_SIZE}" -o "${DISK_SIZE}" -le 0 ]; then
-            local ram_free=$(grep ^MemFree /proc/meminfo | awk '{print $2}')
-            let DISK_SIZE="${ram_free}/1024"
-        fi
-        msg -n "Making new disk image (${DISK_SIZE} MB) ... "
-        if [ ! -d "${TARGET_PATH}" ]; then
-            mkdir "${TARGET_PATH}"
-        fi
-        mount -t tmpfs -o size="${DISK_SIZE}M" tmpfs "${TARGET_PATH}"
-        is_ok "fail" "done" || return 1
-    fi
-
-    return 0
-}
-
 mount_part()
 {
     case "$1" in
     root)
         msg -n "/ ... "
-        local is_mnt=$(grep -c " ${CHROOT_DIR} " /proc/mounts)
-        if [ "${is_mnt}" -eq 0 ]; then
+        if is_mounted "${CHROOT_DIR}" ; then
             [ -d "${CHROOT_DIR}" ] || mkdir -p "${CHROOT_DIR}"
-            [ -d "${TARGET_PATH}" ] && local mnt_opts="bind" || local mnt_opts="rw,relatime"
+            local mnt_opts
+            [ -d "${TARGET_PATH}" ] && mnt_opts="bind" || mnt_opts="rw,relatime"
             mount -o ${mnt_opts} "${TARGET_PATH}" "${CHROOT_DIR}"
             is_ok "fail" "done" || return 1
         else
@@ -626,8 +385,7 @@ mount_part()
     proc)
         msg -n "/proc ... "
         local target="${CHROOT_DIR}/proc"
-        local is_mnt=$(grep -c " ${target} " /proc/mounts)
-        if [ "${is_mnt}" -eq 0 ]; then
+        if is_mounted "${target}" ; then
             [ -d "${target}" ] || mkdir -p "${target}"
             mount -t proc proc "${target}"
             is_ok "fail" "done"
@@ -638,8 +396,7 @@ mount_part()
     sys)
         msg -n "/sys ... "
         local target="${CHROOT_DIR}/sys"
-        local is_mnt=$(grep -c " ${target} " /proc/mounts)
-        if [ "${is_mnt}" -eq 0 ]; then
+        if is_mounted "${target}" ; then
             [ -d "${target}" ] || mkdir -p "${target}"
             mount -t sysfs sys "${target}"
             is_ok "fail" "done"
@@ -651,10 +408,9 @@ mount_part()
         selinux_support || return 0
         msg -n "/sys/fs/selinux ... "
         local target="${CHROOT_DIR}/sys/fs/selinux"
-        local is_mnt=$(grep -c " ${target} " /proc/mounts)
-        if [ "${is_mnt}" -eq 0 ]; then
+        if is_mounted "${target}" ; then
             if [ -e "/sys/fs/selinux/enforce" ]; then
-                cat /sys/fs/selinux/enforce > "${ENV_DIR}/selinux_state"
+                cat /sys/fs/selinux/enforce > "${TEMP_DIR}/selinux_state"
                 echo 0 > /sys/fs/selinux/enforce
             fi
             mount -t selinuxfs selinuxfs "${target}" &&
@@ -667,8 +423,7 @@ mount_part()
     dev)
         msg -n "/dev ... "
         local target="${CHROOT_DIR}/dev"
-        local is_mnt=$(grep -c " ${target} " /proc/mounts)
-        if [ "${is_mnt}" -eq 0 ]; then
+        if is_mounted "${target}" ; then
             [ -d "${target}" ] || mkdir -p "${target}"
             [ -e "/dev/fd" ] || ln -s /proc/self/fd /dev/
             [ -e "/dev/stdin" ] || ln -s /proc/self/fd/0 /dev/stdin
@@ -692,8 +447,7 @@ mount_part()
     pts)
         msg -n "/dev/pts ... "
         local target="${CHROOT_DIR}/dev/pts"
-        local is_mnt=$(grep -c " ${target} " /proc/mounts)
-        if [ "${is_mnt}" -eq 0 ]; then
+        if is_mounted "${target}" ; then
             [ -d "${target}" ] || mkdir -p "${target}"
             mount -o "mode=0620,gid=5" -t devpts devpts "${target}"
             is_ok "fail" "done"
@@ -704,8 +458,7 @@ mount_part()
     shm)
         msg -n "/dev/shm ... "
         local target="${CHROOT_DIR}/dev/shm"
-        local is_mnt=$(grep -c " ${target} " /proc/mounts)
-        if [ "${is_mnt}" -eq 0 ]; then
+        if is_mounted "${target}" ; then
             [ -d "${target}" ] || mkdir -p "${target}"
             mount -t tmpfs tmpfs "${target}"
             is_ok "fail" "done"
@@ -719,53 +472,10 @@ mount_part()
         msg -n "${binfmt_dir} ... "
         if [ ! -e "${binfmt_dir}/register" ]; then
             mount -t binfmt_misc binfmt_misc "${binfmt_dir}"
-        fi
-        case "${HOST_PLATFORM}" in
-        arm)
-            if [ ! -e "${binfmt_dir}/qemu-i386" ]; then
-                echo ":qemu-i386:M::\x7fELF\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x03\x00:\xff\xff\xff\xff\xff\xfe\xfe\xff\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff:/usr/local/bin/${EMULATOR}:" > "${binfmt_dir}/register"
-                is_ok "fail" "done"
-            else
-                msg "skip"
-            fi
-        ;;
-        intel)
-            if [ ! -e "${binfmt_dir}/qemu-arm" ]; then
-                echo ":qemu-arm:M::\x7fELF\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x28\x00:\xff\xff\xff\xff\xff\xff\xff\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff:/usr/local/bin/${EMULATOR}:" > "${binfmt_dir}/register"
-                is_ok "fail" "done"
-            else
-                msg "skip"
-            fi
-        ;;
-        *)
+            is_ok "fail" "done"
+        else
             msg "skip"
-        ;;
-        esac
-    ;;
-    custom)
-        local disk
-        for disk in ${MOUNTS}
-        do
-            local disk_name=$(basename /root/${disk})
-            msg -n "/mnt/${disk_name} ... "
-            local target="${CHROOT_DIR}/mnt/${disk_name}"
-            local is_mnt=$(grep -c " ${target} " /proc/mounts)
-            if [ "${is_mnt}" -eq 0 ]; then
-                if [ -d "${disk}" ]; then
-                    [ -d "${target}" ] || mkdir -p "${target}"
-                    mount -o bind "${disk}" "${target}"
-                    is_ok "fail" "done"
-                elif [ -e "${disk}" ]; then
-                    [ -d "${target}" ] || mkdir -p "${target}"
-                    mount -o rw,relatime "${disk}" "${target}"
-                    is_ok "fail" "done"
-                else
-                    msg "skip"
-                fi
-            else
-                msg "skip"
-            fi
-        done
+        fi
     ;;
     esac
 
@@ -774,16 +484,16 @@ mount_part()
 
 container_mount()
 {
-    if [ "${FAKEROOT}" = "1" ]; then
-        return 0
-    fi
-
     if [ $# -eq 0 ]; then
-        container_mount root proc sys selinux dev tty pts shm binfmt_misc custom
+        container_mount root proc sys selinux dev tty pts shm binfmt_misc
         return $?
     fi
 
     params_check CHROOT_DIR TARGET_PATH || return 1
+
+    if [ "${CHROOT_DIR}" = "${TARGET_PATH}" ]; then
+        return 0
+    fi
 
     msg "Mounting partitions: "
     local item
@@ -819,10 +529,10 @@ container_umount()
             break
         fi
     done
-    [ "${is_release}" -eq 1 ] && msg "done" || msg "fail"
+    [ "${is_release}" -eq 1 ]; is_ok "fail" "done"
 
     msg "Unmounting partitions: "
-    local is_mounted=0
+    local is_mnt=0
     local mask
     for mask in '.*' '*'
     do
@@ -832,34 +542,15 @@ container_umount()
         do
             local part_name=$(echo ${part} | sed "s|^${CHROOT_DIR}/*|/|g")
             msg -n "${part_name} ... "
-            if [ -z "${part_name##*selinux*}" -a -e "/sys/fs/selinux/enforce" -a -e "${ENV_DIR}/selinux_state" ]; then
-                cat "${ENV_DIR}/selinux_state" > /sys/fs/selinux/enforce
+            if [ -z "${part_name##*selinux*}" -a -e "/sys/fs/selinux/enforce" -a -e "${TEMP_DIR}/selinux_state" ]; then
+                cat "${TEMP_DIR}/selinux_state" > /sys/fs/selinux/enforce
             fi
             umount ${part}
             is_ok "fail" "done"
-            is_mounted=1
+            is_mnt=1
         done
     done
-    local binfmt_dir
-    multiarch_support && binfmt_dir="/proc/sys/fs/binfmt_misc"
-    if [ -n "${binfmt_dir}" ]; then
-        local binfmt_qemu=""
-        case "${HOST_PLATFORM}" in
-        arm)
-            binfmt_qemu="${binfmt_dir}/qemu-i386"
-        ;;
-        intel)
-            binfmt_qemu="${binfmt_dir}/qemu-arm"
-        ;;
-        esac
-        if [ -e "${binfmt_qemu}" ]; then
-            msg -n "${binfmt_dir} ... "
-            echo -1 > "${binfmt_qemu}"
-            is_ok "fail" "done"
-            is_mounted=1
-        fi
-    fi
-    [ "${is_mounted}" -ne 1 ] && msg " ...nothing mounted"
+    [ "${is_mnt}" -eq 1 ]; is_ok " ...nothing mounted"
 
     msg -n "Disassociating loop device ... "
     local loop=$(losetup -a | grep "${TARGET_PATH}" | awk -F: '{print $1}')
@@ -868,7 +559,9 @@ container_umount()
     fi
     is_ok "fail" "done"
 
-    [ -d "${CHROOT_DIR}" ] && rmdir "${CHROOT_DIR}"
+    if [ -d "${CHROOT_DIR}" ]; then
+        rmdir "${CHROOT_DIR}"
+    fi
 
     return 0
 }
@@ -877,38 +570,9 @@ container_start()
 {
     params_check CHROOT_DIR || return 1
     container_mounted || container_mount || return 1
-    container_configure dns mtab
 
-    msg "Starting services: "
-
-    local startup="${STARTUP}"
-    local isOK=1
-    if [ $# -eq 0 ]; then
-        if [ -n "${INIT_DIR}" ]; then
-            local services=$(ls "${CHROOT_DIR}/${INIT_DIR}/")
-            if [ -n "${services}" ]; then
-                local item
-                for item in ${services}
-                do
-                    msg -n "${item} ... "
-                    chroot_exec su - root -c "${INIT_DIR}/${item} start"
-                    is_ok "fail" "done"
-                done
-            else
-                isOK=0
-            fi
-        fi
-    else
-        startup="$@"
-    fi
-
-    component_start "${startup}" || isOK=0
-
-    if [ "${isOK}" = "0" ]; then
-        msg "...no active services"
-    fi
-
-    return 0
+    DO_ACTION='do_start'
+    component_exec ${INCLUDE}
 }
 
 container_stop()
@@ -916,43 +580,17 @@ container_stop()
     params_check CHROOT_DIR || return 1
     container_mounted || { msg "The container is already stopped." ; return 1; }
 
-    msg "Stopping services: "
-
-    local startup="${STARTUP}"
-    local isOK=1
-
-    if [ $# -eq 0 ]; then
-        if [ -n "${INIT_DIR}" ]; then
-            local services=$(ls "${CHROOT_DIR}/${INIT_DIR}/" | tac)
-            if [ -n "${services}" ]; then
-                local item
-                for item in ${services}
-                do
-                    msg -n "${item} ... "
-                    chroot_exec su - root -c "${INIT_DIR}/${item} start"
-                    is_ok "fail" "done"
-                done
-            else
-                isOK=0
-            fi
-        fi
-    else
-        startup="$@"
-    fi
-
-    component_stop "${startup}" || isOK=0
-
-    if [ "${isOK}" = "0" ]; then
-        msg "...no active services"
-    fi
-
-    return 0
+    DO_ACTION='do_stop'
+    component_exec ${INCLUDE}
 }
 
-container_chroot()
+container_shell()
 {
+    params_check CHROOT_DIR || return 1
     container_mounted || container_mount || return 1
-    container_configure dns mtab
+
+    DO_ACTION='do_start'
+    component_exec core
 
     SHELL="$@"
     if [ -z "${SHELL}" ]; then
@@ -968,10 +606,9 @@ container_chroot()
 
     TERM="linux"
     USER="root"
-    HOME="$(grep -m1 "^${USER}:" "${CHROOT_DIR}/etc/passwd" | awk -F: '{print $6}')"
-    LANG="${LOCALE}"
+    HOME="$(user_home $USER)"
     PS1="\u@\h:\w\\$ "
-    export PATH SHELL TERM USER HOME LANG PS1
+    export PATH SHELL TERM USER HOME PS1
 
     if [ -e "${CHROOT_DIR}/etc/motd" ]; then
         msg $(cat "${CHROOT_DIR}/etc/motd")
@@ -982,794 +619,10 @@ container_chroot()
     return $?
 }
 
-configure_part()
-{
-    msg -n "$1 ... "
-    (set -e
-        case "$1" in
-        dns)
-            local dns dns_list
-            if [ -z "${DNS}" -o "${DNS}" = "auto" ]; then
-                if [ -n "$(which getprop)" ]; then
-                    dns=$(getprop net.dns1 || true)
-                    [ -n "${dns}" ] && dns_list="${dns}"
-                    dns=$(getprop net.dns2 || true)
-                    [ -n "${dns}" ] && dns_list="${dns_list} ${dns}"
-                fi
-                if [ -z "${dns_list}" -a -e "/etc/resolv.conf" ]; then
-                    dns_list=$(grep "^nameserver" /etc/resolv.conf | awk '{print $2}')
-                fi
-                [ -z "${dns_list}" ] && dns_list="8.8.8.8"
-            else
-                dns_list="${DNS}"
-            fi
-            printf '' > "${CHROOT_DIR}/etc/resolv.conf"
-            for dns in ${dns_list}
-            do
-                echo "nameserver ${dns}" >> "${CHROOT_DIR}/etc/resolv.conf"
-            done
-        ;;
-        mtab)
-            rm -f "${CHROOT_DIR}/etc/mtab" || true
-            grep "${CHROOT_DIR}" /proc/mounts | sed "s|${CHROOT_DIR}/*|/|g" > "${CHROOT_DIR}/etc/mtab"
-        ;;
-        motd)
-            local linux_version="GNU/Linux (${DISTRIB})"
-            if [ -f "${CHROOT_DIR}/etc/os-release" ]
-            then
-                linux_version=$(. "${CHROOT_DIR}/etc/os-release"; echo ${PRETTY_NAME})
-            elif [ -f "${CHROOT_DIR}/etc/arch-release" ]
-            then
-                linux_version="Arch Linux"
-            elif [ -f "${CHROOT_DIR}/etc/gentoo-release" ]
-            then
-                linux_version=$(cat "${CHROOT_DIR}/etc/gentoo-release")
-            elif [ -f "${CHROOT_DIR}/etc/fedora-release" ]
-            then
-                linux_version=$(cat "${CHROOT_DIR}/etc/fedora-release")
-            elif [ -f "${CHROOT_DIR}/etc/redhat-release" ]
-            then
-                linux_version=$(cat "${CHROOT_DIR}/etc/redhat-release")
-            elif [ -f "${CHROOT_DIR}/etc/debian_version" ]
-            then
-                linux_version=$(printf "Debian GNU/Linux "; cat "${CHROOT_DIR}/etc/debian_version")
-            fi
-            local motd="${linux_version} [running on Android via Linux Deploy]"
-            rm -f "${CHROOT_DIR}/etc/motd" || true
-            echo ${motd} > "${CHROOT_DIR}/etc/motd"
-        ;;
-        hosts)
-            local is_localhost=$(grep -c "^127.0.0.1" "${CHROOT_DIR}/etc/hosts" || true)
-            if [ "${is_localhost}" -eq 0 ]; then
-                echo '127.0.0.1 localhost' >> "${CHROOT_DIR}/etc/hosts"
-            fi
-        ;;
-        hostname)
-            echo 'localhost' > "${CHROOT_DIR}/etc/hostname"
-        ;;
-        timezone)
-            local timezone
-            if [ -n "$(which getprop)" ]; then
-                timezone=$(getprop persist.sys.timezone || true)
-            elif [ -e "/etc/timezone" ]; then
-                timezone=$(cat /etc/timezone)
-            fi
-            if [ -z "${timezone}" ]; then
-                exit 1
-            fi
-            rm -f "${CHROOT_DIR}/etc/localtime" || true
-            cp "${CHROOT_DIR}/usr/share/zoneinfo/${timezone}" "${CHROOT_DIR}/etc/localtime"
-            echo ${timezone} > "${CHROOT_DIR}/etc/timezone"
-        ;;
-        su)
-            case "${DISTRIB}" in
-            fedora|opensuse)
-                local pam_su="${CHROOT_DIR}/etc/pam.d/su-l"
-            ;;
-            *)
-                local pam_su="${CHROOT_DIR}/etc/pam.d/su"
-            ;;
-            esac
-            if [ -e "${pam_su}" ]; then 
-                if [ "$(grep -c -e '^auth.*sufficient.*pam_succeed_if.so uid = 0 use_uid quiet$' ${pam_su})" -eq 0 ]; then
-                    sed -i '1,/^auth/s/^\(auth.*\)$/auth\tsufficient\tpam_succeed_if.so uid = 0 use_uid quiet\n\1/' "${pam_su}"
-                fi
-            fi
-        ;;
-        sudo)
-            local sudo_str="${USER_NAME} ALL=(ALL:ALL) NOPASSWD:ALL"
-            local is_str=$(grep -c "${sudo_str}" "${CHROOT_DIR}/etc/sudoers" || true)
-            if [ "${is_str}" -eq 0 ]; then
-                chmod 640 "${CHROOT_DIR}/etc/sudoers"
-                echo ${sudo_str} >> "${CHROOT_DIR}/etc/sudoers"
-                chmod 440 "${CHROOT_DIR}/etc/sudoers"
-            fi
-        ;;
-        groups)
-            [ -e "${SHARE_DIR}/android_groups" ] || exit 0
-            local aid
-            for aid in $(cat "${SHARE_DIR}/android_groups")
-            do
-                local xname=$(echo ${aid} | awk -F: '{print $1}')
-                local xid=$(echo ${aid} | awk -F: '{print $2}')
-                sed -i "s|^${xname}:.*|${xname}:x:${xid}:${USER_NAME}|g" "${CHROOT_DIR}/etc/group" || true
-                local is_group=$(grep -c "^${xname}:" "${CHROOT_DIR}/etc/group" || true)
-                [ "${is_group}" -eq 0 ] && echo "${xname}:x:${xid}:${USER_NAME}" >> "${CHROOT_DIR}/etc/group"
-                local is_passwd=$(grep -c "^${xname}:" "${CHROOT_DIR}/etc/passwd" || true)
-                [ "${is_passwd}" -eq 0 ] && echo "${xname}:x:${xid}:${xid}::/:/bin/false" >> "${CHROOT_DIR}/etc/passwd"
-                sed -i 's|^UID_MIN.*|UID_MIN 5000|g' "${CHROOT_DIR}/etc/login.defs"
-                sed -i 's|^GID_MIN.*|GID_MIN 5000|g' "${CHROOT_DIR}/etc/login.defs"
-            done
-            # add users to aid_inet group
-            local inet_users
-            case "${DISTRIB}" in
-            debian|ubuntu|kalilinux)
-                inet_users="root messagebus www-data mysql postgres"
-            ;;
-            archlinux)
-                inet_users="root dbus"
-            ;;
-            fedora)
-                inet_users="root dbus"
-            ;;
-            opensuse)
-                inet_users="root messagebus"
-            ;;
-            gentoo)
-                inet_users="root messagebus"
-            ;;
-            slackware)
-                inet_users="root messagebus"
-            ;;
-            esac
-            local uid
-            for uid in ${inet_users}
-            do
-                if [ $(grep -c "^aid_inet:.*${uid}" "${CHROOT_DIR}/etc/group") -eq 0 ]; then
-                    sed -i "s|^\(aid_inet:.*\)|\1,${uid}|g" "${CHROOT_DIR}/etc/group"
-                fi
-            done
-        ;;
-        locales)
-            if [ -n "${LOCALE}" -a "${LOCALE}" != "C" -a "${LOCALE}" != "POSIX" ]; then
-                local inputfile=$(echo ${LOCALE} | awk -F. '{print $1}')
-                local charmapfile=$(echo ${LOCALE} | awk -F. '{print $2}')
-                chroot_exec localedef -i ${inputfile} -c -f ${charmapfile} ${LOCALE}
-            else
-                LOCALE="C"
-            fi
-            case "${DISTRIB}" in
-            debian|ubuntu|kalilinux)
-                echo "LANG=${LOCALE}" > "${CHROOT_DIR}/etc/default/locale"
-            ;;
-            archlinux)
-                echo "LANG=${LOCALE}" > "${CHROOT_DIR}/etc/locale.conf"
-            ;;
-            fedora)
-                echo "LANG=${LOCALE}" > "${CHROOT_DIR}/etc/sysconfig/i18n"
-            ;;
-            opensuse)
-                echo "RC_LANG=${LOCALE}" > "${CHROOT_DIR}/etc/sysconfig/language"
-            ;;
-            slackware)
-                sed -i "s|^export LANG=.*|export LANG=${LOCALE}|g" "${CHROOT_DIR}/etc/profile.d/lang.sh"
-            ;;
-            esac
-        ;;
-        repository)
-            rootfs_archive "${SOURCE_PATH}" && exit 0
-            case "${DISTRIB}" in
-            debian|kalilinux)
-                if [ -e "${CHROOT_DIR}/etc/apt/sources.list" ]; then
-                    cp "${CHROOT_DIR}/etc/apt/sources.list" "${CHROOT_DIR}/etc/apt/sources.list.bak"
-                fi
-                if [ $(grep -c "${SOURCE_PATH}.*${SUITE}" "${CHROOT_DIR}/etc/apt/sources.list") -eq 0 ]; then
-                    echo "deb ${SOURCE_PATH} ${SUITE} main contrib non-free" > "${CHROOT_DIR}/etc/apt/sources.list"
-                    echo "deb-src ${SOURCE_PATH} ${SUITE} main contrib non-free" >> "${CHROOT_DIR}/etc/apt/sources.list"
-                fi
-            ;;
-            ubuntu)
-                if [ -e "${CHROOT_DIR}/etc/apt/sources.list" ]; then
-                    cp "${CHROOT_DIR}/etc/apt/sources.list" "${CHROOT_DIR}/etc/apt/sources.list.bak"
-                fi
-                if [ $(grep -c "${SOURCE_PATH}.*${SUITE}" "${CHROOT_DIR}/etc/apt/sources.list") -eq 0 ]; then
-                    echo "deb ${SOURCE_PATH} ${SUITE} main universe multiverse" > "${CHROOT_DIR}/etc/apt/sources.list"
-                    echo "deb-src ${SOURCE_PATH} ${SUITE} main universe multiverse" >> "${CHROOT_DIR}/etc/apt/sources.list"
-                fi
-            ;;
-            archlinux)
-                if [ "${GUEST_PLATFORM}" = "intel" ]
-                then local repo="${SOURCE_PATH%/}/\$repo/os/\$arch"
-                else local repo="${SOURCE_PATH%/}/\$arch/\$repo"
-                fi
-                sed -i "s|^[[:space:]]*Architecture[[:space:]]*=.*$|Architecture = ${ARCH}|" "${CHROOT_DIR}/etc/pacman.conf"
-                sed -i "s|^[[:space:]]*\(CheckSpace\)|#\1|" "${CHROOT_DIR}/etc/pacman.conf"
-                sed -i "s|^[[:space:]]*SigLevel[[:space:]]*=.*$|SigLevel = Never|" "${CHROOT_DIR}/etc/pacman.conf"
-                if [ $(grep -c -e "^[[:space:]]*Server" "${CHROOT_DIR}/etc/pacman.d/mirrorlist") -gt 0 ]
-                then sed -i "s|^[[:space:]]*Server[[:space:]]*=.*|Server = ${repo}|" "${CHROOT_DIR}/etc/pacman.d/mirrorlist"
-                else echo "Server = ${repo}" >> "${CHROOT_DIR}/etc/pacman.d/mirrorlist"
-                fi
-            ;;
-            fedora)
-                find "${CHROOT_DIR}/etc/yum.repos.d/" -name '*.repo' | while read f; do sed -i 's/^enabled=.*/enabled=0/g' "${f}"; done
-                if [ "${GUEST_PLATFORM}" = "intel" -o "${ARCH}" != "aarch64" -a "${SUITE}" -ge 20 ]
-                then local repo="${SOURCE_PATH%/}/fedora/linux/releases/${SUITE}/Everything/${ARCH}/os"
-                else local repo="${SOURCE_PATH%/}/fedora-secondary/releases/${SUITE}/Everything/${ARCH}/os"
-                fi
-                local repo_file="${CHROOT_DIR}/etc/yum.repos.d/fedora-${SUITE}-${ARCH}.repo"
-                echo "[fedora-${SUITE}-${ARCH}]" > "${repo_file}"
-                echo "name=Fedora ${SUITE} - ${ARCH}" >> "${repo_file}"
-                echo "failovermethod=priority" >> "${repo_file}"
-                echo "baseurl=${repo}" >> "${repo_file}"
-                echo "enabled=1" >> "${repo_file}"
-                echo "metadata_expire=7d" >> "${repo_file}"
-                echo "gpgcheck=0" >> "${repo_file}"
-                chmod 644 "${repo_file}"
-            ;;
-            opensuse)
-                if [ "${GUEST_PLATFORM}" = "intel" ]
-                then local repo="${SOURCE_PATH%/}/distribution/${SUITE}/repo/oss/"
-                else local repo="${SOURCE_PATH%/}/${ARCH}/distribution/${SUITE}/repo/oss/"
-                fi
-                local repo_name="openSUSE-${SUITE}-${ARCH}-Repo-OSS"
-                local repo_file="${CHROOT_DIR}/etc/zypp/repos.d/${repo_name}.repo"
-                echo "[${repo_name}]" > "${repo_file}"
-                echo "name=${repo_name}" >> "${repo_file}"
-                echo "enabled=1" >> "${repo_file}"
-                echo "autorefresh=0" >> "${repo_file}"
-                echo "baseurl=${repo}" >> "${repo_file}"
-                echo "type=NONE" >> "${repo_file}"
-                chmod 644 "${repo_file}"
-            ;;
-            gentoo)
-                if [ $(grep -c '^aid_inet:.*,portage' "${CHROOT_DIR}/etc/group") -eq 0 ]; then
-                    sed -i "s|^\(aid_inet:.*\)|\1,portage|g" "${CHROOT_DIR}/etc/group"
-                fi
-                # set MAKEOPTS
-                local ncpu=$(grep -c ^processor /proc/cpuinfo)
-                let ncpu=${ncpu}+1
-                if [ $(grep -c '^MAKEOPTS=' "${CHROOT_DIR}/etc/portage/make.conf") -eq 0 ]; then
-                    echo "MAKEOPTS=\"-j${ncpu}\"" >> "${CHROOT_DIR}/etc/portage/make.conf"
-                fi
-            ;;
-            slackware)
-                if [ -e "${CHROOT_DIR}/etc/slackpkg/mirrors" ]; then
-                    cp "${CHROOT_DIR}/etc/slackpkg/mirrors" "${CHROOT_DIR}/etc/slackpkg/mirrors.bak"
-                fi
-                echo "${SOURCE_PATH}" > "${CHROOT_DIR}/etc/slackpkg/mirrors"
-                chmod 644 "${CHROOT_DIR}/etc/slackpkg/mirrors"
-                sed -i 's|^WGETFLAGS=.*|WGETFLAGS="--passive-ftp -q"|g' "${CHROOT_DIR}/etc/slackpkg/slackpkg.conf"
-            ;;
-            esac
-        ;;
-        profile)
-            if [ -z "${USER_NAME}" ]; then
-                USER_NAME="root"
-            fi
-            if [ -z "${USER_NAME%aid_*}" ]; then
-                echo "Username \"${USER_NAME}\" is reserved."; exit 1
-            fi
-            # user profile
-            if [ "${USER_NAME}" != "root" ]; then
-                chroot_exec groupadd ${USER_NAME} || true
-                chroot_exec useradd -m -g ${USER_NAME} -s /bin/bash ${USER_NAME} || true
-                chroot_exec usermod -g ${USER_NAME} ${USER_NAME} || true
-            fi
-            local user_home=$(grep -m1 "^${USER_NAME}:" "${CHROOT_DIR}/etc/passwd" | awk -F: '{print $6}')
-            local path_str="PATH=${PATH}"
-            local is_path=0
-            if [ -e "${CHROOT_DIR}${user_home}/.profile" ]; then
-                is_path=$(grep -c "${path_str}" "${CHROOT_DIR}${user_home}/.profile" || true)
-            fi
-            if [ "${is_path}" -eq 0 ]; then
-                echo ${path_str} >> "${CHROOT_DIR}${user_home}/.profile"
-            fi
-            # set password for user
-            if [ -z "${USER_PASSWORD}" ]; then
-                USER_PASSWORD="changeme"
-            fi
-            echo ${USER_NAME}:${USER_PASSWORD} | chroot_exec chpasswd
-            # set permissions
-            chroot_exec chown -R ${USER_NAME}:${USER_NAME} "${user_home}"
-        ;;
-        dbus)
-            case "${DISTRIB}" in
-            debian|ubuntu|kalilinux|archlinux)
-                mkdir "${CHROOT_DIR}/run/dbus" || true
-                chmod 755 "${CHROOT_DIR}/run/dbus"
-            ;;
-            fedora)
-                mkdir "${CHROOT_DIR}/var/run/dbus" || true
-                chmod 755 "${CHROOT_DIR}/var/run/dbus"
-                chroot_exec sh -c 'dbus-uuidgen > /etc/machine-id'
-            ;;
-            esac
-        ;;
-        qemu)
-            multiarch_support || exit 0
-            local qemu_source=$(which "${EMULATOR}")
-            local qemu_target="${CHROOT_DIR}/usr/local/bin/${EMULATOR}"
-            [ -e "${qemu_target}" ] && exit 0
-            [ -z "${qemu_source}" ] && exit 1
-            if [ ! -d "${CHROOT_DIR}/usr/local/bin" ]; then
-                mkdir -p "${CHROOT_DIR}/usr/local/bin"
-            fi
-            cp "${qemu_source}" "${qemu_target}"
-            chroot_exec chown root:root "/usr/local/bin/${EMULATOR}"
-            chmod 755 "${qemu_target}"
-        ;;
-        unchroot)
-            local unchroot="${CHROOT_DIR}/bin/unchroot"
-            echo '#!/bin/sh' > "${unchroot}"
-            echo "PATH=${PATH}" >> "${unchroot}"
-            echo 'if [ $# -eq 0 ]; then' >> "${unchroot}"
-            echo 'chroot /proc/1/cwd su -' >> "${unchroot}"
-            echo 'else' >> "${unchroot}"
-            echo 'chroot /proc/1/cwd $*' >> "${unchroot}"
-            echo 'fi' >> "${unchroot}"
-            chmod 755 "${unchroot}"
-        ;;
-        misc)
-            # Fix for upstart (Ubuntu)
-            if [ -e "${CHROOT_DIR}/sbin/initctl" ]; then
-                chroot_exec dpkg-divert --local --rename --add /sbin/initctl
-                chroot_exec ln -s /bin/true /sbin/initctl
-            fi
-            # Fix for yum (Fedora)
-            if [ -e "${CHROOT_DIR}/usr/bin/yum-deprecated" ]; then
-                rm -f "${CHROOT_DIR}/usr/bin/yum" || true
-                echo '#!/bin/sh' > "${CHROOT_DIR}/usr/bin/yum"
-                echo '/usr/bin/yum-deprecated $*' >> "${CHROOT_DIR}/usr/bin/yum"
-                chmod 755 "${CHROOT_DIR}/usr/bin/yum"
-            fi
-        ;;
-        esac
-    exit 0)
-    is_ok "fail" "done" || return 1
-
-    return 0
-}
-
-container_configure()
-{
-    if [ $# -eq 0 ]; then
-        container_configure qemu dns mtab motd hosts hostname timezone su sudo groups locales repository profile dbus unchroot misc
-        return $?
-    fi
-
-    params_check CHROOT_DIR DISTRIB ARCH SUITE SOURCE_PATH || return 1
-    container_mounted || container_mount || return 1
-
-    msg "Configuring the container: "
-    local item
-    for item in $*
-    do
-        configure_part ${item}
-    done
-
-    return 0
-}
-
-container_install()
-{
-    container_prepare || return 1
-    container_mount root binfmt_misc || return 1
-    params_check CHROOT_DIR DISTRIB ARCH SUITE SOURCE_PATH || return 1
-
-    local bootstrap="${DISTRIB}"
-    rootfs_archive "${SOURCE_PATH}" && bootstrap="rootfs"
-
-    case "${bootstrap}" in
-    debian|ubuntu|kalilinux)
-        msg "Installing Debian-based distribution: "
-
-        local basic_packages="locales,sudo,man-db"
-        selinux_support && basic_packages="${basic_packages},selinux-basics"
-
-        (set -e
-            if [ -d "${SHARE_DIR}/debootstrap" ]; then
-                DEBOOTSTRAP_DIR="${SHARE_DIR}/debootstrap"
-                . "${DEBOOTSTRAP_DIR}/debootstrap" --no-check-gpg --foreign --extractor=ar --arch="${ARCH}" --include="${basic_packages}" "${SUITE}" "${CHROOT_DIR}" "${SOURCE_PATH}"
-            else
-                debootstrap --no-check-gpg --foreign --arch="${ARCH}" --include="${basic_packages}" "${SUITE}" "${CHROOT_DIR}" "${SOURCE_PATH}"
-            fi
-        exit 0) 1>&3 2>&3
-        is_ok || return 1
-
-        container_configure qemu dns mtab
-
-        unset DEBOOTSTRAP_DIR
-        chroot_exec /debootstrap/debootstrap --second-stage 1>&3 2>&3
-        is_ok || return 1
-
-        container_mount
-    ;;
-    archlinux)
-        msg "Installing Arch Linux distribution: "
-
-        local basic_packages="filesystem acl archlinux-keyring attr bash bzip2 ca-certificates coreutils cracklib curl db e2fsprogs expat findutils gawk gcc-libs gdbm glibc gmp gnupg gpgme grep keyutils krb5 libarchive libassuan libcap libgcrypt libgpg-error libgssglue libidn libksba libldap libsasl libssh2 libtirpc linux-api-headers lzo ncurses nettle openssl pacman pacman-mirrorlist pam pambase perl pinentry pth readline run-parts sed shadow sudo tzdata util-linux xz which zlib"
-
-        if [ "${GUEST_PLATFORM}" = "intel" ]
-        then local repo="${SOURCE_PATH%/}/core/os/${ARCH}"
-        else local repo="${SOURCE_PATH%/}/${ARCH}/core"
-        fi
-
-        local cache_dir="${CHROOT_DIR}/var/cache/pacman/pkg"
-
-        msg "Repository: ${repo}"
-
-        msg -n "Preparing for deployment ... "
-        (set -e
-            cd "${CHROOT_DIR}"
-            mkdir etc
-            echo "root:x:0:0:root:/root:/bin/bash" > etc/passwd
-            echo "root:x:0:" > etc/group
-            touch etc/fstab
-            mkdir tmp; chmod 1777 tmp
-            mkdir -p var/tmp; chmod 1777 var/tmp
-            mkdir -p var/games; chmod 775 var/games
-            mkdir -p var/spool/mail; chmod 1777 var/spool/mail
-            mkdir -p "${cache_dir}"
-        exit 0)
-        is_ok "fail" "done" || return 1
-
-        msg -n "Retrieving packages list ... "
-        local pkg_list=$(wget -q -O - "${repo}/" | sed -n '/<a / s/^.*<a [^>]*href="\([^\"]*\)".*$/\1/p' | awk -F'/' '{print $NF}' | sort -rn)
-        is_ok "fail" "done" || return 1
-
-        msg "Retrieving base packages: "
-        for package in ${basic_packages}; do
-            msg -n "${package} ... "
-            local pkg_file=$(echo "${pkg_list}" | grep -m1 -e "^${package}-[[:digit:]].*\.xz$" -e "^${package}-[[:digit:]].*\.gz$")
-            test "${pkg_file}"; is_ok "fail" || return 1
-            # download
-            local i
-            for i in 1 2 3
-            do
-                wget -q -c -O "${cache_dir}/${pkg_file}" "${repo}/${pkg_file}" && break
-                sleep 30s
-            done
-            # unpack
-            case "${pkg_file}" in
-            *.gz) tar xzf "${cache_dir}/${pkg_file}" -C "${CHROOT_DIR}";;
-            *.xz) xz -dc "${cache_dir}/${pkg_file}" | tar xp -C "${CHROOT_DIR}";;
-            *) msg "fail"; return 1;;
-            esac
-            is_ok "fail" "done" || return 1
-        done
-
-        container_mount
-
-        container_configure qemu dns mtab repository
-
-        msg "Installing base packages: "
-        (set -e
-            chroot_exec /usr/bin/pacman --noconfirm -Sy
-            extra_packages=$(chroot_exec /usr/bin/pacman --noconfirm -Sg base | awk '{print $2}' | grep -v -e 'linux' -e 'kernel')
-            chroot_exec /usr/bin/pacman --noconfirm --force -Sq ${basic_packages} ${extra_packages}
-        exit 0) 1>&3 2>&3
-        is_ok || return 1
-
-        msg -n "Clearing cache ... "
-        rm -f "${cache_dir}"/* $(find "${CHROOT_DIR}" -type f -name "*.pacorig")
-        is_ok "fail" "done"
-    ;;
-    fedora)
-        msg "Installing Fedora distribution: "
-
-        local basic_packages="filesystem audit-libs basesystem bash bzip2-libs ca-certificates chkconfig coreutils cpio cracklib cracklib-dicts crypto-policies cryptsetup-libs curl cyrus-sasl-lib dbus dbus-libs device-mapper device-mapper-libs diffutils elfutils-libelf elfutils-libs expat fedora-release fedora-repos file-libs fipscheck fipscheck-lib gamin gawk gdbm glib2 glibc glibc-common gmp gnupg2 gnutls gpgme grep gzip hwdata info keyutils-libs kmod kmod-libs krb5-libs libacl libarchive libassuan libattr libblkid libcap libcap-ng libcom_err libcurl libdb libdb4 libdb-utils libffi libgcc libgcrypt libgpg-error libidn libmetalink libmicrohttpd libmount libpwquality libseccomp libselinux libselinux-utils libsemanage libsepol libsmartcols libssh2 libstdc++ libtasn1 libuser libutempter libuuid libverto libxml2 lua lzo man-pages ncurses ncurses-base ncurses-libs nettle nspr nss nss-myhostname nss-softokn nss-softokn-freebl nss-sysinit nss-tools nss-util openldap openssl-libs p11-kit p11-kit-trust pam pcre pinentry pkgconfig policycoreutils popt pth pygpgme pyliblzma python python-chardet python-iniparse python-kitchen python-libs python-pycurl python-six python-urlgrabber pyxattr qrencode-libs readline rootfiles rpm rpm-build-libs rpm-libs rpm-plugin-selinux rpm-python sed selinux-policy setup shadow-utils shared-mime-info sqlite sudo systemd systemd-libs systemd-sysv tcp_wrappers-libs trousers tzdata ustr util-linux vim-minimal xz-libs yum yum-metadata-parser yum-utils which zlib"
-
-        if [ "${GUEST_PLATFORM}" = "intel" -o "${ARCH}" != "aarch64" -a "${SUITE}" -ge 20 ]
-        then local repo="${SOURCE_PATH%/}/fedora/linux/releases/${SUITE}/Everything/${ARCH}/os"
-        else local repo="${SOURCE_PATH%/}/fedora-secondary/releases/${SUITE}/Everything/${ARCH}/os"
-        fi
-
-        msg "Repository: ${repo}"
-
-        msg -n "Preparing for deployment ... "
-        (set -e
-            cd "${CHROOT_DIR}"
-            mkdir etc
-            echo "root:x:0:0:root:/root:/bin/bash" > etc/passwd
-            echo "root:x:0:" > etc/group
-            touch etc/fstab
-            mkdir tmp; chmod 1777 tmp
-        exit 0)
-        is_ok "fail" "done" || return 1
-
-        msg -n "Retrieving packages list ... "
-        local pkg_list="${CHROOT_DIR}/tmp/packages.list"
-        (set -e
-            repodata=$(wget -q -O - "${repo}/repodata" | sed -n '/<a / s/^.*<a [^>]*href="\([^\"]*\-primary\.xml\.gz\)".*$/\1/p')
-            if [ -z "${repodata}" ]; then
-                exit 1
-            fi
-            wget -q -O - "${repo}/repodata/${repodata}" | gzip -dc | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\)".*$/\1/p' > "${pkg_list}"
-        exit 0)
-        is_ok "fail" "done" || return 1
-
-        msg "Retrieving base packages: "
-        local package
-        for package in ${basic_packages}; do
-            msg -n "${package} ... "
-            local pkg_url=$(grep -m1 -e "^.*/${package}-[0-9][0-9\.\-].*\.rpm$" "${pkg_list}")
-            test "${pkg_url}"; is_ok "skip" || continue
-            local pkg_file="${pkg_url##*/}"
-            # download
-            local i
-            for i in 1 2 3
-            do
-                wget -q -c -O "${CHROOT_DIR}/tmp/${pkg_file}" "${repo}/${pkg_url}" && break
-                sleep 30s
-            done
-            # unpack
-            (cd "${CHROOT_DIR}"; rpm2cpio "./tmp/${pkg_file}" | cpio -idmu)
-            is_ok "fail" "done" || return 1
-        done
-
-        container_configure qemu
-
-        msg "Installing base packages: "
-        chroot_exec /bin/rpm -iv --force --nosignature --nodeps /tmp/*.rpm 1>&3 2>&3
-        msg -n "Updating packages database ... "
-        chroot_exec /bin/rpm -i --force --nosignature --nodeps --justdb /tmp/*.rpm
-        is_ok "fail" "done" || return 1
-
-        msg -n "Clearing cache ... "
-        rm -rf "${CHROOT_DIR}"/tmp/*
-        is_ok "fail" "done"
-
-        container_mount
-
-        container_configure dns mtab misc repository
-
-        msg "Installing minimal environment: "
-        (set -e
-            chroot_exec yum groupinstall minimal-environment --nogpgcheck --skip-broken -y --exclude openssh-server
-            chroot_exec yum clean all
-        exit 0) 1>&3 2>&3
-        is_ok || return 1
-    ;;
-    opensuse)
-        msg "Installing openSUSE distribution: "
-
-        local basic_packages=""
-        case "${SUITE}" in
-        12.3) basic_packages="filesystem aaa_base aaa_base-extras autoyast2-installation bash bind-libs bind-utils branding-openSUSE bridge-utils bzip2 coreutils cpio cracklib cracklib-dict-full cron cronie cryptsetup curl cyrus-sasl dbus-1 dbus-1-x11 device-mapper dhcpcd diffutils dirmngr dmraid e2fsprogs elfutils file fillup findutils fontconfig gawk gio-branding-openSUSE glib2-tools glibc glibc-extra glibc-i18ndata glibc-locale gnu-unifont-bitmap-fonts-20080123 gpg2 grep groff gzip hwinfo ifplugd info initviocons iproute2 iputils-s20101006 kbd kpartx krb5 less-456 libX11-6 libX11-data libXau6 libXext6 libXft2 libXrender1 libacl1 libadns1 libaio1 libasm1 libassuan0 libattr1 libaudit1 libaugeas0 libblkid1 libbz2-1 libcairo2 libcap-ng0 libcap2 libcom_err2 libcrack2 libcryptsetup4 libcurl4 libdaemon0 libdb-4_8 libdbus-1-3 libdrm2 libdw1 libedit0 libelf0 libelf1 libestr0 libexpat1 libext2fs2 libffi4 libfreetype6 libgcc_s1 libgcrypt11 libgdbm4 libgio-2_0-0 libglib-2_0-0 libgmodule-2_0-0 libgmp10 libgnutls28 libgobject-2_0-0 libgpg-error0 libgssglue1 libharfbuzz0 libhogweed2 libicu49 libidn11 libiw30 libjson0 libkeyutils1 libkmod2-12 libksba8 libldap-2_4-2 liblua5_1 liblzma5 libmagic1 libmicrohttpd10 libmodman1 libmount1 libncurses5 libncurses6 libnettle4 libnl3-200 libopenssl1_0_0 libp11-kit0 libpango-1_0-0 libparted0 libpci3 libpcre1 libpipeline1 libpixman-1-0 libply-boot-client2 libply-splash-core2 libply-splash-graphics2 libply2 libpng15-15 libpolkit0 libpopt0 libprocps1 libproxy1 libpth20 libpython2_7-1_0 libqrencode3 libreadline6 libreiserfs-0_3-0 libselinux1 libsemanage1 libsepol1 libsolv-tools libssh2-1 libstdc++6 libstorage4 libtasn1 libtasn1-6 libtirpc1 libudev1-195 libusb-0_1-4 libusb-1_0-0 libustr-1_0-1 libuuid1 libwrap0 libxcb-render0 libxcb-shm0 libxcb1 libxml2-2 libxtables9 libyui-ncurses-pkg4 libyui-ncurses4 libyui4 libz1 libzio1 libzypp logrotate lsscsi lvm2 man man-pages mdadm mkinitrd module-init-tools multipath-tools ncurses-utils net-tools netcfg openSUSE-build-key openSUSE-release-12.3 openSUSE-release-ftp-12.3 openslp openssl pam pam-config pango-tools parted pciutils pciutils-ids perl perl-Bootloader perl-Config-Crontab perl-XML-Parser perl-XML-Simple perl-base perl-gettext permissions pinentry pkg-config polkit procps python-base rpcbind rpm rsyslog sed shadow shared-mime-info sudo suse-module-tools sysconfig sysfsutils syslog-service systemd-195 systemd-presets-branding-openSUSE systemd-sysvinit-195 sysvinit-tools tar tcpd terminfo-base timezone-2012j tunctl u-boot-tools udev-195 unzip update-alternatives util-linux vim vim-base vlan wallpaper-branding-openSUSE wireless-tools wpa_supplicant xz yast2 yast2-bootloader yast2-core yast2-country yast2-country-data yast2-firstboot yast2-hardware-detection yast2-installation yast2-packager yast2-perl-bindings yast2-pkg-bindings yast2-proxy yast2-slp yast2-storage yast2-trans-stats yast2-transfer yast2-update yast2-xml yast2-ycp-ui-bindings zypper"
-        ;;
-        13.2) basic_packages="filesystem aaa_base aaa_base-extras autoyast2-installation bash bind-libs bind-utils branding-openSUSE bridge-utils bzip2 coreutils cpio cracklib cracklib-dict-full cron cronie cryptsetup curl cyrus-sasl dbus-1 dbus-1-x11 device-mapper dhcpcd diffutils dirmngr dmraid e2fsprogs elfutils file fillup findutils fontconfig gawk gio-branding-openSUSE glib2-tools glibc glibc-extra glibc-i18ndata glibc-locale gnu-unifont-bitmap-fonts-20080123 gpg2 grep groff gzip hwinfo ifplugd info initviocons iproute2 iputils-s20121221 kbd kpartx krb5 less-458 libX11-6 libX11-data libXau6 libXext6 libXft2 libXrender1 libacl1 libadns1 libaio1 libasm1 libassuan0 libattr1 libaudit1 libaugeas0 libblkid1 libbz2-1 libcairo2 libcap-ng0 libcap2 libcom_err2 libcrack2 libcryptsetup4 libcurl4 libdaemon0 libdb-4_8 libdbus-1-3 libdrm2 libdw1 libedit0 libelf0 libelf1 libestr0 libexpat1 libext2fs2 libffi4 libfreetype6 libgcc_s1 libgcrypt20 libgdbm4 libgio-2_0-0 libglib-2_0-0 libgmodule-2_0-0 libgmp10 libgnutls28 libgobject-2_0-0 libgpg-error0 libgssglue1 libharfbuzz0 libhogweed2 libicu53_1 libidn11 libiw30 libjson-c2 libkeyutils1 libkmod2-18 libksba8 libldap-2_4-2 liblua5_1 liblua5_2 liblzma5 libmagic1 libmicrohttpd10 libmodman1 libmount1 libncurses5 libncurses6 libnettle4 libnl3-200 libopenssl1_0_0 libp11-kit0 libpango-1_0-0 libparted0 libpci3 libpcre1 libpipeline1 libpixman-1-0 libply-boot-client2 libply-splash-core2 libply-splash-graphics2 libply2 libpng16-16 libpolkit0 libpopt0 libprocps3 libproxy1 libpth20 libpython2_7-1_0 libqrencode3 libreadline6 libreiserfs-0_3-0 libsasl2-3 libselinux1 libsemanage1 libsepol1 libsolv-tools libssh2-1 libstdc++6 libstorage5 libtasn1 libtasn1-6 libtirpc1 libudev1-210 libusb-0_1-4 libusb-1_0-0 libustr-1_0-1 libuuid1 libwrap0 libxcb-render0 libxcb-shm0 libxcb1 libxml2-2 libxtables10 libyui-ncurses-pkg6 libyui-ncurses6 libyui6 libz1 libzio1 libzypp logrotate lsscsi lvm2 man man-pages mdadm multipath-tools ncurses-utils net-tools netcfg openSUSE-build-key openSUSE-release-13.2 openSUSE-release-ftp-13.2 openslp openssl pam pam-config pango-tools parted pciutils pciutils-ids perl perl-Bootloader perl-Config-Crontab perl-XML-Parser perl-XML-Simple perl-base perl-gettext permissions pinentry pkg-config polkit procps python-base rpcbind rpm rsyslog sed shadow shared-mime-info sudo suse-module-tools sysconfig sysfsutils syslog-service systemd-210 systemd-presets-branding-openSUSE systemd-sysvinit-210 sysvinit-tools tar tcpd terminfo-base timezone-2014h tunctl u-boot-tools udev-210 unzip update-alternatives util-linux vim vlan wallpaper-branding-openSUSE which wireless-tools wpa_supplicant xz yast2 yast2-bootloader yast2-core yast2-country yast2-country-data yast2-firstboot yast2-hardware-detection yast2-installation yast2-packager yast2-perl-bindings yast2-pkg-bindings yast2-proxy yast2-slp yast2-storage yast2-trans-stats yast2-transfer yast2-update yast2-xml yast2-ycp-ui-bindings zypper"
-        ;;
-        esac
-
-        if [ "${GUEST_PLATFORM}" = "intel" ]
-        then local repo="${SOURCE_PATH%/}/distribution/${SUITE}/repo/oss/suse"
-        else local repo="${SOURCE_PATH%/}/${ARCH}/distribution/${SUITE}/repo/oss/suse"
-        fi
-
-        msg "Repository: ${repo}"
-
-        msg -n "Preparing for deployment ... "
-        (set -e
-            cd "${CHROOT_DIR}"
-            mkdir etc
-            echo "root:x:0:0:root:/root:/bin/bash" > etc/passwd
-            echo "root:x:0:" > etc/group
-            touch etc/fstab
-            mkdir tmp; chmod 1777 tmp
-        exit 0)
-        is_ok "fail" "done" || return 1
-
-        msg -n "Retrieving packages list ... "
-        local pkg_list="${CHROOT_DIR}/tmp/packages.list"
-        (set -e
-            repodata=$(wget -q -O - "${repo}/repodata" | sed -n '/<a / s/^.*<a [^>]*href="\([^\"]*\-primary\.xml\.gz\)".*$/\1/p')
-            [ -z "${repodata}" ] && exit 1
-            wget -q -O - "${repo}/repodata/${repodata}" | gzip -dc | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\)".*$/\1/p' > "${pkg_list}"
-        exit 0)
-        is_ok "fail" "done" || return 1
-
-        msg "Retrieving base packages: "
-        local package
-        for package in ${basic_packages}; do
-            msg -n "${package} ... "
-            local pkg_url=$(grep -e "^${ARCH}" -e "^noarch" "${pkg_list}" | grep -m1 -e "/${package}-[0-9]\{1,4\}\..*\.rpm$")
-            test "${pkg_url}"; is_ok "fail" || return 1
-            local pkg_file="${pkg_url##*/}"
-            # download
-            local i
-            for i in 1 2 3
-            do
-                wget -q -c -O "${CHROOT_DIR}/tmp/${pkg_file}" "${repo}/${pkg_url}" && break
-                sleep 30s
-            done
-            # unpack
-            (cd "${CHROOT_DIR}"; rpm2cpio "./tmp/${pkg_file}" | cpio -idmu)
-            is_ok "fail" "done" || return 1
-        done
-
-        container_configure qemu
-
-        msg "Installing base packages: "
-        chroot_exec /bin/rpm -iv --force --nosignature --nodeps /tmp/*.rpm 1>&3 2>&3
-        is_ok || return 1
-
-        msg -n "Clearing cache ... "
-        rm -rf "${CHROOT_DIR}"/tmp/*
-        is_ok "fail" "done"
-
-        container_mount
-    ;;
-    gentoo)
-        msg "Installing Gentoo distribution: "
-
-        msg -n "Preparing for deployment ... "
-        (set -e
-            cd "${CHROOT_DIR}"
-            mkdir tmp; chmod 1777 tmp
-        exit 0)
-        is_ok "fail" "done" || return 1
-
-        msg -n "Getting repository path ... "
-        local repo="${SOURCE_PATH%/}/autobuilds"
-        local stage3="${CHROOT_DIR}/tmp/latest-stage3.tar.bz2"
-        local archive=$(wget -q -O - "${repo}/latest-stage3-${ARCH}.txt" | grep -v ^# | awk '{print $1}')
-        test "${archive}"; is_ok "fail" "done" || return 1
-
-        msg -n "Retrieving stage3 archive ... "
-        local i
-        for i in 1 2 3
-        do
-            wget -c -O "${stage3}" "${repo}/${archive}" && break
-            sleep 30s
-        done
-        is_ok "fail" "done" || return 1
-
-        msg -n "Unpacking stage3 archive ... "
-        (set -e
-            tar xjpf "${stage3}" -C "${CHROOT_DIR}"
-            rm -f "${stage3}"
-        exit 0)
-        is_ok "fail" "done" || return 1
-
-        container_mount
-
-        container_configure qemu dns mtab repository
-
-        msg -n "Updating portage tree ... "
-        (set -e
-            chroot_exec emerge --sync
-            chroot_exec eselect profile set 1
-        exit 0) 1>/dev/null
-        is_ok "fail" "done" || return 1
-
-        msg "Installing base packages: "
-        (set -e
-            chroot_exec emerge sudo
-        exit 0) 1>&3 2>&3
-        is_ok || return 1
-
-        msg -n "Updating configuration ... "
-        find "${CHROOT_DIR}/" -name "._cfg0000_*" | while read f; do mv "${f}" "$(echo ${f} | sed 's/._cfg0000_//g')"; done
-        is_ok "skip" "done" || return 1
-    ;;
-    slackware)
-        msg "Installing Slackware distribution: "
-
-        local repo="${SOURCE_PATH%/}/slackware"
-        local cache_dir="${CHROOT_DIR}/tmp"
-        local extra_packages="l/glibc l/libtermcap l/ncurses ap/diffutils ap/groff ap/man ap/nano ap/slackpkg ap/sudo n/gnupg n/wget"
-
-        msg -n "Preparing for deployment ... "
-        (set -e
-            cd "${CHROOT_DIR}"
-            mkdir etc
-            touch etc/fstab
-            mkdir tmp; chmod 1777 tmp
-        exit 0)
-        is_ok "fail" "done" || return 1
-
-        msg -n "Retrieving packages list ... "
-        local basic_packages=$(wget -q -O - "${repo}/a/tagfile" | grep -v -e 'kernel' -e 'efibootmgr' -e 'lilo' -e 'grub' -e 'devs' | awk -F: '{if ($1!="") print "a/"$1}')
-        local pkg_list="${cache_dir}/packages.list"
-        wget -q -O - "${repo}/FILE_LIST" | grep -o -e '/.*\.\tgz$' -e '/.*\.\txz$' > "${pkg_list}"
-        is_ok "fail" "done" || return 1
-
-        msg "Retrieving base packages: "
-        local package
-        for package in ${basic_packages} ${extra_packages}
-        do
-            msg -n "${package} ... "
-            local pkg_url=$(grep -m1 -e "/${package}\-" "${pkg_list}")
-            test "${pkg_url}"; is_ok "fail" || return 1
-            local pkg_file="${pkg_url##*/}"
-            # download
-            local i
-            for i in 1 2 3
-            do
-                wget -q -c -O "${cache_dir}/${pkg_file}" "${repo}${pkg_url}" && break
-                sleep 30s
-            done
-            # unpack
-            case "${pkg_file}" in
-            *gz) tar xzf "${cache_dir}/${pkg_file}" -C "${CHROOT_DIR}";;
-            *xz) tar xJf "${cache_dir}/${pkg_file}" -C "${CHROOT_DIR}";;
-            *) msg "fail"; return 1;;
-            esac
-            is_ok "fail" "done" || return 1
-            # install
-            if [ -e "${CHROOT_DIR}/install/doinst.sh" ]; then
-                (cd "${CHROOT_DIR}"; . ./install/doinst.sh)
-            fi
-            if [ -e "${CHROOT_DIR}/install" ]; then
-                rm -rf "${CHROOT_DIR}/install"
-            fi
-        done
-
-        msg -n "Clearing cache ... "
-        rm -f "${cache_dir}"/*
-        is_ok "fail" "done"
-
-        container_mount
-    ;;
-    rootfs)
-        msg "Getting and unpacking rootfs archive: "
-        if [ -n "$(echo ${SOURCE_PATH} | grep -i 'gz$')" ]; then
-            if [ -e "${SOURCE_PATH}" ]; then
-                (set -e
-                    tar xzpvf "${SOURCE_PATH}" -C "${CHROOT_DIR}"
-                exit 0) 1>&3 2>&3
-                is_ok || return 1
-            fi
-            if [ -n "$(echo ${SOURCE_PATH} | grep -i '^http')" ]; then
-                (set -e
-                    wget -q -O - "${SOURCE_PATH}" | tar xzpv -C "${CHROOT_DIR}"
-                exit 0) 1>&3 2>&3
-                is_ok || return 1
-            fi
-        fi
-        if [ -n "$(echo ${SOURCE_PATH} | grep -i 'bz2$')" ]; then
-            if [ -e "${SOURCE_PATH}" ]; then
-                (set -e
-                    tar xjpvf "${SOURCE_PATH}" -C "${CHROOT_DIR}"
-                exit 0) 1>&3 2>&3
-                is_ok || return 1
-            fi
-            if [ -n "$(echo ${SOURCE_PATH} | grep -i '^http')" ]; then
-                (set -e
-                    wget -q -O - "${SOURCE_PATH}" | tar xjpv -C "${CHROOT_DIR}"
-                exit 0) 1>&3 2>&3
-                is_ok || return 1
-            fi
-        fi
-        if [ -n "$(echo ${SOURCE_PATH} | grep -i 'xz$')" ]; then
-            if [ -e "${SOURCE_PATH}" ]; then
-                (set -e
-                    tar xJpvf "${SOURCE_PATH}" -C "${CHROOT_DIR}"
-                exit 0) 1>&3 2>&3
-                is_ok || return 1
-            fi
-            if [ -n "$(echo ${SOURCE_PATH} | grep -i '^http')" ]; then
-                (set -e
-                    wget -q -O - "${SOURCE_PATH}" | tar xJpv -C "${CHROOT_DIR}"
-                exit 0) 1>&3 2>&3
-                is_ok || return 1
-            fi
-        fi
-        if [ $(ls "${CHROOT_DIR}" | wc -l) -le 1 ]; then
-            msg " ...installation failed."; return 1
-        fi
-
-        container_mount
-    ;;
-    esac
-
-    return 0
-}
-
 container_export()
 {
     local rootfs_file="$1"
-    test "${rootfs_file}" || return 1
+    [ -n "${rootfs_file}" ] || return 1
 
     params_check CHROOT_DIR || return 1
     container_mounted || container_mount root || return 1
@@ -1851,7 +704,7 @@ container_status()
 
     msg "Running services: "
     if [ -n "${STARTUP}" ]; then
-        local INCLUDE_DEPENDS=0
+        local WITHOUT_DEPENDS=1
         local DO_ACTION='is_started'
         local component
         for component in ${STARTUP}
@@ -1864,14 +717,14 @@ container_status()
     fi
 
     msg "Mounted parts on Linux: "
-    local is_mounted=0
+    local is_mnt=0
     local item
     for item in $(grep "${CHROOT_DIR}" /proc/mounts | awk '{print $2}' | sed "s|${CHROOT_DIR}/*|/|g")
     do
         msg "* ${item}"
-        local is_mounted=1
+        local is_mnt=1
     done
-    [ "${is_mounted}" -ne 1 ] && msg " ...nothing mounted"
+    [ "${is_mnt}" -ne 1 ] && msg " ...nothing mounted"
 
     msg "Available mount points: "
     local is_mountpoints=0
@@ -1913,136 +766,6 @@ container_status()
     [ "${is_partitions}" -ne 1 ] && msg " ...no available partitions"
 }
 
-#################################################################################
-# Actions
-#################################################################################
-
-action_config()
-{
-    local conf_file="${CONF_FILE}"
-
-    if [ $# -eq 0 ]; then
-        cat "${conf_file}" 1>&3
-        return $?
-    fi
-
-    # parse options
-    local FLAG comp_flag sync_flag
-    local OPTIND=1
-    while getopts :i:ldks FLAG
-    do
-        case "${FLAG}" in
-        l)
-            config_list "${conf_file}"
-            return $?
-        ;;
-        d)
-            config_delete "${conf_file}"
-            return $?
-        ;;
-        i)
-            conf_file=$(config_path "${OPTARG}")
-        ;;
-        k)
-            comp_flag=1
-        ;;
-        s)
-            sync_flag=1
-        ;;
-        *)
-            let OPTIND=OPTIND-1
-            break
-        ;;
-        esac
-    done
-    shift $((OPTIND-1))
-
-    config_update "${conf_file}" "${CONF_FILE}" "$@"
-
-    if [ "${sync_flag}" = "1" ]; then
-        component_sync
-    fi
-    if [ "${comp_flag}" = "1" ]; then
-        component_list
-    fi
-}
-
-action_deploy()
-{
-    # parse options
-    local DO_ACTION='do_install && do_configure'
-    local FLAG all_flag
-    local OPTIND=1
-    while getopts :aic FLAG
-    do
-        case "${FLAG}" in
-        a)
-            all_flag=1
-        ;;
-        i)
-            DO_ACTION='do_install'
-        ;;
-        c)
-            DO_ACTION='do_configure'
-        ;;
-        *)
-            let OPTIND=OPTIND-1
-            break
-        ;;
-        esac
-    done
-    shift $((OPTIND-1))
-
-    # deploy distrib
-    if [ $# -eq 0 -o "${all_flag}" = "1" ]; then
-        case "${DO_ACTION}" in
-        do_install)
-           container_install
-        ;;
-        do_configure)
-           container_configure
-        ;;
-        *)
-           container_install &&
-           container_configure
-        ;;
-        esac
-        [ $? -eq 0 ] || return 1
-    fi
-
-    # deploy components
-    if [ "${all_flag}" = "1" ]; then
-        component_deploy "${INCLUDE} $@"
-    else
-        component_deploy "$@"
-    fi
-    return $?
-}
-
-action_stop()
-{
-    # parse options
-    local FLAG umount_flag
-    local OPTIND=1
-    while getopts :u FLAG
-    do
-        case "${FLAG}" in
-        u)
-            umount_flag=1
-        ;;
-        *)
-            let OPTIND=OPTIND-1
-            break
-        ;;
-        esac
-    done
-    shift $((OPTIND-1))
-
-    container_stop "$@"
-
-    return $?
-}
-
 helper()
 {
 cat <<EOF 1>&3
@@ -2053,89 +776,44 @@ USAGE:
    linuxdeploy [OPTIONS] COMMAND ...
 
 OPTIONS:
-   -f FILE - configuration file, by default "linux"
+   -f FILE - configuration file, by default "deploy.conf"
    -d - enable debug mode
    -t - enable trace mode
 
 COMMANDS:
-   config [...] [PARAMS] - управление конфигурациями
-      - без параметров выводит дамп текущей конфигурации
-      -i NAME|FILE - импортировать конфигурацию
-      -d - удалить конфигурацию
-      -l - список конфигураций
-      -k - список доступных компонентов
-      -s - синхронизировать с репозиторием
-   deploy [-a -i|-c] [NAME ...] - установка дистрибутива или указанных компонентов
-      -a - установка дистрибутива, всех подключенных и указанных компонентов
+   config [...] [PARAMETERS] - управление конфигурациями
+      - без переметров выводит список подключенных компонентов
+      -i FILE - импортировать конфигурацию
+      -x - дамп текущей конфигурации
+      -l - список совместимых компонентов
+      -a - список всех компонентов
+   deploy [-i|-c] [-n NAME] - установка дистрибутива и подключенных компонентов
       -i - только установить, без конфигурирования
       -с - только конфигурировать, без установки
+      -n NAME - пропустить установку указанного компонента
    export <FILE> - экспортировать контейнер как rootfs-архив (tgz или tbz2)
-   shell [cmd] - смонтировать контейнер, если не смонтирован, и выполнить указанную команду внутри контейнера, по умолчанию /bin/bash
+   shell [APP] - смонтировать контейнер, если не смонтирован, и выполнить указанную команду внутри контейнера, по умолчанию /bin/bash
    mount - смонтировать контейнер
    umount - размонтировать контейнер
-   start [NAME ...] - смонтировать контейнер, если не смонтирован, и запустить все или только указанные компоненты
-   stop [-u] [NAME ...] - остановить все или только указанные компоненты
+   start - смонтировать контейнер, если не смонтирован, и запустить все подключенные компоненты
+   stop [-u] - остановить все подключенные компоненты
       -u - размонтировать контейнер
    status - отобразить состояние контейнера и компонетнов
-   help - вызвать справку
-
-PARAMS:
-   --chroot-dir=PATH
-     Директория монтирования контейнера.
-
-   --target-type=file|partition|directory|ram
-     Вариант развертывания контейнера.
-
-   --target-path=PATH
-     Путь установки, зависит от типа развертывания.
-
-   --img-size=SIZE
-     Размер файла образа, когда выбран тип развертывания "file".
-
-   --fs-type=FS|auto
-     Файловая система, которая будет создана внутри образа или на разделе. Поддерживаются ext2, ext3 и ext4.
-
-   --distrib=debian|ubuntu|kalilinux|fedora|archlinux|gentoo|opensuse|slackware
-     Кодовое имя дистрибутива, который будет установлен.
-
-   --arch=NAME
-     Архитектура сборки дистрибутива, например i386 для debian. См. информацию по конкретному дистрибутиву.
-
-   --suite=NAME
-     Версия дистрибутива, например wheezy для debian. См. информацию по конкретному дистрибутиву.
-
-   --source-path=PATH
-     Источник установки дистрибутива, можно указать адрес репозитория или путь к rootfs-ахриву.
-
-   --user-name=USER
-     Имя пользователя, который будет создан после установки дистрибутива.
-
-   --user-password=PASSWORD
-     Пароль пользователя будет назначен указанному пользователю.
-
-   --dns=IP|auto
-     IP-адрес DNS сервера.
-
-   --locale=LOCALE
-     Локализация дистрибутива, например ru_RU.UTF-8.
-
-   --init-dir=PATH
-     Директория внутри контейнера, в которой находятся скрипты автозапуска.
-
-   --mounts=SOURCE[:TARGET] ...
-     Список точек монтирования, которые должны быть доступны внутри контейнера.
-
-   --include=NAME ...
-     Список подключенных компонентов через пробел.
-
-   --startup=NAME ...
-     Список компонентов, которые нужно запускать при запуске контейнера.
-
-   --repository=URL
-     Адрес репозитория компонентов.
+   help [NAME ...] - вызвать справку
 
 EOF
-component_help "${INCLUDE}" 1>&3
+}
+
+do_info()
+{
+cat <<EOF 1>&3
+Name: ${COMPONENT}
+Description: ${DESC}
+Target: ${TARGET}
+Depends: ${DEPENDS}
+Help:
+
+EOF
 }
 
 ################################################################################
@@ -2155,7 +833,7 @@ do
         TRACE_MODE="1"
     ;;
     *)
-        let OPTIND=OPTIND-1
+        let OPTIND=OPTIND+1
         break
     ;;
     esac
@@ -2176,62 +854,121 @@ fi
 umask 0022
 export LANG="C"
 if [ -z "${ENV_DIR}" ]; then
-    ENV_DIR="$(cd ${0%/*}; pwd)"
+    ENV_DIR=$(cd "${0%/*}"; pwd)
 fi
-if [ -z "${SHARE_DIR}" ]; then
-    SHARE_DIR="${ENV_DIR}/share"
+if [ -z "${CONF_FILE}" ]; then
+    CONF_FILE="${ENV_DIR}/deploy.conf"
 fi
-if [ -z "${CONFIG_DIR}" ]; then
-    CONFIG_DIR="${ENV_DIR}/config"
+if [ -z "${REPO_DIR}" ]; then
+    REPO_DIR="${ENV_DIR}/repo"
 fi
-if [ -z "${INCLUDE_DIR}" ]; then
-    INCLUDE_DIR="${ENV_DIR}/include"
-fi
-if [ -z "${PROOT_TMP_DIR}" ]; then
-    export PROOT_TMP_DIR="${ENV_DIR}/tmp"
-    if [ ! -d "${PROOT_TMP_DIR}" ]; then
-        mkdir "${PROOT_TMP_DIR}"
-    fi
+if [ -z "${TEMP_DIR}" ]; then
+    TEMP_DIR="${ENV_DIR}/tmp"
+    [ -d "${TEMP_DIR}" ] || mkdir "${TEMP_DIR}"
 fi
 
 # read config
-CONF_FILE=$(config_path "${CONF_FILE}")
-CONTAINER="${CONF_FILE##*/}"
 OPTLST=" " # space is required
 params_read "${CONF_FILE}"
 
-# init vars
+# fix params
+WITHOUT_CHECK=0
+WITHOUT_DEPENDS=0
+REVERSE_DEPENDS=0
+EXCLUDE_COMPONENTS=""
 CHROOT_DIR="${CHROOT_DIR%/}"
-HOST_PLATFORM=$(get_platform)
-GUEST_PLATFORM=$(get_platform "${ARCH}")
-if [ "${HOST_PLATFORM}" != "${GUEST_PLATFORM}" ]; then
-    case "${GUEST_PLATFORM}" in
-    arm)
-        EMULATOR="qemu-arm-static"
-    ;;
-    intel)
-        EMULATOR="qemu-i386-static"
-    ;;
-    *)
-        EMULATOR=""
-    ;;
-    esac
+if [ "${FAKEROOT}" = "1" -a -z "${CHROOT_DIR}" ]; then
+    CHROOT_DIR="${TARGET_PATH%/}"
 fi
 
 # exec command
 OPTCMD="$1"; shift
 case "${OPTCMD}" in
 config|conf)
-    action_config "$@"
+    if [ $# -eq 0 ]; then
+        [ -n "${INCLUDE}" ] && component_list "${INCLUDE}"
+        exit $?
+    fi
+    conf_file="${CONF_FILE}"
+
+    # parse options
+    OPTIND=1
+    while getopts :i:xla FLAG
+    do
+        case "${FLAG}" in
+        x)
+            dump_flag=1
+        ;;
+        i)
+            conf_file="${OPTARG}"
+        ;;
+        l)
+            list_flag=1
+        ;;
+        a)
+            list_flag=1
+            WITHOUT_CHECK=1
+        ;;
+        *)
+            break
+        ;;
+        esac
+    done
+    shift $((OPTIND-1))
+
+    if [ $# -gt 0 ]; then
+        params_read "${conf_file}"
+        params_parse "$@"
+        if [ -z "${CONTAINER_ID}" ]; then
+            CONTAINER_ID="$(get_uuid)"
+        fi
+        CHROOT_DIR="${CHROOT_DIR%/}"
+        params_write "${CONF_FILE}"
+    fi
+
+    if [ "${dump_flag}" = "1" ]; then
+        cat "${CONF_FILE}" 1>&3
+    elif [ "${list_flag}" = "1" ]; then
+        component_list
+    elif [ $# -gt 0 ]; then
+        component_list "$@"
+    fi
 ;;
 deploy)
-    action_deploy "$@"
+    DO_ACTION='do_install && do_configure'
+
+    # parse options
+    OPTIND=1
+    while getopts :n:ic FLAG
+    do
+        case "${FLAG}" in
+        i)
+            DO_ACTION='do_install'
+        ;;
+        c)
+            DO_ACTION='do_configure'
+        ;;
+        n)
+            EXCLUDE_COMPONENTS="${EXCLUDE_COMPONENTS} ${OPTARG}"
+        ;;
+        *)
+            break
+        ;;
+        esac
+    done
+    shift $((OPTIND-1))
+
+    if [ $# -gt 0 ]; then
+        component_exec "$@"
+    else
+        component_exec "${INCLUDE}"
+    fi
 ;;
 export)
     container_export "$@"
 ;;
 shell)
-    container_chroot "$@"
+    container_shell "$@"
 ;;
 mount)
     container_mount
@@ -2240,16 +977,53 @@ umount)
     container_umount
 ;;
 start)
-    container_start "$@"
+    container_start
 ;;
 stop)
-    action_stop "$@"
+    # parse options
+    OPTIND=1
+    while getopts :u FLAG
+    do
+        case "${FLAG}" in
+        u)
+            umount_flag=1
+        ;;
+        *)
+            break
+        ;;
+        esac
+    done
+    shift $((OPTIND-1))
+
+    container_stop || exit 1
+
+    if [ "${umount_flag}" = "1" ]; then
+        container_umount
+    fi
 ;;
 status)
     container_status
 ;;
+help)
+    if [ $# -eq 0 ]; then
+        helper
+        if [ -n "${INCLUDE}" ]; then
+            msg "PARAMETERS: "
+            WITHOUT_CHECK=1
+            REVERSE_DEPENDS=1
+            DO_ACTION='do_help'
+            component_exec "${INCLUDE}" || 
+            msg -e '   Included components do not have parameters.\n'
+        fi
+    else
+        WITHOUT_CHECK=1
+        WITHOUT_DEPENDS=1
+        DO_ACTION='do_info && do_help'
+        component_exec "$@"
+    fi
+;;
+
 *)
     helper
 ;;
 esac
-
