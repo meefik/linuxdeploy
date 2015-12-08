@@ -47,7 +47,7 @@ do_install()
 
     msg -n "Unpacking stage3 archive ... "
     (set -e
-        tar xjpf "${stage3}" -C "${CHROOT_DIR}"
+        tar xjf "${stage3}" -C "${CHROOT_DIR}" --exclude='./dev' --exclude='./sys' --exclude='./proc'
         rm -f "${stage3}"
     exit 0)
     is_ok "fail" "done" || return 1

@@ -66,8 +66,9 @@ do_install()
         done
         # unpack
         case "${pkg_file}" in
-        *.gz) tar xzf "${cache_dir}/${pkg_file}" -C "${CHROOT_DIR}";;
-        *.xz) xz -dc "${cache_dir}/${pkg_file}" | tar xp -C "${CHROOT_DIR}";;
+        *gz) tar xzf "${cache_dir}/${pkg_file}" -C "${CHROOT_DIR}" --exclude='./dev' --exclude='./sys' --exclude='./proc';;
+        *bz2) tar xjf "${cache_dir}/${pkg_file}" -C "${CHROOT_DIR}" --exclude='./dev' --exclude='./sys' --exclude='./proc';;
+        *xz) tar xJf "${cache_dir}/${pkg_file}" -C "${CHROOT_DIR}" --exclude='./dev' --exclude='./sys' --exclude='./proc';;
         *) msg "fail"; return 1;;
         esac
         is_ok "fail" "done" || return 1

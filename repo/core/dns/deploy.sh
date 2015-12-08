@@ -2,7 +2,7 @@
 # Linux Deploy Component
 # (c) Anton Skshidlevsky <meefik@gmail.com>, GPLv3
 
-[ -n ${DNS} ] || DNS="auto"
+[ -n "${DNS}" ] || DNS="auto"
 
 do_configure()
 {

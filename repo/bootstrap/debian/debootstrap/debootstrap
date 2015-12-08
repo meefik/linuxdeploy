@@ -1,6 +1,6 @@
 #!/bin/sh -e
 
-VERSION='1.0.48'
+VERSION='1.0.48-meefik'
 
 unset TMP TEMP TMPDIR || true
 
@@ -16,8 +16,6 @@ if [ -z "$DEBOOTSTRAP_DIR" ]; then
 		DEBOOTSTRAP_DIR=/usr/share/debootstrap
 	fi
 fi
-
-DEVICES_TARGZ=$DEBOOTSTRAP_DIR/devices.tgz
 
 . $DEBOOTSTRAP_DIR/functions
 exec 4>&1
@@ -464,16 +462,6 @@ DEBOOTSTRAP_CHECKSUM_FIELD="SHA$SHA_SIZE"
 
 export ARCH SUITE TARGET CHROOT_CMD SHA_SIZE DEBOOTSTRAP_CHECKSUM_FIELD
 
-if am_doing_phase first_stage second_stage; then
-	if in_path id && [ `id -u` -ne 0 ]; then
-		error 1 NEEDROOT "debootstrap can only run as root"
-	fi
-	# Ensure that we can create working devices and executables on the target.
-	if ! check_sane_mount "$TARGET"; then
-		error 1 NOEXEC "Cannot install into target '$TARGET' mounted with noexec or nodev"
-	fi
-fi
-
 if [ ! -e "$SCRIPT" ]; then
 	error 1 NOSCRIPT "No such script: %s" "$SCRIPT"
 fi
@@ -619,7 +607,6 @@ if am_doing_phase first_stage; then
 	if ! am_doing_phase second_stage; then
 		cp $DEBOOTSTRAP_DIR/debootstrap	 "$TARGET/debootstrap/debootstrap"
 		cp $DEBOOTSTRAP_DIR/functions	 "$TARGET/debootstrap/functions"
-		cp $DEBOOTSTRAP_DIR/devices.tgz	 "$TARGET/debootstrap/devices.tgz"
 		cp $SCRIPT			 "$TARGET/debootstrap/suite-script"
 		echo "$ARCH"			>"$TARGET/debootstrap/arch"
 		echo "$SUITE"			>"$TARGET/debootstrap/suite"

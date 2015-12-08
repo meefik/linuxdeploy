@@ -950,60 +950,8 @@ setup_etc () {
 	fi
 }
 
-UMOUNT_DIRS=
-
-umount_exit_function () {
-	for dir in $UMOUNT_DIRS; do
-		( cd / ; umount "$TARGET/${dir#/}" ) || true
-	done
-}
-
-umount_on_exit () {
-	if [ "$UMOUNT_DIRS" ]; then
-		UMOUNT_DIRS="$UMOUNT_DIRS $1"
-	else
-		UMOUNT_DIRS="$1"
-		on_exit umount_exit_function
-	fi
-}
-
-clear_mtab () {
-	if [ -f "$TARGET/etc/mtab" ] && [ ! -h "$TARGET/etc/mtab" ]; then
-		rm -f "$TARGET/etc/mtab"
-	fi
-}
-
 setup_proc () {
-	case "$HOST_OS" in
-	    *freebsd*)
-		umount_on_exit /dev
-		umount_on_exit /proc
-		umount "$TARGET/proc" 2>/dev/null || true
-		if [ "$HOST_OS" = kfreebsd ]; then
-			in_target mount -t linprocfs proc /proc
-		else
-			mount -t linprocfs proc $TARGET/proc
-		fi
-		;;
-	    hurd*)
-		;;
-	    *)
-		umount_on_exit /dev/pts
-		umount_on_exit /dev/shm
-		umount_on_exit /proc/bus/usb
-		umount_on_exit /proc
-		umount "$TARGET/proc" 2>/dev/null || true
-		in_target mount -t proc proc /proc
-		if [ -d "$TARGET/sys" ] && \
-		   grep -q '[[:space:]]sysfs' /proc/filesystems 2>/dev/null; then
-			umount_on_exit /sys
-			umount "$TARGET/sys" 2>/dev/null || true
-			in_target mount -t sysfs sysfs /sys
-		fi
-		on_exit clear_mtab
-		;;
-	esac
-	umount_on_exit /lib/init/rw
+	return 0
 }
 
 setup_proc_fakechroot () {
@@ -1016,34 +964,7 @@ setup_devices () {
 		setup_devices_fakechroot
 		return 0
 	fi
-
-	case "$HOST_OS" in
-	    kfreebsd*)
-		in_target mount -t devfs devfs /dev ;;
-	    freebsd)
-		mount -t devfs devfs $TARGET/dev ;;
-	    hurd*)
-		setup_devices_hurd ;;
-	    *)
-		if [ -e "$DEVICES_TARGZ" ]; then
-			zcat "$DEVICES_TARGZ" | (cd "$TARGET"; tar -xf -)
-		else
-			if [ -e /dev/.devfsd ] ; then
-				in_target mount -t devfs devfs /dev
-			else
-				error 1 NODEVTGZ "no %s. cannot create devices" "$DEVICES_TARGZ"
-			fi
-		fi
-		;;
-	esac
-}
-
-setup_devices_hurd () {
-	# Use the setup-translators of the hurd package, and firmlink
-	# $TARGET/{dev,servers} to the system ones.
-	in_target /usr/lib/hurd/setup-translators -k
-	settrans -a $TARGET/dev /hurd/firmlink /dev
-	settrans -a $TARGET/servers /hurd/firmlink /servers
+	return 0
 }
 
 setup_devices_fakechroot () {
@@ -1204,7 +1125,7 @@ elif [ -e "/usr/lib/debootstrap/pkgdetails" ]; then
 elif [ -e "$DEBOOTSTRAP_DIR/pkgdetails" ]; then
 	PKGDETAILS="$DEBOOTSTRAP_DIR/pkgdetails"
 else
-	PKGDETAILS=""
+	PKGDETAILS="$(which pkgdetails)"
 fi
 
 ##################################################### dependency resolution
@@ -1260,42 +1181,6 @@ get_next_predep () {
 }
 
 ################################################################### helpers
-
-# Return zero if it is possible to create devices and execute programs in
-# this directory. (Both may be forbidden by mount options, e.g. nodev and
-# noexec respectively.)
-check_sane_mount () {
-	mkdir -p "$1"
-
-	case "$HOST_OS" in
-	    *freebsd*|hurd*)
-		;;
-	    *)
-		mknod "$1/test-dev-null" c 1 3 || return 1
-		if ! echo test > "$1/test-dev-null"; then
-			rm -f "$1/test-dev-null"
-			return 1
-		fi
-		rm -f "$1/test-dev-null"
-		;;
-	esac
-
-	SH=/bin/sh
-	[ -x $SH ] || SH=`which sh`
-
-	cat > "$1/test-exec" <<EOF
-#! $SH
-:
-EOF
-	chmod +x "$1/test-exec"
-	if ! "$1/test-exec"; then
-		rm -f "$1/test-exec"
-		return 1
-	fi
-	rm -f "$1/test-exec"
-
-	return 0
-}
 
 read_gpg_status () {
 	badsig=

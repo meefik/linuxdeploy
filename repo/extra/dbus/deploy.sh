@@ -64,8 +64,8 @@ do_start()
 {
     msg -n ":: Starting ${COMPONENT} ... "
     is_started && { msg "skip"; return 0; }
-    [ -e "${CHROOT_DIR}/run/dbus/pid" ] && rm "${CHROOT_DIR}/run/dbus/pid"
-    [ -e "${CHROOT_DIR}/var/run/messagebus.pid" ] && rm "${CHROOT_DIR}/var/run/messagebus.pid"
+    [ -e "${CHROOT_DIR}/run/dbus/pid" ] && rm -f "${CHROOT_DIR}/run/dbus/pid"
+    [ -e "${CHROOT_DIR}/var/run/messagebus.pid" ] && rm -f "${CHROOT_DIR}/var/run/messagebus.pid"
     chroot_exec dbus-daemon --system --fork &
     is_ok "fail" "done"
     return 0

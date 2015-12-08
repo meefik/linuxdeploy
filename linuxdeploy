@@ -124,7 +124,7 @@ is_archive()
 
 chroot_exec()
 {
-    unset TMPDIR LD_PRELOAD LD_DEBUG
+    unset TMP TEMP TMPDIR LD_PRELOAD LD_DEBUG
     if [ "${FAKEROOT}" = "1" ]; then
         if [ -z "${PROOT_TMP_DIR}" ]; then
             export PROOT_TMP_DIR="${TEMP_DIR}"
@@ -169,7 +169,7 @@ params_write()
 {
     local conf_file="$1"
     [ -n "${conf_file}" ] || return 1
-    echo "# Created: $(date '+%F %R')" > ${conf_file}
+    echo "# ${conf_file##*/} $(date '+%F %R')" > ${conf_file}
     local key val
     for key in ${OPTLST}
     do
@@ -372,7 +372,7 @@ mount_part()
     case "$1" in
     root)
         msg -n "/ ... "
-        if is_mounted "${CHROOT_DIR}" ; then
+        if ! is_mounted "${CHROOT_DIR}" ; then
             [ -d "${CHROOT_DIR}" ] || mkdir -p "${CHROOT_DIR}"
             local mnt_opts
             [ -d "${TARGET_PATH}" ] && mnt_opts="bind" || mnt_opts="rw,relatime"
@@ -385,7 +385,7 @@ mount_part()
     proc)
         msg -n "/proc ... "
         local target="${CHROOT_DIR}/proc"
-        if is_mounted "${target}" ; then
+        if ! is_mounted "${target}" ; then
             [ -d "${target}" ] || mkdir -p "${target}"
             mount -t proc proc "${target}"
             is_ok "fail" "done"
@@ -396,7 +396,7 @@ mount_part()
     sys)
         msg -n "/sys ... "
         local target="${CHROOT_DIR}/sys"
-        if is_mounted "${target}" ; then
+        if ! is_mounted "${target}" ; then
             [ -d "${target}" ] || mkdir -p "${target}"
             mount -t sysfs sys "${target}"
             is_ok "fail" "done"
@@ -408,7 +408,7 @@ mount_part()
         selinux_support || return 0
         msg -n "/sys/fs/selinux ... "
         local target="${CHROOT_DIR}/sys/fs/selinux"
-        if is_mounted "${target}" ; then
+        if ! is_mounted "${target}" ; then
             if [ -e "/sys/fs/selinux/enforce" ]; then
                 cat /sys/fs/selinux/enforce > "${TEMP_DIR}/selinux_state"
                 echo 0 > /sys/fs/selinux/enforce
@@ -423,13 +423,14 @@ mount_part()
     dev)
         msg -n "/dev ... "
         local target="${CHROOT_DIR}/dev"
-        if is_mounted "${target}" ; then
+        if ! is_mounted "${target}" ; then
             [ -d "${target}" ] || mkdir -p "${target}"
             [ -e "/dev/fd" ] || ln -s /proc/self/fd /dev/
             [ -e "/dev/stdin" ] || ln -s /proc/self/fd/0 /dev/stdin
             [ -e "/dev/stdout" ] || ln -s /proc/self/fd/1 /dev/stdout
             [ -e "/dev/stderr" ] || ln -s /proc/self/fd/2 /dev/stderr
             mount -o bind /dev "${target}"
+            mount -o ro,remount "${target}"
             is_ok "fail" "done"
         else
             msg "skip"
@@ -447,7 +448,7 @@ mount_part()
     pts)
         msg -n "/dev/pts ... "
         local target="${CHROOT_DIR}/dev/pts"
-        if is_mounted "${target}" ; then
+        if ! is_mounted "${target}" ; then
             [ -d "${target}" ] || mkdir -p "${target}"
             mount -o "mode=0620,gid=5" -t devpts devpts "${target}"
             is_ok "fail" "done"
@@ -458,7 +459,7 @@ mount_part()
     shm)
         msg -n "/dev/shm ... "
         local target="${CHROOT_DIR}/dev/shm"
-        if is_mounted "${target}" ; then
+        if ! is_mounted "${target}" ; then
             [ -d "${target}" ] || mkdir -p "${target}"
             mount -t tmpfs tmpfs "${target}"
             is_ok "fail" "done"

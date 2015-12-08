@@ -22,7 +22,7 @@ do_start()
             [ -n "${disk_src}" -a -n "${disk_dst}" ] || continue
             msg -n "${disk_src} ... "
             target="${CHROOT_DIR}/${disk_dst}"
-            if is_mounted "${target}" ; then
+            if ! is_mounted "${target}" ; then
                 if [ -d "${disk_src}" ]; then
                     [ -d "${target}" ] || mkdir -p "${target}"
                     mount -o bind "${disk_src}" "${target}"
