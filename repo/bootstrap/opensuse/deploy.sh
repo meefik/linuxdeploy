@@ -27,7 +27,7 @@ do_install()
     ;;
     esac
 
-    if [ "${GUEST_PLATFORM}" = "intel" ]
+    if [ "$(get_platform ${ARCH})" = "intel" ]
     then local repo="${SOURCE_PATH%/}/distribution/${SUITE}/repo/oss/suse"
     else local repo="${SOURCE_PATH%/}/${ARCH}/distribution/${SUITE}/repo/oss/suse"
     fi
@@ -35,22 +35,15 @@ do_install()
     msg "Repository: ${repo}"
 
     msg -n "Preparing for deployment ... "
-    (set -e
-        cd "${CHROOT_DIR}"
-        mkdir etc
-        echo "root:x:0:0:root:/root:/bin/bash" > etc/passwd
-        echo "root:x:0:" > etc/group
-        touch etc/fstab
-        mkdir tmp; chmod 1777 tmp
-    exit 0)
+    tar xzf "${COMPONENT_DIR}/filesystem.tgz" -C "${CHROOT_DIR}"
     is_ok "fail" "done" || return 1
 
     msg -n "Retrieving packages list ... "
     local pkg_list="${CHROOT_DIR}/tmp/packages.list"
     (set -e
-        repodata=$(wget -q -O - "${repo}/repodata" | sed -n '/<a / s/^.*<a [^>]*href="\([^\"]*\-primary\.xml\.gz\)".*$/\1/p')
+        repodata=$(wget -q -O - "${repo}/repodata/repomd.xml" | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\-primary\.xml\.gz\)".*$/\1/p')
         [ -z "${repodata}" ] && exit 1
-        wget -q -O - "${repo}/repodata/${repodata}" | gzip -dc | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\)".*$/\1/p' > "${pkg_list}"
+        wget -q -O - "${repo}/${repodata}" | gzip -dc | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\)".*$/\1/p' > "${pkg_list}"
     exit 0)
     is_ok "fail" "done" || return 1
 
@@ -67,6 +60,7 @@ do_install()
             wget -q -c -O "${CHROOT_DIR}/tmp/${pkg_file}" "${repo}/${pkg_url}" && break
             sleep 30s
         done
+        [ "${package}" = "filesystem" ] && { msg "done"; continue; }
         # unpack
         (cd "${CHROOT_DIR}"; rpm2cpio "./tmp/${pkg_file}" | cpio -idmu)
         is_ok "fail" "done" || return 1
@@ -75,7 +69,7 @@ do_install()
     component_exec core/emulator
 
     msg "Installing base packages: "
-    chroot_exec /bin/rpm -iv --force --nosignature --nodeps /tmp/*.rpm 1>&3 2>&3
+    chroot_exec rpm -iv --excludepath / --force --nosignature --nodeps --justdb /tmp/*.rpm 1>&3 2>&3
     is_ok || return 1
 
     msg -n "Clearing cache ... "
