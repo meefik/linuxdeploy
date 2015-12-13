@@ -224,6 +224,63 @@ params_check()
     return 0
 }
 
+
+################################################################################
+# Configs
+################################################################################
+
+config_path()
+{
+    local conf_file="$1"
+    if [ -n "${conf_file}" ]; then
+        if [ -n "${conf_file##*/*}" ]; then
+            conf_file="${CONFIG_DIR}/${conf_file}.conf"
+        fi
+        echo "${conf_file}"
+    fi
+}
+
+config_update()
+{
+    local source_conf="$1"; shift
+    local target_conf="$1"; shift
+    params_read "${source_conf}"
+    params_parse "$@"
+    if [ -z "${CONTAINER_ID}" ]; then
+        CONTAINER_ID="$(get_uuid)"
+    fi
+    CHROOT_DIR="${CHROOT_DIR%/}"
+    params_write "${target_conf}"
+}
+
+config_list()
+{
+    local conf_file="$1"
+    local conf DISTRIB ARCH SUITE INCLUDE
+    for conf in $(ls "${CONFIG_DIR}/")
+    do
+        local current='-'
+        [ "${conf_file##*/}" = "${conf}" ] && current='*'
+        unset DISTRIB ARCH SUITE INCLUDE
+        eval $(grep '^DISTRIB=' "${CONFIG_DIR}/${conf}")
+        eval $(grep '^ARCH=' "${CONFIG_DIR}/${conf}")
+        eval $(grep '^SUITE=' "${CONFIG_DIR}/${conf}")
+        eval $(grep '^INCLUDE=' "${CONFIG_DIR}/${conf}")
+        local formated_desc=$(printf "%-1s %-15s %-10s %-10s %-10s %.28s\n" "${current}" "${conf%.conf}" "${DISTRIB}" "${ARCH}" "${SUITE}" "${INCLUDE}")
+        msg "${formated_desc}"
+    done
+}
+
+config_remove()
+{
+    local conf_file="$1"
+    if [ -e "${conf_file}" ]; then
+        rm -f "${conf_file}"
+    else
+        return 1
+    fi
+}
+
 ################################################################################
 # Components
 ################################################################################
@@ -277,7 +334,9 @@ component_depends()
         eval $(grep '^TARGET=' "${conf_file}")
         eval $(grep '^DEPENDS=' "${conf_file}")
         # check compatibility
-        target_check ${TARGET} || continue
+        if [ "${WITHOUT_CHECK}" != "1" ]; then
+            target_check ${TARGET} || continue
+        fi
         if [ "${REVERSE_DEPENDS}" = "1" ]; then
             # output
             echo ${component}
@@ -338,26 +397,21 @@ component_exec()
 component_list()
 {
     local components="$@"
-    local conf_file component output TARGET DESC
+    local component output DESC
     if [ -z "${components}" ]; then
-        components=$(find "${REPO_DIR}/" -type f -name "deploy.conf" | sort)
-    else
-        components=$(IGNORE_DEPENDS=" " component_depends ${components} | while read c; do echo "${REPO_DIR}/${c}/deploy.conf"; done)
+        components=$(find "${REPO_DIR}/" -type f -name "deploy.conf" | while read f
+            do 
+                component="${f%/*}"
+                component="${component//${REPO_DIR}\//}"
+                echo "${component}"
+            done)
     fi
-    for conf_file in $components
+    components=$(IGNORE_DEPENDS=" " component_depends ${components} | sort)
+    for component in $components
     do
-        [ -e "${conf_file}" ] || continue
-        component="${conf_file%/*}"
-        component="${component//${REPO_DIR}\//}"
-        TARGET='*:*:*'
-        DESC=''
-        # check for compatibility
-        if [ "${WITHOUT_CHECK}" != "1" ]; then
-            eval $(grep '^TARGET=' "${conf_file}")
-            target_check ${TARGET} || continue
-        fi
         # output
-        eval $(grep '^DESC=' "${conf_file}")
+        DESC=''
+        eval $(grep '^DESC=' "${REPO_DIR}/${component}/deploy.conf")
         output=$(printf "%-30s %.49s\n" "${component}" "${DESC}")
         msg "${output}"
     done
@@ -777,18 +831,19 @@ USAGE:
    linuxdeploy [OPTIONS] COMMAND ...
 
 OPTIONS:
-   -f FILE - configuration file, by default "deploy.conf"
+   -f FILE - configuration file
    -d - enable debug mode
    -t - enable trace mode
 
 COMMANDS:
-   config [...] [PARAMETERS] - управление конфигурациями
-      - без переметров выводит список подключенных компонентов
+   config [...] [PARAMETERS] [NAME ...] - управление конфигурациями
+      - без параметров выводит список конфигураций
+      -r - удалить текущую конфигурацию
       -i FILE - импортировать конфигурацию
       -x - дамп текущей конфигурации
-      -l - список совместимых компонентов
+      -l - список подключенных компонентов
       -a - список всех компонентов
-   deploy [-i|-c] [-n NAME] - установка дистрибутива и подключенных компонентов
+   deploy [-i|-c] [-n NAME] [NAME ...] - установка дистрибутива и подключенных компонентов
       -i - только установить, без конфигурирования
       -с - только конфигурировать, без установки
       -n NAME - пропустить установку указанного компонента
@@ -855,10 +910,14 @@ fi
 umask 0022
 export LANG="C"
 if [ -z "${ENV_DIR}" ]; then
-    ENV_DIR=$(cd "${0%/*}"; pwd)
+    ENV_DIR=$(readlink "$0")
+    ENV_DIR="${ENV_DIR%/*}"
+    if [ -z "${ENV_DIR}" ]; then
+        ENV_DIR=$(cd "${0%/*}"; pwd)
+    fi
 fi
-if [ -z "${CONF_FILE}" ]; then
-    CONF_FILE="${ENV_DIR}/deploy.conf"
+if [ -z "${CONFIG_DIR}" ]; then
+    CONFIG_DIR="${ENV_DIR}/config"
 fi
 if [ -z "${REPO_DIR}" ]; then
     REPO_DIR="${ENV_DIR}/repo"
@@ -867,6 +926,7 @@ if [ -z "${TEMP_DIR}" ]; then
     TEMP_DIR="${ENV_DIR}/tmp"
     [ -d "${TEMP_DIR}" ] || mkdir "${TEMP_DIR}"
 fi
+CONF_FILE=$(config_path "${CONF_FILE}")
 
 # read config
 OPTLST=" " # space is required
@@ -887,27 +947,30 @@ OPTCMD="$1"; shift
 case "${OPTCMD}" in
 config|conf)
     if [ $# -eq 0 ]; then
-        [ -n "${INCLUDE}" ] && component_list "${INCLUDE}"
+        config_list "${CONF_FILE}"
         exit $?
     fi
     conf_file="${CONF_FILE}"
 
     # parse options
     OPTIND=1
-    while getopts :i:xla FLAG
+    while getopts :i:rxla FLAG
     do
         case "${FLAG}" in
+        r)
+            config_remove "${CONF_FILE}"
+            exit $?
+        ;;
         x)
             dump_flag=1
         ;;
         i)
-            conf_file="${OPTARG}"
+            conf_file=$(config_path "${OPTARG}")
         ;;
         l)
             list_flag=1
         ;;
         a)
-            list_flag=1
             WITHOUT_CHECK=1
         ;;
         *)
@@ -918,20 +981,14 @@ config|conf)
     shift $((OPTIND-1))
 
     if [ $# -gt 0 ]; then
-        params_read "${conf_file}"
-        params_parse "$@"
-        if [ -z "${CONTAINER_ID}" ]; then
-            CONTAINER_ID="$(get_uuid)"
-        fi
-        CHROOT_DIR="${CHROOT_DIR%/}"
-        params_write "${CONF_FILE}"
+        config_update "${conf_file}" "${CONF_FILE}" "$@"
     fi
 
     if [ "${dump_flag}" = "1" ]; then
-        cat "${CONF_FILE}" 1>&3
-    elif [ "${list_flag}" = "1" ]; then
-        component_list
-    elif [ $# -gt 0 ]; then
+        [ -e "${CONF_FILE}" ] && cat "${CONF_FILE}" 1>&3
+    elif [ "${list_flag}" = "1" -a $# -eq 0 ]; then
+        component_list "${INCLUDE}"
+    else 
         component_list "$@"
     fi
 ;;
