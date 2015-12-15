@@ -26,9 +26,9 @@
         <item>Autre</item>
     </string-array>
     <string-array name="fbfreeze_entries">
-        <item>Ne pas freezer</item>
+        <item>Ne pas bloquer</item>
         <item>Pause</item>
-        <item>Stop</item>
+        <item>Arrêter</item>
     </string-array>
     
 
