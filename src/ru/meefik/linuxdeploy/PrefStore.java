@@ -460,8 +460,7 @@ public class PrefStore {
     public static String getUserName(Context c) {
         SharedPreferences pref = c.getSharedPreferences(getCurrentProfile(c),
                 Context.MODE_PRIVATE);
-        return pref.getString("username", c.getString(R.string.username))
-                .toLowerCase(Locale.ENGLISH);
+        return pref.getString("username", c.getString(R.string.username)).trim();
     }
 
     /**

@@ -11,6 +11,7 @@
         <item>简体中文</item>
         <item>Tiếng Việt</item>
         <item>Slovenský</item>
+        <item>Português</item>
     </string-array>
     <string-array name="language_values" translatable="false">
         <item>en</item>
@@ -22,6 +23,7 @@
         <item>zh</item>
         <item>vi</item>
         <item>sk</item>
+        <item>pt</item>
     </string-array>
     <string-array name="theme_entries">
         <item>Dark</item>
@@ -280,6 +282,7 @@
         <item>squeeze</item>
         <item>wheezy</item>
         <item>jessie</item>
+        <item>stretch</item>
         <item>sid</item>
     </string-array>
     <string-array name="debian_architecture_values" translatable="false">
@@ -308,9 +311,9 @@
         <item>lucid</item>
         <item>precise</item>
         <item>trusty</item>
-        <item>utopic</item>
         <item>vivid</item>
         <item>wily</item>
+        <item>xenial</item>
     </string-array>
     <string-array name="ubuntu_architecture_values" translatable="false">
         <item>armel</item>
