@@ -132,7 +132,7 @@
     <string name="title_mountdir_preference">Chroot Verzeichnis</string>
     <string name="dialog_title_mountdir_preference">Chroot Verzeichnis</string>
     <string name="title_sshstartup_preference">SSH</string>
-    <string name="summary_sshstartup_preference">Der SSH-Server wird beim (nächsten) Start des Linux-Systems gestartet (empfohlen)</string></string>
+    <string name="summary_sshstartup_preference">Der SSH-Server wird beim (nächsten) Start des Linux-Systems gestartet (empfohlen)</string>
     <string name="title_sshproperties_preference">SSH Einstellungen</string>
     <string name="summary_sshproperties_preference">SSH-Server Einstellungen &#228;ndern</string>
     <string name="title_guistartup_preference">GUI</string>

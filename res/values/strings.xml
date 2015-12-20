@@ -70,7 +70,7 @@
     <string name="env_preferences">Operating environment</string>
     <string name="title_busyboxdir_preference">BusyBox directory</string>
     <string name="dialog_title_busyboxdir_preference">BusyBox directory</string>
-    <string name="title_usecli_preference">Use CLI</string>
+    <string name="title_usecli_preference">Enable CLI</string>
     <string name="summary_usecli_preference">Set up a command line interface</string>
     <string name="title_installenv_preference">Update ENV</string>
     <string name="summary_installenv_preference">Update the operating environment</string>

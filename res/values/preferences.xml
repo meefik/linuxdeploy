@@ -64,7 +64,7 @@
     </string-array>
 
     <!-- Debian -->
-    <string name="debian_suite" translatable="false">wheezy</string>
+    <string name="debian_suite" translatable="false">jessie</string>
     <!-- arm -->
     <string name="arm_debian_mirror" translatable="false">http://ftp.debian.org/debian/</string>
     <string name="arm_debian_architecture" translatable="false">armhf</string>
@@ -73,7 +73,7 @@
     <string name="intel_debian_architecture" translatable="false">i386</string>
 
     <!-- Ubuntu -->
-    <string name="ubuntu_suite" translatable="false">precise</string>
+    <string name="ubuntu_suite" translatable="false">trusty</string>
     <!-- arm -->
     <string name="arm_ubuntu_mirror" translatable="false">http://ports.ubuntu.com/</string>
     <string name="arm_ubuntu_architecture" translatable="false">armhf</string>

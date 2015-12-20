@@ -7,12 +7,12 @@
 
 msg()
 {
-echo "$1" "$2" 1>&3
+echo "$@" 1>&3
 }
 
 get_platform()
 {
-local arch=$1
+local arch="$1"
 [ -z "${arch}" ] && arch=$(uname -m)
 case "${arch}" in
 arm*|aarch64)
@@ -60,10 +60,36 @@ else
 fi
 }
 
+is_mounted()
+{
+local mount_point="$1"
+[ -n "${mount_point}" ] || return 1
+if $(grep -q " ${mount_point} " /proc/mounts); then
+	return 0
+else
+	return 1
+fi
+}
+
 container_mounted()
 {
-local is_mnt=$(grep -c " ${MNT_TARGET} " /proc/mounts)
-[ "${is_mnt}" -eq 0 ] && return 1 || return 0
+is_mounted "${MNT_TARGET}"
+}
+
+chroot_exec()
+{
+unset TMP TEMP TMPDIR LD_PRELOAD LD_DEBUG
+if [ "$1" = "-u" ]; then
+	local username="$2"
+        shift 2
+        if [ -n "$@" ]; then
+		chroot "${MNT_TARGET}" /bin/su - ${username} -c "$@"
+	else
+		chroot "${MNT_TARGET}" /bin/su - ${username}
+	fi
+else
+	chroot "${MNT_TARGET}" "$@"
+fi
 }
 
 ssh_started()
@@ -115,21 +141,26 @@ esac
 msg "done"
 
 if [ "${DEPLOY_TYPE}" = "file" ]; then
+        local file_size=0
+        if [ -f "${IMG_TARGET}" ]; then
+            file_size=$(stat -c %s "${IMG_TARGET}")
+        fi
 	if [ "${IMG_SIZE}" -eq 0 ]; then
-		local file_size=0
-		[ -f "${IMG_TARGET}" ] && file_size=$(stat -c %s ${IMG_TARGET})
-		local dir_name=$(dirname ${IMG_TARGET})
-		local block_size=$(stat -c %s -f ${dir_name})
-		local available_size=$(stat -c %a -f ${dir_name})
+		local dir_name=$(dirname "${IMG_TARGET}")
+		local block_size=$(stat -c %s -f "${dir_name}")
+		local available_size=$(stat -c %a -f "${dir_name}")
 		let available_size="(${block_size}*${available_size})+${file_size}"
 		let IMG_SIZE="(${available_size}-${available_size}/10)/1048576"
 		[ "${IMG_SIZE}" -gt 4095 ] && IMG_SIZE=4095
 		[ "${IMG_SIZE}" -lt 512 ] && IMG_SIZE=512
 	fi
-	msg -n "Making new disk image (${IMG_SIZE} MB) ... "
-	dd if=/dev/zero of=${IMG_TARGET} bs=1048576 seek=$(expr ${IMG_SIZE} - 1) count=1 ||
-	dd if=/dev/zero of=${IMG_TARGET} bs=1048576 count=${IMG_SIZE}
-	[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
+        let file_size="${file_size}/1048576"
+        if [ "${IMG_SIZE}" != "${file_size}" ]; then
+		msg -n "Making new disk image (${IMG_SIZE} MB) ... "
+		dd if=/dev/zero of="${IMG_TARGET}" bs=1048576 seek=$(expr ${IMG_SIZE} - 1) count=1 ||
+		dd if=/dev/zero of="${IMG_TARGET}" bs=1048576 count=${IMG_SIZE}
+		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
+        fi
 fi
 
 if [ "${DEPLOY_TYPE}" = "file" -o "${DEPLOY_TYPE}" = "partition" ]; then
@@ -145,22 +176,22 @@ if [ "${DEPLOY_TYPE}" = "file" -o "${DEPLOY_TYPE}" = "partition" ]; then
 	[ "${FS_TYPE}" = "auto" ] && FS_TYPE=${fs_support}
 
 	msg -n "Making file system (${FS_TYPE}) ... "
-	local loop_exist=$(losetup -a | grep -c ${IMG_TARGET})
-	local img_mounted=$(grep -c ${IMG_TARGET} /proc/mounts)
+	local loop_exist=$(losetup -a | grep -c "${IMG_TARGET}")
+	local img_mounted=$(grep -c "${IMG_TARGET}" /proc/mounts)
 	[ "${loop_exist}" -ne 0 -o "${img_mounted}" -ne 0 ] && { msg "fail"; return 1; }
-	mke2fs -qF -t ${FS_TYPE} -O ^has_journal ${IMG_TARGET}
+	mke2fs -qF -t ${FS_TYPE} -O ^has_journal "${IMG_TARGET}"
 	[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 fi
 
 if [ "${DEPLOY_TYPE}" = "ram" ]; then
-	umount ${IMG_TARGET}
+	umount "${IMG_TARGET}"
 	if [ "${IMG_SIZE}" -eq 0 ]; then
 		local ram_free=$(grep ^MemFree /proc/meminfo | awk '{print $2}')
 		let IMG_SIZE="${ram_free}/1024"
 	fi
 	msg -n "Making new disk image (${IMG_SIZE} MB) ... "
-	[ -d "${IMG_TARGET}" ] || mkdir ${IMG_TARGET}
-	mount -t tmpfs -o size=${IMG_SIZE}M tmpfs ${IMG_TARGET}
+	[ -d "${IMG_TARGET}" ] || mkdir "${IMG_TARGET}"
+	mount -t tmpfs -o size=${IMG_SIZE}M tmpfs "${IMG_TARGET}"
 	[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 fi
 
@@ -172,11 +203,10 @@ mount_part()
 case "$1" in
 root)
 	msg -n "/ ... "
-	local is_mnt=$(grep -c " ${MNT_TARGET} " /proc/mounts)
-	if [ "${is_mnt}" -eq 0 ]; then
-		[ -d "${MNT_TARGET}" ] || mkdir -p ${MNT_TARGET}
+	if ! is_mounted "${MNT_TARGET}" ; then
+		[ -d "${MNT_TARGET}" ] || mkdir -p "${MNT_TARGET}"
 		[ -d "${IMG_TARGET}" ] && local mnt_opts="bind" || local mnt_opts="rw,relatime"
-		mount -o ${mnt_opts} ${IMG_TARGET} ${MNT_TARGET}
+		mount -o ${mnt_opts} "${IMG_TARGET}" "${MNT_TARGET}"
 		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 	else
 		msg "skip"
@@ -184,11 +214,10 @@ root)
 ;;
 proc)
 	msg -n "/proc ... "
-	local target=${MNT_TARGET}/proc
-	local is_mnt=$(grep -c " ${target} " /proc/mounts)
-	if [ "${is_mnt}" -eq 0 ]; then
-		[ -d "${target}" ] || mkdir -p ${target}
-		mount -t proc proc ${target}
+	local target="${MNT_TARGET}/proc"
+	if ! is_mounted "${target}" ; then
+		[ -d "${target}" ] || mkdir -p "${target}"
+		mount -t proc proc "${target}"
 		[ $? -eq 0 ] && msg "done" || msg "fail"
 	else
 		msg "skip"
@@ -196,11 +225,10 @@ proc)
 ;;
 sys)
 	msg -n "/sys ... "
-	local target=${MNT_TARGET}/sys
-	local is_mnt=$(grep -c " ${target} " /proc/mounts)
-	if [ "${is_mnt}" -eq 0 ]; then
-		[ -d "${target}" ] || mkdir -p ${target}
-		mount -t sysfs sys ${target}
+	local target="${MNT_TARGET}/sys"
+	if ! is_mounted "${target}" ; then
+		[ -d "${target}" ] || mkdir -p "${target}"
+		mount -t sysfs sys "${target}"
 		[ $? -eq 0 ] && msg "done" || msg "fail"
 	else
 		msg "skip"
@@ -209,15 +237,14 @@ sys)
 selinux)
 	selinux_support || return 0
 	msg -n "/sys/fs/selinux ... "
-	local target=${MNT_TARGET}/sys/fs/selinux
-	local is_mnt=$(grep -c " ${target} " /proc/mounts)
-	if [ "${is_mnt}" -eq 0 ]; then
+	local target="${MNT_TARGET}/sys/fs/selinux"
+	if ! is_mounted "${target}" ; then
 		if [ -e "/sys/fs/selinux/enforce" ]; then
-			cat /sys/fs/selinux/enforce > ${ENV_DIR%/}/etc/selinux_state
+			cat /sys/fs/selinux/enforce > "${ENV_DIR%/}/etc/selinux_state"
 			echo 0 > /sys/fs/selinux/enforce
 		fi
-		mount -t selinuxfs selinuxfs ${target} &&
-		mount -o remount,ro,bind ${target}
+		mount -t selinuxfs selinuxfs "${target}" &&
+		mount -o remount,ro,bind "${target}"
 		[ $? -eq 0 ] && msg "done" || msg "fail"
 	else
 		msg "skip"
@@ -225,15 +252,14 @@ selinux)
 ;;
 dev)
 	msg -n "/dev ... "
-	local target=${MNT_TARGET}/dev
-	local is_mnt=$(grep -c " ${target} " /proc/mounts)
-	if [ "${is_mnt}" -eq 0 ]; then
-		[ -d "${target}" ] || mkdir -p ${target}
+	local target="${MNT_TARGET}/dev"
+	if ! is_mounted "${target}" ; then
+		[ -d "${target}" ] || mkdir -p "${target}"
 		[ -e "/dev/fd" ] || ln -s /proc/self/fd /dev/
 		[ -e "/dev/stdin" ] || ln -s /proc/self/fd/0 /dev/stdin
 		[ -e "/dev/stdout" ] || ln -s /proc/self/fd/1 /dev/stdout
 		[ -e "/dev/stderr" ] || ln -s /proc/self/fd/2 /dev/stderr
-		mount -o bind /dev ${target}
+		mount -o bind /dev "${target}"
 		[ $? -eq 0 ] && msg "done" || msg "fail"
 	else
 		msg "skip"
@@ -250,11 +276,10 @@ tty)
 ;;
 pts)
 	msg -n "/dev/pts ... "
-	local target=${MNT_TARGET}/dev/pts
-	local is_mnt=$(grep -c " ${target} " /proc/mounts)
-	if [ "${is_mnt}" -eq 0 ]; then
-		[ -d "${target}" ] || mkdir -p ${target}
-		mount -o "mode=0620,gid=5" -t devpts devpts ${target}
+	local target="${MNT_TARGET}/dev/pts"
+	if ! is_mounted "${target}" ; then
+		[ -d "${target}" ] || mkdir -p "${target}"
+		mount -o "mode=0620,gid=5" -t devpts devpts "${target}"
 		[ $? -eq 0 ] && msg "done" || msg "fail"
 	else
 		msg "skip"
@@ -262,11 +287,10 @@ pts)
 ;;
 shm)
 	msg -n "/dev/shm ... "
-	local target=${MNT_TARGET}/dev/shm
-	local is_mnt=$(grep -c " ${target} " /proc/mounts)
-	if [ "${is_mnt}" -eq 0 ]; then
-		[ -d "${target}" ] || mkdir -p ${target}
-		mount -t tmpfs tmpfs ${target}
+	local target="${MNT_TARGET}/dev/shm"
+	if ! is_mounted "${target}" ; then
+		[ -d "${target}" ] || mkdir -p "${target}"
+		mount -t tmpfs tmpfs "${target}"
 		[ $? -eq 0 ] && msg "done" || msg "fail"
 	else
 		msg "skip"
@@ -276,12 +300,12 @@ binfmt_misc)
 	local binfmt_dir=$(multiarch_support)
 	[ -n "${binfmt_dir}" ] || return 0
 	msg -n "${binfmt_dir} ... "
-	[ -e "${binfmt_dir}" ] || mkdir ${binfmt_dir}
-	[ -e "${binfmt_dir}/register" ] || mount -t binfmt_misc binfmt_misc ${binfmt_dir}
+	[ -e "${binfmt_dir}" ] || mkdir "${binfmt_dir}"
+	[ -e "${binfmt_dir}/register" ] || mount -t binfmt_misc binfmt_misc "${binfmt_dir}"
 	case "$(get_platform)" in
 	arm)
 		if [ ! -e "${binfmt_dir}/qemu-i386" ]; then
-			echo ':qemu-i386:M::\x7fELF\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x03\x00:\xff\xff\xff\xff\xff\xfe\xfe\xff\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff:/usr/local/bin/qemu-i386-static:' > ${binfmt_dir}/register
+			echo ':qemu-i386:M::\x7fELF\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x03\x00:\xff\xff\xff\xff\xff\xfe\xfe\xff\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff:/usr/local/bin/qemu-i386-static:' > "${binfmt_dir}/register"
 			[ $? -eq 0 ] && msg "done" || msg "fail"
 		else
 			msg "skip"
@@ -289,7 +313,7 @@ binfmt_misc)
 	;;
 	intel)
 		if [ ! -e "${binfmt_dir}/qemu-arm" ]; then
-			echo ':qemu-arm:M::\x7fELF\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x28\x00:\xff\xff\xff\xff\xff\xff\xff\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff:/usr/local/bin/qemu-arm-static:' > ${binfmt_dir}/register
+			echo ':qemu-arm:M::\x7fELF\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x28\x00:\xff\xff\xff\xff\xff\xff\xff\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff:/usr/local/bin/qemu-arm-static:' > "${binfmt_dir}/register"
 			[ $? -eq 0 ] && msg "done" || msg "fail"
 		else
 			msg "skip"
@@ -305,16 +329,15 @@ custom)
 	do
 		local disk_name=$(basename /root/${disk})
 		msg -n "/mnt/${disk_name} ... "
-		local target=${MNT_TARGET}/mnt/${disk_name}
-		local is_mnt=$(grep -c " ${target} " /proc/mounts)
-		if [ "${is_mnt}" -eq 0 ]; then
+		local target="${MNT_TARGET}/mnt/${disk_name}"
+		if ! is_mounted "${target}" ; then
 			if [ -d "${disk}" ]; then
-				[ -d "${target}" ] || mkdir -p ${target}
-				mount -o bind ${disk} ${target}
+				[ -d "${target}" ] || mkdir -p "${target}"
+				mount -o bind "${disk}" "${target}"
 				[ $? -eq 0 ] && msg "done" || msg "fail"
 			elif [ -e "${disk}" ]; then
-				[ -d "${target}" ] || mkdir -p ${target}
-				mount -o rw,relatime ${disk} ${target}
+				[ -d "${target}" ] || mkdir -p "${target}"
+				mount -o rw,relatime "${disk}" "${target}"
 				[ $? -eq 0 ] && msg "done" || msg "fail"
 			else
 				msg "skip"
@@ -356,9 +379,9 @@ local lsof_full=$(lsof | awk '{print $1}' | grep -c '^lsof')
 for i in 1 2 3
 do
 	if [ "${lsof_full}" -eq 0 ]; then
-		local pids=$(lsof | grep ${MNT_TARGET} | awk '{print $1}' | uniq)
+		local pids=$(lsof | grep "${MNT_TARGET}" | awk '{print $1}' | uniq)
 	else
-		local pids=$(lsof | grep ${MNT_TARGET} | awk '{print $2}' | uniq)
+		local pids=$(lsof | grep "${MNT_TARGET}" | awk '{print $2}' | uniq)
 	fi
 	if [ -n "${pids}" ]; then
 		kill -9 ${pids}
@@ -381,7 +404,7 @@ do
 		msg -n "${pp} ... "
 		local selinux=$(echo ${pp} | grep -ci "selinux")
 		if [ "${selinux}" -gt 0 -a -e "/sys/fs/selinux/enforce" -a -e "${ENV_DIR%/}/etc/selinux_state" ]; then
-			cat ${ENV_DIR%/}/etc/selinux_state > /sys/fs/selinux/enforce
+			cat "${ENV_DIR%/}/etc/selinux_state" > /sys/fs/selinux/enforce
 		fi
 		umount ${p}
 		[ $? -eq 0 ] && msg "done" || msg "fail"
@@ -401,7 +424,7 @@ if [ -n "${binfmt_dir}" ]; then
 	esac
 	if [ -e "${binfmt_qemu}" ]; then
 		msg -n "${binfmt_dir} ... "
-		echo -1 > ${binfmt_qemu}
+		echo -1 > "${binfmt_qemu}"
 		[ $? -eq 0 ] && msg "done" || msg "fail"
 		is_mounted=1
 	fi
@@ -409,9 +432,9 @@ fi
 [ "${is_mounted}" -ne 1 ] && msg " ...nothing mounted"
 
 msg -n "Disassociating loop device ... "
-local loop=$(losetup -a | grep ${IMG_TARGET} | awk -F: '{print $1}')
+local loop=$(losetup -a | grep "${IMG_TARGET}" | awk -F: '{print $1}')
 if [ -n "${loop}" ]; then
-	losetup -d ${loop}
+	losetup -d "${loop}"
 fi
 [ $? -eq 0 ] && msg "done" || msg "fail"
 
@@ -442,10 +465,10 @@ fi
 dbus_init()
 {
 # dbus (Debian/Ubuntu/Arch Linux/Kali Linux)
-[ -e "${MNT_TARGET}/run/dbus/pid" ] && rm ${MNT_TARGET}/run/dbus/pid
+[ -e "${MNT_TARGET}/run/dbus/pid" ] && rm -f "${MNT_TARGET}/run/dbus/pid"
 # dbus (Fedora)
-[ -e "${MNT_TARGET}/var/run/messagebus.pid" ] && rm ${MNT_TARGET}/var/run/messagebus.pid
-chroot ${MNT_TARGET} dbus-daemon --system --fork
+[ -e "${MNT_TARGET}/var/run/messagebus.pid" ] && rm -f "${MNT_TARGET}/var/run/messagebus.pid"
+chroot_exec -u root "dbus-daemon --system --fork"
 }
 
 fb_refresh()
@@ -455,11 +478,11 @@ local fbdev="${FB_DEV##*/}"
 local fbrotate="/sys/class/graphics/${fbdev}/rotate"
 [ -e "${fbrotate}" ] || return 0
 local pid_file="${MNT_TARGET}/tmp/xsession.pid"
-touch ${pid_file}
-chmod 666 ${pid_file}
+touch "${pid_file}"
+chmod 666 "${pid_file}"
 while [ -e "${pid_file}" ]
 do
-    echo 0 > ${fbrotate}
+    echo 0 > "${fbrotate}"
     sleep 0.01
 done
 }
@@ -469,16 +492,16 @@ ssh)
 	msg -n "SSH [:${SSH_PORT}] ... "
 	ssh_started && { msg "skip"; return 0; }
 	# prepare var
-	[ -e "${MNT_TARGET}/var/run" -a ! -e "${MNT_TARGET}/var/run/sshd" ] && mkdir ${MNT_TARGET}/var/run/sshd
-	[ -e "${MNT_TARGET}/run" -a ! -e "${MNT_TARGET}/run/sshd" ] && mkdir ${MNT_TARGET}/run/sshd
+	[ -e "${MNT_TARGET}/var/run" -a ! -e "${MNT_TARGET}/var/run/sshd" ] && mkdir "${MNT_TARGET}/var/run/sshd"
+	[ -e "${MNT_TARGET}/run" -a ! -e "${MNT_TARGET}/run/sshd" ] && mkdir "${MNT_TARGET}/run/sshd"
 	# generate keys
 	if [ -z "$(ls ${MNT_TARGET}/etc/ssh/ | grep key)" ]; then
-		chroot ${MNT_TARGET} su - root -c 'ssh-keygen -A'
+		chroot_exec -u root "ssh-keygen -A"
 		echo
 	fi
 	# exec sshd
 	local sshd='`which sshd`'
-	chroot ${MNT_TARGET} su - root -c "${sshd} -p ${SSH_PORT}"
+	chroot_exec -u root "${sshd} -p ${SSH_PORT}"
 	[ $? -eq 0 ] && msg "done" || msg "fail"
 ;;
 vnc)
@@ -488,43 +511,43 @@ vnc)
 	gui_started && { msg "skip"; return 0; }
 	dbus_init
 	# remove locks
-	[ -e "${MNT_TARGET}/tmp/.X${VNC_DISPLAY}-lock" ] && rm ${MNT_TARGET}/tmp/.X${VNC_DISPLAY}-lock
-	[ -e "${MNT_TARGET}/tmp/.X11-unix/X${VNC_DISPLAY}" ] && rm ${MNT_TARGET}/tmp/.X11-unix/X${VNC_DISPLAY}
+	[ -e "${MNT_TARGET}/tmp/.X${VNC_DISPLAY}-lock" ] && rm -f "${MNT_TARGET}/tmp/.X${VNC_DISPLAY}-lock"
+	[ -e "${MNT_TARGET}/tmp/.X11-unix/X${VNC_DISPLAY}" ] && rm -f "${MNT_TARGET}/tmp/.X11-unix/X${VNC_DISPLAY}"
 	# exec vncserver
-	chroot ${MNT_TARGET} su - ${USER_NAME} -c "vncserver :${VNC_DISPLAY} -depth ${VNC_DEPTH} -geometry ${VNC_GEOMETRY} -dpi ${VNC_DPI} ${VNC_ARGS}"
+	chroot_exec -u ${USER_NAME} "vncserver :${VNC_DISPLAY} -depth ${VNC_DEPTH} -geometry ${VNC_GEOMETRY} -dpi ${VNC_DPI} ${VNC_ARGS}"
 	[ $? -eq 0 ] && msg "done" || msg "fail"
 ;;
 xserver)
 	msg -n "X Server [${XSERVER_HOST}:${XSERVER_DISPLAY}] ... "
 	gui_started && { msg "skip"; return 0; }
 	dbus_init
-	chroot ${MNT_TARGET} su - ${USER_NAME} -c "export DISPLAY=${XSERVER_HOST}:${XSERVER_DISPLAY}; ~/.xinitrc &"
+	chroot_exec -u ${USER_NAME} "export DISPLAY=${XSERVER_HOST}:${XSERVER_DISPLAY}; ~/.xinitrc &"
 	[ $? -eq 0 ] && msg "done" || msg "fail"
 ;;
 framebuffer)
 	msg -n "Framebuffer [:${FB_DISPLAY}] ... "
 	gui_started && { msg "skip"; return 0; }
 	# update xorg.conf
-	sed -i "s|Option.*\"fbdev\".*#linuxdeploy|Option \"fbdev\" \"${FB_DEV}\" #linuxdeploy|g" ${MNT_TARGET}/etc/X11/xorg.conf
-	sed -i "s|Option.*\"Device\".*#linuxdeploy|Option \"Device\" \"${FB_INPUT}\" #linuxdeploy|g" ${MNT_TARGET}/etc/X11/xorg.conf
+	sed -i "s|Option.*\"fbdev\".*#linuxdeploy|Option \"fbdev\" \"${FB_DEV}\" #linuxdeploy|g" "${MNT_TARGET}/etc/X11/xorg.conf"
+	sed -i "s|Option.*\"Device\".*#linuxdeploy|Option \"Device\" \"${FB_INPUT}\" #linuxdeploy|g" "${MNT_TARGET}/etc/X11/xorg.conf"
 	dbus_init
 	fb_refresh &
 	(set -e
 		sync
 		case "${FB_FREEZE}" in
 		stop)
-			chroot ${MNT_TARGET} su - ${USER_NAME} -c "xinit -- :${FB_DISPLAY} -dpi ${FB_DPI} ${FB_ARGS} &"
+			chroot_exec -u ${USER_NAME} "xinit -- :${FB_DISPLAY} -dpi ${FB_DPI} ${FB_ARGS} &"
 			setprop ctl.stop surfaceflinger
 			sleep 10
 			setprop ctl.stop zygote
 		;;
 		pause)
-			chroot ${MNT_TARGET} su - ${USER_NAME} -c "xinit -- :${FB_DISPLAY} -dpi ${FB_DPI} ${FB_ARGS} &"
+			chroot_exec -u ${USER_NAME} "xinit -- :${FB_DISPLAY} -dpi ${FB_DPI} ${FB_ARGS} &"
 			pkill -STOP system_server
 			pkill -STOP surfaceflinger
 		;;
 		*)
-			chroot ${MNT_TARGET} su - ${USER_NAME} -c "xinit -- :${FB_DISPLAY} -dpi ${FB_DPI} ${FB_ARGS} &"
+			chroot_exec -u ${USER_NAME} "xinit -- :${FB_DISPLAY} -dpi ${FB_DPI} ${FB_ARGS} &"
 		;;
 		esac
 	exit 0)
@@ -534,7 +557,7 @@ custom)
 	for script in ${CUSTOM_SCRIPTS}
 	do
 		msg -n "${script} ... "
-		chroot ${MNT_TARGET} su - root -c "${script} start"
+		chroot_exec -u root "${script} start"
 		[ $? -eq 0 ] && msg "done" || msg "fail"
 	done
 ;;
@@ -568,7 +591,7 @@ local pid=""
 for path in /run/sshd.pid /var/run/sshd.pid
 do
 	if [ -e "${MNT_TARGET}${path}" ]; then
-		pid=$(cat ${MNT_TARGET}${path})
+		pid=$(cat "${MNT_TARGET}${path}")
 		break
 	fi
 done
@@ -582,8 +605,8 @@ xsession_kill()
 {
 local pid=""
 if [ -e "${MNT_TARGET}/tmp/xsession.pid" ]; then
-	pid=$(cat ${MNT_TARGET}/tmp/xsession.pid)
-	rm ${MNT_TARGET}/tmp/xsession.pid
+	pid=$(cat "${MNT_TARGET}/tmp/xsession.pid")
+	rm -f "${MNT_TARGET}/tmp/xsession.pid"
 fi
 if [ -n "${pid}" ]; then
 	kill -9 ${pid} || return 1
@@ -600,7 +623,7 @@ ssh)
 vnc)
 	msg -n "VNC ... "
 	xsession_kill
-	chroot ${MNT_TARGET} su - ${USER_NAME} -c "vncserver -kill :${VNC_DISPLAY}"
+	chroot_exec -u ${USER_NAME} "vncserver -kill :${VNC_DISPLAY}"
 	[ $? -eq 0 ] && msg "done" || msg "fail"
 ;;
 xserver)
@@ -627,7 +650,7 @@ custom)
 	for script in ${CUSTOM_SCRIPTS}
 	do
 		msg -n "${script} ... "
-		chroot ${MNT_TARGET} su - root -c "${script} stop"
+		chroot_exec -u root "${script} stop"
 		[ $? -eq 0 ] && msg "done" || msg "fail"
 	done
 ;;
@@ -643,22 +666,16 @@ container_mounted || mount_container
 
 configure_container dns mtab
 
-[ -e "${MNT_TARGET}/etc/motd" ] && msg "$(cat ${MNT_TARGET}/etc/motd)"
+[ -e "${MNT_TARGET}/etc/motd" ] && msg $(cat "${MNT_TARGET}/etc/motd")
 
-SHELL="$*"
-if [ -z "${SHELL}" ]; then
-	[ -e "${MNT_TARGET}/bin/sh" ] && SHELL=/bin/sh
-	[ -e "${MNT_TARGET}/bin/bash" ] && SHELL=/bin/bash
-fi
-[ -z "${SHELL}" ] && { msg "Shell not found."; return 1; }
-
+SHELL="$@"
 USER="root"
-HOME=$(grep -m1 "^${USER}:" ${MNT_TARGET}/etc/passwd | awk -F: '{print $6}')
-LANG=${LOCALE}
+HOME=$(grep -m1 "^${USER}:" "${MNT_TARGET}/etc/passwd" | awk -F: '{print $6}')
+LANG="${LOCALE}"
 PS1="\u@\h:\w\\$ "
 export PATH TERM SHELL USER HOME LANG PS1
 
-chroot ${MNT_TARGET} ${SHELL} 1>&3 2>&3
+chroot_exec -u ${USER} "${SHELL}" 1>&3 2>&3
 [ $? -ne 0 ] && return 1
 
 return 0
@@ -678,55 +695,56 @@ msg -n "$1 ... "
 		else
 			local dns_list=$(echo ${SERVER_DNS} | tr ',;' ' ')
 		fi
-		printf '' > ${MNT_TARGET}/etc/resolv.conf
+		printf '' > "${MNT_TARGET}/etc/resolv.conf"
 		for dns in ${dns_list}
 		do
-			echo "nameserver ${dns}" >> ${MNT_TARGET}/etc/resolv.conf
+			echo "nameserver ${dns}" >> "${MNT_TARGET}/etc/resolv.conf"
 		done
 	;;
 	mtab)
-		rm -f ${MNT_TARGET}/etc/mtab || true
-		grep ${MNT_TARGET} /proc/mounts | sed "s|${MNT_TARGET}/*|/|g" > ${MNT_TARGET}/etc/mtab
+		rm -f "${MNT_TARGET}/etc/mtab" || true
+		grep "${MNT_TARGET}" /proc/mounts | sed "s|${MNT_TARGET}/*|/|g" > "${MNT_TARGET}/etc/mtab"
 	;;
 	motd)
 		local linux_version="GNU/Linux (${DISTRIB})"
-		if [ -f ${MNT_TARGET}/etc/os-release ]
+		if [ -f "${MNT_TARGET}/etc/os-release" ]
 		then
-			linux_version=$(. ${MNT_TARGET}/etc/os-release; echo ${PRETTY_NAME})
-		elif [ -f ${MNT_TARGET}/etc/arch-release ]
+			linux_version=$(. "${MNT_TARGET}/etc/os-release"; echo ${PRETTY_NAME})
+		elif [ -f "${MNT_TARGET}/etc/arch-release" ]
 		then
 			linux_version="Arch Linux"
-		elif [ -f ${MNT_TARGET}/etc/gentoo-release ]
+		elif [ -f "${MNT_TARGET}/etc/gentoo-release" ]
 		then
-			linux_version=$(cat ${MNT_TARGET}/etc/gentoo-release)
-		elif [ -f ${MNT_TARGET}/etc/fedora-release ]
+			linux_version=$(cat "${MNT_TARGET}/etc/gentoo-release")
+		elif [ -f "${MNT_TARGET}/etc/fedora-release" ]
 		then
-			linux_version=$(cat ${MNT_TARGET}/etc/fedora-release)
-		elif [ -f ${MNT_TARGET}/etc/redhat-release ]
+			linux_version=$(cat "${MNT_TARGET}/etc/fedora-release")
+		elif [ -f "${MNT_TARGET}/etc/redhat-release" ]
 		then
-			linux_version=$(cat ${MNT_TARGET}/etc/redhat-release)
-		elif [ -f ${MNT_TARGET}/etc/debian_version ]
+			linux_version=$(cat "${MNT_TARGET}/etc/redhat-release")
+		elif [ -f "${MNT_TARGET}/etc/debian_version" ]
 		then
-			linux_version=$(printf "Debian GNU/Linux " ; cat ${MNT_TARGET}/etc/debian_version)
+			linux_version=$(printf "Debian GNU/Linux " ; cat "${MNT_TARGET}/etc/debian_version")
 		fi
 		local motd="${linux_version} [running on Android via Linux Deploy]"
-		rm -f ${MNT_TARGET}/etc/motd || true
-		echo ${motd} > ${MNT_TARGET}/etc/motd
+		rm -f "${MNT_TARGET}/etc/motd" || true
+		echo ${motd} > "${MNT_TARGET}/etc/motd"
 	;;
 	hosts)
-		local is_localhost=$(grep -c "^127.0.0.1" ${MNT_TARGET}/etc/hosts || true)
-		[ "${is_localhost}" -eq 0 ] && echo '127.0.0.1 localhost' >> ${MNT_TARGET}/etc/hosts
+		if ! $(grep -q "^127.0.0.1" "${MNT_TARGET}/etc/hosts"); then
+			echo '127.0.0.1 localhost' >> "${MNT_TARGET}/etc/hosts"
+		fi
 	;;
 	hostname)
-		echo 'localhost' > ${MNT_TARGET}/etc/hostname
+		echo 'localhost' > "${MNT_TARGET}/etc/hostname"
 	;;
 	timezone)
 		local timezone=$(getprop persist.sys.timezone || true)
 		[ -z "${timezone}" ] && timezone=$(cat /etc/timezone)
 		[ -z "${timezone}" ] && exit 1
-		rm -f ${MNT_TARGET}/etc/localtime || true
-		cp ${MNT_TARGET}/usr/share/zoneinfo/${timezone} ${MNT_TARGET}/etc/localtime
-		echo ${timezone} > ${MNT_TARGET}/etc/timezone
+		rm -f "${MNT_TARGET}/etc/localtime" || true
+		cp "${MNT_TARGET}/usr/share/zoneinfo/${timezone}" "${MNT_TARGET}/etc/localtime"
+		echo ${timezone} > "${MNT_TARGET}/etc/timezone"
 	;;
 	su)
 		case "${DISTRIB}" in
@@ -737,97 +755,101 @@ msg -n "$1 ... "
 			local pam_su="${MNT_TARGET}/etc/pam.d/su"
 		;;
 		esac
-		if [ -e "${pam_su}" -a -z "$(grep -e '^auth.*sufficient.*pam_succeed_if.so uid = 0 use_uid quiet$' ${pam_su})" ]; then
-			sed -i '1,/^auth/s/^\(auth.*\)$/auth\tsufficient\tpam_succeed_if.so uid = 0 use_uid quiet\n\1/' ${pam_su}
+		if [ -e "${pam_su}" ]; then
+			if ! $(grep -q '^auth.*sufficient.*pam_succeed_if.so uid = 0 use_uid quiet$' "${pam_su}"); then
+				sed -i '1,/^auth/s/^\(auth.*\)$/auth\tsufficient\tpam_succeed_if.so uid = 0 use_uid quiet\n\1/' "${pam_su}"
+			fi
 		fi
 	;;
 	sudo)
 		local sudo_str="${USER_NAME} ALL=(ALL:ALL) NOPASSWD:ALL"
-		local is_str=$(grep -c "${sudo_str}" ${MNT_TARGET}/etc/sudoers || true)
-		[ "${is_str}" -eq 0 ] && echo ${sudo_str} >> ${MNT_TARGET}/etc/sudoers
-		chmod 440 ${MNT_TARGET}/etc/sudoers
+		if ! $(grep -q "${sudo_str}" "${MNT_TARGET}/etc/sudoers"); then
+			echo ${sudo_str} >> "${MNT_TARGET}/etc/sudoers"
+		fi
+		chmod 440 "${MNT_TARGET}/etc/sudoers"
 	;;
 	groups)
-		local aids=$(cat ${ENV_DIR%/}/share/android-groups)
+		local aids=$(cat "${ENV_DIR%/}/share/android-groups")
 		for aid in ${aids}
 		do
 			local xname=$(echo ${aid} | awk -F: '{print $1}')
 			local xid=$(echo ${aid} | awk -F: '{print $2}')
-			sed -i "s|^${xname}:.*|${xname}:x:${xid}:${USER_NAME}|g" ${MNT_TARGET}/etc/group || true
-			local is_group=$(grep -c "^${xname}:" ${MNT_TARGET}/etc/group || true)
-			[ "${is_group}" -eq 0 ] && echo "${xname}:x:${xid}:${USER_NAME}" >> ${MNT_TARGET}/etc/group
-			local is_passwd=$(grep -c "^${xname}:" ${MNT_TARGET}/etc/passwd || true)
-			[ "${is_passwd}" -eq 0 ] && echo "${xname}:x:${xid}:${xid}::/:/bin/false" >> ${MNT_TARGET}/etc/passwd
-			sed -i 's|^UID_MIN.*|UID_MIN 5000|g' ${MNT_TARGET}/etc/login.defs
-			sed -i 's|^GID_MIN.*|GID_MIN 5000|g' ${MNT_TARGET}/etc/login.defs
+			sed -i "s|^${xname}:.*|${xname}:x:${xid}:${USER_NAME}|g" "${MNT_TARGET}/etc/group" || true
+			if ! $(grep -q "^${xname}:" "${MNT_TARGET}/etc/group"); then
+				echo "${xname}:x:${xid}:${USER_NAME}" >> "${MNT_TARGET}/etc/group"
+			fi
+			if ! $(grep -q "^${xname}:" "${MNT_TARGET}/etc/passwd"); then
+				echo "${xname}:x:${xid}:${xid}::/:/bin/false" >> "${MNT_TARGET}/etc/passwd"
+			fi
 		done
 		# add users to aid_inet group
-		local inet_users=""
+		local inet_users="root"
 		case "${DISTRIB}" in
 		debian|ubuntu|kalilinux)
-			inet_users="root messagebus www-data mysql postgres"
+			inet_users="${inet_users} messagebus www-data mysql postgres"
 		;;
 		archlinux)
-			inet_users="root dbus"
+			inet_users="${inet_users} dbus"
 		;;
 		fedora)
-			inet_users="root dbus"
+			inet_users="${inet_users} dbus"
 		;;
 		opensuse)
-			inet_users="root messagebus"
+			inet_users="${inet_users} messagebus"
 		;;
 		gentoo)
-			inet_users="root messagebus"
+			inet_users="${inet_users} messagebus"
 		;;
 		slackware)
-			inet_users="root messagebus"
+			inet_users="${inet_users} messagebus"
 		;;
 		esac
 		for uid in ${inet_users}
 		do
-			if [ -z "$(grep \"^aid_inet:.*${uid}\" ${MNT_TARGET}/etc/group)" ]; then
-				sed -i "s|^\(aid_inet:.*\)|\1,${uid}|g" ${MNT_TARGET}/etc/group
+			[ -e "${MNT_TARGET}/etc/group" ] || continue
+			if ! $(grep -q "^aid_inet:.*${uid}" "${MNT_TARGET}/etc/group"); then
+				sed -i "s|^\(aid_inet:.*\)|\1,${uid}|g" "${MNT_TARGET}/etc/group"
 			fi
 		done
 	;;
 	locales)
 		local inputfile=$(echo ${LOCALE} | awk -F. '{print $1}')
 		local charmapfile=$(echo ${LOCALE} | awk -F. '{print $2}')
-		chroot ${MNT_TARGET} localedef -i ${inputfile} -c -f ${charmapfile} ${LOCALE}
+		chroot_exec localedef -i ${inputfile} -c -f ${charmapfile} ${LOCALE}
 		case "${DISTRIB}" in
 		debian|ubuntu|kalilinux)
-			echo "LANG=${LOCALE}" > ${MNT_TARGET}/etc/default/locale
+			echo "LANG=${LOCALE}" > "${MNT_TARGET}/etc/default/locale"
 		;;
 		archlinux)
-			echo "LANG=${LOCALE}" > ${MNT_TARGET}/etc/locale.conf
+			echo "LANG=${LOCALE}" > "${MNT_TARGET}/etc/locale.conf"
 		;;
 		fedora)
-			echo "LANG=${LOCALE}" > ${MNT_TARGET}/etc/sysconfig/i18n
+			echo "LANG=${LOCALE}" > "${MNT_TARGET}/etc/sysconfig/i18n"
 		;;
 		opensuse)
-			echo "RC_LANG=${LOCALE}" > ${MNT_TARGET}/etc/sysconfig/language
+			echo "RC_LANG=${LOCALE}" > "${MNT_TARGET}/etc/sysconfig/language"
 		;;
 		slackware)
-			sed -i "s|^export LANG=.*|export LANG=${LOCALE}|g" ${MNT_TARGET}/etc/profile.d/lang.sh
+			sed -i "s|^export LANG=.*|export LANG=${LOCALE}|g" "${MNT_TARGET}/etc/profile.d/lang.sh"
 		;;
 		esac
 	;;
 	repository)
-		local platform=$(get_platform ${ARCH})
+		local platform=$(get_platform "${ARCH}")
 		case "${DISTRIB}" in
 		debian|ubuntu|kalilinux)
 			if [ -e "${MNT_TARGET}/etc/apt/sources.list" ]; then
-				cp ${MNT_TARGET}/etc/apt/sources.list ${MNT_TARGET}/etc/apt/sources.list.bak
+				cp "${MNT_TARGET}/etc/apt/sources.list" "${MNT_TARGET}/etc/apt/sources.list.bak"
 			fi
-			if [ -z "$(grep "${MIRROR}.*${SUITE}" ${MNT_TARGET}/etc/apt/sources.list)" ]; then
+			if ! $(grep -q "${MIRROR}.*${SUITE}" "${MNT_TARGET}/etc/apt/sources.list"); then
 				case "${DISTRIB}" in
 				debian|kalilinux)
-					echo "deb ${MIRROR} ${SUITE} main contrib non-free" > ${MNT_TARGET}/etc/apt/sources.list
-					echo "deb-src ${MIRROR} ${SUITE} main contrib non-free" >> ${MNT_TARGET}/etc/apt/sources.list
+					echo "deb ${MIRROR} ${SUITE} main contrib non-free" > "${MNT_TARGET}/etc/apt/sources.list"
+					echo "deb-src ${MIRROR} ${SUITE} main contrib non-free" >> "${MNT_TARGET}/etc/apt/sources.list"
 				;;
 				ubuntu)
-					echo "deb ${MIRROR} ${SUITE} main universe multiverse" > ${MNT_TARGET}/etc/apt/sources.list
-					echo "deb-src ${MIRROR} ${SUITE} main universe multiverse" >> ${MNT_TARGET}/etc/apt/sources.list
+					echo "deb ${MIRROR} ${SUITE} main universe multiverse" > "${MNT_TARGET}/etc/apt/sources.list"
+					echo "deb-src ${MIRROR} ${SUITE} main universe multiverse" >> "${MNT_TARGET}/etc/apt/sources.list"
 				;;
 				esac
 			fi
@@ -837,29 +859,29 @@ msg -n "$1 ... "
 			then local repo="${MIRROR%/}/\$repo/os/\$arch"
 			else local repo="${MIRROR%/}/\$arch/\$repo"
 			fi
-			sed -i "s|^[[:space:]]*Architecture[[:space:]]*=.*$|Architecture = ${ARCH}|" ${MNT_TARGET}/etc/pacman.conf
-			sed -i "s|^[[:space:]]*\(CheckSpace\)|#\1|" ${MNT_TARGET}/etc/pacman.conf
-			sed -i "s|^[[:space:]]*SigLevel[[:space:]]*=.*$|SigLevel = Never|" ${MNT_TARGET}/etc/pacman.conf
-			if [ $(grep -c -e "^[[:space:]]*Server" ${MNT_TARGET}/etc/pacman.d/mirrorlist) -gt 0 ]
-			then sed -i "s|^[[:space:]]*Server[[:space:]]*=.*|Server = ${repo}|" ${MNT_TARGET}/etc/pacman.d/mirrorlist
-			else echo "Server = ${repo}" >> ${MNT_TARGET}/etc/pacman.d/mirrorlist
+			sed -i "s|^[[:space:]]*Architecture[[:space:]]*=.*$|Architecture = ${ARCH}|" "${MNT_TARGET}/etc/pacman.conf"
+			sed -i "s|^[[:space:]]*\(CheckSpace\)|#\1|" "${MNT_TARGET}/etc/pacman.conf"
+			sed -i "s|^[[:space:]]*SigLevel[[:space:]]*=.*$|SigLevel = Never|" "${MNT_TARGET}/etc/pacman.conf"
+			if $(grep -q '^[[:space:]]*Server' "${MNT_TARGET}/etc/pacman.d/mirrorlist")
+			then sed -i "s|^[[:space:]]*Server[[:space:]]*=.*|Server = ${repo}|" "${MNT_TARGET}/etc/pacman.d/mirrorlist"
+			else echo "Server = ${repo}" >> "${MNT_TARGET}/etc/pacman.d/mirrorlist"
 			fi
 		;;
 		fedora)
-			find ${MNT_TARGET}/etc/yum.repos.d/ -name *.repo | while read f; do sed -i 's/^enabled=.*/enabled=0/g' ${f}; done
+			find "${MNT_TARGET}/etc/yum.repos.d/" -name "*.repo" | while read f; do sed -i 's/^enabled=.*/enabled=0/g' "${f}"; done
 			if [ "${platform}" = "intel" -o "${ARCH}" != "aarch64" -a "${SUITE}" -ge 20 ]
 			then local repo="${MIRROR%/}/fedora/linux/releases/${SUITE}/Everything/${ARCH}/os"
 			else local repo="${MIRROR%/}/fedora-secondary/releases/${SUITE}/Everything/${ARCH}/os"
 			fi
 			local repo_file="${MNT_TARGET}/etc/yum.repos.d/fedora-${SUITE}-${ARCH}.repo"
-			echo "[fedora-${SUITE}-${ARCH}]" > ${repo_file}
-			echo "name=Fedora ${SUITE} - ${ARCH}" >> ${repo_file}
-			echo "failovermethod=priority" >> ${repo_file}
-			echo "baseurl=${repo}" >> ${repo_file}
-			echo "enabled=1" >> ${repo_file}
-			echo "metadata_expire=7d" >> ${repo_file}
-			echo "gpgcheck=0" >> ${repo_file}
-			chmod 644 ${repo_file}
+			echo "[fedora-${SUITE}-${ARCH}]" > "${repo_file}"
+			echo "name=Fedora ${SUITE} - ${ARCH}" >> "${repo_file}"
+			echo "failovermethod=priority" >> "${repo_file}"
+			echo "baseurl=${repo}" >> "${repo_file}"
+			echo "enabled=1" >> "${repo_file}"
+			echo "metadata_expire=7d" >> "${repo_file}"
+			echo "gpgcheck=0" >> "${repo_file}"
+			chmod 644 "${repo_file}"
 		;;
 		opensuse)
 			if [ "${platform}" = "intel" ]
@@ -868,32 +890,32 @@ msg -n "$1 ... "
 			fi
 			local repo_name="openSUSE-${SUITE}-${ARCH}-Repo-OSS"
 			local repo_file="${MNT_TARGET}/etc/zypp/repos.d/${repo_name}.repo"
-			echo "[${repo_name}]" > ${repo_file}
-			echo "name=${repo_name}" >> ${repo_file}
-			echo "enabled=1" >> ${repo_file}
-			echo "autorefresh=0" >> ${repo_file}
-			echo "baseurl=${repo}" >> ${repo_file}
-			echo "type=NONE" >> ${repo_file}
-			chmod 644 ${repo_file}
+			echo "[${repo_name}]" > "${repo_file}"
+			echo "name=${repo_name}" >> "${repo_file}"
+			echo "enabled=1" >> "${repo_file}"
+			echo "autorefresh=0" >> "${repo_file}"
+			echo "baseurl=${repo}" >> "${repo_file}"
+			echo "type=NONE" >> "${repo_file}"
+			chmod 644 "${repo_file}"
 		;;
 		gentoo)
-			if [ -z "$(grep '^aid_inet:.*,portage' ${MNT_TARGET}/etc/group)" ]; then
-				sed -i "s|^\(aid_inet:.*\)|\1,portage|g" ${MNT_TARGET}/etc/group
+			if ! $(grep -q '^aid_inet:.*,portage' "${MNT_TARGET}/etc/group"); then
+				sed -i "s|^\(aid_inet:.*\)|\1,portage|g" "${MNT_TARGET}/etc/group"
 			fi
 			# set MAKEOPTS
 			local ncpu=$(grep -c ^processor /proc/cpuinfo)
 			let ncpu=${ncpu}+1
-			if [ -z "$(grep '^MAKEOPTS=' ${MNT_TARGET}/etc/portage/make.conf)" ]; then
-				echo "MAKEOPTS=\"-j${ncpu}\"" >> ${MNT_TARGET}/etc/portage/make.conf
+			if ! $(grep -q '^MAKEOPTS=' "${MNT_TARGET}/etc/portage/make.conf"); then
+				echo "MAKEOPTS=\"-j${ncpu}\"" >> "${MNT_TARGET}/etc/portage/make.conf"
 			fi
 		;;
 		slackware)
 			if [ -e "${MNT_TARGET}/etc/slackpkg/mirrors" ]; then
-				cp ${MNT_TARGET}/etc/slackpkg/mirrors ${MNT_TARGET}/etc/slackpkg/mirrors.bak
+				cp "${MNT_TARGET}/etc/slackpkg/mirrors" "${MNT_TARGET}/etc/slackpkg/mirrors.bak"
 			fi
-			echo ${MIRROR} > ${MNT_TARGET}/etc/slackpkg/mirrors
-			chmod 644 ${MNT_TARGET}/etc/slackpkg/mirrors
-			sed -i 's|^WGETFLAGS=.*|WGETFLAGS="--passive-ftp -q"|g' ${MNT_TARGET}/etc/slackpkg/slackpkg.conf
+			echo ${MIRROR} > "${MNT_TARGET}/etc/slackpkg/mirrors"
+			chmod 644 "${MNT_TARGET}/etc/slackpkg/mirrors"
+			sed -i 's|^WGETFLAGS=.*|WGETFLAGS="--passive-ftp -q"|g' "${MNT_TARGET}/etc/slackpkg/slackpkg.conf"
 		;;
 		esac
 	;;
@@ -903,106 +925,109 @@ msg -n "$1 ... "
 			echo "Username ${USER_NAME} is reserved."
 			exit 1
 		fi
+		sed -i 's|^UID_MIN.*|UID_MIN 5000|g' "${MNT_TARGET}/etc/login.defs"
+		sed -i 's|^GID_MIN.*|GID_MIN 5000|g' "${MNT_TARGET}/etc/login.defs"
 		# cli
 		if [ "${USER_NAME}" != "root" ]; then
-			chroot ${MNT_TARGET} groupadd ${USER_NAME} || true
-			chroot ${MNT_TARGET} useradd -m -g ${USER_NAME} -s /bin/bash ${USER_NAME} || true
-			chroot ${MNT_TARGET} usermod -g ${USER_NAME} ${USER_NAME} || true
+			chroot_exec groupadd ${USER_NAME} || true
+			chroot_exec useradd -m -g ${USER_NAME} -s /bin/bash ${USER_NAME} || true
+			chroot_exec usermod -g ${USER_NAME} ${USER_NAME} || true
 		fi
-		local user_home=$(grep -m1 "^${USER_NAME}:" ${MNT_TARGET}/etc/passwd | awk -F: '{print $6}')
-		local user_id=$(grep -m1 "^${USER_NAME}:" ${MNT_TARGET}/etc/passwd | awk -F: '{print $3}')
-		local group_id=$(grep -m1 "^${USER_NAME}:" ${MNT_TARGET}/etc/passwd | awk -F: '{print $4}')
+		local user_home=$(grep -m1 "^${USER_NAME}:" "${MNT_TARGET}/etc/passwd" | awk -F: '{print $6}')
+		local user_id=$(grep -m1 "^${USER_NAME}:" "${MNT_TARGET}/etc/passwd" | awk -F: '{print $3}')
+		local group_id=$(grep -m1 "^${USER_NAME}:" "${MNT_TARGET}/etc/passwd" | awk -F: '{print $4}')
 		local path_str="PATH=${PATH}"
-		local is_path=$(grep "${path_str}" ${MNT_TARGET}${user_home}/.profile || true)
-		[ -z "${is_path}" ] && echo ${path_str} >> ${MNT_TARGET}${user_home}/.profile
+		if ! $(grep -q "${path_str}" "${MNT_TARGET}${user_home}/.profile"); then
+			echo ${path_str} >> "${MNT_TARGET}${user_home}/.profile"
+		fi
 		# gui
-		mkdir ${MNT_TARGET}${user_home}/.vnc || true
-		echo 'XAUTHORITY=$HOME/.Xauthority' > ${MNT_TARGET}${user_home}/.vnc/xstartup
-		echo 'export XAUTHORITY' >> ${MNT_TARGET}${user_home}/.vnc/xstartup
-		echo "LANG=$LOCALE" >> ${MNT_TARGET}${user_home}/.vnc/xstartup
-		echo 'export LANG' >> ${MNT_TARGET}${user_home}/.vnc/xstartup
-		echo 'echo $$ > /tmp/xsession.pid' >> ${MNT_TARGET}${user_home}/.vnc/xstartup
+		mkdir "${MNT_TARGET}${user_home}/.vnc" || true
+		echo 'XAUTHORITY=$HOME/.Xauthority' > "${MNT_TARGET}${user_home}/.vnc/xstartup"
+		echo 'export XAUTHORITY' >> "${MNT_TARGET}${user_home}/.vnc/xstartup"
+		echo "LANG=$LOCALE" >> "${MNT_TARGET}${user_home}/.vnc/xstartup"
+		echo 'export LANG' >> "${MNT_TARGET}${user_home}/.vnc/xstartup"
+		echo 'echo $$ > /tmp/xsession.pid' >> "${MNT_TARGET}${user_home}/.vnc/xstartup"
 		case "${DESKTOP_ENV}" in
 		xterm)
-			echo 'xterm -max' >> ${MNT_TARGET}${user_home}/.vnc/xstartup
+			echo 'xterm -max' >> "${MNT_TARGET}${user_home}/.vnc/xstartup"
 		;;
 		lxde)
-			echo 'startlxde' >> ${MNT_TARGET}${user_home}/.vnc/xstartup
+			echo 'startlxde' >> "${MNT_TARGET}${user_home}/.vnc/xstartup"
 		;;
 		xfce)
-			echo 'startxfce4' >> ${MNT_TARGET}${user_home}/.vnc/xstartup
+			echo 'startxfce4' >> "${MNT_TARGET}${user_home}/.vnc/xstartup"
 		;;
 		gnome)
-			echo 'XKL_XMODMAP_DISABLE=1' >> ${MNT_TARGET}${user_home}/.vnc/xstartup
-			echo 'export XKL_XMODMAP_DISABLE' >> ${MNT_TARGET}${user_home}/.vnc/xstartup
-			echo 'if [ -n "`gnome-session -h | grep "\-\-session"`" ]; then' >> ${MNT_TARGET}${user_home}/.vnc/xstartup
-			echo '   gnome-session --session=gnome' >> ${MNT_TARGET}${user_home}/.vnc/xstartup
-			echo 'else' >> ${MNT_TARGET}${user_home}/.vnc/xstartup
-			echo '   gnome-session' >> ${MNT_TARGET}${user_home}/.vnc/xstartup
-			echo 'fi' >> ${MNT_TARGET}${user_home}/.vnc/xstartup
+			echo 'XKL_XMODMAP_DISABLE=1' >> "${MNT_TARGET}${user_home}/.vnc/xstartup"
+			echo 'export XKL_XMODMAP_DISABLE' >> "${MNT_TARGET}${user_home}/.vnc/xstartup"
+			echo 'if [ -n "`gnome-session -h | grep "\-\-session"`" ]; then' >> "${MNT_TARGET}${user_home}/.vnc/xstartup"
+			echo '   gnome-session --session=gnome' >> "${MNT_TARGET}${user_home}/.vnc/xstartup"
+			echo 'else' >> "${MNT_TARGET}${user_home}/.vnc/xstartup"
+			echo '   gnome-session' >> "${MNT_TARGET}${user_home}/.vnc/xstartup"
+			echo 'fi' >> "${MNT_TARGET}${user_home}/.vnc/xstartup"
 		;;
 		kde)
-			echo 'startkde' >> ${MNT_TARGET}${user_home}/.vnc/xstartup
+			echo 'startkde' >> "${MNT_TARGET}${user_home}/.vnc/xstartup"
 		;;
 		other)
-			echo '# desktop environment' >> ${MNT_TARGET}${user_home}/.vnc/xstartup
+			echo '# desktop environment' >> "${MNT_TARGET}${user_home}/.vnc/xstartup"
 		;;
 		esac
-		chmod 755 ${MNT_TARGET}${user_home}/.vnc/xstartup
-		rm ${MNT_TARGET}${user_home}/.xinitrc || true
-		ln -s ./.vnc/xstartup ${MNT_TARGET}${user_home}/.xinitrc
+		chmod 755 "${MNT_TARGET}${user_home}/.vnc/xstartup"
+		rm -f "${MNT_TARGET}${user_home}/.xinitrc" || true
+		ln -s "./.vnc/xstartup" "${MNT_TARGET}${user_home}/.xinitrc"
 		# set password for user
-		chroot ${MNT_TARGET} sh -c "printf '%s\n' ${USER_PASSWORD} ${USER_PASSWORD} | passwd ${USER_NAME}"
-		chroot ${MNT_TARGET} sh -c "echo ${USER_PASSWORD} | vncpasswd -f > ${user_home}/.vnc/passwd" ||
-		echo "MPTcXfgXGiY=" | base64 -d > ${MNT_TARGET}${user_home}/.vnc/passwd
-		chmod 600 ${MNT_TARGET}${user_home}/.vnc/passwd
+		echo ${USER_NAME}:${USER_PASSWORD} | chroot_exec chpasswd
+		echo ${USER_PASSWORD} | chroot_exec vncpasswd -f > "${MNT_TARGET}${user_home}/.vnc/passwd" ||
+		echo "MPTcXfgXGiY=" | base64 -d > "${MNT_TARGET}${user_home}/.vnc/passwd"
+		chmod 600 "${MNT_TARGET}${user_home}/.vnc/passwd"
 		# set permissions
-		chown -R ${user_id}:${group_id} ${MNT_TARGET}${user_home} || true
+		chown -R ${user_id}:${group_id} "${MNT_TARGET}${user_home}" || true
 	;;
 	dbus)
 		case "${DISTRIB}" in
 		debian|ubuntu|kalilinux|archlinux)
-			mkdir ${MNT_TARGET}/run/dbus || true
-			chmod 755 ${MNT_TARGET}/run/dbus
+			mkdir "${MNT_TARGET}/run/dbus" || true
+			chmod 755 "${MNT_TARGET}/run/dbus"
 		;;
 		fedora)
-			mkdir ${MNT_TARGET}/var/run/dbus || true
-			chmod 755 ${MNT_TARGET}/var/run/dbus
-			chroot ${MNT_TARGET} sh -c "dbus-uuidgen > /etc/machine-id"
+			mkdir "${MNT_TARGET}/var/run/dbus" || true
+			chmod 755 "${MNT_TARGET}/var/run/dbus"
+			chroot_exec dbus-uuidgen > "${MNT_TARGET}/etc/machine-id"
 		;;
 		esac
 	;;
 	xorg)
 		# Xwrapper.config
-		mkdir -p ${MNT_TARGET}/etc/X11
-		if [ -n "$(grep -e '^allowed_users' ${MNT_TARGET}/etc/X11/Xwrapper.config)" ]; then
-			sed -i 's/^allowed_users=.*/allowed_users=anybody/g' ${MNT_TARGET}/etc/X11/Xwrapper.config
+		mkdir -p "${MNT_TARGET}/etc/X11"
+		if $(grep -q '^allowed_users' "${MNT_TARGET}/etc/X11/Xwrapper.config"); then
+			sed -i 's/^allowed_users=.*/allowed_users=anybody/g' "${MNT_TARGET}/etc/X11/Xwrapper.config"
 		else
-			echo "allowed_users=anybody" >> ${MNT_TARGET}/etc/X11/Xwrapper.config
+			echo "allowed_users=anybody" >> "${MNT_TARGET}/etc/X11/Xwrapper.config"
 		fi
 		# xorg.conf
-		mkdir -p ${MNT_TARGET}/etc/X11
+		mkdir -p "${MNT_TARGET}/etc/X11"
 		local xorg_conf="${MNT_TARGET}/etc/X11/xorg.conf"
-		[ -e "${xorg_conf}" ] && cp ${xorg_conf} ${xorg_conf}.bak
-		cp ${ENV_DIR%/}/share/xorg.conf ${xorg_conf}
-		chmod 644 ${xorg_conf}
+		[ -e "${xorg_conf}" ] && cp "${xorg_conf}" "${xorg_conf}.bak"
+		cp "${ENV_DIR%/}/share/xorg.conf" "${xorg_conf}"
+		chmod 644 "${xorg_conf}"
 		# specific configuration
 		case "${DISTRIB}" in
 		gentoo)
 			# set Xorg make configuration
-			if [ -z "$(grep '^INPUT_DEVICES=' ${MNT_TARGET}/etc/portage/make.conf)" ]; then
-				echo 'INPUT_DEVICES="evdev"' >> ${MNT_TARGET}/etc/portage/make.conf
+			if $(grep -q '^INPUT_DEVICES=' "${MNT_TARGET}/etc/portage/make.conf"); then
+				sed -i 's|^\(INPUT_DEVICES=\).*|\1"evdev"|g' "${MNT_TARGET}/etc/portage/make.conf"
 			else
-				sed -i 's|^\(INPUT_DEVICES=\).*|\1"evdev"|g' ${MNT_TARGET}/etc/portage/make.conf
+				echo 'INPUT_DEVICES="evdev"' >> "${MNT_TARGET}/etc/portage/make.conf"
 			fi
-			if [ -z "$(grep '^VIDEO_CARDS=' ${MNT_TARGET}/etc/portage/make.conf)" ]; then
-				echo 'VIDEO_CARDS="fbdev"' >> ${MNT_TARGET}/etc/portage/make.conf
+			if $(grep -q '^VIDEO_CARDS=' "${MNT_TARGET}/etc/portage/make.conf"); then
+				sed -i 's|^\(VIDEO_CARDS=\).*|\1"fbdev"|g' "${MNT_TARGET}/etc/portage/make.conf"
 			else
-				sed -i 's|^\(VIDEO_CARDS=\).*|\1"fbdev"|g' ${MNT_TARGET}/etc/portage/make.conf
+				echo 'VIDEO_CARDS="fbdev"' >> "${MNT_TARGET}/etc/portage/make.conf"
 			fi
 		;;
 		opensuse)
-			[ -e "${MNT_TARGET}/usr/bin/Xorg" ] && chmod +s ${MNT_TARGET}/usr/bin/Xorg
+			[ -e "${MNT_TARGET}/usr/bin/Xorg" ] && chmod +s "${MNT_TARGET}/usr/bin/Xorg"
 		;;
 		esac
 	;;
@@ -1011,12 +1036,12 @@ msg -n "$1 ... "
 		local platform=$(get_platform)
 		case "${platform}" in
 		arm)
-			local qemu_static=$(which qemu-i386-static)
-			local qemu_target=${MNT_TARGET%/}/usr/local/bin/qemu-i386-static
+			local qemu_static="$(which qemu-i386-static)"
+			local qemu_target="${MNT_TARGET}/usr/local/bin/qemu-i386-static"
 		;;
 		intel)
-			local qemu_static=$(which qemu-arm-static)
-			local qemu_target=${MNT_TARGET%/}/usr/local/bin/qemu-arm-static
+			local qemu_static="$(which qemu-arm-static)"
+			local qemu_target="${MNT_TARGET}/usr/local/bin/qemu-arm-static"
 		;;
 		*)
 			exit 0
@@ -1024,48 +1049,48 @@ msg -n "$1 ... "
 		esac
 		[ -e "${qemu_target}" ] && exit 0
 		[ -z "${qemu_static}" ] && exit 1
-		mkdir -p ${MNT_TARGET%/}/usr/local/bin || true
-		cp ${qemu_static} ${qemu_target}
-		chown 0:0 ${qemu_target}
-		chmod 755 ${qemu_target}
+		mkdir -p "${MNT_TARGET}/usr/local/bin" || true
+		cp "${qemu_static}" "${qemu_target}"
+		chown 0:0 "${qemu_target}"
+		chmod 755 "${qemu_target}"
 	;;
 	unchroot)
-		local unchroot=${MNT_TARGET}/bin/unchroot
-		echo '#!/bin/sh' > ${unchroot}
-		echo "PATH=${PATH}" >> ${unchroot}
-		echo 'if [ $# -eq 0 ]; then' >> ${unchroot}
-		echo 'chroot /proc/1/cwd su -' >> ${unchroot}
-		echo 'else' >> ${unchroot}
-		echo 'chroot /proc/1/cwd $*' >> ${unchroot}
-		echo 'fi' >> ${unchroot}
-		chmod 755 ${unchroot}
+		local unchroot="${MNT_TARGET}/bin/unchroot"
+		echo '#!/bin/sh' > "${unchroot}"
+		echo "PATH=$PATH" >> "${unchroot}"
+		echo 'if [ $# -eq 0 ]; then' >> "${unchroot}"
+		echo 'chroot /proc/1/cwd su -' >> "${unchroot}"
+		echo 'else' >> "${unchroot}"
+		echo 'chroot /proc/1/cwd $@' >> "${unchroot}"
+		echo 'fi' >> "${unchroot}"
+		chmod 755 "${unchroot}"
 	;;
 	android)
 		[ -e "/system" ] || exit 0
-		[ ! -L "${MNT_TARGET}/system" ] && ln -s /mnt/system ${MNT_TARGET}/system
-		local reboot=$(which reboot)
+		[ ! -L "${MNT_TARGET}/system" ] && ln -s "/mnt/system" "${MNT_TARGET}/system"
+		local reboot="$(which reboot)"
 		if [ -n "${reboot}" ]; then
-			rm ${MNT_TARGET}/sbin/reboot || true
-			ln -s ${reboot} ${MNT_TARGET}/sbin/reboot
+			rm -f "${MNT_TARGET}/sbin/reboot" || true
+			ln -s "${reboot}" "${MNT_TARGET}/sbin/reboot"
 		fi
-		local shutdown=$(which shutdown)
+		local shutdown="$(which shutdown)"
 		if [ -n "${shutdown}" ]; then
-			rm ${MNT_TARGET}/sbin/shutdown || true
-			ln -s ${shutdown} ${MNT_TARGET}/sbin/shutdown
+			rm -f "${MNT_TARGET}/sbin/shutdown" || true
+			ln -s "${shutdown}" "${MNT_TARGET}/sbin/shutdown"
 		fi
 	;;
 	misc)
 		# Fix for upstart (Ubuntu)
 		if [ -e "${MNT_TARGET}/sbin/initctl" ]; then
-			chroot ${MNT_TARGET} dpkg-divert --local --rename --add /sbin/initctl
-			chroot ${MNT_TARGET} ln -s /bin/true /sbin/initctl
+			chroot_exec dpkg-divert --local --rename --add /sbin/initctl
+			chroot_exec ln -s /bin/true /sbin/initctl
 		fi
 		# Fix for yum (Fedora)
 		if [ -e "${MNT_TARGET}/usr/bin/yum-deprecated" ]; then
-			rm ${MNT_TARGET}/usr/bin/yum || true
-			echo '#!/bin/sh' > ${MNT_TARGET}/usr/bin/yum
-			echo '/usr/bin/yum-deprecated $*' >> ${MNT_TARGET}/usr/bin/yum
-			chmod 755 ${MNT_TARGET}/usr/bin/yum
+			rm -f "${MNT_TARGET}/usr/bin/yum" || true
+			echo '#!/bin/sh' > "${MNT_TARGET}/usr/bin/yum"
+			echo '/usr/bin/yum-deprecated $*' >> "${MNT_TARGET}/usr/bin/yum"
+			chmod 755 "${MNT_TARGET}/usr/bin/yum"
 		fi
 	;;
 	esac
@@ -1149,10 +1174,10 @@ msg "Installing additional components: "
 		done
 		[ -z "$pkgs" ] && return 1
 		export DEBIAN_FRONTEND=noninteractive
-		chroot ${MNT_TARGET} apt-get update -yq
-		chroot ${MNT_TARGET} apt-get install -yf
-		chroot ${MNT_TARGET} apt-get install ${pkgs} --no-install-recommends -yq
-		chroot ${MNT_TARGET} apt-get clean
+		chroot_exec -u root "apt-get update -yq"
+		chroot_exec -u root "apt-get install -yf"
+		chroot_exec -u root "apt-get install ${pkgs} --no-install-recommends -yq"
+		chroot_exec -u root "apt-get clean"
 	;;
 	archlinux)
 		local pkgs=""
@@ -1192,8 +1217,8 @@ msg "Installing additional components: "
 		done
 		[ -z "${pkgs}" ] && return 1
 		#rm -f ${MNT_TARGET}/var/lib/pacman/db.lck || true
-		chroot ${MNT_TARGET} pacman -Syq --noconfirm ${pkgs}
-		rm -f ${MNT_TARGET}/var/cache/pacman/pkg/* || true
+		chroot_exec -u root "pacman -Syq --noconfirm ${pkgs}"
+		rm -f "${MNT_TARGET}"/var/cache/pacman/pkg/* || true
 	;;
 	fedora)
 		local pkgs=""
@@ -1233,9 +1258,9 @@ msg "Installing additional components: "
 			esac
 		done
 		[ -z "${pkgs}" ] && return 1
-		chroot ${MNT_TARGET} yum install ${pkgs} --nogpgcheck --skip-broken -y
-		[ -n "${igrp}" ] && chroot ${MNT_TARGET} yum groupinstall "${igrp}" --nogpgcheck --skip-broken -y
-		chroot ${MNT_TARGET} yum clean all
+		chroot_exec -u root "yum install ${pkgs} --nogpgcheck --skip-broken -y"
+		[ -n "${igrp}" ] && chroot_exec -u root "yum groupinstall "${igrp}" --nogpgcheck --skip-broken -y"
+		chroot_exec -u root "yum clean all"
 	;;
 	opensuse)
 		local pkgs=""
@@ -1274,8 +1299,8 @@ msg "Installing additional components: "
 			esac
 		done
 		[ -z "${pkgs}" ] && return 1
-		chroot ${MNT_TARGET} zypper --no-gpg-checks --non-interactive install ${pkgs}
-		chroot ${MNT_TARGET} zypper clean
+		chroot_exec -u root "zypper --no-gpg-checks --non-interactive install ${pkgs}"
+		chroot_exec -u root "zypper clean"
 	;;
 	gentoo)
 		local pkgs=""
@@ -1307,11 +1332,11 @@ msg "Installing additional components: "
 			;;
 			vnc)
 				# set server USE flag for tightvnc
-				if [ -z "$(grep '^net-misc/tightvnc' ${MNT_TARGET}/etc/portage/package.use)" ]; then
-					echo "net-misc/tightvnc server" >> ${MNT_TARGET}/etc/portage/package.use
+				if ! $(grep -q '^net-misc/tightvnc' "${MNT_TARGET}/etc/portage/package.use"); then
+					echo "net-misc/tightvnc server" >> "${MNT_TARGET}/etc/portage/package.use"
 				fi
-				if [ -z "$(grep '^net-misc/tightvnc.*server' ${MNT_TARGET}/etc/portage/package.use)" ]; then
-					sed -i "s|^\(net-misc/tightvnc.*\)|\1 server|g" ${MNT_TARGET}/etc/portage/package.use
+				if ! $(grep -q '^net-misc/tightvnc.*server' "${MNT_TARGET}/etc/portage/package.use"); then
+					sed -i "s|^\(net-misc/tightvnc.*\)|\1 server|g" "${MNT_TARGET}/etc/portage/package.use"
 				fi
 				pkgs="${pkgs} tightvnc"
 			;;
@@ -1321,9 +1346,9 @@ msg "Installing additional components: "
 			esac
 		done
 		[ -z "${pkgs}" ] && return 1
-		chroot ${MNT_TARGET} emerge --autounmask-write ${pkgs} || {
-			mv ${MNT_TARGET}/etc/portage/._cfg0000_package.use ${MNT_TARGET}/etc/portage/package.use
-			chroot ${MNT_TARGET} emerge ${pkgs}
+		chroot_exec -u root "emerge --autounmask-write ${pkgs}" || {
+			mv "${MNT_TARGET}/etc/portage/._cfg0000_package.use" "${MNT_TARGET}/etc/portage/package.use"
+			chroot_exec -u root "emerge ${pkgs}"
 		}
 	;;
 	slackware)
@@ -1337,8 +1362,8 @@ msg "Installing additional components: "
 			esac
 		done
 		[ -z "${pkgs}" ] && return 1
-		chroot ${MNT_TARGET} slackpkg update || true
-		chroot ${MNT_TARGET} slackpkg -checkgpg=off -batch=on -default_answer=y install ${pkgs}
+		chroot_exec -u root "slackpkg update" || true
+		chroot_exec -u root "slackpkg -checkgpg=off -batch=on -default_answer=y install ${pkgs}"
 	;;
 	*)
 		msg " ...not supported"
@@ -1366,15 +1391,15 @@ debian|ubuntu|kalilinux)
 	local basic_packages="locales,sudo,man-db"
 
 	(set -e
-		DEBOOTSTRAP_DIR=${ENV_DIR%/}/share/debootstrap
-		. ${DEBOOTSTRAP_DIR}/debootstrap --no-check-gpg --arch ${ARCH} --foreign --extractor=ar --include=${basic_packages} ${SUITE} ${MNT_TARGET} ${MIRROR}
+		DEBOOTSTRAP_DIR="${ENV_DIR%/}/share/debootstrap"
+		. "${DEBOOTSTRAP_DIR}/debootstrap" --no-check-gpg --arch "${ARCH}" --foreign --extractor=ar --include="${basic_packages}" "${SUITE}" "${MNT_TARGET}" "${MIRROR}"
 	exit 0) 1>&3 2>&3
 	[ $? -ne 0 ] && return 1
 
 	configure_container qemu dns mtab
 
 	unset DEBOOTSTRAP_DIR
-	chroot ${MNT_TARGET} /debootstrap/debootstrap --second-stage 1>&3 2>&3
+	chroot_exec /debootstrap/debootstrap --second-stage 1>&3 2>&3
 	[ $? -ne 0 ] && return 1
 
 	mount_container
@@ -1396,13 +1421,13 @@ archlinux)
 
 	msg -n "Preparing for deployment ... "
 	(set -e
-		cd ${MNT_TARGET}
+		cd "${MNT_TARGET}"
 		mkdir etc
 		echo "root:x:0:0:root:/root:/bin/bash" > etc/passwd
 		echo "root:x:0:" > etc/group
 		touch etc/fstab
 		mkdir tmp; chmod 01777 tmp
-		mkdir -p ${cache_dir}
+		mkdir -p "${cache_dir}"
 	exit 0)
 	[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 
@@ -1411,7 +1436,8 @@ archlinux)
 	[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 
 	msg "Retrieving base packages: "
-	for package in ${basic_packages}; do
+	for package in ${basic_packages}
+	do
 		msg -n "${package} ... "
 		local pkg_file=$(echo "${pkg_list}" | grep -m1 -e "^${package}-[[:digit:]].*\.xz$" -e "^${package}-[[:digit:]].*\.gz$")
 		test "${pkg_file}" || { msg "fail"; return 1; }
@@ -1419,13 +1445,13 @@ archlinux)
 		for i in 1 2 3
 		do
 			[ ${i} -gt 1 ] && sleep 30s
-			wget -q -c -O ${cache_dir}/${pkg_file} ${repo}/${pkg_file}
+			wget -q -c -O "${cache_dir}/${pkg_file}" "${repo}/${pkg_file}"
 			[ $? -eq 0 ] && break
 		done
 		# unpack
 		case "${pkg_file}" in
-		*.gz) tar xzf ${cache_dir}/${pkg_file} -C ${MNT_TARGET};;
-		*.xz) xz -dc ${cache_dir}/${pkg_file} | tar x -C ${MNT_TARGET};;
+		*.gz) tar xzf "${cache_dir}/${pkg_file}" -C "${MNT_TARGET}";;
+		*.xz) xz -dc "${cache_dir}/${pkg_file}" | tar x -C "${MNT_TARGET}";;
 		*) msg "fail"; return 1;;
 		esac
 		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
@@ -1433,20 +1459,18 @@ archlinux)
 
 	mount_container
 
-	configure_container qemu dns mtab repository
+	configure_container qemu dns mtab groups repository
 
 	msg "Installing base packages: "
 	(set -e
-		chroot ${MNT_TARGET} /usr/bin/pacman --noconfirm -Sy
-		extra_packages=$(chroot ${MNT_TARGET} /usr/bin/pacman --noconfirm -Sg base | awk '{print $2}' | grep -v -e 'linux' -e 'kernel')
-		chroot ${MNT_TARGET} /usr/bin/pacman --noconfirm --force -Sq ${basic_packages} ${extra_packages}
+		chroot_exec -u root "/usr/bin/pacman --noconfirm -Sy"
+		extra_packages=$(chroot_exec -u root "/usr/bin/pacman --noconfirm -Sg base" | awk '{print $2}' | grep -v -e 'linux' -e 'kernel' | xargs)
+		chroot_exec -u root "/usr/bin/pacman --noconfirm --force -Sq ${basic_packages} ${extra_packages}"
 	exit 0) 1>&3 2>&3
 	[ $? -ne 0 ] && return 1
 
 	msg -n "Clearing cache ... "
-	(set -e
-		rm -f ${cache_dir}/* $(find ${MNT_TARGET} -type f -name "*.pacorig")
-	exit 0)
+	rm -f "${cache_dir}"/* "${MNT_TARGET}/.INSTALL" "${MNT_TARGET}/.MTREE" "${MNT_TARGET}/.PKGINFO" $(find "${MNT_TARGET}" -type f -name "*.pacorig")
 	[ $? -eq 0 ] && msg "done" || msg "fail"
 ;;
 fedora)
@@ -1464,7 +1488,7 @@ fedora)
 
 	msg -n "Preparing for deployment ... "
 	(set -e
-		cd ${MNT_TARGET}
+		cd "${MNT_TARGET}"
 		mkdir etc
 		echo "root:x:0:0:root:/root:/bin/bash" > etc/passwd
 		echo "root:x:0:" > etc/group
@@ -1476,48 +1500,52 @@ fedora)
 	msg -n "Retrieving packages list ... "
 	local pkg_list="${MNT_TARGET}/tmp/packages.list"
 	(set -e
-		repodata=$(wget -q -O - ${repo}/repodata | sed -n '/<a / s/^.*<a [^>]*href="\([^\"]*\-primary\.xml\.gz\)".*$/\1/p')
+		repodata=$(wget -q -O - "${repo}/repodata/repomd.xml" | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\-primary\.xml\.gz\)".*$/\1/p')
 		[ -z "${repodata}" ] && exit 1
-		wget -q -O - ${repo}/repodata/${repodata} | gzip -dc | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\)".*$/\1/p' > ${pkg_list}
+		wget -q -O - "${repo}/${repodata}" | gzip -dc | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\)".*$/\1/p' > "${pkg_list}"
 	exit 0)
 	[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 
 	msg "Retrieving base packages: "
-	for package in ${basic_packages}; do
+	for package in ${basic_packages}
+	do
 		msg -n "${package} ... "
-		local pkg_url=$(grep -m1 -e "^.*/${package}-[0-9][0-9\.\-].*\.rpm$" ${pkg_list})
+		local pkg_url=$(grep -m1 -e "^.*/${package}-[0-9][0-9\.\-].*\.rpm$" "${pkg_list}")
 		test "${pkg_url}" || { msg "skip"; continue; }
-		local pkg_file=$(basename ${pkg_url})
+		local pkg_file=$(basename "${pkg_url}")
 		# download
 		for i in 1 2 3
 		do
 			[ ${i} -gt 1 ] && sleep 30s
-			wget -q -c -O ${MNT_TARGET}/tmp/${pkg_file} ${repo}/${pkg_url}
+			wget -q -c -O "${MNT_TARGET}/tmp/${pkg_file}" "${repo}/${pkg_url}"
 			[ $? -eq 0 ] && break
 		done
 		# unpack
-		(cd ${MNT_TARGET}; rpm2cpio ${MNT_TARGET}/tmp/${pkg_file} | cpio -idmu)
+		(cd "${MNT_TARGET}"; rpm2cpio "${MNT_TARGET}/tmp/${pkg_file}" | cpio -idmu)
 		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 	done
 
 	configure_container qemu
 
 	msg "Installing base packages: "
-	chroot ${MNT_TARGET} /bin/rpm -iv --force --nosignature --nodeps /tmp/*.rpm 1>&3 2>&3
+	chroot_exec /bin/rpm -iv --force --nosignature --nodeps /tmp/*.rpm 1>&3 2>&3
+
 	msg -n "Updating packages database ... "
-	chroot ${MNT_TARGET} /bin/rpm -i --force --nosignature --nodeps --justdb /tmp/*.rpm
+	chroot_exec /bin/rpm -i --force --nosignature --nodeps --justdb /tmp/*.rpm
 	[ $? -eq 0 ] && msg "done" || msg "fail"
-	# clean cache
-	rm -rf ${MNT_TARGET}/tmp/*
+
+	msg -n "Clearing cache ... "
+	rm -rf "${MNT_TARGET}"/tmp/*
+	[ $? -eq 0 ] && msg "done" || msg "fail"
 
 	mount_container
 
-	configure_container dns mtab misc repository
+	configure_container dns mtab misc groups repository
 
 	msg "Installing minimal environment: "
 	(set -e
-		chroot ${MNT_TARGET} yum groupinstall minimal-environment --nogpgcheck --skip-broken -y --exclude openssh-server
-		chroot ${MNT_TARGET} yum clean all
+		chroot_exec -u root "yum groupinstall minimal-environment --nogpgcheck --skip-broken -y --exclude openssh-server"
+		chroot_exec -u root "yum clean all"
 	exit 0) 1>&3 2>&3
 	[ $? -ne 0 ] && return 1
 ;;
@@ -1542,7 +1570,7 @@ opensuse)
 
 	msg -n "Preparing for deployment ... "
 	(set -e
-		cd ${MNT_TARGET}
+		cd "${MNT_TARGET}"
 		mkdir etc
 		echo "root:x:0:0:root:/root:/bin/bash" > etc/passwd
 		echo "root:x:0:" > etc/group
@@ -1554,37 +1582,40 @@ opensuse)
 	msg -n "Retrieving packages list ... "
 	local pkg_list="$MNT_TARGET/tmp/packages.list"
 	(set -e
-		repodata=$(wget -q -O - ${repo}/repodata | sed -n '/<a / s/^.*<a [^>]*href="\([^\"]*\-primary\.xml\.gz\)".*$/\1/p')
+		repodata=$(wget -q -O - "${repo}/repodata/repomd.xml" | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\-primary\.xml\.gz\)".*$/\1/p')
 		[ -z "${repodata}" ] && exit 1
-		wget -q -O - ${repo}/repodata/${repodata} | gzip -dc | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\)".*$/\1/p' > ${pkg_list}
+		wget -q -O - "${repo}/${repodata}" | gzip -dc | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\)".*$/\1/p' > "${pkg_list}"
 	exit 0)
 	[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 
 	msg "Retrieving base packages: "
-	for package in ${basic_packages}; do
+	for package in ${basic_packages}
+	do
 		msg -n "${package} ... "
-		local pkg_url=$(grep -e "^${ARCH}" -e "^noarch" ${pkg_list} | grep -m1 -e "/${package}-[0-9]\{1,4\}\..*\.rpm$")
+		local pkg_url=$(grep -e "^${ARCH}" -e "^noarch" "${pkg_list}" | grep -m1 -e "/${package}-[0-9]\{1,4\}\..*\.rpm$")
 		test "${pkg_url}" || { msg "fail"; return 1; }
-		local pkg_file=$(basename ${pkg_url})
+		local pkg_file=$(basename "${pkg_url}")
 		# download
 		for i in 1 2 3
 		do
 			[ ${i} -gt 1 ] && sleep 30s
-			wget -q -c -O ${MNT_TARGET}/tmp/${pkg_file} ${repo}/${pkg_url}
+			wget -q -c -O "${MNT_TARGET}/tmp/${pkg_file}" "${repo}/${pkg_url}"
 			[ $? -eq 0 ] && break
 		done
 		# unpack
-		(cd ${MNT_TARGET}; rpm2cpio ${MNT_TARGET}/tmp/${pkg_file} | cpio -idmu)
+		(cd "${MNT_TARGET}"; rpm2cpio "${MNT_TARGET}/tmp/${pkg_file}" | cpio -idmu)
 		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 	done
 
 	configure_container qemu
 
 	msg "Installing base packages: "
-	chroot ${MNT_TARGET} /bin/rpm -iv --force --nosignature --nodeps /tmp/*.rpm 1>&3 2>&3
+	chroot_exec /bin/rpm -iv --force --nosignature --nodeps /tmp/*.rpm 1>&3 2>&3
 	[ $? -ne 0 ] && return 1
-	# clean cache
-	rm -rf ${MNT_TARGET}/tmp/*
+
+	msg -n "Clearing cache ... "
+	rm -rf "${MNT_TARGET}"/tmp/*
+	[ $? -eq 0 ] && msg "done" || msg "fail"
 
 	mount_container
 ;;
@@ -1593,7 +1624,7 @@ gentoo)
 
 	msg -n "Preparing for deployment ... "
 	(set -e
-		cd ${MNT_TARGET}
+		cd "${MNT_TARGET}"
 		mkdir tmp; chmod 01777 tmp
 	exit 0)
 	[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
@@ -1608,49 +1639,49 @@ gentoo)
 	for i in 1 2 3
 	do
 		[ ${i} -gt 1 ] && sleep 30s
-		wget -c -O ${stage3} ${repo}/${archive}
+		wget -c -O "${stage3}" "${repo}/${archive}"
 		[ $? -eq 0 ] && break
 	done
 	[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 
 	msg -n "Unpacking stage3 archive ... "
 	(set -e
-		tar xjpf ${stage3} -C ${MNT_TARGET}
-		rm ${stage3}
+		tar xjf "${stage3}" -C "${MNT_TARGET}"
+		rm -f "${stage3}"
 	exit 0)
 	[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 
 	mount_container
 
-	configure_container qemu dns mtab repository
+	configure_container qemu dns mtab groups repository
 
 	msg -n "Updating portage tree ... "
 	(set -e
-		chroot ${MNT_TARGET} emerge --sync
-		chroot ${MNT_TARGET} eselect profile set 1
+		chroot_exec -u root "emerge --sync"
+		chroot_exec -u root "eselect profile set 1"
 	exit 0) 1>/dev/null
 	[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 
 	msg "Installing base packages: "
 	(set -e
-		chroot ${MNT_TARGET} emerge sudo
+		chroot_exec -u root "emerge sudo"
 	exit 0) 1>&3 2>&3
 	[ $? -eq 0 ] || return 1
 
 	msg -n "Updating configuration ... "
-	find ${MNT_TARGET}/ -name "._cfg0000_*" | while read f; do mv "${f}" "$(echo ${f} | sed 's/._cfg0000_//g')"; done
+	find "${MNT_TARGET}/" -name "._cfg0000_*" | while read f; do mv "${f}" "$(echo ${f} | sed 's/._cfg0000_//g')"; done
 	[ $? -eq 0 ] && msg "done" || msg "skip"
 ;;
 slackware)
 	msg "Installing Slackware distribution: "
 
-	local repo=${MIRROR%/}/slackware
-	local cache_dir=${MNT_TARGET}/tmp
+	local repo="${MIRROR%/}/slackware"
+	local cache_dir="${MNT_TARGET}/tmp"
 	local extra_packages="l/glibc l/libtermcap l/ncurses ap/diffutils ap/groff ap/man ap/nano ap/slackpkg ap/sudo n/gnupg n/wget"
 
 	msg -n "Preparing for deployment ... "
 	(set -e
-		cd ${MNT_TARGET}
+		cd "${MNT_TARGET}"
 		mkdir etc
 		touch etc/fstab
 		mkdir tmp; chmod 01777 tmp
@@ -1658,42 +1689,43 @@ slackware)
 	[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 
 	msg -n "Retrieving packages list ... "
-	local basic_packages=$(wget -q -O - ${repo}/a/tagfile | grep -v -e 'kernel' -e 'efibootmgr' -e 'lilo' -e 'grub' | awk -F: '{if ($1!="") print "a/"$1}')
+	local basic_packages=$(wget -q -O - "${repo}/a/tagfile" | grep -v -e 'kernel' -e 'efibootmgr' -e 'lilo' -e 'grub' | awk -F: '{if ($1!="") print "a/"$1}')
 	local pkg_list="${cache_dir}/packages.list"
-	wget -q -O - ${repo}/FILE_LIST | grep -o -e '/.*\.\tgz$' -e '/.*\.\txz$' > ${pkg_list}
+	wget -q -O - "${repo}/FILE_LIST" | grep -o -e '/.*\.\tgz$' -e '/.*\.\txz$' > "${pkg_list}"
 	[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 
 	msg "Retrieving base packages: "
-	for package in ${basic_packages} ${extra_packages}; do
+	for package in ${basic_packages} ${extra_packages}
+	do
 		msg -n "${package} ... "
-		local pkg_url=$(grep -m1 -e "/${package}\-" ${pkg_list})
+		local pkg_url=$(grep -m1 -e "/${package}\-" "${pkg_list}")
 		test "${pkg_url}" || { msg "fail"; return 1; }
-		local pkg_file=$(basename ${pkg_url})
+		local pkg_file=$(basename "${pkg_url}")
 		# download
 		for i in 1 2 3
 		do
 			[ ${i} -gt 1 ] && sleep 30s
-			wget -q -c -O ${cache_dir}/${pkg_file} ${repo}${pkg_url}
+			wget -q -c -O "${cache_dir}/${pkg_file}" "${repo}${pkg_url}"
 	    		[ $? -eq 0 ] && break
 	    	done
 		# unpack
 		case "${pkg_file}" in
-		*gz) tar xzf ${cache_dir}/${pkg_file} -C ${MNT_TARGET};;
-		*xz) tar xJf ${cache_dir}/${pkg_file} -C ${MNT_TARGET};;
+		*gz) tar xzf "${cache_dir}/${pkg_file}" -C "${MNT_TARGET}";;
+		*xz) tar xJf "${cache_dir}/${pkg_file}" -C "${MNT_TARGET}";;
 		*) msg "fail"; return 1;;
 		esac
 		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 		# install
 		if [ -e "${MNT_TARGET}/install/doinst.sh" ]; then
-			(cd ${MNT_TARGET}; . ./install/doinst.sh)
+			(cd "${MNT_TARGET}"; . ./install/doinst.sh)
 		fi
 		if [ -e "${MNT_TARGET}/install" ]; then
-			rm -rf ${MNT_TARGET}/install
+			rm -rf "${MNT_TARGET}/install"
 		fi
 	done
 
 	msg -n "Clearing cache ... "
-	rm -f ${cache_dir}/*
+	rm -f "${cache_dir}"/*
 	[ $? -eq 0 ] && msg "done" || msg "fail"
 
 	mount_container
@@ -1703,13 +1735,13 @@ rootfs)
 	if [ -n "$(echo ${MIRROR} | grep -i 'gz$')" ]; then
 		if [ -e "${MIRROR}" ]; then
 			(set -e
-				tar xzpvf "${MIRROR}" -C ${MNT_TARGET}
+				tar xzvf "${MIRROR}" -C "${MNT_TARGET}"
 			exit 0) 1>&3 2>&3
 			[ $? -eq 0 ] || return 1
 		fi
 		if [ -n "$(echo ${MIRROR} | grep -i '^http')" ]; then
 			(set -e
-				wget -q -O - "${MIRROR}" | tar xzpv -C ${MNT_TARGET}
+				wget -q -O - "${MIRROR}" | tar xzv -C "${MNT_TARGET}"
 			exit 0) 1>&3 2>&3
 			[ $? -eq 0 ] || return 1
 		fi
@@ -1717,13 +1749,13 @@ rootfs)
 	if [ -n "$(echo ${MIRROR} | grep -i 'bz2$')" ]; then
 		if [ -e "${MIRROR}" ]; then
 			(set -e
-				tar xjpvf "${MIRROR}" -C ${MNT_TARGET}
+				tar xjvf "${MIRROR}" -C "${MNT_TARGET}"
 			exit 0) 1>&3 2>&3
 			[ $? -eq 0 ] || return 1
 		fi
 		if [ -n "$(echo ${MIRROR} | grep -i '^http')" ]; then
 			(set -e
-				wget -q -O - "${MIRROR}" | tar xjpv -C ${MNT_TARGET}
+				wget -q -O - "${MIRROR}" | tar xjv -C "${MNT_TARGET}"
 			exit 0) 1>&3 2>&3
 			[ $? -eq 0 ] || return 1
 		fi
@@ -1731,18 +1763,18 @@ rootfs)
 	if [ -n "$(echo ${MIRROR} | grep -i 'xz$')" ]; then
 		if [ -e "${MIRROR}" ]; then
 			(set -e
-				tar xJpvf "${MIRROR}" -C ${MNT_TARGET}
+				tar xJvf "${MIRROR}" -C "${MNT_TARGET}"
 			exit 0) 1>&3 2>&3
 			[ $? -eq 0 ] || return 1
 		fi
 		if [ -n "$(echo ${MIRROR} | grep -i '^http')" ]; then
 			(set -e
-				wget -q -O - "${MIRROR}" | tar xJpv -C ${MNT_TARGET}
+				wget -q -O - "${MIRROR}" | tar xJv -C "${MNT_TARGET}"
 			exit 0) 1>&3 2>&3
 			[ $? -eq 0 ] || return 1
 		fi
 	fi
-	[ "$(ls ${MNT_TARGET} | wc -l)" -le 1 ] && { msg " ...installation failed."; return 1; }
+	[ $(ls "${MNT_TARGET}" | wc -l) -le 1 ] && { msg " ...installation failed."; return 1; }
 
 	mount_container
 ;;
@@ -1769,12 +1801,12 @@ container_mounted || mount_container root
 case "${rootfs_archive}" in
 *gz)
 	msg -n "Exporting rootfs as tar.gz archive ... "
-	tar cpzvf ${rootfs_archive} --one-file-system -C ${MNT_TARGET} .
+	tar czvf "${rootfs_archive}" --one-file-system -C "${MNT_TARGET}" .
 	[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 ;;
 *bz2)
 	msg -n "Exporting rootfs as tar.bz2 archive ... "
-	tar cpjvf ${rootfs_archive} --one-file-system -C ${MNT_TARGET} .
+	tar cjvf "${rootfs_archive}" --one-file-system -C "${MNT_TARGET}" .
 	[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 ;;
 *)
@@ -1787,19 +1819,19 @@ esac
 status_container()
 {
 msg -n "Linux Deploy version: "
-msg "$(cat ${ENV_DIR%/}/etc/version)"
+msg $(cat "${ENV_DIR%/}/etc/version")
 
 msg -n "Device: "
-msg "$(getprop ro.product.model || echo unknown)"
+msg $(getprop ro.product.model || echo unknown)
 
 msg -n "Android: "
-msg "$(getprop ro.build.version.release || echo unknown)"
+msg $(getprop ro.build.version.release || echo unknown)
 
 msg -n "Architecture: "
-msg "$(uname -m)"
+msg $(uname -m)
 
 msg -n "Kernel: "
-msg "$(uname -r)"
+msg $(uname -r)
 
 msg -n "Memory: "
 local mem_total=$(grep ^MemTotal /proc/meminfo | awk '{print $2}')
@@ -1840,7 +1872,7 @@ gui_started && msg "yes" || msg "no"
 
 msg "Mounted parts on Linux: "
 local is_mounted=0
-for i in $(grep ${MNT_TARGET} /proc/mounts | awk '{print $2}' | sed "s|${MNT_TARGET}/*|/|g")
+for i in $(grep "${MNT_TARGET}" /proc/mounts | awk '{print $2}' | sed "s|${MNT_TARGET}/*|/|g")
 do
 	msg "* $i"
 	local is_mounted=1
@@ -1849,7 +1881,7 @@ done
 
 msg "Available mount points: "
 local is_mountpoints=0
-for p in $(grep -v ${MNT_TARGET} /proc/mounts | grep ^/ | awk '{print $2":"$3}')
+for p in $(grep -v "${MNT_TARGET}" /proc/mounts | grep ^/ | awk '{print $2":"$3}')
 do
 	local part=$(echo $p | awk -F: '{print $1}')
 	local fstype=$(echo $p | awk -F: '{print $2}')
@@ -1900,7 +1932,7 @@ fi
 
 helper()
 {
-local version=$(cat ${ENV_DIR%/}/etc/version)
+local version=$(cat "${ENV_DIR%/}/etc/version")
 
 cat <<EOF 1>&3
 Linux Deploy ${version}
@@ -1934,12 +1966,9 @@ EOF
 # init env
 TERM="linux"
 export PATH TERM
-unset LD_PRELOAD
 umask 0022
 
-cd ${ENV_DIR}
-
-true || { msg "Detected a problem with the operating environment."; exit 1; }
+cd "${ENV_DIR}"
 
 # load default config
 CONF_FILE="${ENV_DIR%/}/etc/deploy.conf"
@@ -1950,7 +1979,7 @@ while getopts :c:dt FLAG
 do
 	case ${FLAG} in
 	c)
-		CONF_FILE=${OPTARG}
+		CONF_FILE="${OPTARG}"
 		load_conf "${CONF_FILE}"
 	;;
 	d)
@@ -1965,6 +1994,8 @@ shift $((OPTIND-1))
 
 # exit if config not found
 [ -e "${CONF_FILE}" ] || load_conf "${CONF_FILE}"
+
+MNT_TARGET="${MNT_TARGET%/}"
 
 # log level
 exec 3>&1
@@ -1996,7 +2027,7 @@ stop)
 ;;
 shell)
 	shift
-	chroot_container "$*"
+	chroot_container "$@"
 ;;
 export)
 	export_container "$2"
