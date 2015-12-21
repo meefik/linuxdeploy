@@ -9,6 +9,7 @@
         <item>Italiano</item>
         <item>Español</item>
         <item>简体中文</item>
+        <item>繁體中文</item>
         <item>Tiếng Việt</item>
         <item>Slovenský</item>
         <item>Português</item>
@@ -20,7 +21,8 @@
         <item>fr</item>
         <item>it</item>
         <item>es</item>
-        <item>zh</item>
+        <item>zh_CN</item>
+        <item>zh_TW</item>
         <item>vi</item>
         <item>sk</item>
         <item>pt</item>
