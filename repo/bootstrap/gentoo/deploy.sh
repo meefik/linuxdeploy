@@ -52,7 +52,7 @@ do_install()
     exit 0)
     is_ok "fail" "done" || return 1
 
-    component_exec core/emulator core/dns core/mtab core/repository
+    component_exec core/emulator core/dns core/mtab core/groups core/repository
 
     msg -n "Updating portage tree ... "
     (set -e

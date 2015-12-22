@@ -77,7 +77,7 @@ do_install()
     component_exec core/emulator core/dns core/mtab core/repository
 
     msg "Installing base packages: "
-    extra_packages=$(chroot_exec /usr/bin/pacman --noconfirm -Sg base | awk '{print $2}' | grep -v -e 'linux' -e 'kernel')
+    extra_packages=$(chroot_exec /usr/bin/pacman --noconfirm -Sg base | awk '{print $2}' | grep -v -e 'linux' -e 'kernel' | xargs)
     pacman_install ${basic_packages} ${extra_packages}
     is_ok || return 1
 

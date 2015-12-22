@@ -66,6 +66,19 @@ do_configure()
             chmod 755 "${CHROOT_DIR}/usr/bin/yum"
         fi
     ;;
+    centos)
+        find "${CHROOT_DIR}/etc/yum.repos.d/" -name '*.repo' | while read f; do sed -i 's/^enabled=.*/enabled=0/g' "${f}"; done
+        local repo="${SOURCE_PATH%/}/${SUITE}/os/${ARCH}"
+        local repo_file="${CHROOT_DIR}/etc/yum.repos.d/centos-${SUITE}-${ARCH}.repo"
+        echo "[centos-${SUITE}-${ARCH}]" > "${repo_file}"
+        echo "name=CentOS ${SUITE} - ${ARCH}" >> "${repo_file}"
+        echo "failovermethod=priority" >> "${repo_file}"
+        echo "baseurl=${repo}" >> "${repo_file}"
+        echo "enabled=1" >> "${repo_file}"
+        echo "metadata_expire=7d" >> "${repo_file}"
+        echo "gpgcheck=0" >> "${repo_file}"
+        chmod 644 "${repo_file}"
+    ;;
     opensuse)
         if [ "$(get_platform ${ARCH})" = "intel" ]
         then local repo="${SOURCE_PATH%/}/distribution/${SUITE}/repo/oss/"

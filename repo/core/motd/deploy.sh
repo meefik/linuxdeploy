@@ -9,9 +9,6 @@ do_configure()
     if [ -f "${CHROOT_DIR}/etc/os-release" ]
     then
         linux_version=$(. "${CHROOT_DIR}/etc/os-release"; echo ${PRETTY_NAME})
-    elif [ -f "${CHROOT_DIR}/etc/arch-release" ]
-    then
-        linux_version="Arch Linux"
     elif [ -f "${CHROOT_DIR}/etc/gentoo-release" ]
     then
         linux_version=$(cat "${CHROOT_DIR}/etc/gentoo-release")
@@ -21,6 +18,12 @@ do_configure()
     elif [ -f "${CHROOT_DIR}/etc/redhat-release" ]
     then
         linux_version=$(cat "${CHROOT_DIR}/etc/redhat-release")
+    elif [ -f "${CHROOT_DIR}/etc/centos-release" ]
+    then
+        linux_version=$(cat "${CHROOT_DIR}/etc/centos-release")
+    elif [ -f "${CHROOT_DIR}/etc/arch-release" ]
+    then
+        linux_version="Arch Linux"
     elif [ -f "${CHROOT_DIR}/etc/debian_version" ]
     then
         linux_version=$(printf "Debian GNU/Linux "; cat "${CHROOT_DIR}/etc/debian_version")

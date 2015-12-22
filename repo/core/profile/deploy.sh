@@ -19,11 +19,7 @@ do_configure()
     fi
     local user_home="$(user_home ${USER_NAME})"
     local path_str="PATH=${PATH}"
-    local is_path=0
-    if [ -e "${CHROOT_DIR}${user_home}/.profile" ]; then
-        is_path=$(grep -c "${path_str}" "${CHROOT_DIR}${user_home}/.profile")
-    fi
-    if [ "${is_path}" -eq 0 ]; then
+    if ! $(grep -q "${path_str}" "${CHROOT_DIR}${user_home}/.profile"); then
         echo ${path_str} >> "${CHROOT_DIR}${user_home}/.profile"
     fi
     # set password for user

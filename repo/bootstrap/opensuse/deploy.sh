@@ -69,7 +69,7 @@ do_install()
     component_exec core/emulator
 
     msg "Installing base packages: "
-    chroot_exec rpm -iv --excludepath / --force --nosignature --nodeps --justdb /tmp/*.rpm 1>&3 2>&3
+    chroot_exec /bin/rpm -iv --excludepath / --force --nosignature --nodeps --justdb /tmp/*.rpm 1>&3 2>&3
     is_ok || return 1
 
     msg -n "Clearing cache ... "

@@ -95,8 +95,7 @@ is_mounted()
 {
     local mount_point="$1"
     [ -n "${mount_point}" ] || return 1
-    local is_mnt=$(grep -c " ${mount_point} " /proc/mounts)
-    if [ "${is_mnt}" -ne 0 ]; then
+    if $(grep -q " ${mount_point} " /proc/mounts); then
         return 0
     else
         return 1
