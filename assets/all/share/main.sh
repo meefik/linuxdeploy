@@ -1173,10 +1173,9 @@ msg "Installing additional components: "
 			esac
 		done
 		[ -z "$pkgs" ] && return 1
-		export DEBIAN_FRONTEND=noninteractive
 		chroot_exec -u root "apt-get update -yq"
-		chroot_exec -u root "apt-get install -yf"
-		chroot_exec -u root "apt-get install ${pkgs} --no-install-recommends -yq"
+		chroot_exec -u root "DEBIAN_FRONTEND=noninteractive apt-get install -yf"
+		chroot_exec -u root "DEBIAN_FRONTEND=noninteractive apt-get install ${pkgs} --no-install-recommends -yq"
 		chroot_exec -u root "apt-get clean"
 	;;
 	archlinux)
