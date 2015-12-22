@@ -91,6 +91,14 @@ user_home()
     echo $(grep -m1 "^${user_name}:" "${CHROOT_DIR}/etc/passwd" | awk -F: '{print $6}')
 }
 
+user_shell()
+{
+    [ -e "${CHROOT_DIR}/etc/passwd" ] || return 1
+    local user_name="$1"
+    [ -n "${user_name}" ] || return 1
+    echo $(grep -m1 "^${user_name}:" "${CHROOT_DIR}/etc/passwd" | awk -F: '{print $7}')
+}
+
 is_mounted()
 {
     local mount_point="$1"
@@ -124,6 +132,10 @@ is_archive()
 chroot_exec()
 {
     unset TMP TEMP TMPDIR LD_PRELOAD LD_DEBUG
+    if [ "$1" = "-u" ]; then
+        local username="$2"
+        shift 2
+    fi
     if [ "${FAKEROOT}" = "1" ]; then
         if [ -z "${PROOT_TMP_DIR}" ]; then
             export PROOT_TMP_DIR="${TEMP_DIR}"
@@ -136,9 +148,25 @@ chroot_exec()
         if [ -n "${EMULATOR}" ]; then
             emulator="-q ${EMULATOR}"
         fi
-        proot -r "${CHROOT_DIR}" -w / ${mounts} ${emulator} -0 "$@"
+        if [ -n "${username}" ]; then
+            if [ $# -gt 0 ]; then
+                proot -r "${CHROOT_DIR}" -w / ${mounts} ${emulator} -0 /bin/su - ${username} -c "$*"
+            else
+                proot -r "${CHROOT_DIR}" -w / ${mounts} ${emulator} -0 /bin/su - ${username}
+            fi
+        else
+            proot -r "${CHROOT_DIR}" -w / ${mounts} ${emulator} -0 "$@"
+        fi
     else
-        chroot "${CHROOT_DIR}" "$@"
+        if [ -n "${username}" ]; then
+            if [ $# -gt 0 ]; then
+                chroot "${CHROOT_DIR}" /bin/su - ${username} -c "$*"
+            else
+                chroot "${CHROOT_DIR}" /bin/su - ${username}
+            fi
+        else
+            chroot "${CHROOT_DIR}" "$@"
+        fi
     fi
 }
 
@@ -646,20 +674,9 @@ container_shell()
     DO_ACTION='do_start'
     component_exec core
 
-    SHELL="$@"
-    if [ -z "${SHELL}" ]; then
-        if [ -e "${CHROOT_DIR}/bin/bash" ]; then
-            SHELL=/bin/bash
-        elif [ -e "${CHROOT_DIR}/bin/sh" ]; then
-            SHELL=/bin/sh
-        else
-            msg "Shell not found."
-            return 1
-        fi
-    fi
-
     TERM="linux"
     USER="root"
+    SHELL="$(user_shell $USER)"
     HOME="$(user_home $USER)"
     PS1="\u@\h:\w\\$ "
     export PATH SHELL TERM USER HOME PS1
@@ -668,7 +685,7 @@ container_shell()
         msg $(cat "${CHROOT_DIR}/etc/motd")
     fi
 
-    chroot_exec ${SHELL} 1>&3 2>&3
+    chroot_exec -u ${USER} "$@" 1>&3 2>&3
 
     return $?
 }
@@ -907,7 +924,7 @@ fi
 
 # init env
 umask 0022
-export LANG="C"
+unset LANG
 if [ -z "${ENV_DIR}" ]; then
     ENV_DIR=$(readlink "$0")
     ENV_DIR="${ENV_DIR%/*}"

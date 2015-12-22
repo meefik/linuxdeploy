@@ -9,12 +9,25 @@ emerge_install()
     local packages="$@"
     [ -n "${packages}" ] || return 1
     (set -e
-        chroot_exec emerge --autounmask-write ${packages} || {
+        chroot_exec -u root emerge --autounmask-write ${packages} || {
             mv "${CHROOT_DIR}/etc/portage/._cfg0000_package.use" "${CHROOT_DIR}/etc/portage/package.use"
-            chroot_exec emerge ${packages}
+            chroot_exec -u root emerge ${packages}
         }
     exit 0) 1>&3 2>&3
     return $?
+}
+
+emerge_repository()
+{
+    if ! $(grep '^aid_inet:.*,portage' "${CHROOT_DIR}/etc/group"); then
+        sed -i "s|^\(aid_inet:.*\)|\1,portage|g" "${CHROOT_DIR}/etc/group"
+    fi
+    # set MAKEOPTS
+    local ncpu=$(grep -c ^processor /proc/cpuinfo)
+    let ncpu=${ncpu}+1
+    if ! $(grep '^MAKEOPTS=' "${CHROOT_DIR}/etc/portage/make.conf"); then
+        echo "MAKEOPTS=\"-j${ncpu}\"" >> "${CHROOT_DIR}/etc/portage/make.conf"
+    fi
 }
 
 do_install()
@@ -52,7 +65,11 @@ do_install()
     exit 0)
     is_ok "fail" "done" || return 1
 
-    component_exec core/emulator core/dns core/mtab core/groups core/repository
+    component_exec core/emulator core/dns core/mtab core/groups
+
+    msg -n "Updating repository ... "
+    emerge_repository
+    is_ok "fail" "done"
 
     msg -n "Updating portage tree ... "
     (set -e
@@ -62,9 +79,7 @@ do_install()
     is_ok "fail" "done" || return 1
 
     msg "Installing base packages: "
-    (set -e
-        chroot_exec emerge sudo
-    exit 0) 1>&3 2>&3
+    emerge_install sudo
     is_ok || return 1
 
     msg -n "Updating configuration ... "

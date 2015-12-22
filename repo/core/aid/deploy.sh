@@ -9,27 +9,29 @@ do_configure()
     [ -n "$(which getprop)" ] || return 0
 
     msg ":: Configuring ${COMPONENT} ... "
-    local aid
+    # set min uid and gid
+    sed -i 's|^UID_MIN.*|UID_MIN 5000|g' "${CHROOT_DIR}/etc/login.defs"
+    sed -i 's|^GID_MIN.*|GID_MIN 5000|g' "${CHROOT_DIR}/etc/login.defs"
+    # add android groups
+    local aid uid
     for aid in $(cat "${COMPONENT_DIR}/android_groups")
     do
         local xname=$(echo ${aid} | awk -F: '{print $1}')
         local xid=$(echo ${aid} | awk -F: '{print $2}')
         sed -i "s|^${xname}:.*|${xname}:x:${xid}:${USER_NAME}|g" "${CHROOT_DIR}/etc/group"
-        local is_group=$(grep -c "^${xname}:" "${CHROOT_DIR}/etc/group")
-        [ "${is_group}" -eq 0 ] && echo "${xname}:x:${xid}:${USER_NAME}" >> "${CHROOT_DIR}/etc/group"
-        local is_passwd=$(grep -c "^${xname}:" "${CHROOT_DIR}/etc/passwd")
-        [ "${is_passwd}" -eq 0 ] && echo "${xname}:x:${xid}:${xid}::/:/bin/false" >> "${CHROOT_DIR}/etc/passwd"
-        sed -i 's|^UID_MIN.*|UID_MIN 5000|g' "${CHROOT_DIR}/etc/login.defs"
-        sed -i 's|^GID_MIN.*|GID_MIN 5000|g' "${CHROOT_DIR}/etc/login.defs"
-    done
-    # add users to aid_inet group
-    local inet_users="root"
-    local uid
-    for uid in ${inet_users}
-    do
-        if [ $(grep -c "^aid_inet:.*${uid}" "${CHROOT_DIR}/etc/group") -eq 0 ]; then
-            sed -i "s|^\(aid_inet:.*\)|\1,${uid}|g" "${CHROOT_DIR}/etc/group"
+        if ! $(grep -q "^${xname}:" "${CHROOT_DIR}/etc/group"); then
+            echo "${xname}:x:${xid}:${USER_NAME}" >> "${CHROOT_DIR}/etc/group"
         fi
+        if ! $(grep -q "^:" "${CHROOT_DIR}/etc/passwd"); then
+            echo "${xname}:x:${xid}:${xid}::/:/bin/false" >> "${CHROOT_DIR}/etc/passwd"
+        fi
+        # add users to aid_inet group
+        for uid in ${PRIVILEGED_USERS}
+        do
+            if ! $(grep -q "^${xname}:.*${uid}" "${CHROOT_DIR}/etc/group"); then
+                sed -i "s|^\(${xname}:.*\)|\1,${uid}|g" "${CHROOT_DIR}/etc/group"
+            fi
+        done
     done
     return 0
 }

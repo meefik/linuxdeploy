@@ -10,7 +10,7 @@ do_configure()
     do
         pam_su="${CHROOT_DIR}/${item}"
         if [ -e "${pam_su}" ]; then 
-            if [ $(grep -c -e '^auth.*sufficient.*pam_succeed_if.so uid = 0 use_uid quiet$' "${pam_su}") -eq 0 ]; then
+            if ! $(grep '^auth.*sufficient.*pam_succeed_if.so uid = 0 use_uid quiet$' "${pam_su}"); then
                 sed -i '1,/^auth/s/^\(auth.*\)$/auth\tsufficient\tpam_succeed_if.so uid = 0 use_uid quiet\n\1/' "${pam_su}"
             fi
         fi

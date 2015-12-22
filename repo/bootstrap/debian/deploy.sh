@@ -8,12 +8,41 @@ apt_install()
     [ -n "${packages}" ] || return 1
     (set -e
         export DEBIAN_FRONTEND=noninteractive
-        chroot_exec apt-get update -yq
-        chroot_exec apt-get install -yf
-        chroot_exec apt-get install ${packages} --no-install-recommends -yq
-        chroot_exec apt-get clean
+        chroot_exec -u root apt-get update -yq
+        chroot_exec -u root apt-get install -yf
+        chroot_exec -u root apt-get install ${packages} --no-install-recommends -yq
+        chroot_exec -u root apt-get clean
     exit 0) 1>&3 2>&3
     return $?
+}
+
+apt_repository()
+{
+    case "${DISTRIB}" in
+    debian|kalilinux)
+        if [ -e "${CHROOT_DIR}/etc/apt/sources.list" ]; then
+            cp "${CHROOT_DIR}/etc/apt/sources.list" "${CHROOT_DIR}/etc/apt/sources.list.bak"
+        fi
+        if [ $(grep -c "${SOURCE_PATH}.*${SUITE}" "${CHROOT_DIR}/etc/apt/sources.list") -eq 0 ]; then
+            echo "deb ${SOURCE_PATH} ${SUITE} main contrib non-free" > "${CHROOT_DIR}/etc/apt/sources.list"
+            echo "deb-src ${SOURCE_PATH} ${SUITE} main contrib non-free" >> "${CHROOT_DIR}/etc/apt/sources.list"
+        fi
+    ;;
+    ubuntu)
+        if [ -e "${CHROOT_DIR}/etc/apt/sources.list" ]; then
+            cp "${CHROOT_DIR}/etc/apt/sources.list" "${CHROOT_DIR}/etc/apt/sources.list.bak"
+        fi
+        if [ $(grep -c "${SOURCE_PATH}.*${SUITE}" "${CHROOT_DIR}/etc/apt/sources.list") -eq 0 ]; then
+            echo "deb ${SOURCE_PATH} ${SUITE} main universe multiverse" > "${CHROOT_DIR}/etc/apt/sources.list"
+            echo "deb-src ${SOURCE_PATH} ${SUITE} main universe multiverse" >> "${CHROOT_DIR}/etc/apt/sources.list"
+        fi
+        # Fix for upstart
+        if [ -e "${CHROOT_DIR}/sbin/initctl" ]; then
+            chroot_exec dpkg-divert --local --rename --add /sbin/initctl
+            ln -s /bin/true "${CHROOT_DIR}/sbin/initctl"
+        fi
+    ;;
+    esac
 }
 
 do_install()
@@ -36,6 +65,10 @@ do_install()
     unset DEBOOTSTRAP_DIR
     chroot_exec /debootstrap/debootstrap --second-stage 1>&3 2>&3
     is_ok || return 1
+
+    msg -n "Updating repository ... "
+    apt_repository
+    is_ok "fail" "done"
 
     return 0
 }

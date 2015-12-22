@@ -7,10 +7,23 @@ zypper_install()
     local packages="$@"
     [ -n "${packages}" ] || return 1
     (set -e
-        chroot_exec zypper --no-gpg-checks --non-interactive install ${packages}
-        chroot_exec zypper clean
+        chroot_exec -u root zypper --no-gpg-checks --non-interactive install ${packages}
+        chroot_exec -u root zypper clean
     exit 0) 1>&3 2>&3
     return $?
+}
+
+zypper_repository()
+{
+    local repo_name="openSUSE-${SUITE}-${ARCH}-Repo-OSS"
+    local repo_file="${CHROOT_DIR}/etc/zypp/repos.d/${repo_name}.repo"
+    echo "[${repo_name}]" > "${repo_file}"
+    echo "name=${repo_name}" >> "${repo_file}"
+    echo "enabled=1" >> "${repo_file}"
+    echo "autorefresh=0" >> "${repo_file}"
+    echo "baseurl=${REPO_URL}" >> "${repo_file}"
+    echo "type=NONE" >> "${repo_file}"
+    chmod 644 "${repo_file}"
 }
 
 do_install()
@@ -28,11 +41,11 @@ do_install()
     esac
 
     if [ "$(get_platform ${ARCH})" = "intel" ]
-    then local repo="${SOURCE_PATH%/}/distribution/${SUITE}/repo/oss/suse"
-    else local repo="${SOURCE_PATH%/}/${ARCH}/distribution/${SUITE}/repo/oss/suse"
+    then REPO_URL="${SOURCE_PATH%/}/distribution/${SUITE}/repo/oss/suse"
+    else REPO_URL="${SOURCE_PATH%/}/${ARCH}/distribution/${SUITE}/repo/oss/suse"
     fi
 
-    msg "Repository: ${repo}"
+    msg "URL: ${REPO_URL}"
 
     msg -n "Preparing for deployment ... "
     tar xzf "${COMPONENT_DIR}/filesystem.tgz" -C "${CHROOT_DIR}"
@@ -41,9 +54,9 @@ do_install()
     msg -n "Retrieving packages list ... "
     local pkg_list="${CHROOT_DIR}/tmp/packages.list"
     (set -e
-        repodata=$(wget -q -O - "${repo}/repodata/repomd.xml" | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\-primary\.xml\.gz\)".*$/\1/p')
+        repodata=$(wget -q -O - "${REPO_URL}/repodata/repomd.xml" | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\-primary\.xml\.gz\)".*$/\1/p')
         [ -z "${repodata}" ] && exit 1
-        wget -q -O - "${repo}/${repodata}" | gzip -dc | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\)".*$/\1/p' > "${pkg_list}"
+        wget -q -O - "${REPO_URL}/${repodata}" | gzip -dc | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\)".*$/\1/p' > "${pkg_list}"
     exit 0)
     is_ok "fail" "done" || return 1
 
@@ -57,7 +70,7 @@ do_install()
         # download
         for i in 1 2 3
         do
-            wget -q -c -O "${CHROOT_DIR}/tmp/${pkg_file}" "${repo}/${pkg_url}" && break
+            wget -q -c -O "${CHROOT_DIR}/tmp/${pkg_file}" "${REPO_URL}/${pkg_url}" && break
             sleep 30s
         done
         [ "${package}" = "filesystem" ] && { msg "done"; continue; }
@@ -71,6 +84,10 @@ do_install()
     msg "Installing base packages: "
     chroot_exec /bin/rpm -iv --excludepath / --force --nosignature --nodeps --justdb /tmp/*.rpm 1>&3 2>&3
     is_ok || return 1
+
+    msg -n "Updating repository ... "
+    zypper_repository
+    is_ok "fail" "done"
 
     msg -n "Clearing cache ... "
     rm -rf "${CHROOT_DIR}"/tmp/*

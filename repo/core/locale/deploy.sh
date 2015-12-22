@@ -18,7 +18,7 @@ do_configure()
     debian|ubuntu|kalilinux)
         echo "LANG=${LOCALE}" > "${CHROOT_DIR}/etc/default/locale"
     ;;
-    archlinux)
+    archlinux|centos)
         echo "LANG=${LOCALE}" > "${CHROOT_DIR}/etc/locale.conf"
     ;;
     fedora)
