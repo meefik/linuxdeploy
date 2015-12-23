@@ -9,6 +9,7 @@
     <string name="menu_settings">Einstellungen</string>
     <string name="menu_about">&#220;ber</string>
     <string name="menu_exit">Schlie&#223;en</string>
+    <string name="menu_terminal">Terminal</string>
     <string name="menu_status">Status</string>
     <string name="menu_clear">Leeren</string>
     <string name="menu_new">Neu</string>
@@ -38,6 +39,7 @@
     <string name="toast_import_profile_error">Fehler beim Importieren des Profils!</string>
     <string name="toast_export_profile_success">Profil erfolgreich exportiert.</string>
     <string name="toast_export_profile_error">Fehler beim Exportieren das Profils!</string>
+    <string name="toast_terminal_error">Error when starting the terminal!</string>
     <string name="confirm_profile_discard_title">Profil entfernen</string>
     <string name="confirm_profile_discard_message">Ausgewähltes Profil l&#246;schen?</string>
     <string name="new_script_title">Skript-Pfad</string>
@@ -67,6 +69,8 @@
     <string name="summary_appicon_preference">Ein Linux Deploy-Icon wird in der Benachrichtigungsleiste angezeigt.</string>
     <string name="title_autostart_preference">Autostart</string>
     <string name="summary_autostart_preference">Soll das GNU/Linux-System beim Hochfahren des Handys oder Tablets automatisch gestartet werden?</string>
+    <string name="title_terminalcmd_preference">Terminal command</string>
+    <string name="dialog_title_terminalcmd_preference">Terminal command</string>
     <string name="env_preferences">Betriebsumgebung (ENV)</string>
     <string name="title_busyboxdir_preference">BusyBox Verzeichnis</string>
     <string name="dialog_title_busyboxdir_preference">BusyBox Verzeichnis</string>

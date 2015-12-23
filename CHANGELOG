@@ -1,6 +1,9 @@
 Changelog (English)
 ===================
 
+1.5.5
+Open a shell from Android Terminal Emulator
+
 1.5.4
 Fixed a problem with user password that contains uppercase letters
 Added support system BusyBox, a built-in is no longer supported
@@ -317,6 +320,9 @@ Updated list packages of base system installation
 
 История изменений (Русский)
 ===========================
+
+1.5.5
+Открытие командной оболочки в Android Terminal Emulator
 
 1.5.4
 Исправлена проблема с установкой пароля, содержащего заглавные буквы

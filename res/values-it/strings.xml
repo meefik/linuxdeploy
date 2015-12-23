@@ -9,6 +9,7 @@
     <string name="menu_settings">Impostazioni</string>
     <string name="menu_about">Circa</string>
     <string name="menu_exit">Esci</string>
+    <string name="menu_terminal">Terminal</string>
     <string name="menu_status">Stato</string>
     <string name="menu_clear">Pulisci</string>
     <string name="menu_new">Nuovo</string>
@@ -38,6 +39,7 @@
     <string name="toast_import_profile_error">Errore nell\'imporazione del profilo!</string>
     <string name="toast_export_profile_success">Profilo esportato con successo.</string>
     <string name="toast_export_profile_error">Errore esportazione del profilo!</string>
+    <string name="toast_terminal_error">Error when starting the terminal!</string>
     <string name="confirm_profile_discard_title">Rimuovi profilo</string>
     <string name="confirm_profile_discard_message">Rimuovere il profilo selezionato?</string>
     <string name="new_script_title">Percorso script</string>
@@ -67,6 +69,8 @@
     <string name="summary_appicon_preference">Mostra icona nella barra delle notifiche</string>
     <string name="title_autostart_preference">Avvio automatico</string>
     <string name="summary_autostart_preference">Esegui automaticamente GNU/Linux all\'avvio di Android</string>
+    <string name="title_terminalcmd_preference">Terminal command</string>
+    <string name="dialog_title_terminalcmd_preference">Terminal command</string>
     <string name="env_preferences">Ambiente operativo</string>
     <string name="title_busyboxdir_preference">Cartella BusyBox</string>
     <string name="dialog_title_busyboxdir_preference">Cartella BusyBox</string>

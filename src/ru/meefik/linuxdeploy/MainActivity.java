@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
@@ -159,6 +160,18 @@ public class MainActivity extends SherlockActivity {
             break;
         case R.id.menu_status:
             new ExecScript(getApplicationContext(), "status").start();
+            break;
+        case R.id.menu_terminal:
+            try {
+                Intent intent_terminal = new Intent("jackpal.androidterm.RUN_SCRIPT");
+                intent_terminal.addCategory(Intent.CATEGORY_DEFAULT);
+                intent_terminal.putExtra("jackpal.androidterm.iInitialCommand", 
+                    PrefStore.getTerminalCmd(this));
+                startActivity(intent_terminal);
+            } catch(Exception e) {
+                Toast.makeText(getApplicationContext(), 
+                        R.string.toast_terminal_error, Toast.LENGTH_SHORT).show(); 
+            }
             break;
         case R.id.menu_properties:
             Intent intent_properties = new Intent(this,

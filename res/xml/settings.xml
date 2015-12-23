@@ -62,6 +62,12 @@
             android:key="autostart"
             android:summary="@string/summary_autostart_preference"
             android:title="@string/title_autostart_preference" />
+        <EditTextPreference
+            android:defaultValue="@string/terminalcmd"
+            android:dialogTitle="@string/dialog_title_terminalcmd_preference"
+            android:key="terminalcmd"
+            android:summary="@string/terminalcmd"
+            android:title="@string/title_terminalcmd_preference" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/env_preferences" >
         <EditTextPreference

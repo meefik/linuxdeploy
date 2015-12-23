@@ -9,6 +9,7 @@
     <string name="menu_settings">设置</string>
     <string name="menu_about">关于</string>
     <string name="menu_exit">退出</string>
+    <string name="menu_terminal">終奌站</string>
     <string name="menu_status">状态</string>
     <string name="menu_clear">清空</string>
     <string name="menu_new">新建</string>
@@ -38,6 +39,7 @@
     <string name="toast_import_profile_error">导入配置文件出错！</string>
     <string name="toast_export_profile_success">配置文件已成功导出。</string>
     <string name="toast_export_profile_error">导出配置文件出错！</string>
+    <string name="toast_terminal_error">Error when starting the terminal!</string>
     <string name="confirm_profile_discard_title">移除配置文件</string>
     <string name="confirm_profile_discard_message">删除选中的配置文件？</string>
     <string name="new_script_title">脚本路径</string>
@@ -67,6 +69,8 @@
     <string name="summary_timestamp_preference">显示时间戳</string>
     <string name="title_autostart_preference">开机启动</string>
     <string name="summary_autostart_preference">在 Android 启动时自动启动 GNU/Linux</string>
+    <string name="title_terminalcmd_preference">Terminal command</string>
+    <string name="dialog_title_terminalcmd_preference">Terminal command</string>
     <string name="env_preferences">系统环境</string>
     <string name="title_busyboxdir_preference">BusyBox 目录</string>
     <string name="dialog_title_busyboxdir_preference">BusyBox 目录</string>

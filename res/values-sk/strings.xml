@@ -9,6 +9,7 @@
     <string name="menu_settings">Nastavenia</string>
     <string name="menu_about">O aplikácii</string>
     <string name="menu_exit">Skončiť</string>
+    <string name="menu_terminal">Terminal</string>
     <string name="menu_status">Stav</string>
     <string name="menu_clear">Vymazať</string>
     <string name="menu_new">Nový</string>
@@ -38,6 +39,7 @@
     <string name="toast_import_profile_error">Chyba pri importovaní profilu!</string>
     <string name="toast_export_profile_success">Profil bol úspešne exportovaný.</string>
     <string name="toast_export_profile_error">Chyba pri exportovaní profilu!</string>
+    <string name="toast_terminal_error">Error when starting the terminal!</string>
     <string name="confirm_profile_discard_title">Odstránenie profilu</string>
     <string name="confirm_profile_discard_message">Odstrániť vybratý profil?</string>
     <string name="new_script_title">Cesta k skriptu</string>
@@ -67,6 +69,8 @@
     <string name="summary_appicon_preference">Zobrazí ikonu v lište upozornení</string>
     <string name="title_autostart_preference">Automatické spustenie</string>
     <string name="summary_autostart_preference">Automaticky spustí systém GNU/Linux po spustení Androidu</string>
+    <string name="title_terminalcmd_preference">Terminal command</string>
+    <string name="dialog_title_terminalcmd_preference">Terminal command</string>
     <string name="env_preferences">Operačné prostredie</string>
     <string name="title_busyboxdir_preference">Adresár BusyBox</string>
     <string name="dialog_title_busyboxdir_preference">Adresár BusyBox</string>

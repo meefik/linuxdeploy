@@ -38,6 +38,30 @@ public class PrefStore {
     public static final String PROFILES_PREF_NAME = "profiles";
 
     /**
+     * Get string with values by resource id
+     * 
+     * @param c context
+     * @param resId resource id with variables
+     * @return string with values
+     */
+    public static String getValues(Context c, int resId) {
+        return c.getString(resId).replace("${ENV_DIR}", 
+                getEnvDir(c)).replace("${EXTERNAL_STORAGE}", getStorage());
+    }
+    
+    /**
+     * Get string with values by string
+     * 
+     * @param c context
+     * @param text string with variables
+     * @return string with values
+     */
+    public static String getValues(Context c, String text) {
+        return text.replace("${ENV_DIR}", 
+                getEnvDir(c)).replace("${EXTERNAL_STORAGE}", getStorage());
+    }
+    
+    /**
      * Get application version
      * 
      * @param c context
@@ -142,7 +166,7 @@ public class PrefStore {
             fontSizeInt = Integer.parseInt(fontSize);
             SharedPreferences.Editor editor = pref.edit();
             editor.putString("fontsize", fontSize);
-            editor.apply();
+            editor.commit();
         }
         return fontSizeInt;
     }
@@ -166,7 +190,7 @@ public class PrefStore {
             maxLinesInt = Integer.parseInt(maxLines);
             SharedPreferences.Editor editor = pref.edit();
             editor.putString("maxlines", maxLines);
-            editor.apply();
+            editor.commit();
         }
         return maxLinesInt;
     }
@@ -234,15 +258,7 @@ public class PrefStore {
     public static String getLogFile(Context c) {
         SharedPreferences pref = c.getSharedPreferences(APP_PREF_NAME,
                 Context.MODE_PRIVATE);
-        String logFile = pref.getString("logfile", c
-                .getString(R.string.logfile));
-        if (logFile.length() == 0) {
-            logFile = getStorage() + "/linuxdeploy.log";
-            SharedPreferences.Editor editor = pref.edit();
-            editor.putString("logfile", logFile);
-            editor.commit();
-        }
-        return logFile;
+        return getValues(c, pref.getString("logfile", c.getString(R.string.logfile)));
     }
 
     /**
@@ -309,6 +325,18 @@ public class PrefStore {
                 Context.MODE_PRIVATE);
         return pref.getString("busyboxdir", c.getString(R.string.busyboxdir));
     }
+    
+    /**
+     * Get terminal script
+     * 
+     * @param c context
+     * @return script
+     */
+    public static String getTerminalCmd(Context c) {
+        SharedPreferences pref = c.getSharedPreferences(APP_PREF_NAME,
+                Context.MODE_PRIVATE);
+        return getValues(c, pref.getString("terminalcmd", c.getString(R.string.terminalcmd)));
+    }
 
     /**
      * Get shell
@@ -354,15 +382,7 @@ public class PrefStore {
     public static String getTargetPath(Context c) {
         SharedPreferences pref = c.getSharedPreferences(getCurrentProfile(c),
                 Context.MODE_PRIVATE);
-        String diskImage = pref.getString("diskimage", c
-                .getString(R.string.diskimage));
-        if (diskImage.length() == 0) {
-            SharedPreferences.Editor editor = pref.edit();
-            diskImage = getStorage() + "/linux.img";
-            editor.putString("diskimage", diskImage);
-            editor.commit();
-        }
-        return diskImage;
+        return getValues(c, pref.getString("diskimage", c.getString(R.string.diskimage)));
     }
 
     /**
@@ -371,7 +391,7 @@ public class PrefStore {
      * @param c context
      * @return type
      */
-    public static String getDeployType(Context c) {
+    public static String getTargetType(Context c) {
         SharedPreferences pref = c.getSharedPreferences(getCurrentProfile(c),
                 Context.MODE_PRIVATE);
         return pref.getString("deploytype", c.getString(R.string.deploytype));
@@ -383,7 +403,7 @@ public class PrefStore {
      * @param c context
      * @return size in Mb
      */
-    public static String getImageSize(Context c) {
+    public static String getDiskSize(Context c) {
         SharedPreferences pref = c.getSharedPreferences(getCurrentProfile(c),
                 Context.MODE_PRIVATE);
         return pref.getString("disksize", c.getString(R.string.disksize));
@@ -1104,8 +1124,7 @@ public class PrefStore {
     public static List<String> getMountsList(Context c) {
         SharedPreferences sp = c.getSharedPreferences(getCurrentProfile(c),
                 Context.MODE_PRIVATE);
-        String str = sp.getString("mounts", c.getString(R.string.mounts)
-                .replace("{storage}", getStorage()));
+        String str = getValues(c, sp.getString("mounts", c.getString(R.string.mounts)));
         List<String> list = new ArrayList<String>();
         for (String i : str.split(" ")) {
             list.add(i);

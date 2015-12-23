@@ -11,19 +11,24 @@
     <string name="autostart" translatable="false">false</string>
     <string name="appicon" translatable="false">true</string>
     <string name="busyboxdir" translatable="false">/system/xbin</string>
+    <string name="terminalcmd" translatable="false">su -c \"${ENV_DIR}/bin/linuxdeploy shell\"</string>
     <string name="usecli" translatable="false">false</string>
     <string name="profile" translatable="false">Linux</string>
     <string name="debug" translatable="false">false</string>
     <string name="trace" translatable="false">false</string>
     <string name="logger" translatable="false">false</string>
-    <string name="logfile" translatable="false"></string>
+    <string name="logfile" translatable="false">${EXTERNAL_STORAGE}/linuxdeploy.log</string>
     <string name="distribution" translatable="false">debian</string>
     <string name="suite" translatable="false">@string/debian_suite</string>
     <string name="architecture" translatable="false"></string>
     <string name="mirror" translatable="false"></string>
     <string name="deploytype" translatable="false">file</string>
     <string name="mountdir" translatable="false">/data/local/linux</string>
-    <string name="diskimage" translatable="false"></string>
+    <string name="diskimage" translatable="false">@string/targetpath_file</string>
+    <string name="targetpath_file" translatable="false">${EXTERNAL_STORAGE}/linux.img</string>
+    <string name="targetpath_directory" translatable="false">${ENV_DIR}/linux</string>
+    <string name="targetpath_partition" translatable="false">/dev/block/mmcblkXpY</string>
+    <string name="targetpath_ram" translatable="false">/data/local/ram</string>
     <string name="disksize" translatable="false">0</string>
     <string name="fstype" translatable="false">auto</string>
     <string name="username" translatable="false">android</string>
@@ -35,7 +40,7 @@
     <string name="customstartup" translatable="false">false</string>
     <string name="scripts" translatable="false">/etc/init.d/myscript</string>
     <string name="custommount" translatable="false">false</string>
-    <string name="mounts" translatable="false">/system {storage}</string>
+    <string name="mounts" translatable="false">/system ${EXTERNAL_STORAGE}</string>
     <string name="guistartup" translatable="false">true</string>
     <string name="guitype" translatable="false">vnc</string>
     <string name="sshstartup" translatable="false">true</string>

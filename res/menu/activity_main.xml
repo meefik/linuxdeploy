@@ -19,6 +19,13 @@
         android:title="@string/menu_properties">
     </item>
     <item
+        android:id="@+id/menu_terminal"
+        android:icon="@android:drawable/ic_menu_set_as"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/menu_terminal">
+    </item>
+    <item
         android:id="@+id/menu_status"
         android:icon="@android:drawable/ic_menu_info_details"
         android:orderInCategory="100"
