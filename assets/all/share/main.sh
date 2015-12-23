@@ -1817,8 +1817,11 @@ esac
 
 status_container()
 {
-msg -n "Linux Deploy version: "
+msg -n "Linux Deploy: "
 msg $(cat "${ENV_DIR%/}/etc/version")
+
+msg -n "BusyBox: "
+msg $(busybox | busybox head -1 | busybox awk '{print $2}')
 
 msg -n "Device: "
 msg $(getprop ro.product.model || echo unknown)
