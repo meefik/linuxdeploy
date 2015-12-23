@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ru.meefik.linuxdeploy"
-    android:versionCode="183"
-    android:versionName="1.5.4" >
+    android:versionCode="184"
+    android:versionName="1.5.5" >
 
     <uses-sdk
         android:minSdkVersion="7"
@@ -13,6 +13,7 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.ACCESS_SUPERUSER" />
+    <uses-permission android:name="jackpal.androidterm.permission.RUN_SCRIPT" />
 
     <application
         android:allowBackup="true"

@@ -9,6 +9,7 @@
     <string name="menu_settings">Cài đặt</string>
     <string name="menu_about">Thông tin</string>
     <string name="menu_exit">Thoát</string>
+    <string name="menu_terminal">Terminal</string>
     <string name="menu_status">Trạng thái</string>
     <string name="menu_clear">Xoá màn hình</string>
     <string name="menu_new">Mới</string>
@@ -38,6 +39,7 @@
     <string name="toast_import_profile_error">Có lỗi trong khi nhập hồ sơ!</string>
     <string name="toast_export_profile_success">Xuất hồ sơ thành công.</string>
     <string name="toast_export_profile_error">Có lỗi trong khi xuất hồ sơ!</string>
+    <string name="toast_terminal_error">Error when starting the terminal!</string>
     <string name="confirm_profile_discard_title">Xoá hồ sơ</string>
     <string name="confirm_profile_discard_message">Xoá hồ sơ đã chọn?</string>
     <string name="new_script_title">Đường dẫn tập lệnh</string>
@@ -67,6 +69,8 @@
     <string name="summary_appicon_preference">Hiện biểu tượng trên thanh thông báo</string>
     <string name="title_autostart_preference">Tự khởi động</string>
     <string name="summary_autostart_preference">Tự khởi động GNU/Linux khi mở nguồn</string>
+    <string name="title_terminalcmd_preference">Terminal command</string>
+    <string name="dialog_title_terminalcmd_preference">Terminal command</string>
     <string name="env_preferences">Môi trường điều hành</string>
     <string name="title_busyboxdir_preference">Đường dẫn BusyBox</string>
     <string name="dialog_title_busyboxdir_preference">Đường dẫn BusyBox</string>

@@ -243,7 +243,7 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 		if (pref instanceof EditTextPreference) {
 			EditTextPreference editPref = (EditTextPreference) pref;
 			pref.setSummary(editPref.getText());
-
+			
 			if (editPref.getKey().equals("serverdns")
 					&& editPref.getText().length() == 0) {
 				pref.setSummary(getString(R.string.summary_serverdns_preference));
@@ -252,17 +252,19 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 					&& editPref.getText().equals("0")) {
 				pref.setSummary(getString(R.string.summary_disksize_preference));
 			}
-			if (editPref.getKey().equals("diskimage")
-			        && editPref.getText().length() == 0) {
-			    pref.setSummary(PrefStore.getTargetPath(this));
+			if (editPref.getKey().equals("diskimage") && !init) {
+			    editPref.setText(PrefStore.getTargetPath(this));
+			    pref.setSummary(editPref.getText());
 			}
             if (editPref.getKey().equals("vncwidth")
                     && editPref.getText().length() == 0) {
-                pref.setSummary(PrefStore.getScreenWidth(this).toString());
+                editPref.setText(PrefStore.getScreenWidth(this).toString());
+                pref.setSummary(editPref.getText());
             }
             if (editPref.getKey().equals("vncheight")
                     && editPref.getText().length() == 0) {
-                pref.setSummary(PrefStore.getScreenHeight(this).toString());
+                editPref.setText(PrefStore.getScreenHeight(this).toString());
+                pref.setSummary(editPref.getText());
             }
 		}
 
@@ -386,28 +388,28 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 				switch (listPref.getValue()) {
 				case "file":
 					if (init) {
-						diskimage.setText(PrefStore.getStorage() + "/linux.img");
+						diskimage.setText(PrefStore.getValues(this, R.string.targetpath_file));
 					}
 					disksize.setEnabled(true);
 					fstype.setEnabled(true);
 					break;
 				case "partition":
 					if (init) {
-						diskimage.setText("/dev/block/mmcblkXpY");
+						diskimage.setText(PrefStore.getValues(this, R.string.targetpath_partition));
 					}
 					disksize.setEnabled(false);
 					fstype.setEnabled(true);
 					break;
 				case "ram":
 					if (init) {
-						diskimage.setText("/data/local/ram");
+						diskimage.setText(PrefStore.getValues(this, R.string.targetpath_ram));
 					}
 					disksize.setEnabled(true);
 					fstype.setEnabled(false);
 					break;
 				default:
 					if (init) {
-						diskimage.setText(PrefStore.getStorage());
+						diskimage.setText(PrefStore.getValues(this, R.string.targetpath_directory));
 					}
 					disksize.setEnabled(false);
 					fstype.setEnabled(false);

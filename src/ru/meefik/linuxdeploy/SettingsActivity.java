@@ -107,10 +107,15 @@ public class SettingsActivity extends SherlockPreferenceActivity implements
 		if (pref instanceof EditTextPreference) {
 			EditTextPreference editPref = (EditTextPreference) pref;
 			pref.setSummary(editPref.getText());
+
+            if (editPref.getKey().equals("terminalcmd") && !init) {
+                editPref.setText(PrefStore.getTerminalCmd(this));
+                pref.setSummary(editPref.getText());
+            }
 			
-            if (editPref.getKey().equals("logfile")
-                    && editPref.getText().length() == 0) {
-                pref.setSummary(PrefStore.getLogFile(this));
+            if (editPref.getKey().equals("logfile") && !init) {
+                editPref.setText(PrefStore.getLogFile(this));
+                pref.setSummary(editPref.getText());
             }
 		}
 
