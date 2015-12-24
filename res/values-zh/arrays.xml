@@ -69,6 +69,15 @@
         <item>X11 服务器</item>
     </string-array>
     
+    <!-- CentOS -->
+
+    <string-array name="centos_components_entries">
+        <item>桌面环境</item>
+        <item>SSH 服务器</item>
+        <item>VNC 服务器</item>
+        <item>X11 服务器</item>
+    </string-array>
+    
     <!-- Arch Linux -->
 
     <string-array name="archlinux_components_entries">

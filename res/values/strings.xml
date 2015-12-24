@@ -29,8 +29,8 @@
     <string name="title_activity_mounts">Mounts</string>
     <string name="confirm_start_title">Start</string>
     <string name="confirm_stop_title">Stop</string>
-    <string name="confirm_start_message">Mount GNU/Linux system and start services?</string>
-    <string name="confirm_stop_message">Stop services and unmount GNU/Linux system?</string>
+    <string name="confirm_start_message">Mount the container and start services?</string>
+    <string name="confirm_stop_message">Stop services and unmount the container?</string>
     <string name="new_profile_title">Profile name</string>
     <string name="edit_profile_title">Profile name</string>
     <string name="import_profile_title">Import profile</string>
@@ -68,7 +68,7 @@
     <string name="title_appicon_preference">Show icon</string>
     <string name="summary_appicon_preference">Display icon in notification bar</string>
     <string name="title_autostart_preference">Autostart</string>
-    <string name="summary_autostart_preference">Automatically run GNU/Linux when starting Android</string>
+    <string name="summary_autostart_preference">Automatically run the container when starting Android</string>
     <string name="title_terminalcmd_preference">Terminal command</string>
     <string name="dialog_title_terminalcmd_preference">Terminal command</string>
     <string name="env_preferences">Operating environment</string>
@@ -99,7 +99,7 @@
     <string name="summary_reconfigure_preference">Start GNU/Linux reconfiguration</string>
     <string name="message_reconfigure_confirm_dialog">Start reconfiguration of GNU/Linux system?</string>
     <string name="title_export_preference">Export</string>
-    <string name="summary_export_preference">Export GNU/Linux as rootfs archive</string>
+    <string name="summary_export_preference">Export the container as rootfs archive</string>
     <string name="deploy_preferences">Deploy</string>
     <string name="title_distribution_preference">Distribution</string>
     <string name="dialog_title_distribution_preference">Distribution</string>

@@ -69,6 +69,15 @@
         <item>Servidor X</item>
     </string-array>
     
+    <!-- CentOS -->
+
+    <string-array name="centos_components_entries">
+        <item>Ambiente Desktop</item>
+        <item>Servidor SSH</item>
+        <item>Servidor VNC</item>
+        <item>Servidor X</item>
+    </string-array>
+    
     <!-- Arch Linux -->
 
     <string-array name="archlinux_components_entries">

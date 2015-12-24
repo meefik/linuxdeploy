@@ -12,13 +12,13 @@ The program interface supports English and Russian. You can manage the process o
 Installing a new operating system takes about 30 minutes. The recommended minimum size of a disk image is 1024 MB (with LXDE), and without a GUI - 512 MB. When you install Linux on the flash card with the FAT32 file system, the image size should not exceed 4095 MB! After the initial setup the default password for SSH and VNC is changeme. The password can be changed through standard OS tools.
 
 #### Features: ####
-* Supported distributions: Debian, Ubuntu, Kali Linux, Arch Linux, Fedora, Gentoo, openSUSE, Slackware, RootFS (tgz, tbz2, txz)
+* Supported distributions: Debian, Ubuntu, Kali Linux, Arch Linux, Fedora, CentOS, Gentoo, openSUSE, Slackware, RootFS (tgz, tbz2, txz)
 * Installation type: image file, disk partition, RAM, directory
 * Supported file systems: ext2, ext3, ext4
 * Supported architectures: ARM, ARM64, x86, x86_64, emulation mode (ARM ~ x86)
 * Control interface: CLI, SSH, VNC, X, framebuffer
 * Desktop environment: XTerm, LXDE, Xfce, GNOME, KDE, other (manual configuration)
-* Supported languages: English, Russian, German, French, Italian, Spanish, Chinese, Vietnamese, Slovak
+* Supported languages: English, Russian, German, French, Italian, Spanish, Chinese, Vietnamese, Slovak, Portuguese
 
 #### Install ####
 You can install the app from Google Play: <https://play.google.com/store/apps/details?id=ru.meefik.linuxdeploy>.

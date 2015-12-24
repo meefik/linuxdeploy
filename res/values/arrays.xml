@@ -234,6 +234,7 @@
         <item>ubuntu</item>
         <item>kalilinux</item>
         <item>fedora</item>
+        <item>centos</item>
         <item>archlinux</item>
         <item>gentoo</item>
         <item>opensuse</item>
@@ -245,6 +246,7 @@
         <item>Ubuntu</item>
         <item>Kali Linux</item>
         <item>Fedora</item>
+        <item>CentOS</item>
         <item>Arch Linux</item>
         <item>Gentoo</item>
         <item>openSUSE</item>
@@ -385,6 +387,30 @@
         <item>xserver</item>
     </string-array>
     <string-array name="fedora_components_entries">
+        <item>Desktop Environment</item>
+        <item>SSH server</item>
+        <item>VNC server</item>
+        <item>X server</item>
+    </string-array>
+    
+    <!-- CentOS -->
+
+    <string-array name="centos_suite_values" translatable="false">
+        <item>7</item>
+    </string-array>
+    <string-array name="centos_architecture_values" translatable="false">
+        <item>armhfp</item>
+        <item>aarch64</item>
+        <item>i386</item>
+        <item>x86_64</item>
+    </string-array>
+    <string-array name="centos_components_values" translatable="false">
+        <item>desktop</item>
+        <item>ssh</item>
+        <item>vnc</item>
+        <item>xserver</item>
+    </string-array>
+    <string-array name="centos_components_entries">
         <item>Desktop Environment</item>
         <item>SSH server</item>
         <item>VNC server</item>

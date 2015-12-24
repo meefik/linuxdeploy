@@ -788,19 +788,10 @@ msg -n "$1 ... "
 		debian|ubuntu|kalilinux)
 			inet_users="${inet_users} messagebus www-data mysql postgres"
 		;;
-		archlinux)
+		archlinux|fedora|centos)
 			inet_users="${inet_users} dbus"
 		;;
-		fedora)
-			inet_users="${inet_users} dbus"
-		;;
-		opensuse)
-			inet_users="${inet_users} messagebus"
-		;;
-		gentoo)
-			inet_users="${inet_users} messagebus"
-		;;
-		slackware)
+		opensuse|gentoo|slackware)
 			inet_users="${inet_users} messagebus"
 		;;
 		esac
@@ -820,7 +811,7 @@ msg -n "$1 ... "
 		debian|ubuntu|kalilinux)
 			echo "LANG=${LOCALE}" > "${CHROOT_DIR}/etc/default/locale"
 		;;
-		archlinux)
+		archlinux|centos)
 			echo "LANG=${LOCALE}" > "${CHROOT_DIR}/etc/locale.conf"
 		;;
 		fedora)
@@ -876,6 +867,19 @@ msg -n "$1 ... "
 			local repo_file="${CHROOT_DIR}/etc/yum.repos.d/fedora-${SUITE}-${ARCH}.repo"
 			echo "[fedora-${SUITE}-${ARCH}]" > "${repo_file}"
 			echo "name=Fedora ${SUITE} - ${ARCH}" >> "${repo_file}"
+			echo "failovermethod=priority" >> "${repo_file}"
+			echo "baseurl=${repo}" >> "${repo_file}"
+			echo "enabled=1" >> "${repo_file}"
+			echo "metadata_expire=7d" >> "${repo_file}"
+			echo "gpgcheck=0" >> "${repo_file}"
+			chmod 644 "${repo_file}"
+		;;
+		centos)
+			chroot_exec -u root "yum-config-manager --disable '*'" >/dev/null
+			local repo="${SOURCE_PATH%/}/${SUITE}/os/${ARCH}"
+			local repo_file="${CHROOT_DIR}/etc/yum.repos.d/CentOS-${SUITE}-${ARCH}.repo"
+			echo "[centos-${SUITE}-${ARCH}]" > "${repo_file}"
+			echo "name=CentOS ${SUITE} - ${ARCH}" >> "${repo_file}"
 			echo "failovermethod=priority" >> "${repo_file}"
 			echo "baseurl=${repo}" >> "${repo_file}"
 			echo "enabled=1" >> "${repo_file}"
@@ -985,17 +989,15 @@ msg -n "$1 ... "
 		chown -R ${user_id}:${group_id} "${CHROOT_DIR}${user_home}" || true
 	;;
 	dbus)
-		case "${DISTRIB}" in
-		debian|ubuntu|kalilinux|archlinux)
+		if [ -e "${CHROOT_DIR}/run" ]; then
 			mkdir "${CHROOT_DIR}/run/dbus" || true
 			chmod 755 "${CHROOT_DIR}/run/dbus"
-		;;
-		fedora)
+		fi
+		if [ -e "${CHROOT_DIR}/var/run" ]; then
 			mkdir "${CHROOT_DIR}/var/run/dbus" || true
 			chmod 755 "${CHROOT_DIR}/var/run/dbus"
-			chroot_exec dbus-uuidgen > "${CHROOT_DIR}/etc/machine-id"
-		;;
-		esac
+		fi
+		chroot_exec dbus-uuidgen > "${CHROOT_DIR}/etc/machine-id"
 	;;
 	xorg)
 		# Xwrapper.config
@@ -1242,6 +1244,48 @@ msg "Installing additional components: "
 				;;
 				kde)
 					igrp="kde-desktop"
+				;;
+				esac
+			;;
+			ssh)
+				pkgs="${pkgs} openssh-server"
+			;;
+			vnc)
+				pkgs="${pkgs} tigervnc-server"
+			;;
+			xserver)
+				pkgs="${pkgs} xorg-x11-xinit xorg-x11-server-Xorg xorg-x11-drv-fbdev xorg-x11-drv-evdev"
+			;;
+			esac
+		done
+		[ -z "${pkgs}" ] && return 1
+		chroot_exec -u root "yum install ${pkgs} --nogpgcheck --skip-broken -y"
+		[ -n "${igrp}" ] && chroot_exec -u root "yum groupinstall "${igrp}" --nogpgcheck --skip-broken -y"
+		chroot_exec -u root "yum clean all"
+	;;
+	centos)
+		local pkgs=""
+		local igrp=""
+		for component in ${USE_COMPONENTS}
+		do
+			case "${component}" in
+			desktop)
+				pkgs="${pkgs} xorg-x11-server-utils xorg-x11-fonts-misc dejavu-*"
+				case "${DESKTOP_ENV}" in
+				xterm)
+					pkgs="${pkgs} xterm"
+				;;
+				lxde)
+					igrp="lxde-desktop-environment"
+				;;
+				xfce)
+					igrp="xfce-desktop-environment"
+				;;
+				gnome)
+					igrp="gnome-desktop-environment"
+				;;
+				kde)
+					igrp="kde-desktop-environment"
 				;;
 				esac
 			;;
@@ -1527,10 +1571,7 @@ fedora)
 	configure_container qemu
 
 	msg "Installing base packages: "
-	chroot_exec /bin/rpm -iv --force --nosignature --nodeps /tmp/*.rpm 1>&3 2>&3
-
-	msg -n "Updating packages database ... "
-	chroot_exec /bin/rpm -i --force --nosignature --nodeps --justdb /tmp/*.rpm
+	chroot_exec /bin/rpm -iv --force --nosignature --nodeps --justdb /tmp/*.rpm 1>&3 2>&3
 	[ $? -eq 0 ] && msg "done" || msg "fail"
 
 	msg -n "Clearing cache ... "
@@ -1545,6 +1586,75 @@ fedora)
 	(set -e
 		chroot_exec -u root "yum groupinstall minimal-environment --nogpgcheck --skip-broken -y --exclude openssh-server"
 		chroot_exec -u root "yum clean all"
+	exit 0) 1>&3 2>&3
+	[ $? -ne 0 ] && return 1
+;;
+centos)
+	msg "Installing CentOS distribution: "
+
+	local basic_packages="filesystem audit-libs basesystem bash bzip2-libs ca-certificates centos-release chkconfig coreutils cpio cracklib cracklib-dicts cryptsetup-libs curl cyrus-sasl-lib dbus dbus-libs device-mapper device-mapper-libs diffutils elfutils-libelf elfutils-libs expat file-libs gawk gdbm glib2 glibc glibc-common gmp gnupg2 gpgme grep gzip info keyutils-libs kmod kmod-libs krb5-libs libacl libassuan libattr libblkid libcap libcap-ng libcom_err libcurl libdb libdb-utils libffi libgcc libgcrypt libgpg-error libidn libmount libpwquality libselinux libsemanage libsepol libssh2 libstdc++ libtasn1 libuser libutempter libuuid libverto libxml2 lua ncurses ncurses-base ncurses-libs nspr nss nss-softokn nss-softokn-freebl nss-sysinit nss-tools nss-util openldap openssl-libs p11-kit p11-kit-trust pam pcre pinentry pkgconfig popt pth pygpgme pyliblzma python python-chardet python-iniparse python-kitchen python-libs python-pycurl python-urlgrabber pyxattr qrencode-libs readline rootfiles rpm rpm-build-libs rpm-libs rpm-python sed selinux-policy setup shadow-utils shared-mime-info sqlite sudo systemd systemd-libs tzdata ustr util-linux vim-minimal which xz-libs yum yum-metadata-parser yum-plugin-fastestmirror yum-utils zlib"
+
+	local repo="${SOURCE_PATH%/}/${SUITE}/os/${ARCH}"
+
+	msg "Repository: ${repo}"
+
+	msg -n "Preparing for deployment ... "
+	(set -e
+		cd "${CHROOT_DIR}"
+		mkdir etc
+		echo "root:x:0:0:root:/root:/bin/bash" > etc/passwd
+		echo "root:x:0:" > etc/group
+		touch etc/fstab
+		mkdir tmp; chmod 01777 tmp
+	exit 0)
+	[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
+
+	msg -n "Retrieving packages list ... "
+	local pkg_list="${CHROOT_DIR}/tmp/packages.list"
+	(set -e
+		repodata=$(wget -q -O - "${repo}/repodata/repomd.xml" | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\-primary\.xml\.gz\)".*$/\1/p')
+		[ -z "${repodata}" ] && exit 1
+		wget -q -O - "${repo}/${repodata}" | gzip -dc | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\)".*$/\1/p' > "${pkg_list}"
+	exit 0)
+	[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
+
+	msg "Retrieving base packages: "
+	for package in ${basic_packages}
+	do
+		msg -n "${package} ... "
+		local pkg_url=$(grep -m1 -e "^.*/${package}-[0-9][0-9\.\-].*\.rpm$" "${pkg_list}")
+		test "${pkg_url}" || { msg "skip"; continue; }
+		local pkg_file=$(basename "${pkg_url}")
+		# download
+		for i in 1 2 3
+		do
+			[ ${i} -gt 1 ] && sleep 30s
+			wget -q -c -O "${CHROOT_DIR}/tmp/${pkg_file}" "${repo}/${pkg_url}"
+			[ $? -eq 0 ] && break
+		done
+		# unpack
+		(cd "${CHROOT_DIR}"; rpm2cpio "${CHROOT_DIR}/tmp/${pkg_file}" | cpio -idmu)
+		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
+	done
+
+	configure_container qemu
+
+	msg "Installing base packages: "
+	chroot_exec /bin/rpm -iv --force --nosignature --nodeps --justdb /tmp/*.rpm 1>&3 2>&3
+	[ $? -eq 0 ] && msg "done" || msg "fail"
+
+	msg -n "Clearing cache ... "
+	rm -rf "${CHROOT_DIR}"/tmp/*
+	[ $? -eq 0 ] && msg "done" || msg "fail"
+
+	mount_container
+
+	configure_container dns mtab misc groups repository
+
+	msg "Installing minimal environment: "
+	(set -e
+		chroot_exec -u root 'yum groupinstall "Minimal Install" --nogpgcheck --skip-broken -y --exclude openssh-server'
+		chroot_exec -u root 'yum clean all'
 	exit 0) 1>&3 2>&3
 	[ $? -ne 0 ] && return 1
 ;;
