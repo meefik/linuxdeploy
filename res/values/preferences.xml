@@ -104,6 +104,15 @@
     <string name="intel_fedora_mirror" translatable="false">http://dl.fedoraproject.org/pub/</string>
     <string name="intel_fedora_architecture" translatable="false">i386</string>
     
+    <!-- CentOS -->
+    <string name="centos_suite" translatable="false">7</string>
+    <!-- arm -->
+    <string name="arm_centos_mirror" translatable="false">http://mirror.centos.org/altarch/</string>
+    <string name="arm_centos_architecture" translatable="false">armhfp</string>
+    <!-- intel -->
+    <string name="intel_centos_mirror" translatable="false">http://mirror.centos.org/altarch/</string>
+    <string name="intel_centos_architecture" translatable="false">i386</string>
+    
     <!-- Arch Linux -->
     <string name="archlinux_suite" translatable="false">latest</string>
     <!-- arm -->

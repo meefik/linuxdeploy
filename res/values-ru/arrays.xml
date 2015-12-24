@@ -69,6 +69,15 @@
         <item>X сервер</item>
     </string-array>
     
+    <!-- CentOS -->
+
+    <string-array name="centos_components_entries">
+        <item>Окружение рабочего стола</item>
+        <item>SSH сервер</item>
+        <item>VNC сервер</item>
+        <item>X сервер</item>
+    </string-array>
+    
     <!-- Arch Linux -->
 
     <string-array name="archlinux_components_entries">

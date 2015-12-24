@@ -29,8 +29,8 @@
     <string name="title_activity_mounts">Монтирование</string>
     <string name="confirm_start_title">Запустить</string>
     <string name="confirm_stop_title">Остановить</string>
-    <string name="confirm_start_message">Смонтировать GNU/Linux и запустить сервисы?</string>
-    <string name="confirm_stop_message">Остановить сервисы и размонтировать GNU/Linux?</string>
+    <string name="confirm_start_message">Смонтировать контейнер и запустить сервисы?</string>
+    <string name="confirm_stop_message">Остановить сервисы и размонтировать контейнер?</string>
     <string name="new_profile_title">Имя профиля</string>
     <string name="edit_profile_title">Имя профиля</string>
     <string name="import_profile_title">Импортировать профиль</string>
@@ -68,7 +68,7 @@
     <string name="title_appicon_preference">Показывать иконку</string>
     <string name="summary_appicon_preference">Отображать значок на панели уведомлений</string>
     <string name="title_autostart_preference">Автозапуск</string>
-    <string name="summary_autostart_preference">Автоматически запускать GNU/Linux при загрузке Android</string>
+    <string name="summary_autostart_preference">Автоматически запускать контейнер при загрузке Android</string>
     <string name="title_terminalcmd_preference">Команда терминала</string>
     <string name="dialog_title_terminalcmd_preference">Команда терминала</string>
     <string name="env_preferences">Рабочее окружение</string>
@@ -99,7 +99,7 @@
     <string name="summary_reconfigure_preference">Выполнить переконфигурацию GNU/Linux системы</string>
     <string name="message_reconfigure_confirm_dialog">Выполнить переконфигурацию GNU/Linux системы?</string>
     <string name="title_export_preference">Экспортировать</string>
-    <string name="summary_export_preference">Экспортировать GNU/Linux как rootfs-архив</string>
+    <string name="summary_export_preference">Экспортировать контейнер как rootfs-архив</string>
     <string name="deploy_preferences">Развертывание</string>
     <string name="title_distribution_preference">Дистрибутив</string>
     <string name="dialog_title_distribution_preference">Дистрибутив</string>

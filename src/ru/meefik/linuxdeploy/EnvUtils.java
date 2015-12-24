@@ -448,7 +448,7 @@ public class EnvUtils {
         lines.add("TARGET_PATH=\"" + PrefStore.getTargetPath(c) + "\"");
         lines.add("DISK_SIZE=\"" + PrefStore.getDiskSize(c) + "\"");
         lines.add("FS_TYPE=\"" + PrefStore.getFilesystem(c) + "\"");
-        lines.add("DEPLOY_TYPE=\"" + PrefStore.getTargetType(c) + "\"");
+        lines.add("TARGET_TYPE=\"" + PrefStore.getTargetType(c) + "\"");
         lines.add("DISTRIB=\"" + PrefStore.getDistribution(c) + "\"");
         lines.add("ARCH=\"" + PrefStore.getArchitecture(c) + "\"");
         lines.add("SUITE=\"" + PrefStore.getSuite(c) + "\"");
