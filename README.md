@@ -3,11 +3,11 @@ Linux Deploy
 
 Copyright (C) 2012-2015  Anton Skshidlevsky, [GPLv3](http://opensource.org/licenses/gpl-3.0.html)
 
-This application is open source software for quick and easy installation of the operating system (OS) GNU / Linux on your Android device.
+This application is open source software for quick and easy installation of the operating system (OS) GNU/Linux on your Android device.
 
 The application creates a disk image on a flash card, mounts it and installs an OS distribution. Applications of the new system are run in a chroot environment and working together with the Android platform. All changes made on the device are reversible, i.e. the application and components can be removed completely. Installation of a distribution is done by downloading files from official mirrors online over the internet. The application requires superuser rights (ROOT).
 
-The program interface supports English and Russian. You can manage the process of installing the OS, and after installation, you can start and stop services of the new system (there is support for running your scripts) through the UI. The installation process is reported as text in the main application window. During the installation, the program will adjust the environment, which includes the base system, SSH server, VNC server and desktop environment. The program interface can also manage SSH and VNC settings.
+The program supports multi language interface. You can manage the process of installing the OS, and after installation, you can start and stop services of the new system (there is support for running your scripts) through the UI. The installation process is reported as text in the main application window. During the installation, the program will adjust the environment, which includes the base system, SSH server, VNC server and desktop environment. The program interface can also manage SSH and VNC settings.
 
 Installing a new operating system takes about 30 minutes. The recommended minimum size of a disk image is 1024 MB (with LXDE), and without a GUI - 512 MB. When you install Linux on the flash card with the FAT32 file system, the image size should not exceed 4095 MB! After the initial setup the default password for SSH and VNC is changeme. The password can be changed through standard OS tools.
 
@@ -46,4 +46,4 @@ Installation time and use space on disk (Debian wheezy/armhf on Samsung Galaxy S
 Source code: <https://github.com/meefik/linuxdeploy>. The source code is written using the Android SDK/NDK and the Eclipse ADT plugin.
 
 #### Donations ####
-<http://meefik.github.io/donate.html>
+<http://meefik.github.io/donate>
