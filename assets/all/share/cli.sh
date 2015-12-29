@@ -7,7 +7,24 @@
 
 msg()
 {
-echo "$@" 1>&3
+if [ $# -gt 0 ]; then
+	echo "$@" 1>&$FD
+else
+	local text
+        while read text; do
+		echo "${text}" 1>&$FD
+	done
+fi
+}
+
+find_unused_fd()
+{
+local fd_max=$(ulimit -n)
+local fd=0
+while [ $fd -le $fd_max -a -e /proc/$$/fd/$fd ]; do
+	fd=$((fd+1))
+done
+echo $fd
 }
 
 get_platform()
@@ -82,13 +99,23 @@ unset TMP TEMP TMPDIR LD_PRELOAD LD_DEBUG
 if [ "$1" = "-u" ]; then
 	local username="$2"
         shift 2
-        if [ -n "$@" ]; then
-		chroot "${CHROOT_DIR}" /bin/su - ${username} -c "$@"
+        if [ $# -gt 0 ]; then
+		chroot "${CHROOT_DIR}" /bin/su - ${username} -c "$*"
 	else
+		if [ -e "${CHROOT_DIR}/etc/motd" ]; then
+			msg $(cat "${CHROOT_DIR}/etc/motd")
+		fi
 		chroot "${CHROOT_DIR}" /bin/su - ${username}
 	fi
 else
-	chroot "${CHROOT_DIR}" "$@"
+	if [ $# -gt 0 ]; then
+		chroot "${CHROOT_DIR}" $*
+	else
+		if [ -e "${CHROOT_DIR}/etc/motd" ]; then
+			msg $(cat "${CHROOT_DIR}/etc/motd")
+		fi
+		chroot "${CHROOT_DIR}"
+	fi
 fi
 }
 
@@ -116,7 +143,7 @@ local pid=$([ -e "${pidfile}" ] && cat ${pidfile})
 [ -z "${is_started}" ] && return 1 || return 0
 }
 
-prepare_container()
+container_prepare()
 {
 container_mounted && { msg "The container is already mounted."; return 1; }
 
@@ -352,10 +379,10 @@ esac
 return 0
 }
 
-mount_container()
+container_mount()
 {
 if [ $# -eq 0 ]; then
-	mount_container root proc sys selinux dev tty pts shm binfmt_misc custom
+	container_mount root proc sys selinux dev tty pts shm binfmt_misc custom
 	[ $? -ne 0 ] && return 1
 else
 	msg "Mounting partitions: "
@@ -369,7 +396,7 @@ fi
 return 0
 }
 
-umount_container()
+container_umount()
 {
 container_mounted || { msg "The container is not mounted." ; return 0; }
 
@@ -441,19 +468,19 @@ fi
 return 0
 }
 
-start_container()
+container_start()
 {
 if [ $# -eq 0 ]; then
-	mount_container
+	container_mount
 	[ $? -ne 0 ] && return 1
 
-	configure_container dns mtab
+	container_configure dns mtab
 
 	msg "Starting services: "
 
 	for i in ${STARTUP}
 	do
-		start_container ${i}
+		container_start ${i}
 		[ $? -eq 0 ] || return 1
 	done
 
@@ -566,7 +593,7 @@ esac
 return 0
 }
 
-stop_container()
+container_stop()
 {
 container_mounted || { msg "The container is already stopped." ; return 0; }
 
@@ -575,13 +602,13 @@ if [ $# -eq 0 ]; then
 
 	for i in ${STARTUP}
 	do
-		stop_container ${i}
+		container_stop ${i}
 		[ $? -eq 0 ] || return 1
 	done
 
 	[ -z "${STARTUP}" ] && msg "...no active services"
 
-	umount_container
+	container_umount
 	[ $? -ne 0 ] && return 1 || return 0
 fi
 
@@ -659,26 +686,22 @@ esac
 return 0
 }
 
-chroot_container()
+container_chroot()
 {
-container_mounted || mount_container
+container_mounted || container_mount
 [ $? -ne 0 ] && return 1
 
-configure_container dns mtab
+eval "container_configure dns mtab $FD>/dev/null"
 
-[ -e "${CHROOT_DIR}/etc/motd" ] && msg $(cat "${CHROOT_DIR}/etc/motd")
-
-SHELL="$@"
 USER="root"
 HOME=$(grep -m1 "^${USER}:" "${CHROOT_DIR}/etc/passwd" | awk -F: '{print $6}')
+SHELL=$(grep -m1 "^${USER}:" "${CHROOT_DIR}/etc/passwd" | awk -F: '{print $7}')
 LANG="${LOCALE}"
 PS1="\u@\h:\w\\$ "
-export PATH TERM SHELL USER HOME LANG PS1
+export USER HOME SHELL LANG PS1
 
-chroot_exec -u ${USER} "${SHELL}" 1>&3 2>&3
-[ $? -ne 0 ] && return 1
-
-return 0
+chroot_exec "$@" 1>&$FD 2>&$FD
+return $?
 }
 
 configure_part()
@@ -1102,16 +1125,16 @@ exit 0)
 return 0
 }
 
-configure_container()
+container_configure()
 {
 if [ $# -eq 0 ]; then
-	configure_container qemu dns mtab motd hosts hostname timezone su sudo groups locales repository profile dbus xorg unchroot android misc
+	container_configure qemu dns mtab motd hosts hostname timezone su sudo groups locales repository profile dbus xorg unchroot android misc
 	[ $? -ne 0 ] && return 1
 
-	install_components
+	components_install
 	[ $? -ne 0 ] && return 1
 else 
-	container_mounted || mount_container
+	container_mounted || container_mount
 	[ $? -ne 0 ] && return 1
 
 	msg "Configuring the container: "
@@ -1126,7 +1149,7 @@ fi
 return 0
 }
 
-install_components()
+components_install()
 {
 [ -z "${USE_COMPONENTS}" ] && return 1
 
@@ -1413,39 +1436,39 @@ msg "Installing additional components: "
 		exit 1
 	;;
 	esac
-exit 0) 1>&3 2>&3
+exit 0) | msg
 [ $? -ne 0 ] && return 1
 
 return 0
 }
 
-install_container()
+container_install()
 {
-prepare_container
+container_prepare
 [ $? -ne 0 ] && return 1
 
-mount_container root binfmt_misc
+container_mount root binfmt_misc
 [ $? -ne 0 ] && return 1
 
 case "${DISTRIB}" in
 debian|ubuntu|kalilinux)
 	msg "Installing Debian-based distribution: "
 
-	local basic_packages="locales,sudo,man-db"
+	local basic_packages="dbus,locales,sudo,man-db"
 
 	(set -e
 		DEBOOTSTRAP_DIR="${ENV_DIR%/}/share/debootstrap"
 		. "${DEBOOTSTRAP_DIR}/debootstrap" --no-check-gpg --arch "${ARCH}" --foreign --extractor=ar --include="${basic_packages}" "${SUITE}" "${CHROOT_DIR}" "${SOURCE_PATH}"
-	exit 0) 1>&3 2>&3
+	exit 0) | msg
 	[ $? -ne 0 ] && return 1
 
-	configure_container qemu dns mtab
+	container_configure qemu dns mtab
 
 	unset DEBOOTSTRAP_DIR
-	chroot_exec /debootstrap/debootstrap --second-stage 1>&3 2>&3
+	chroot_exec /debootstrap/debootstrap --second-stage | msg
 	[ $? -ne 0 ] && return 1
 
-	mount_container
+	container_mount
 ;;
 archlinux)
 	msg "Installing Arch Linux distribution: "
@@ -1500,16 +1523,16 @@ archlinux)
 		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 	done
 
-	mount_container
+	container_mount
 
-	configure_container qemu dns mtab groups repository
+	container_configure qemu dns mtab groups repository
 
 	msg "Installing base packages: "
 	(set -e
 		chroot_exec -u root "/usr/bin/pacman --noconfirm -Sy"
 		extra_packages=$(chroot_exec -u root "/usr/bin/pacman --noconfirm -Sg base" | awk '{print $2}' | grep -v -e 'linux' -e 'kernel' | xargs)
 		chroot_exec -u root "/usr/bin/pacman --noconfirm --force -Sq ${basic_packages} ${extra_packages}"
-	exit 0) 1>&3 2>&3
+	exit 0) | msg
 	[ $? -ne 0 ] && return 1
 
 	msg -n "Clearing cache ... "
@@ -1568,25 +1591,25 @@ fedora)
 		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 	done
 
-	configure_container qemu
+	container_configure qemu
 
-	msg "Installing base packages: "
-	chroot_exec /bin/rpm -iv --force --nosignature --nodeps --justdb /tmp/*.rpm 1>&3 2>&3
+	msg "Updating a packages database ... "
+	chroot_exec /bin/rpm -iv --force --nosignature --nodeps --justdb /tmp/*.rpm
 	[ $? -eq 0 ] && msg "done" || msg "fail"
 
 	msg -n "Clearing cache ... "
 	rm -rf "${CHROOT_DIR}"/tmp/*
 	[ $? -eq 0 ] && msg "done" || msg "fail"
 
-	mount_container
+	container_mount
 
-	configure_container dns mtab misc groups repository
+	container_configure dns mtab misc groups repository
 
 	msg "Installing minimal environment: "
 	(set -e
 		chroot_exec -u root "yum groupinstall minimal-environment --nogpgcheck --skip-broken -y --exclude openssh-server"
 		chroot_exec -u root "yum clean all"
-	exit 0) 1>&3 2>&3
+	exit 0) | msg
 	[ $? -ne 0 ] && return 1
 ;;
 centos)
@@ -1637,25 +1660,25 @@ centos)
 		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 	done
 
-	configure_container qemu
+	container_configure qemu
 
-	msg "Installing base packages: "
-	chroot_exec /bin/rpm -iv --force --nosignature --nodeps --justdb /tmp/*.rpm 1>&3 2>&3
+	msg "Updating a packages database ... "
+	chroot_exec /bin/rpm -iv --force --nosignature --nodeps --justdb /tmp/*.rpm
 	[ $? -eq 0 ] && msg "done" || msg "fail"
 
 	msg -n "Clearing cache ... "
 	rm -rf "${CHROOT_DIR}"/tmp/*
 	[ $? -eq 0 ] && msg "done" || msg "fail"
 
-	mount_container
+	container_mount
 
-	configure_container dns mtab misc groups repository
+	container_configure dns mtab misc groups repository
 
 	msg "Installing minimal environment: "
 	(set -e
 		chroot_exec -u root 'yum groupinstall "Minimal Install" --nogpgcheck --skip-broken -y --exclude openssh-server'
 		chroot_exec -u root 'yum clean all'
-	exit 0) 1>&3 2>&3
+	exit 0) | msg
 	[ $? -ne 0 ] && return 1
 ;;
 opensuse)
@@ -1716,17 +1739,17 @@ opensuse)
 		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 	done
 
-	configure_container qemu
+	container_configure qemu
 
-	msg "Installing base packages: "
-	chroot_exec /bin/rpm -iv --force --nosignature --nodeps /tmp/*.rpm 1>&3 2>&3
-	[ $? -ne 0 ] && return 1
+	msg "Updating a packages database ... "
+	chroot_exec /bin/rpm -iv --force --nosignature --nodeps /tmp/*.rpm
+	[ $? -eq 0 ] && msg "done" || msg "fail"
 
 	msg -n "Clearing cache ... "
 	rm -rf "${CHROOT_DIR}"/tmp/*
 	[ $? -eq 0 ] && msg "done" || msg "fail"
 
-	mount_container
+	container_mount
 ;;
 gentoo)
 	msg "Installing Gentoo distribution: "
@@ -1760,9 +1783,9 @@ gentoo)
 	exit 0)
 	[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 
-	mount_container
+	container_mount
 
-	configure_container qemu dns mtab groups repository
+	container_configure qemu dns mtab groups repository
 
 	msg -n "Updating portage tree ... "
 	(set -e
@@ -1774,7 +1797,7 @@ gentoo)
 	msg "Installing base packages: "
 	(set -e
 		chroot_exec -u root "emerge sudo"
-	exit 0) 1>&3 2>&3
+	exit 0) | msg
 	[ $? -eq 0 ] || return 1
 
 	msg -n "Updating configuration ... "
@@ -1837,7 +1860,7 @@ slackware)
 	rm -f "${cache_dir}"/*
 	[ $? -eq 0 ] && msg "done" || msg "fail"
 
-	mount_container
+	container_mount
 ;;
 rootfs)
 	msg "Getting and unpacking rootfs archive: "
@@ -1845,13 +1868,13 @@ rootfs)
 		if [ -e "${SOURCE_PATH}" ]; then
 			(set -e
 				tar xzvf "${SOURCE_PATH}" -C "${CHROOT_DIR}"
-			exit 0) 1>&3 2>&3
+			exit 0) | msg
 			[ $? -eq 0 ] || return 1
 		fi
 		if [ -n "$(echo ${SOURCE_PATH} | grep -i '^http')" ]; then
 			(set -e
 				wget -q -O - "${SOURCE_PATH}" | tar xzv -C "${CHROOT_DIR}"
-			exit 0) 1>&3 2>&3
+			exit 0) | msg
 			[ $? -eq 0 ] || return 1
 		fi
 	fi
@@ -1859,13 +1882,13 @@ rootfs)
 		if [ -e "${SOURCE_PATH}" ]; then
 			(set -e
 				tar xjvf "${SOURCE_PATH}" -C "${CHROOT_DIR}"
-			exit 0) 1>&3 2>&3
+			exit 0) | msg
 			[ $? -eq 0 ] || return 1
 		fi
 		if [ -n "$(echo ${SOURCE_PATH} | grep -i '^http')" ]; then
 			(set -e
 				wget -q -O - "${SOURCE_PATH}" | tar xjv -C "${CHROOT_DIR}"
-			exit 0) 1>&3 2>&3
+			exit 0) | msg
 			[ $? -eq 0 ] || return 1
 		fi
 	fi
@@ -1873,19 +1896,19 @@ rootfs)
 		if [ -e "${SOURCE_PATH}" ]; then
 			(set -e
 				tar xJvf "${SOURCE_PATH}" -C "${CHROOT_DIR}"
-			exit 0) 1>&3 2>&3
+			exit 0) | msg
 			[ $? -eq 0 ] || return 1
 		fi
 		if [ -n "$(echo ${SOURCE_PATH} | grep -i '^http')" ]; then
 			(set -e
 				wget -q -O - "${SOURCE_PATH}" | tar xJv -C "${CHROOT_DIR}"
-			exit 0) 1>&3 2>&3
+			exit 0) | msg
 			[ $? -eq 0 ] || return 1
 		fi
 	fi
 	[ $(ls "${CHROOT_DIR}" | wc -l) -le 1 ] && { msg " ...installation failed."; return 1; }
 
-	mount_container
+	container_mount
 ;;
 *)
 	msg "This Linux distribution is not supported."
@@ -1893,18 +1916,18 @@ rootfs)
 ;;
 esac
 
-configure_container
+container_configure
 [ $? -ne 0 ] && return 1
 
 return 0
 }
 
-export_container()
+container_export()
 {
 local rootfs_archive="$1"
 [ -z "${rootfs_archive}" ] && { msg "Incorrect export parameters."; return 1; }
 
-container_mounted || mount_container root
+container_mounted || container_mount root
 [ $? -ne 0 ] && return 1
 
 case "${rootfs_archive}" in
@@ -1925,7 +1948,7 @@ case "${rootfs_archive}" in
 esac
 }
 
-status_container()
+container_status()
 {
 msg -n "Linux Deploy: "
 msg $(cat "${ENV_DIR%/}/etc/version")
@@ -2046,7 +2069,7 @@ helper()
 {
 local version=$(cat "${ENV_DIR%/}/etc/version")
 
-cat <<EOF 1>&3
+cat <<EOF | msg
 Linux Deploy ${version}
 (c) 2012-2015 Anton Skshidlevsky, GPLv3
 
@@ -2110,42 +2133,43 @@ shift $((OPTIND-1))
 CHROOT_DIR="${CHROOT_DIR%/}"
 
 # log level
-exec 3>&1
+FD=$(find_unused_fd)
+eval "exec $FD>&1"
 [ "${DEBUG_MODE}" != "y" -a "${TRACE_MODE}" != "y" ] && { exec 1>/dev/null; exec 2>/dev/null; }
 [ "${TRACE_MODE}" = "y" ] && set -x
 
 # exec command
 case "$1" in
 prepare)
-	prepare_container
+	container_prepare
 ;;
 install)
-	install_container
+	container_install
 ;;
 configure)
-	configure_container
+	container_configure
 ;;
 mount)
-	mount_container
+	container_mount
 ;;
 umount)
-	umount_container
+	container_umount
 ;;
 start)
-	start_container
+	container_start
 ;;
 stop)
-	stop_container
+	container_stop
 ;;
 shell)
 	shift
-	chroot_container "$@"
+	container_chroot "$@"
 ;;
 export)
-	export_container "$2"
+	container_export "$2"
 ;;
 status)
-	status_container
+	container_status
 ;;
 *)
 	helper
