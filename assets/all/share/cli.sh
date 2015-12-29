@@ -5,6 +5,9 @@
 #
 ################################################################################
 
+# force using busybox mount
+alias mount="busybox mount"
+
 msg()
 {
 if [ $# -gt 0 ]; then
