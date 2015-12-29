@@ -4,6 +4,7 @@ Changelog (English)
 1.5.5
 Open a shell from Android Terminal Emulator
 Added support CentOS
+Translated into Korean
 
 1.5.4
 Fixed a problem with user password that contains uppercase letters
@@ -325,6 +326,7 @@ Updated list packages of base system installation
 1.5.5
 Открытие командной оболочки в Android Terminal Emulator
 Добавлена поддержка CentOS
+Переведено на корейский язык
 
 1.5.4
 Исправлена проблема с установкой пароля, содержащего заглавные буквы
