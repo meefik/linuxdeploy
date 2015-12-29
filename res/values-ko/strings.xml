@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    
+    <string name="app_name">Linux Deploy</string>
+    <string name="app_version">version %1$s</string>
     <string name="menu_start">시작</string>
     <string name="menu_stop">정지</string>
     <string name="menu_properties">속성</string>
