@@ -240,7 +240,7 @@ public class EnvUtils {
                     "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:" +
                     PrefStore.getBusyboxDir(c) + ":$PATH\n");
             bw.write("ENV_DIR=\"" + PrefStore.getEnvDir(c) + "\"\n");
-            bw.write(". ${ENV_DIR}/share/main.sh\n");
+            bw.write(". ${ENV_DIR}/share/cli.sh\n");
             result = true;
         } catch (IOException e) {
             e.printStackTrace();
