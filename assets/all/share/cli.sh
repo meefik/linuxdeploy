@@ -84,6 +84,7 @@ if [ "$1" = "-u" ]; then
         chroot "${CHROOT_DIR}" /bin/su - ${username}
     fi
 else
+    PATH="${PATH}:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
     if [ $# -gt 0 ]; then
         chroot "${CHROOT_DIR}" $*
     else
@@ -182,7 +183,7 @@ if [ "${TARGET_TYPE}" = "file" -o "${TARGET_TYPE}" = "partition" ]; then
     local loop_exist=$(losetup -a | grep -c "${TARGET_PATH}")
     local img_mounted=$(grep -c "${TARGET_PATH}" /proc/mounts)
     [ "${loop_exist}" -ne 0 -o "${img_mounted}" -ne 0 ] && { msg "fail"; return 1; }
-    mke2fs -qF -t ${FS_TYPE} -O ^has_journal "${TARGET_PATH}"
+    mke2fs -qF -t ${FS_TYPE} -O ^has_journal "${TARGET_PATH}" >/dev/null
     [ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 fi
 
@@ -1572,8 +1573,8 @@ fedora)
 
     container_configure qemu
 
-    msg "Updating a packages database ... "
-    chroot_exec /bin/rpm -iv --force --nosignature --nodeps --justdb /tmp/*.rpm
+    msg -n "Updating a packages database ... "
+    chroot_exec /bin/rpm -iv --force --nosignature --nodeps --justdb /tmp/*.rpm >/dev/null
     [ $? -eq 0 ] && msg "done" || msg "fail"
 
     msg -n "Clearing cache ... "
@@ -1641,8 +1642,8 @@ centos)
 
     container_configure qemu
 
-    msg "Updating a packages database ... "
-    chroot_exec /bin/rpm -iv --force --nosignature --nodeps --justdb /tmp/*.rpm
+    msg -n "Updating a packages database ... "
+    chroot_exec /bin/rpm -iv --force --nosignature --nodeps --justdb /tmp/*.rpm >/dev/null
     [ $? -eq 0 ] && msg "done" || msg "fail"
 
     msg -n "Clearing cache ... "
@@ -1720,8 +1721,8 @@ opensuse)
 
     container_configure qemu
 
-    msg "Updating a packages database ... "
-    chroot_exec /bin/rpm -iv --force --nosignature --nodeps /tmp/*.rpm
+    msg -n "Updating a packages database ... "
+    chroot_exec /bin/rpm -iv --force --nosignature --nodeps /tmp/*.rpm >/dev/null
     [ $? -eq 0 ] && msg "done" || msg "fail"
 
     msg -n "Clearing cache ... "
