@@ -236,10 +236,8 @@ public class EnvUtils {
         try {
             bw = new BufferedWriter(new FileWriter(scriptFile));
             bw.write("#!" + PrefStore.getShell(c) + "\n");
-            bw.write("PATH=" + PrefStore.getEnvDir(c) + "/bin:" +
-                    "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:" +
-                    PrefStore.getBusyboxDir(c) + ":$PATH\n");
-            bw.write("ENV_DIR=\"" + PrefStore.getEnvDir(c) + "\"\n");
+            bw.write("PATH=" + PrefStore.getEnvDir(c) + "/bin:" + PrefStore.getBusyboxDir(c) + ":$PATH\n");
+            bw.write("ENV_DIR=" + PrefStore.getEnvDir(c) + "\n");
             bw.write(". ${ENV_DIR}/share/cli.sh\n");
             result = true;
         } catch (IOException e) {
