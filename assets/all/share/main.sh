@@ -206,7 +206,7 @@ root)
 	if ! is_mounted "${CHROOT_DIR}" ; then
 		[ -d "${CHROOT_DIR}" ] || mkdir -p "${CHROOT_DIR}"
 		[ -d "${TARGET_PATH}" ] && local mnt_opts="bind" || local mnt_opts="rw,relatime"
-		mount -o ${mnt_opts} "${TARGET_PATH}" "${CHROOT_DIR}"
+		busybox mount -o ${mnt_opts} "${TARGET_PATH}" "${CHROOT_DIR}"
 		[ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 	else
 		msg "skip"
