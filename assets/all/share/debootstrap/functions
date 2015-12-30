@@ -1287,7 +1287,7 @@ check_sane_mount () {
 #! $SH
 :
 EOF
-	chmod +x "$1/test-exec"
+	chmod 0775 "$1/test-exec"
 	if ! "$1/test-exec"; then
 		rm -f "$1/test-exec"
 		return 1
