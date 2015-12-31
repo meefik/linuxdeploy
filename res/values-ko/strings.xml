@@ -91,7 +91,7 @@
     <string name="summary_logger_preference">기록을 파일로 저장</string>
     <string name="title_logfile_preference">기록 파일</string>
     <string name="dialog_title_logfile_preference">기록 파일</string>
-    <string name="action_preferences"></string>
+    <string name="action_preferences">활동</string>
     <string name="title_install_preference">Install</string>
     <string name="summary_install_preference">Start GNU/Linux installation</string>
     <string name="message_install_confirm_dialog">Start installation of GNU/Linux system?</string>
