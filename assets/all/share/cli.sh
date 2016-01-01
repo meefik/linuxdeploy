@@ -1109,9 +1109,14 @@ configure_part()
         ;;
         misc)
             # Fix for upstart (Ubuntu)
-            if [ -e "${CHROOT_DIR}/sbin/initctl" ]; then
-                chroot_exec dpkg-divert --local --rename --add /sbin/initctl
+            if [ "${DISTRIB}" = "ubuntu" -a -e "${CHROOT_DIR}/sbin/initctl" ]; then
+                chroot_exec dpkg-divert --local --rename --add /sbin/initctl >/dev/null
                 chroot_exec ln -s /bin/true /sbin/initctl
+            fi
+            # Fix for systemd-logind (Ubuntu)
+            if [ "${DISTRIB}" = "ubuntu" -a ! -L "${CHROOT_DIR}/etc/init.d/systemd-logind" ]; then
+                chroot_exec dpkg-divert --local --add /etc/init.d/systemd-logind >/dev/null
+                chroot_exec ln -fs /bin/true /etc/init.d/systemd-logind
             fi
             # Fix for yum (Fedora)
             if [ -e "${CHROOT_DIR}/usr/bin/yum-deprecated" ]; then
