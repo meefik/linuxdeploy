@@ -60,6 +60,7 @@
         <item>ext4</item>
     </string-array>
     <string-array name="locale_values" translatable="false">
+        <item>POSIX</item>
         <item>aa_DJ.UTF-8</item>
         <item>af_ZA.UTF-8</item>
         <item>an_ES.UTF-8</item>

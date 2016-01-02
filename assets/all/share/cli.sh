@@ -829,9 +829,13 @@ configure_part()
             done
         ;;
         locales)
-            local inputfile=$(echo ${LOCALE} | awk -F. '{print $1}')
-            local charmapfile=$(echo ${LOCALE} | awk -F. '{print $2}')
-            chroot_exec localedef -i ${inputfile} -c -f ${charmapfile} ${LOCALE}
+            if [ -n "${LOCALE}" -a "${LOCALE}" != "C" -a "${LOCALE}" != "POSIX" ]; then
+                local inputfile=$(echo ${LOCALE} | awk -F. '{print $1}')
+                local charmapfile=$(echo ${LOCALE} | awk -F. '{print $2}')
+                chroot_exec localedef -i ${inputfile} -c -f ${charmapfile} ${LOCALE}
+            else
+                LOCALE="C"
+            fi
             case "${DISTRIB}" in
             debian|ubuntu|kalilinux)
                 echo "LANG=${LOCALE}" > "${CHROOT_DIR}/etc/default/locale"
@@ -966,7 +970,7 @@ configure_part()
             local user_home=$(grep -m1 "^${USER_NAME}:" "${CHROOT_DIR}/etc/passwd" | awk -F: '{print $6}')
             local user_id=$(grep -m1 "^${USER_NAME}:" "${CHROOT_DIR}/etc/passwd" | awk -F: '{print $3}')
             local group_id=$(grep -m1 "^${USER_NAME}:" "${CHROOT_DIR}/etc/passwd" | awk -F: '{print $4}')
-            local path_str="PATH=${PATH}"
+            local path_str="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
             if ! $(grep -q "${path_str}" "${CHROOT_DIR}${user_home}/.profile"); then
                 echo ${path_str} >> "${CHROOT_DIR}${user_home}/.profile"
             fi
@@ -1085,7 +1089,7 @@ configure_part()
         unchroot)
             local unchroot="${CHROOT_DIR}/bin/unchroot"
             echo '#!/bin/sh' > "${unchroot}"
-            echo "PATH=$PATH" >> "${unchroot}"
+            echo "PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >> "${unchroot}"
             echo 'if [ $# -eq 0 ]; then' >> "${unchroot}"
             echo 'chroot /proc/1/cwd su -' >> "${unchroot}"
             echo 'else' >> "${unchroot}"
