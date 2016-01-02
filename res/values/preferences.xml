@@ -11,7 +11,7 @@
     <string name="autostart" translatable="false">false</string>
     <string name="appicon" translatable="false">true</string>
     <string name="busyboxdir" translatable="false">/system/xbin</string>
-    <string name="terminalcmd" translatable="false">su -c \"${ENV_DIR}/bin/linuxdeploy shell\"</string>
+    <string name="terminalcmd" translatable="false">su -c \"${ENV_DIR}/bin/linuxdeploy shell -u root\"</string>
     <string name="usecli" translatable="false">false</string>
     <string name="profile" translatable="false">Linux</string>
     <string name="debug" translatable="false">false</string>
@@ -34,7 +34,7 @@
     <string name="username" translatable="false">android</string>
     <string name="password" translatable="false">changeme</string>
     <string name="serverdns" translatable="false"></string>
-    <string name="locale" translatable="false">en_US.UTF-8</string>
+    <string name="locale" translatable="false">POSIX</string>
     <string name="desktopenv" translatable="false">lxde</string>
     <string name="components" translatable="false">desktop ssh vnc</string>
     <string name="customstartup" translatable="false">false</string>
