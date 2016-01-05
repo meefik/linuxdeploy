@@ -15,7 +15,9 @@ Copyright (C) 2012-2015  Антон Скшидлевский, [GPLv3](http://ope
 * Поддерживаемые языки: мультиязычный интерфейс
 
 #### Установка ####
-Вы можете установить это приложение из Google play: <https://play.google.com/store/apps/details?id=ru.meefik.linuxdeploy>.
+Вы можете установить это приложение из:
+* GitHub: <https://github.com/meefik/linuxdeploy/releases>
+* Google Play: <https://play.google.com/store/apps/details?id=ru.meefik.linuxdeploy>
 
 #### Обновление ####
 После обновления необходимо выполнить: Настройки -> Обновить окружение. В последних версиях обновление окружения выполняется автоматически.
