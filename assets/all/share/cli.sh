@@ -75,8 +75,8 @@ chroot_exec()
     unset TMP TEMP TMPDIR LD_PRELOAD LD_DEBUG
     if [ "$1" = "-u" ]; then
         local username="$2"
-            shift 2
-            if [ $# -gt 0 ]; then
+        shift 2
+        if [ $# -gt 0 ]; then
             chroot "${CHROOT_DIR}" /bin/su - ${username} -c "$*"
         else
             if [ -e "${CHROOT_DIR}/etc/motd" ]; then
@@ -377,7 +377,7 @@ container_mount()
         local item
         for item in $*
         do
-            mount_part $item
+            mount_part ${item}
             [ $? -ne 0 ] && return 1
         done
     fi
@@ -2055,7 +2055,7 @@ container_status()
     for item in /sys/block/*/dev
     do
         if [ -f "${item}" ]; then
-            local devname=$(echo $i | sed -e 's@/dev@@' -e 's@.*/@@')
+            local devname=$(echo ${item} | sed -e 's@/dev@@' -e 's@.*/@@')
             [ -e "/dev/${devname}" ] && local devpath="/dev/${devname}"
             [ -e "/dev/block/${devname}" ] && local devpath="/dev/block/${devname}"
             [ -n "${devpath}" ] && local parts=$(fdisk -l ${devpath} | grep ^/dev/ | awk '{print $1}')
@@ -2106,7 +2106,7 @@ COMMANDS:
    umount - unmount a container
    start - start services in the container
    stop - stop all services in the container
-   shell [app] - execute application in the container, be default /bin/bash
+   shell [-u USER] [app] - execute an application in the container, be default /bin/bash
    export <archive> - export the container as rootfs archive (tgz or tbz2)
    status - show information about the system
 
@@ -2139,6 +2139,9 @@ do
     ;;
     t)
         TRACE_MODE="1"
+    ;;
+    *)
+        break
     ;;
     esac
 done
