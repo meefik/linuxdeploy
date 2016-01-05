@@ -21,7 +21,10 @@ Installing a new operating system takes about 30 minutes. The recommended minimu
 * Supported languages: multilingual interface
 
 #### Install ####
-You can install the app from Google Play: <https://play.google.com/store/apps/details?id=ru.meefik.linuxdeploy>.
+You can install the app from:
+* GitHub: <https://github.com/meefik/linuxdeploy/releases>
+* Google Play: <https://play.google.com/store/apps/details?id=ru.meefik.linuxdeploy>
+
 
 #### Update ####
 After updating the program you must perform: Settings -> Update ENV.
