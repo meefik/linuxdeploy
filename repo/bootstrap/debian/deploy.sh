@@ -7,12 +7,11 @@ apt_install()
     local packages="$@"
     [ -n "${packages}" ] || return 1
     (set -e
-        export DEBIAN_FRONTEND=noninteractive
         chroot_exec -u root apt-get update -yq
-        chroot_exec -u root apt-get install -yf
-        chroot_exec -u root apt-get install ${packages} --no-install-recommends -yq
+        chroot_exec -u root "DEBIAN_FRONTEND=noninteractive apt-get install -yf"
+        chroot_exec -u root "DEBIAN_FRONTEND=noninteractive apt-get install ${packages} --no-install-recommends -yq"
         chroot_exec -u root apt-get clean
-    exit 0) 1>&3 2>&3
+    exit 0)
     return $?
 }
 
@@ -57,13 +56,13 @@ do_install()
     (set -e
         DEBOOTSTRAP_DIR="${COMPONENT_DIR}/debootstrap"
         . "${DEBOOTSTRAP_DIR}/debootstrap" --no-check-gpg --foreign --extractor=ar --arch="${ARCH}" --include="${basic_packages}" "${SUITE}" "${CHROOT_DIR}" "${SOURCE_PATH}"
-    exit 0) 1>&3 2>&3
+    exit 0)
     is_ok || return 1
 
     component_exec core/emulator core/dns core/mtab
 
     unset DEBOOTSTRAP_DIR
-    chroot_exec /debootstrap/debootstrap --second-stage 1>&3 2>&3
+    chroot_exec /debootstrap/debootstrap --second-stage
     is_ok || return 1
 
     msg -n "Updating repository ... "

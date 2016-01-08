@@ -9,7 +9,7 @@ yum_install()
     (set -e
         chroot_exec -u root yum install ${packages} --nogpgcheck --skip-broken -y
         chroot_exec -u root yum clean all
-    exit 0) 1>&3 2>&3
+    exit 0)
     return $?
 }
 
@@ -20,7 +20,7 @@ yum_groupinstall()
     (set -e
         chroot_exec -u root yum groupinstall ${groupname} --nogpgcheck --skip-broken -y
         chroot_exec -u root yum clean all
-    exit 0) 1>&3 2>&3
+    exit 0)
     return $?
 }
 
@@ -83,8 +83,8 @@ do_install()
 
     component_exec core/emulator
 
-    msg "Installing base packages: "
-    chroot_exec /bin/rpm -iv --excludepath / --force --nosignature --nodeps --justdb /tmp/*.rpm 1>&3 2>&3
+    msg "Updating a packages database ... "
+    chroot_exec /bin/rpm -iv --excludepath / --force --nosignature --nodeps --justdb /tmp/*.rpm >/dev/null
     is_ok "fail" "done" || return 1
 
     msg -n "Clearing cache ... "

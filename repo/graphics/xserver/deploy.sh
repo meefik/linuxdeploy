@@ -43,7 +43,7 @@ do_stop()
 
 do_help()
 {
-cat <<EOF 1>&3
+cat <<EOF
    --display=HOST:DISPLAY 
      Display of X server, e.g 127.0.0.1:0.
 

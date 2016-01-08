@@ -6,7 +6,7 @@
 
 do_configure()
 {
-    [ -n "$(which getprop)" ] || return 0
+    [ -d "/system" ] || return 0
 
     msg ":: Configuring ${COMPONENT} ... "
     # set min uid and gid
@@ -38,7 +38,7 @@ do_configure()
 
 do_help()
 {
-cat <<EOF 1>&3
+cat <<EOF
    --privileged-users=USERS
      Список пользователей через пробел, которых добавить в группы Android.
 

@@ -13,7 +13,7 @@ emerge_install()
             mv "${CHROOT_DIR}/etc/portage/._cfg0000_package.use" "${CHROOT_DIR}/etc/portage/package.use"
             chroot_exec -u root emerge ${packages}
         }
-    exit 0) 1>&3 2>&3
+    exit 0)
     return $?
 }
 

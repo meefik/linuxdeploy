@@ -6,7 +6,7 @@ GRAPHICS="${GRAPHICS##*/}"
 
 do_help()
 {
-cat <<EOF 1>&3
+cat <<EOF
    --graphics=NAME
      Графическая подсистема.
 

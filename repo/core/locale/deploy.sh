@@ -26,6 +26,7 @@ do_configure()
     ;;
     opensuse)
         echo "RC_LANG=${LOCALE}" > "${CHROOT_DIR}/etc/sysconfig/language"
+        echo 'ROOT_USES_LANG="yes"' >> "${CHROOT_DIR}/etc/sysconfig/language"
     ;;
     slackware)
         sed -i "s|^export LANG=.*|export LANG=${LOCALE}|g" "${CHROOT_DIR}/etc/profile.d/lang.sh"
@@ -36,7 +37,7 @@ do_configure()
 
 do_help()
 {
-cat <<EOF 1>&3
+cat <<EOF
    --locale=LOCALE
      Локализация дистрибутива, например ru_RU.UTF-8.
 

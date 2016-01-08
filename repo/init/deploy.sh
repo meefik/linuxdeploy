@@ -6,7 +6,7 @@ INIT="${INIT##*/}"
 
 do_help()
 {
-cat <<EOF 1>&3
+cat <<EOF
    --init=NAME
      Система инициализации.
 

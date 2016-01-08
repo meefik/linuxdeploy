@@ -9,7 +9,7 @@ zypper_install()
     (set -e
         chroot_exec -u root zypper --no-gpg-checks --non-interactive install ${packages}
         chroot_exec -u root zypper clean
-    exit 0) 1>&3 2>&3
+    exit 0)
     return $?
 }
 
@@ -81,9 +81,9 @@ do_install()
 
     component_exec core/emulator
 
-    msg "Installing base packages: "
-    chroot_exec /bin/rpm -iv --excludepath / --force --nosignature --nodeps --justdb /tmp/*.rpm 1>&3 2>&3
-    is_ok || return 1
+    msg "Updating a packages database ... "
+    chroot_exec /bin/rpm -iv --excludepath / --force --nosignature --nodeps --justdb /tmp/*.rpm >/dev/null
+    is_ok "fail" "done" || return 1
 
     msg -n "Updating repository ... "
     zypper_repository

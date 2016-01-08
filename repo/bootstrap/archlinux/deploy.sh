@@ -12,7 +12,7 @@ pacman_install()
         #rm -f ${CHROOT_DIR}/var/lib/pacman/db.lck || true
         chroot_exec -u root pacman -Syq --force --noconfirm ${packages}
         rm -f "${CHROOT_DIR}"/var/cache/pacman/pkg/* || true
-    exit 0) 1>&3 2>&3
+    exit 0)
     return $?
 }
 

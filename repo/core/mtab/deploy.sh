@@ -44,7 +44,7 @@ do_start()
 
 do_help()
 {
-cat <<EOF 1>&3
+cat <<EOF
    --mounts=SOURCE:TARGET ...
      Подключение ресурсов к контейнеру.
 

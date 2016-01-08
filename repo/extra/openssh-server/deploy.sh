@@ -38,8 +38,7 @@ do_install()
 
 is_started()
 {
-    local is_started=""
-    local item pidfile pid 
+    local item pidfile pid
     for item in /var/run/sshd.pid /run/sshd.pid
     do
         pidfile="${CHROOT_DIR}${item}"
@@ -60,8 +59,7 @@ do_start()
     [ -e "${CHROOT_DIR}/run" -a ! -e "${CHROOT_DIR}/run/sshd" ] && mkdir "${CHROOT_DIR}/run/sshd"
     # generate keys
     if [ -z "$(ls \"${CHROOT_DIR}/etc/ssh/\" | grep key)" ]; then
-        chroot_exec su - root -c 'ssh-keygen -A'
-        echo
+        chroot_exec su - root -c 'ssh-keygen -A' >/dev/null
     fi
     # exec sshd
     local sshd='`which sshd`'
@@ -93,7 +91,7 @@ do_stop()
 
 do_help()
 {
-cat <<EOF 1>&3
+cat <<EOF
    --ssh-port=PORT
      Port of SSH server.
 

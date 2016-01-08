@@ -163,8 +163,8 @@ do_stop()
 
 do_help()
 {
-cat <<EOF 1>&3
-   --fb-display=DISPLAY 
+cat <<EOF
+   --fb-display=DISPLAY
      Display of X server, e.g 0.
 
    --fb-args=STR

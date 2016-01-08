@@ -14,7 +14,7 @@ VERSION="2.0.0"
 
 msg()
 {
-    echo "$@" 1>&3
+    echo "$@"
 }
 
 is_ok()
@@ -112,7 +112,7 @@ is_mounted()
 
 container_mounted()
 {
-    if [ "${CHROOT_DIR}" = "${TARGET_PATH}" ]; then
+    if [ "${FAKEROOT}" = "1" ]; then
         return 0
     else
         is_mounted "${CHROOT_DIR}"
@@ -132,6 +132,7 @@ is_archive()
 chroot_exec()
 {
     unset TMP TEMP TMPDIR LD_PRELOAD LD_DEBUG
+    local path="${PATH}:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
     if [ "$1" = "-u" ]; then
         local username="$2"
         shift 2
@@ -155,7 +156,7 @@ chroot_exec()
                 proot -r "${CHROOT_DIR}" -w / ${mounts} ${emulator} -0 /bin/su - ${username}
             fi
         else
-            proot -r "${CHROOT_DIR}" -w / ${mounts} ${emulator} -0 "$@"
+            PATH="${path}" proot -r "${CHROOT_DIR}" -w / ${mounts} ${emulator} -0 $*
         fi
     else
         if [ -n "${username}" ]; then
@@ -165,7 +166,7 @@ chroot_exec()
                 chroot "${CHROOT_DIR}" /bin/su - ${username}
             fi
         else
-            chroot "${CHROOT_DIR}" "$@"
+            PATH="${path}" chroot "${CHROOT_DIR}" $*
         fi
     fi
 }
@@ -573,9 +574,7 @@ container_mount()
 
     params_check CHROOT_DIR TARGET_PATH || return 1
 
-    if [ "${CHROOT_DIR}" = "${TARGET_PATH}" ]; then
-        return 0
-    fi
+    [ "${FAKEROOT}" != "1" ] || return 0
 
     msg "Mounting partitions: "
     local item
@@ -679,13 +678,13 @@ container_shell()
     SHELL="$(user_shell $USER)"
     HOME="$(user_home $USER)"
     PS1="\u@\h:\w\\$ "
-    export PATH SHELL TERM USER HOME PS1
+    export TERM USER SHELL HOME PS1
 
     if [ -e "${CHROOT_DIR}/etc/motd" ]; then
         msg $(cat "${CHROOT_DIR}/etc/motd")
     fi
 
-    chroot_exec -u ${USER} "$@" 1>&3 2>&3
+    chroot_exec "$@" 2>&1
 
     return $?
 }
@@ -839,7 +838,7 @@ container_status()
 
 helper()
 {
-cat <<EOF 1>&3
+cat <<EOF
 Linux Deploy ${VERSION}
 (c) 2012-2015 Anton Skshidlevsky, GPLv3
 
@@ -864,7 +863,8 @@ COMMANDS:
       -с - только конфигурировать, без установки
       -n NAME - пропустить установку указанного компонента
    export <FILE> - экспортировать контейнер как rootfs-архив (tgz или tbz2)
-   shell [APP] - смонтировать контейнер, если не смонтирован, и выполнить указанную команду внутри контейнера, по умолчанию /bin/bash
+   shell [-u USER] [APP] - смонтировать контейнер, если не смонтирован, и выполнить указанную команду внутри контейнера, по умолчанию /bin/bash
+      -u USER - переключиться на указанного пользователя
    mount - смонтировать контейнер
    umount - размонтировать контейнер
    start - смонтировать контейнер, если не смонтирован, и запустить все подключенные компоненты
@@ -878,7 +878,7 @@ EOF
 
 do_info()
 {
-cat <<EOF 1>&3
+cat <<EOF
 Name: ${COMPONENT}
 Description: ${DESC}
 Target: ${TARGET}
@@ -915,7 +915,6 @@ shift $((OPTIND-1))
 # log level
 exec 3>&1
 if [ "${DEBUG_MODE}" != "1" -a "${TRACE_MODE}" != "1" ]; then
-    exec 1>/dev/null
     exec 2>/dev/null
 fi
 if [ "${TRACE_MODE}" = "1" ]; then
@@ -1001,7 +1000,7 @@ config|conf)
     fi
 
     if [ "${dump_flag}" = "1" ]; then
-        [ -e "${CONF_FILE}" ] && cat "${CONF_FILE}" 1>&3
+        [ -e "${CONF_FILE}" ] && cat "${CONF_FILE}"
     elif [ "${list_flag}" = "1" -a $# -eq 0 ]; then
         component_list "${INCLUDE}"
     else 

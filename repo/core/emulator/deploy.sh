@@ -99,7 +99,7 @@ do_stop()
 
 do_help()
 {
-cat <<EOF 1>&3
+cat <<EOF
    --emulator=PATH
      Указать какой использовать эмулятор, по умолчанию QEMU.
 

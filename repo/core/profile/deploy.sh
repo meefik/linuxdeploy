@@ -17,11 +17,6 @@ do_configure()
         chroot_exec useradd -m -g ${USER_NAME} -s /bin/bash ${USER_NAME}
         chroot_exec usermod -g ${USER_NAME} ${USER_NAME}
     fi
-    local user_home="$(user_home ${USER_NAME})"
-    local path_str="PATH=${PATH}"
-    if ! $(grep -q "${path_str}" "${CHROOT_DIR}${user_home}/.profile"); then
-        echo ${path_str} >> "${CHROOT_DIR}${user_home}/.profile"
-    fi
     # set password for user
     echo ${USER_NAME}:${USER_PASSWORD} | chroot_exec chpasswd
     # set permissions
@@ -31,7 +26,7 @@ do_configure()
 
 do_help()
 {
-cat <<EOF 1>&3
+cat <<EOF
    --user-name=USER
      Имя пользователя, который будет создан после установки дистрибутива.
 

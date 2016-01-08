@@ -7,7 +7,7 @@ do_configure()
     msg ":: Configuring ${COMPONENT} ... "
     local unchroot="${CHROOT_DIR}/bin/unchroot"
     echo '#!/bin/sh' > "${unchroot}"
-    echo "PATH=${PATH}" >> "${unchroot}"
+    echo "PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >> "${unchroot}"
     echo 'if [ $# -eq 0 ]; then' >> "${unchroot}"
     echo 'chroot /proc/1/cwd su -' >> "${unchroot}"
     echo 'else' >> "${unchroot}"

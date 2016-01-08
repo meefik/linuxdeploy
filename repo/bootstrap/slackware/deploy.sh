@@ -9,9 +9,9 @@ slackpkg_install()
     local packages="$@"
     [ -n "${packages}" ] || return 1
     (set -e
-        chroot_exec -u root slackpkg update || true
+        chroot_exec -u root slackpkg -checkgpg=off -batch=on -default_answer=y update || true
         chroot_exec -u root slackpkg -checkgpg=off -batch=on -default_answer=y install ${packages}
-    exit 0) 1>&3 2>&3
+    exit 0)
     return $?
 }
 
@@ -33,7 +33,7 @@ do_install()
 
     REPO_URL="${SOURCE_PATH%/}/slackware"
     local cache_dir="${CHROOT_DIR}/tmp"
-    local extra_packages="l/glibc l/libtermcap l/ncurses ap/diffutils ap/groff ap/man ap/nano ap/slackpkg ap/sudo n/gnupg n/wget"
+    local extra_packages="l/glibc l/glibc-i18n l/libtermcap l/ncurses ap/diffutils ap/groff ap/man ap/nano ap/slackpkg ap/sudo n/gnupg n/wget"
 
     msg -n "Preparing for deployment ... "
     (set -e

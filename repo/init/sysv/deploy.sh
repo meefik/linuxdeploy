@@ -40,7 +40,7 @@ do_stop()
 
 do_help()
 {
-cat <<EOF 1>&3
+cat <<EOF
    --init-level=NUM
      Number of init level, e.g 3.
 

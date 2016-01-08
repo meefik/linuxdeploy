@@ -100,8 +100,8 @@ do_stop()
 
 do_help()
 {
-cat <<EOF 1>&3
-   --vnc-display=DISPLAY 
+cat <<EOF
+   --vnc-display=DISPLAY
      Display of VNC server, e.g 0.
 
    --vnc-args=STR

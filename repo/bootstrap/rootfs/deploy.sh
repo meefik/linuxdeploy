@@ -75,7 +75,7 @@ rootfs_make()
         if [ "${loop_exist}" -ne 0 -o "${img_mounted}" -ne 0 ]; then
             msg "fail"; return 1
         fi
-        mke2fs -qF -t "${FS_TYPE}" -O ^has_journal "${TARGET_PATH}"
+        mke2fs -qF -t "${FS_TYPE}" -O ^has_journal "${TARGET_PATH}" >/dev/null
         is_ok "fail" "done" || return 1
     fi
 
@@ -109,43 +109,31 @@ rootfs_import()
     msg "Getting and unpacking rootfs archive: "
     if [ -n "$(echo ${SOURCE_PATH} | grep -i 'gz$')" ]; then
         if [ -e "${SOURCE_PATH}" ]; then
-            (set -e
-                tar xzpvf "${SOURCE_PATH}" -C "${CHROOT_DIR}"
-            exit 0) 1>&3 2>&3
+            tar xzpvf "${SOURCE_PATH}" -C "${CHROOT_DIR}"
             is_ok || return 1
         fi
         if [ -n "$(echo ${SOURCE_PATH} | grep -i '^http')" ]; then
-            (set -e
-                wget -q -O - "${SOURCE_PATH}" | tar xzpv -C "${CHROOT_DIR}"
-            exit 0) 1>&3 2>&3
+            wget -q -O - "${SOURCE_PATH}" | tar xzpv -C "${CHROOT_DIR}"
             is_ok || return 1
         fi
     fi
     if [ -n "$(echo ${SOURCE_PATH} | grep -i 'bz2$')" ]; then
         if [ -e "${SOURCE_PATH}" ]; then
-            (set -e
-                tar xjpvf "${SOURCE_PATH}" -C "${CHROOT_DIR}"
-            exit 0) 1>&3 2>&3
+            tar xjpvf "${SOURCE_PATH}" -C "${CHROOT_DIR}"
             is_ok || return 1
         fi
         if [ -n "$(echo ${SOURCE_PATH} | grep -i '^http')" ]; then
-            (set -e
-                wget -q -O - "${SOURCE_PATH}" | tar xjpv -C "${CHROOT_DIR}"
-            exit 0) 1>&3 2>&3
+            wget -q -O - "${SOURCE_PATH}" | tar xjpv -C "${CHROOT_DIR}"
             is_ok || return 1
         fi
     fi
     if [ -n "$(echo ${SOURCE_PATH} | grep -i 'xz$')" ]; then
         if [ -e "${SOURCE_PATH}" ]; then
-            (set -e
-                tar xJpvf "${SOURCE_PATH}" -C "${CHROOT_DIR}"
-            exit 0) 1>&3 2>&3
+            tar xJpvf "${SOURCE_PATH}" -C "${CHROOT_DIR}"
             is_ok || return 1
         fi
         if [ -n "$(echo ${SOURCE_PATH} | grep -i '^http')" ]; then
-            (set -e
-                wget -q -O - "${SOURCE_PATH}" | tar xJpv -C "${CHROOT_DIR}"
-            exit 0) 1>&3 2>&3
+            wget -q -O - "${SOURCE_PATH}" | tar xJpv -C "${CHROOT_DIR}"
             is_ok || return 1
         fi
     fi

@@ -6,7 +6,7 @@ DISTRIB="${DISTRIB##*/}"
 
 do_help()
 {
-cat <<EOF 1>&3
+cat <<EOF
    --chroot-dir=PATH
      Директория монтирования контейнера.
 
