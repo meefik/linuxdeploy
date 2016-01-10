@@ -5,8 +5,12 @@
 do_configure()
 {
     msg ":: Configuring ${COMPONENT} ... "
-    rm -f "${CHROOT_DIR}/etc/mtab"
-    grep "${CHROOT_DIR}" /proc/mounts | sed "s|${CHROOT_DIR}/*|/|g" > "${CHROOT_DIR}/etc/mtab"
+    if [ "${FAKEROOT}" = "1" ]; then
+        ln -sf /proc/mounts "${CHROOT_DIR}/etc/mtab"
+    else
+        rm -f "${CHROOT_DIR}/etc/mtab"
+        grep "${CHROOT_DIR}" /proc/mounts | sed "s|${CHROOT_DIR}/*|/|g" > "${CHROOT_DIR}/etc/mtab"
+    fi
     return 0
 }
 
