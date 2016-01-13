@@ -995,16 +995,16 @@ config|conf)
     done
     shift $((OPTIND-1))
 
-    if [ $# -gt 0 ]; then
-        config_update "${conf_file}" "${CONF_FILE}" "$@"
-    fi
-
     if [ "${dump_flag}" = "1" ]; then
         [ -e "${CONF_FILE}" ] && cat "${CONF_FILE}"
-    elif [ "${list_flag}" = "1" -a $# -eq 0 ]; then
-        component_list "${INCLUDE}"
-    else 
-        component_list "$@"
+    elif [ "${list_flag}" = "1" ]; then
+        if [ $# -eq 0 ]; then
+            component_list "${INCLUDE}"
+        else
+            component_list "$@"
+        fi
+    else
+        config_update "${conf_file}" "${CONF_FILE}" "$@"
     fi
 ;;
 deploy)
