@@ -7,6 +7,7 @@ proot_exit()
 cat <<'EOF'
 exit()
 {
+    history -w
     local self_tracer_pid=$(grep ^TracerPid: /proc/self/status 2>/dev/null | cut -f2)
     find /proc/*/status | while read f;
     do

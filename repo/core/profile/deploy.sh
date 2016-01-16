@@ -20,7 +20,7 @@ do_configure()
     # set password for user
     echo ${USER_NAME}:${USER_PASSWORD} | chroot_exec chpasswd
     # set permissions
-    chroot_exec chown -R ${USER_NAME}:${USER_NAME} "${user_home}"
+    chroot_exec chown -R ${USER_NAME}:${USER_NAME} "$(user_home ${USER_NAME})"
     return 0
 }
 

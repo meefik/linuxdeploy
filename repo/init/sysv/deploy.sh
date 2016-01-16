@@ -2,6 +2,8 @@
 # Linux Deploy Component
 # (c) Anton Skshidlevsky <meefik@gmail.com>, GPLv3
 
+[ -n "${INIT_USER}" ] || INIT_USER="root"
+
 do_start()
 {
     if [ -n "${INIT_LEVEL}" ]; then
@@ -12,11 +14,15 @@ do_start()
             for item in ${services}
             do
                 msg -n "${item/S[0-9][0-9]/} ... "
-                chroot_exec -u root "/etc/rc${INIT_LEVEL}.d/${item} start" >/dev/null
+                if [ "${INIT_BG}" = "1" ]; then
+                    chroot_exec -u ${INIT_USER} "/etc/rc${INIT_LEVEL}.d/${item} start" 1>&2 &
+                else
+                    chroot_exec -u ${INIT_USER} "/etc/rc${INIT_LEVEL}.d/${item} start" 1>&2
+                fi
                 is_ok "fail" "done"
             done
         fi
-    fi
+   fi
     return 0
 }
 
@@ -30,7 +36,11 @@ do_stop()
             for item in ${services}
             do
                 msg -n "${item/K[0-9][0-9]/} ... "
-                chroot_exec -u root "/etc/rc6.d/${item} stop" >/dev/null
+                if [ "${INIT_BG}" = "1" ]; then
+                    chroot_exec -u ${INIT_USER} "/etc/rc6.d/${item} stop" 1>&2 &
+                else
+                    chroot_exec -u ${INIT_USER} "/etc/rc6.d/${item} stop" 1>&2
+                fi
                 is_ok "fail" "done"
             done
         fi
@@ -43,6 +53,12 @@ do_help()
 cat <<EOF
    --init-level=NUM
      Number of init level, e.g 3.
+
+   --init-user=USER
+     Пользователь из-под которого осуществляется запуск.
+
+   --init-bg
+     Запускать процессы в фоновом режиме.
 
 EOF
 }
