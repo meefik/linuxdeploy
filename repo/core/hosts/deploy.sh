@@ -5,7 +5,7 @@
 do_configure()
 {
     msg ":: Configuring ${COMPONENT} ... "
-    if ! $(grep "^127.0.0.1" "${CHROOT_DIR}/etc/hosts"); then
+    if ! $(grep -q "^127.0.0.1" "${CHROOT_DIR}/etc/hosts"); then
         echo '127.0.0.1 localhost' >> "${CHROOT_DIR}/etc/hosts"
     fi
     return 0

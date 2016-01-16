@@ -22,7 +22,7 @@ apt_repository()
         if [ -e "${CHROOT_DIR}/etc/apt/sources.list" ]; then
             cp "${CHROOT_DIR}/etc/apt/sources.list" "${CHROOT_DIR}/etc/apt/sources.list.bak"
         fi
-        if [ $(grep -c "${SOURCE_PATH}.*${SUITE}" "${CHROOT_DIR}/etc/apt/sources.list") -eq 0 ]; then
+        if ! $(grep -q "${SOURCE_PATH}.*${SUITE}" "${CHROOT_DIR}/etc/apt/sources.list"); then
             echo "deb ${SOURCE_PATH} ${SUITE} main contrib non-free" > "${CHROOT_DIR}/etc/apt/sources.list"
             echo "deb-src ${SOURCE_PATH} ${SUITE} main contrib non-free" >> "${CHROOT_DIR}/etc/apt/sources.list"
         fi
@@ -31,7 +31,7 @@ apt_repository()
         if [ -e "${CHROOT_DIR}/etc/apt/sources.list" ]; then
             cp "${CHROOT_DIR}/etc/apt/sources.list" "${CHROOT_DIR}/etc/apt/sources.list.bak"
         fi
-        if [ $(grep -c "${SOURCE_PATH}.*${SUITE}" "${CHROOT_DIR}/etc/apt/sources.list") -eq 0 ]; then
+        if ! $(grep -q "${SOURCE_PATH}.*${SUITE}" "${CHROOT_DIR}/etc/apt/sources.list"); then
             echo "deb ${SOURCE_PATH} ${SUITE} main universe multiverse" > "${CHROOT_DIR}/etc/apt/sources.list"
             echo "deb-src ${SOURCE_PATH} ${SUITE} main universe multiverse" >> "${CHROOT_DIR}/etc/apt/sources.list"
         fi

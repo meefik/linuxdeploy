@@ -21,7 +21,7 @@ pacman_repository()
     sed -i "s|^[[:space:]]*Architecture[[:space:]]*=.*$|Architecture = ${ARCH}|" "${CHROOT_DIR}/etc/pacman.conf"
     sed -i "s|^[[:space:]]*\(CheckSpace\)|#\1|" "${CHROOT_DIR}/etc/pacman.conf"
     sed -i "s|^[[:space:]]*SigLevel[[:space:]]*=.*$|SigLevel = Never|" "${CHROOT_DIR}/etc/pacman.conf"
-    if $(grep "^[[:space:]]*Server" "${CHROOT_DIR}/etc/pacman.d/mirrorlist")
+    if $(grep -q "^[[:space:]]*Server" "${CHROOT_DIR}/etc/pacman.d/mirrorlist")
     then sed -i "s|^[[:space:]]*Server[[:space:]]*=.*|Server = ${REPO_URL}|" "${CHROOT_DIR}/etc/pacman.d/mirrorlist"
     else echo "Server = ${REPO_URL}" >> "${CHROOT_DIR}/etc/pacman.d/mirrorlist"
     fi

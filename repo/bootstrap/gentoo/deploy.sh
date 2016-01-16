@@ -19,13 +19,13 @@ emerge_install()
 
 emerge_repository()
 {
-    if ! $(grep '^aid_inet:.*,portage' "${CHROOT_DIR}/etc/group"); then
+    if ! $(grep -q '^aid_inet:.*,portage' "${CHROOT_DIR}/etc/group"); then
         sed -i "s|^\(aid_inet:.*\)|\1,portage|g" "${CHROOT_DIR}/etc/group"
     fi
     # set MAKEOPTS
     local ncpu=$(grep -c ^processor /proc/cpuinfo)
     let ncpu=${ncpu}+1
-    if ! $(grep '^MAKEOPTS=' "${CHROOT_DIR}/etc/portage/make.conf"); then
+    if ! $(grep -q '^MAKEOPTS=' "${CHROOT_DIR}/etc/portage/make.conf"); then
         echo "MAKEOPTS=\"-j${ncpu}\"" >> "${CHROOT_DIR}/etc/portage/make.conf"
     fi
 }

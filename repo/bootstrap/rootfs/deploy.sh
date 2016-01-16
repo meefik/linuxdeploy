@@ -57,8 +57,8 @@ rootfs_make()
         local fs fs_support
         for fs in ext4 ext3 ext2
         do
-            if [ "$(grep -c ${fs} /proc/filesystems)" -gt 0 ]; then
-                fs_support=${fs}
+            if $(grep -q "${fs}" /proc/filesystems); then
+                fs_support="${fs}"
                 break
             fi
         done

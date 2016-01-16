@@ -39,7 +39,7 @@ do_configure()
     msg ":: Configuring ${COMPONENT} ... "
     # Xwrapper.config
     mkdir "${CHROOT_DIR}/etc/X11"
-    if [ $(grep -c -e '^allowed_users' "${CHROOT_DIR}/etc/X11/Xwrapper.config") -gt 0 ]; then
+    if $(grep -q '^allowed_users' "${CHROOT_DIR}/etc/X11/Xwrapper.config"); then
         sed -i 's/^allowed_users=.*/allowed_users=anybody/g' "${CHROOT_DIR}/etc/X11/Xwrapper.config"
     else
         echo "allowed_users=anybody" >> "${CHROOT_DIR}/etc/X11/Xwrapper.config"
@@ -59,15 +59,15 @@ do_configure()
     case "${DISTRIB}" in
     gentoo)
         # set Xorg make configuration
-        if [ $(grep -c '^INPUT_DEVICES=' "${CHROOT_DIR}/etc/portage/make.conf") -eq 0 ]; then
-            echo 'INPUT_DEVICES="evdev"' >> "${CHROOT_DIR}/etc/portage/make.conf"
-        else
+        if $(grep -q '^INPUT_DEVICES=' "${CHROOT_DIR}/etc/portage/make.conf"); then
             sed -i 's|^\(INPUT_DEVICES=\).*|\1"evdev"|g' "${CHROOT_DIR}/etc/portage/make.conf"
-        fi
-        if [ $(grep -c '^VIDEO_CARDS=' "${CHROOT_DIR}/etc/portage/make.conf") -eq 0 ]; then
-            echo 'VIDEO_CARDS="fbdev"' >> "${CHROOT_DIR}/etc/portage/make.conf"
         else
+            echo 'INPUT_DEVICES="evdev"' >> "${CHROOT_DIR}/etc/portage/make.conf"
+        fi
+        if $(grep -q '^VIDEO_CARDS=' "${CHROOT_DIR}/etc/portage/make.conf"); then
             sed -i 's|^\(VIDEO_CARDS=\).*|\1"fbdev"|g' "${CHROOT_DIR}/etc/portage/make.conf"
+        else
+            echo 'VIDEO_CARDS="fbdev"' >> "${CHROOT_DIR}/etc/portage/make.conf"
         fi
     ;;
     opensuse)

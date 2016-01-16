@@ -28,10 +28,10 @@ do_install()
     ;;
     gentoo:*:*)
         # set server USE flag for tightvnc
-        if [ $(grep -c '^net-misc/tightvnc' "${CHROOT_DIR}/etc/portage/package.use") -eq 0 ]; then
+        if ! $(grep -q '^net-misc/tightvnc' "${CHROOT_DIR}/etc/portage/package.use"); then
             echo "net-misc/tightvnc server" >> "${CHROOT_DIR}/etc/portage/package.use"
         fi
-        if [ $(grep -c '^net-misc/tightvnc.*server' "${CHROOT_DIR}/etc/portage/package.use") -eq 0 ]; then
+        if ! $(grep -q '^net-misc/tightvnc.*server' "${CHROOT_DIR}/etc/portage/package.use"); then
             sed -i "s|^\(net-misc/tightvnc.*\)|\1 server|g" "${CHROOT_DIR}/etc/portage/package.use"
         fi
         packages="tightvnc"
