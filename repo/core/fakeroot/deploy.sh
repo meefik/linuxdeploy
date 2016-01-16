@@ -21,6 +21,7 @@ EOF
 
 do_configure()
 {
+    [ "$FAKEROOT" = "1" ] || return 0
     msg ":: Configuring ${COMPONENT} ... "
     if ! $(grep -q '^exit()' "${CHROOT_DIR}/etc/bash.bashrc"); then
         proot_exit >> "${CHROOT_DIR}/etc/bash.bashrc"
