@@ -12,7 +12,7 @@ do_start()
             for item in ${services}
             do
                 msg -n "${item} ... "
-                chroot_exec su - root -c "${INIT_DIR%/}/${item} start"
+                chroot_exec -u root "${INIT_DIR%/}/${item} start" >/dev/null
                 is_ok "fail" "done"
             done
         fi
@@ -30,7 +30,7 @@ do_stop()
             for item in ${services}
             do
                 msg -n "${item} ... "
-                chroot_exec su - root -c "${INIT_DIR%/}/${item} stop"
+                chroot_exec -u root "${INIT_DIR%/}/${item} stop" >/dev/null
                 is_ok "fail" "done"
             done
         fi

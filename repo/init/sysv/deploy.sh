@@ -12,7 +12,7 @@ do_start()
             for item in ${services}
             do
                 msg -n "${item/S[0-9][0-9]/} ... "
-                chroot_exec su - root -c "/etc/rc${INIT_LEVEL}.d/${item} start"
+                chroot_exec -u root "/etc/rc${INIT_LEVEL}.d/${item} start" >/dev/null
                 is_ok "fail" "done"
             done
         fi
@@ -30,7 +30,7 @@ do_stop()
             for item in ${services}
             do
                 msg -n "${item/K[0-9][0-9]/} ... "
-                chroot_exec su - root -c "/etc/rc${INIT_LEVEL}.d/${item} stop"
+                chroot_exec -u root "/etc/rc6.d/${item} stop" >/dev/null
                 is_ok "fail" "done"
             done
         fi
