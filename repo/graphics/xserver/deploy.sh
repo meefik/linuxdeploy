@@ -4,21 +4,11 @@
 
 [ -n "${DISPLAY}" ] || DISPLAY=":0"
 
-is_started()
-{
-    local pid
-    local pidfile="${CHROOT_DIR}/tmp/xsession.pid"
-    [ -e "${pidfile}" ] && pid=$(cat "${pidfile}")
-    if [ -n "${pid}" -a -e "/proc/${pid}" ]; then
-        return 0
-    else
-        return 1
-    fi
-}
-
 do_start()
 {
     msg -n ":: Starting ${COMPONENT} ... "
+    is_started /tmp/xsession.pid
+    is_ok "skip" || return 0
     local cmd="export DISPLAY=${DISPLAY}; ~/.xinitrc"
     chroot_exec su - ${USER_NAME} -c "${cmd}" &
     is_ok "fail" "done"
@@ -28,16 +18,8 @@ do_start()
 do_stop()
 {
     msg -n ":: Stopping ${COMPONENT} ... "
-    local pid=""
-    if [ -e "${CHROOT_DIR}/tmp/xsession.pid" ]; then
-        pid=$(cat "${CHROOT_DIR}/tmp/xsession.pid")
-    fi
-    if [ -n "${pid}" ]; then
-        kill -9 ${pid}
-        is_ok "fail" "done"
-    else
-        msg "done"
-    fi
+    kill_pids /tmp/xsession.pid
+    is_ok "fail" "done"
     return 0
 }
 

@@ -57,25 +57,13 @@ do_configure()
     return 0
 }
 
-is_started()
-{
-    local pid
-    local pidfile="${CHROOT_DIR}/tmp/xsession.pid"
-    [ -e "${pidfile}" ] && pid=$(cat "${pidfile}")
-    if [ -n "${pid}" -a -e "/proc/${pid}" ]; then
-        return 0
-    else
-        return 1
-    fi
-}
-
 do_start()
 {
     msg -n ":: Starting ${COMPONENT} ... "
-    is_started && { msg "skip"; return 0; }
+    is_started /tmp/xsession.pid
+    is_ok "skip" || return 0
     # remove locks
-    [ -e "${CHROOT_DIR}/tmp/.X${VNC_DISPLAY}-lock" ] && rm -f "${CHROOT_DIR}/tmp/.X${VNC_DISPLAY}-lock"
-    [ -e "${CHROOT_DIR}/tmp/.X11-unix/X${VNC_DISPLAY}" ] && rm -f "${CHROOT_DIR}/tmp/.X11-unix/X${VNC_DISPLAY}"
+    remove_files "/tmp/.X${VNC_DISPLAY}-lock" "/tmp/.X11-unix/X${VNC_DISPLAY}"
     # exec vncserver
     chroot_exec su - ${USER_NAME} -c "vncserver :${VNC_DISPLAY} ${VNC_ARGS}" &
     is_ok "fail" "done"
@@ -85,16 +73,8 @@ do_start()
 do_stop()
 {
     msg -n ":: Stopping ${COMPONENT} ... "
-    local pid=""
-    if [ -e "${CHROOT_DIR}/tmp/xsession.pid" ]; then
-        pid=$(cat "${CHROOT_DIR}/tmp/xsession.pid")
-    fi
-    if [ -n "${pid}" ]; then
-        kill -9 ${pid}
-        is_ok "fail" "done"
-    else
-        msg "done"
-    fi
+    kill_pids /tmp/xsession.pid
+    is_ok "fail" "done"
     return 0
 }
 

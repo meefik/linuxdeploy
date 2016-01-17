@@ -80,18 +80,6 @@ do_configure()
     return 0
 }
 
-is_started()
-{
-    local pid
-    local pidfile="${CHROOT_DIR}/tmp/xsession.pid"
-    [ -e "${pidfile}" ] && pid=$(cat "${pidfile}")
-    if [ -n "${pid}" -a -e "/proc/${pid}" ]; then
-        return 0
-    else
-        return 1
-    fi
-}
-
 do_start()
 {
     fb_refresh()
@@ -110,6 +98,8 @@ do_start()
         done
     }
     msg -n ":: Starting ${COMPONENT} ... "
+    is_started /tmp/xsession.pid
+    is_ok "skip" || return 0
     fb_refresh &
     (set -e
         sync
@@ -137,11 +127,6 @@ do_start()
 do_stop()
 {
     msg -n ":: Stopping ${COMPONENT} ... "
-    local pid=""
-    if [ -e "${CHROOT_DIR}/tmp/xsession.pid" ]; then
-        pid=$(cat "${CHROOT_DIR}/tmp/xsession.pid")
-        rm "${CHROOT_DIR}/tmp/xsession.pid"
-    fi
     case "${FB_FREEZE}" in
     stop)
         setprop ctl.start surfaceflinger
@@ -152,12 +137,9 @@ do_stop()
         pkill -CONT system_server
     ;;
     esac
-    if [ -n "${pid}" ]; then
-        kill -9 ${pid}
-        is_ok "fail" "done"
-    else
-        msg "done"
-    fi
+    kill_pids /tmp/xsession.pid
+    is_ok "fail" "done"
+    remove_files /tmp/xsession.pid
     return 0
 }
 

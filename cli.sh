@@ -56,6 +56,11 @@ get_uuid()
     cat /proc/sys/kernel/random/uuid
 }
 
+is_fakeroot()
+{
+    [ "${FAKEROOT}" = "1" ]
+}
+
 multiarch_support()
 {
     if [ -d "/proc/sys/fs/binfmt_misc" ]; then
@@ -127,6 +132,67 @@ is_archive()
         return 0
     fi
     return 1
+}
+
+get_pids()
+{
+    local item pidfile pid pids
+    for item in $*
+    do
+        pid=""
+        pidfile="${CHROOT_DIR}${item}"
+        [ -e "${pidfile}" ] && pid=$(cat "${pidfile}")
+        if [ -n "${pid}" -a -e "/proc/${pid}" ]; then
+            pids="${pids} ${pid}"
+        fi
+    done
+    if [ -n "${pids}" ]; then
+        echo ${pids}
+        return 0
+    else
+        return 1
+    fi    
+}
+
+is_started()
+{
+    get_pids $* >/dev/null
+}
+
+kill_pids()
+{
+    local pids=$(get_pids $*)
+    if [ -n "${pids}" ]; then
+        kill -9 ${pids}
+        return $?
+    fi
+    return 0
+}
+
+remove_files()
+{
+    local item target
+    for item in $*
+    do
+        target="${CHROOT_DIR}${item}"
+        if [ -e "${target}" ]; then
+            rm -f "${target}"
+        fi
+    done
+    return 0
+}
+
+make_dirs()
+{
+    local item target
+    for item in $*
+    do
+        target="${CHROOT_DIR}${item}"
+        if [ -d "${target%/*}" -a ! -d "${target}" ]; then
+            mkdir "${target}"
+        fi
+    done
+    return 0
 }
 
 chroot_exec()
