@@ -422,7 +422,7 @@ component_depends()
         [ -z "${IGNORE_DEPENDS##* ${component} *}" ] && continue
         IGNORE_DEPENDS="${IGNORE_DEPENDS}${component} "
         # check component exist
-        conf_file="${REPO_DIR}/${component}/deploy.conf"
+        conf_file="${INCLUDE_DIR}/${component}/deploy.conf"
         [ -e "${conf_file}" ] || continue
         # read component variables
         eval $(grep '^TARGET=' "${conf_file}")
@@ -455,7 +455,7 @@ component_exec()
     (set -e
         for COMPONENT in ${components}
         do
-            COMPONENT_DIR="${REPO_DIR}/${COMPONENT}"
+            COMPONENT_DIR="${INCLUDE_DIR}/${COMPONENT}"
             [ -d "${COMPONENT_DIR}" ] || continue
             unset NAME DESC TARGET PARAMS DEPENDS EXTENDS
             TARGET='*:*:*'
@@ -470,8 +470,8 @@ component_exec()
             # load extends
             for component in ${EXTENDS} ${COMPONENT}
             do
-                if [ -e "${REPO_DIR}/${component}/deploy.sh" ]; then
-                    . "${REPO_DIR}/${component}/deploy.sh"
+                if [ -e "${INCLUDE_DIR}/${component}/deploy.sh" ]; then
+                    . "${INCLUDE_DIR}/${component}/deploy.sh"
                 fi
             done
             # exclude components
@@ -493,10 +493,10 @@ component_list()
     local components="$@"
     local component output DESC
     if [ -z "${components}" ]; then
-        components=$(find "${REPO_DIR}/" -type f -name "deploy.conf" | while read f
+        components=$(find "${INCLUDE_DIR}/" -type f -name "deploy.conf" | while read f
             do 
                 component="${f%/*}"
-                component="${component//${REPO_DIR}\//}"
+                component="${component//${INCLUDE_DIR}\//}"
                 echo "${component}"
             done)
     fi
@@ -505,7 +505,7 @@ component_list()
     do
         # output
         DESC=''
-        eval $(grep '^DESC=' "${REPO_DIR}/${component}/deploy.conf")
+        eval $(grep '^DESC=' "${INCLUDE_DIR}/${component}/deploy.conf")
         output=$(printf "%-30s %.49s\n" "${component}" "${DESC}")
         msg "${output}"
     done
@@ -767,9 +767,9 @@ rootfs_import()
     *gz)
         msg -n "Importing rootfs from tar.gz archive ... "
         if [ -e "${rootfs_file}" ]; then
-            tar xzpvf "${rootfs_file}" -C "${CHROOT_DIR}" 1>&2
+            tar xzvf "${rootfs_file}" -C "${CHROOT_DIR}" 1>&2
         elif [ -z "${rootfs_file##http*}" ]; then
-            wget -q -O - "${rootfs_file}" | tar xzpv -C "${CHROOT_DIR}" 1>&2
+            wget -q -O - "${rootfs_file}" | tar xzv -C "${CHROOT_DIR}" 1>&2
         else
             msg "fail"; return 1
         fi
@@ -778,9 +778,9 @@ rootfs_import()
     *bz2)
         msg -n "Importing rootfs from tar.bz2 archive ... "
         if [ -e "${rootfs_file}" ]; then
-            tar xjpvf "${rootfs_file}" -C "${CHROOT_DIR}" 1>&2
+            tar xjvf "${rootfs_file}" -C "${CHROOT_DIR}" 1>&2
         elif [ -z "${rootfs_file##http*}" ]; then
-            wget -q -O - "${rootfs_file}" | tar xjpv -C "${CHROOT_DIR}" 1>&2
+            wget -q -O - "${rootfs_file}" | tar xjv -C "${CHROOT_DIR}" 1>&2
         else
             msg "fail"; return 1
         fi
@@ -789,9 +789,9 @@ rootfs_import()
     *xz)
         msg -n "Importing rootfs from tar.xz archive ... "
         if [ -e "${rootfs_file}" ]; then
-            tar xJpvf "${rootfs_file}" -C "${CHROOT_DIR}" 1>&2
+            tar xJvf "${rootfs_file}" -C "${CHROOT_DIR}" 1>&2
         elif [ -z "${rootfs_file##http*}" ]; then
-            wget -q -O - "${rootfs_file}" | tar xJpv -C "${CHROOT_DIR}" 1>&2
+            wget -q -O - "${rootfs_file}" | tar xJv -C "${CHROOT_DIR}" 1>&2
         else
             msg "fail"; return 1
         fi
@@ -816,17 +816,17 @@ rootfs_export()
     case "${rootfs_file}" in
     *gz)
         msg -n "Exporting rootfs as tar.gz archive ... "
-        tar cpzvf "${rootfs_file}" --one-file-system -C "${CHROOT_DIR}" . 1>&2
+        tar czvf "${rootfs_file}" --one-file-system -C "${CHROOT_DIR}" . 1>&2
         is_ok "fail" "done" || return 1
     ;;
     *bz2)
         msg -n "Exporting rootfs as tar.bz2 archive ... "
-        tar cpjvf "${rootfs_file}" --one-file-system -C "${CHROOT_DIR}" . 1>&2
+        tar cjvf "${rootfs_file}" --one-file-system -C "${CHROOT_DIR}" . 1>&2
         is_ok "fail" "done" || return 1
     ;;
     *xz)
         msg -n "Exporting rootfs as tar.xz archive ... "
-        tar cpJvf "${rootfs_file}" --one-file-system -C "${CHROOT_DIR}" . 1>&2
+        tar cJvf "${rootfs_file}" --one-file-system -C "${CHROOT_DIR}" . 1>&2
         is_ok "fail" "done" || return 1
     ;;
     *)
@@ -1053,11 +1053,12 @@ if [ -z "${ENV_DIR}" ]; then
         ENV_DIR=$(cd "${0%/*}"; pwd)
     fi
 fi
+if [ -z "${INCLUDE_DIR}" ]; then
+    INCLUDE_DIR="${ENV_DIR}/include"
+fi
 if [ -z "${CONFIG_DIR}" ]; then
     CONFIG_DIR="${ENV_DIR}/config"
-fi
-if [ -z "${REPO_DIR}" ]; then
-    REPO_DIR="${ENV_DIR}/repo"
+    [ -d "${CONFIG_DIR}" ] || mkdir "${CONFIG_DIR}"
 fi
 if [ -z "${TEMP_DIR}" ]; then
     TEMP_DIR="${ENV_DIR}/tmp"
