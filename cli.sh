@@ -755,7 +755,57 @@ container_shell()
     return $?
 }
 
-container_export()
+rootfs_import()
+{
+    local rootfs_file="$1"
+    [ -n "${rootfs_file}" ] || return 1
+
+    params_check CHROOT_DIR || return 1
+    container_mounted || container_mount root || return 1
+
+    case "${rootfs_file}" in
+    *gz)
+        msg -n "Importing rootfs from tar.gz archive ... "
+        if [ -e "${rootfs_file}" ]; then
+            tar xzpvf "${rootfs_file}" -C "${CHROOT_DIR}" 1>&2
+        elif [ -z "${rootfs_file##http*}" ]; then
+            wget -q -O - "${rootfs_file}" | tar xzpv -C "${CHROOT_DIR}" 1>&2
+        else
+            msg "fail"; return 1
+        fi
+        is_ok "fail" "done" || return 1
+    ;;
+    *bz2)
+        msg -n "Importing rootfs from tar.bz2 archive ... "
+        if [ -e "${rootfs_file}" ]; then
+            tar xjpvf "${rootfs_file}" -C "${CHROOT_DIR}" 1>&2
+        elif [ -z "${rootfs_file##http*}" ]; then
+            wget -q -O - "${rootfs_file}" | tar xjpv -C "${CHROOT_DIR}" 1>&2
+        else
+            msg "fail"; return 1
+        fi
+        is_ok "fail" "done" || return 1
+    ;;
+    *xz)
+        msg -n "Importing rootfs from tar.xz archive ... "
+        if [ -e "${rootfs_file}" ]; then
+            tar xJpvf "${rootfs_file}" -C "${CHROOT_DIR}" 1>&2
+        elif [ -z "${rootfs_file##http*}" ]; then
+            wget -q -O - "${rootfs_file}" | tar xJpv -C "${CHROOT_DIR}" 1>&2
+        else
+            msg "fail"; return 1
+        fi
+        is_ok "fail" "done" || return 1
+    ;;
+    *)
+        msg "Incorrect filename, supported only gz, bz2 or xz archives."
+        return 1
+    ;;
+    esac
+    return 0
+}
+
+rootfs_export()
 {
     local rootfs_file="$1"
     [ -n "${rootfs_file}" ] || return 1
@@ -766,16 +816,21 @@ container_export()
     case "${rootfs_file}" in
     *gz)
         msg -n "Exporting rootfs as tar.gz archive ... "
-        tar cpzvf "${rootfs_file}" --one-file-system -C "${CHROOT_DIR}" .
+        tar cpzvf "${rootfs_file}" --one-file-system -C "${CHROOT_DIR}" . 1>&2
         is_ok "fail" "done" || return 1
     ;;
     *bz2)
         msg -n "Exporting rootfs as tar.bz2 archive ... "
-        tar cpjvf "${rootfs_file}" --one-file-system -C "${CHROOT_DIR}" .
+        tar cpjvf "${rootfs_file}" --one-file-system -C "${CHROOT_DIR}" . 1>&2
+        is_ok "fail" "done" || return 1
+    ;;
+    *xz)
+        msg -n "Exporting rootfs as tar.xz archive ... "
+        tar cpJvf "${rootfs_file}" --one-file-system -C "${CHROOT_DIR}" . 1>&2
         is_ok "fail" "done" || return 1
     ;;
     *)
-        msg "Incorrect filename, supported only gz or bz2 archives."
+        msg "Incorrect filename, supported only gz, bz2 or xz archives."
         return 1
     ;;
     esac
@@ -928,7 +983,8 @@ COMMANDS:
       -i - только установить, без конфигурирования
       -с - только конфигурировать, без установки
       -n NAME - пропустить установку указанного компонента
-   export <FILE> - экспортировать контейнер как rootfs-архив (tgz или tbz2)
+   import <FILE|URL> - импортировать контейнер как rootfs-архив (tgz, tbz2 или txz)
+   export <FILE> - экспортировать контейнер как rootfs-архив (tgz, tbz2 или txz)
    shell [-u USER] [APP] - смонтировать контейнер, если не смонтирован, и выполнить указанную команду внутри контейнера, по умолчанию /bin/bash
       -u USER - переключиться на указанного пользователя
    mount - смонтировать контейнер
@@ -1103,8 +1159,11 @@ deploy)
         component_exec "${INCLUDE}"
     fi
 ;;
+import)
+    rootfs_import "$@"
+;;
 export)
-    container_export "$@"
+    rootfs_export "$@"
 ;;
 shell)
     container_shell "$@"

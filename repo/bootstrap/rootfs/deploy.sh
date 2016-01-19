@@ -104,46 +104,6 @@ rootfs_make()
     return 0
 }
 
-rootfs_import()
-{
-    msg "Getting and unpacking rootfs archive: "
-    if [ -n "$(echo ${SOURCE_PATH} | grep -i 'gz$')" ]; then
-        if [ -e "${SOURCE_PATH}" ]; then
-            tar xzpvf "${SOURCE_PATH}" -C "${CHROOT_DIR}"
-            is_ok || return 1
-        fi
-        if [ -n "$(echo ${SOURCE_PATH} | grep -i '^http')" ]; then
-            wget -q -O - "${SOURCE_PATH}" | tar xzpv -C "${CHROOT_DIR}"
-            is_ok || return 1
-        fi
-    fi
-    if [ -n "$(echo ${SOURCE_PATH} | grep -i 'bz2$')" ]; then
-        if [ -e "${SOURCE_PATH}" ]; then
-            tar xjpvf "${SOURCE_PATH}" -C "${CHROOT_DIR}"
-            is_ok || return 1
-        fi
-        if [ -n "$(echo ${SOURCE_PATH} | grep -i '^http')" ]; then
-            wget -q -O - "${SOURCE_PATH}" | tar xjpv -C "${CHROOT_DIR}"
-            is_ok || return 1
-        fi
-    fi
-    if [ -n "$(echo ${SOURCE_PATH} | grep -i 'xz$')" ]; then
-        if [ -e "${SOURCE_PATH}" ]; then
-            tar xJpvf "${SOURCE_PATH}" -C "${CHROOT_DIR}"
-            is_ok || return 1
-        fi
-        if [ -n "$(echo ${SOURCE_PATH} | grep -i '^http')" ]; then
-            wget -q -O - "${SOURCE_PATH}" | tar xJpv -C "${CHROOT_DIR}"
-            is_ok || return 1
-        fi
-    fi
-    if [ $(ls "${CHROOT_DIR}" | wc -l) -le 1 ]; then
-        msg " ...installation failed."; return 1
-    fi
-
-    return 0
-}
-
 do_install()
 {
     if [ "${CHROOT_DIR}" != "${TARGET_PATH}" ]; then
