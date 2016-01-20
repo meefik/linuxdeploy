@@ -7,15 +7,17 @@ proot_exit()
 cat <<'EOF'
 exit()
 {
-    history -w
+    local tracer_pid
     local self_tracer_pid=$(grep ^TracerPid: /proc/self/status 2>/dev/null | cut -f2)
-    find /proc/*/status | while read f;
+    find /proc/*/status | grep -o '[0-9]\+' | sort -n | while read pid;
     do
-        if [ "$self_tracer_pid" = "$(grep ^TracerPid: $f 2>/dev/null | cut -f2)" ]; then
-            kill -9 $(grep ^Pid: $f | cut -f2)
+        tracer_pid=$(grep ^TracerPid: /proc/$pid/status 2>/dev/null | cut -f2)
+        if [ "$self_tracer_pid" = "$tracer_pid" -a "$pid" != "$$" ]; then
+            kill -9 $pid
         fi
     done
-    return $1
+    unset exit
+    exit $1
 }
 EOF
 }

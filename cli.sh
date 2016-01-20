@@ -578,7 +578,6 @@ mount_part()
             [ -e "/dev/stdout" ] || ln -s /proc/self/fd/1 /dev/stdout
             [ -e "/dev/stderr" ] || ln -s /proc/self/fd/2 /dev/stderr
             mount -o bind /dev "${target}"
-            mount -o ro,remount "${target}"
             is_ok "fail" "done"
         else
             msg "skip"
