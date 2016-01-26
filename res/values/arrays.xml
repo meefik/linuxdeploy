@@ -13,6 +13,7 @@
         <item>Slovenský</item>
         <item>Português</item>
         <item>한국어</item>
+        <item>Polish</item>
     </string-array>
     <string-array name="language_values" translatable="false">
         <item>en</item>
@@ -26,6 +27,7 @@
         <item>sk</item>
         <item>pt</item>
         <item>ko</item>
+        <item>pl</item>
     </string-array>
     <string-array name="theme_entries">
         <item>Dark</item>

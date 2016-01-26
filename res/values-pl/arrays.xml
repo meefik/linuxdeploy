@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+    <string-array name="theme_entries">
+        <item>Ciemny</item>
+        <item>Jasny</item>
+    </string-array>
+    <string-array name="deploytype_entries">
+        <item>Plik</item>
+        <item>Partycja</item>
+        <item>Katalog</item>
+        <item>RAM</item>
+    </string-array>
+    <string-array name="fstype_entries">
+        <item>Automatyczny</item>
+        <item>ext2</item>
+        <item>ext3</item>
+        <item>ext4</item>
+    </string-array>
+    <string-array name="desktopenv_entries">
+        <item>XTerm</item>
+        <item>LXDE</item>
+        <item>Xfce</item>
+        <item>GNOME</item>
+        <item>KDE</item>
+        <item>Inny</item>
+    </string-array>
+    <string-array name="fbfreeze_entries">
+        <item>Nie zatrzymuj</item>
+        <item>Wstrzymaj</item>
+        <item>Zatrzymaj</item>
+    </string-array>
+    
+
+    <!-- Debian -->
+    <string-array name="debian_components_entries">
+        <item>Środowisko graficzne</item>
+        <item>Serwer SSH</item>
+        <item>Serwer VNC</item>
+        <item>Serwer X</item>
+    </string-array>
+
+    <!-- Ubuntu -->
+    <string-array name="ubuntu_components_entries">
+        <item>Środowisko graficzne</item>
+        <item>Serwer SSH</item>
+        <item>Serwer VNC</item>
+        <item>Serwer X</item>
+    </string-array>
+    
+    <!-- Kali Linux -->
+    <string-array name="kalilinux_components_entries">
+        <item>Środowisko graficzne</item>
+        <item>Serwer SSH</item>
+        <item>Serwer VNC</item>
+        <item>Serwer X</item>
+        <item>Komponenty Kali</item>
+    </string-array>
+    
+    <!-- Fedora -->
+    <string-array name="fedora_components_entries">
+        <item>Środowisko graficzne</item>
+        <item>Serwer SSH</item>
+        <item>Serwer VNC</item>
+        <item>Serwer X</item>
+    </string-array>
+    
+    <!-- CentOS -->
+    <string-array name="centos_components_entries">
+        <item>Środowisko graficzne</item>
+        <item>Serwer SSH</item>
+        <item>Serwer VNC</item>
+        <item>Serwer X</item>
+    </string-array>
+    
+    <!-- Arch Linux -->
+    <string-array name="archlinux_components_entries">
+        <item>Środowisko graficzne</item>
+        <item>Serwer SSH </item>
+        <item>Serwer VNC</item>
+        <item>Serwer X</item>
+    </string-array>
+
+    <!-- openSUSE -->
+    <string-array name="opensuse_components_entries">
+        <item>Środowisko graficzne</item>
+        <item>Serwer SSH</item>
+        <item>Serwer VNC</item>
+        <item>Serwer X</item>
+    </string-array>
+    
+    <!-- Gentoo -->
+    <string-array name="gentoo_components_entries">
+        <item>Środowisko graficzne</item>
+        <item>Serwer SSH</item>
+        <item>Serwer VNC</item>
+        <item>Serwer X</item>
+    </string-array>
+    
+    <!-- Slackware -->
+    <string-array name="slackware_components_entries">
+        <item>Serwer SSH</item>
+    </string-array>
+</resources>
