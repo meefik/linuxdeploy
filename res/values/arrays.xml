@@ -377,6 +377,7 @@
         <item>20</item>
         <item>21</item>
         <item>22</item>
+        <item>23</item>
     </string-array>
     <string-array name="fedora_architecture_values" translatable="false">
         <item>arm</item> <!-- f18 only -->
