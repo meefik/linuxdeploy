@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-
+<resources>
+    
     <string-array name="theme_entries">
         <item>Ciemny</item>
         <item>Jasny</item>
@@ -100,4 +101,5 @@
     <string-array name="slackware_components_entries">
         <item>Serwer SSH</item>
     </string-array>
+    
 </resources>

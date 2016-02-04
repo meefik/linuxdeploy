@@ -346,12 +346,12 @@ mount_part()
             msg -n "/mnt/${disk_name} ... "
             local target="${CHROOT_DIR}/mnt/${disk_name}"
             if ! is_mounted "${target}" ; then
+                [ -d "${target}" ] || mkdir -p "${target}"
+                [ -e "${disk}" ] || mkdir -p "${disk}"
                 if [ -d "${disk}" ]; then
-                    [ -d "${target}" ] || mkdir -p "${target}"
                     mount -o bind "${disk}" "${target}"
                     [ $? -eq 0 ] && msg "done" || msg "fail"
                 elif [ -e "${disk}" ]; then
-                    [ -d "${target}" ] || mkdir -p "${target}"
                     mount -o rw,relatime "${disk}" "${target}"
                     [ $? -eq 0 ] && msg "done" || msg "fail"
                 else
