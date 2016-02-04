@@ -352,6 +352,9 @@ mount_part()
                     [ $? -eq 0 ] && msg "done" || msg "fail"
                 elif [ -e "${disk}" ]; then
                     [ -d "${target}" ] || mkdir -p "${target}"
+                    if ! [ -d "${disk}" ]; then
+                        mkdir -p "${disk}"
+                    fi
                     mount -o rw,relatime "${disk}" "${target}"
                     [ $? -eq 0 ] && msg "done" || msg "fail"
                 else
