@@ -27,12 +27,12 @@ do_start()
             msg -n "${disk_src} ... "
             target="${CHROOT_DIR}/${disk_dst}"
             if ! is_mounted "${target}" ; then
+                [ -d "${target}" ] || mkdir -p "${target}"
+                [ -e "${disk_src}" ] || mkdir -p "${disk_src}"
                 if [ -d "${disk_src}" ]; then
-                    [ -d "${target}" ] || mkdir -p "${target}"
                     mount -o bind "${disk_src}" "${target}"
                     is_ok "fail" "done"
                 elif [ -e "${disk_src}" ]; then
-                    [ -d "${target}" ] || mkdir -p "${target}"
                     mount -o rw,relatime "${disk_src}" "${target}"
                     is_ok "fail" "done"
                 else
