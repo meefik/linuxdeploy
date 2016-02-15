@@ -17,20 +17,19 @@ apt_install()
 
 apt_repository()
 {
+    if [ -e "${CHROOT_DIR}/etc/apt/sources.list" ]; then
+        cp "${CHROOT_DIR}/etc/apt/sources.list" "${CHROOT_DIR}/etc/apt/sources.list.bak"
+    fi
+    # Fix for resolv problem in stretch and xenial
+    echo 'Debug::NoDropPrivs true;' > "${CHROOT_DIR}/etc/apt/apt.conf.d/00no-drop-privs"
     case "${DISTRIB}" in
     debian|kalilinux)
-        if [ -e "${CHROOT_DIR}/etc/apt/sources.list" ]; then
-            cp "${CHROOT_DIR}/etc/apt/sources.list" "${CHROOT_DIR}/etc/apt/sources.list.bak"
-        fi
         if ! $(grep -q "${SOURCE_PATH}.*${SUITE}" "${CHROOT_DIR}/etc/apt/sources.list"); then
             echo "deb ${SOURCE_PATH} ${SUITE} main contrib non-free" > "${CHROOT_DIR}/etc/apt/sources.list"
             echo "deb-src ${SOURCE_PATH} ${SUITE} main contrib non-free" >> "${CHROOT_DIR}/etc/apt/sources.list"
         fi
     ;;
     ubuntu)
-        if [ -e "${CHROOT_DIR}/etc/apt/sources.list" ]; then
-            cp "${CHROOT_DIR}/etc/apt/sources.list" "${CHROOT_DIR}/etc/apt/sources.list.bak"
-        fi
         if ! $(grep -q "${SOURCE_PATH}.*${SUITE}" "${CHROOT_DIR}/etc/apt/sources.list"); then
             echo "deb ${SOURCE_PATH} ${SUITE} main universe multiverse" > "${CHROOT_DIR}/etc/apt/sources.list"
             echo "deb-src ${SOURCE_PATH} ${SUITE} main universe multiverse" >> "${CHROOT_DIR}/etc/apt/sources.list"
