@@ -17,7 +17,7 @@
     <string name="debug" translatable="false">false</string>
     <string name="trace" translatable="false">false</string>
     <string name="logger" translatable="false">false</string>
-    <string name="logfile" translatable="false">${EXTERNAL_STORAGE}/linuxdeploy.log</string>
+    <string name="logfile" translatable="false">${EXTERNAL_STORAGE}/linuxdeploy_${TIMESTAMP}.log</string>
     <string name="distribution" translatable="false">debian</string>
     <string name="suite" translatable="false">@string/debian_suite</string>
     <string name="architecture" translatable="false"></string>

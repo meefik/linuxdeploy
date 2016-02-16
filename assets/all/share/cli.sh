@@ -874,6 +874,8 @@ configure_part()
                     ;;
                     esac
                 fi
+                # fix resolv problem for stretch and xenial
+                echo 'Debug::NoDropPrivs true;' > "${CHROOT_DIR}/etc/apt/apt.conf.d/00no-drop-privs"
             ;;
             archlinux)
                 if [ "${platform}" = "intel" ]

@@ -10,6 +10,7 @@
         <item>分区</item>
         <item>目录</item>
         <item>RAM</item>
+        <item>自动</item>
     </string-array>
     <string-array name="fstype_entries">
         <item>自动</item>

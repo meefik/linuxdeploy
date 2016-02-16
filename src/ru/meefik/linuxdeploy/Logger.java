@@ -1,7 +1,5 @@
 package ru.meefik.linuxdeploy;
 
-import android.content.Context;
-
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -13,11 +11,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import android.content.Context;
+
 public class Logger {
 
     private static volatile List<String> protocol = new ArrayList<>();
     private static boolean fragment = false;
-
+    private static String logFile;
+    
     /**
      * Generate timestamp
      * 
@@ -78,8 +79,9 @@ public class Logger {
     private static void saveToFile(Context c, String msg) {
         byte[] data = msg.getBytes();
         FileOutputStream fos = null;
+        if (logFile == null) logFile = PrefStore.getLogFile(c);
         try {
-            fos = new FileOutputStream(PrefStore.getLogFile(c), true);
+            fos = new FileOutputStream(logFile, true);
             fos.write(data);
             fos.flush();
         } catch (Exception e) {
@@ -93,6 +95,16 @@ public class Logger {
                 }
             }
         }
+    }
+    
+    /**
+     * Set log filename
+     * 
+     * @param c context
+     */
+    public static void setLogFile(Context c) {
+        long timestamp = System.currentTimeMillis() / 1000;
+        logFile = PrefStore.getLogFile(c).replace("${TIMESTAMP}", String.valueOf(timestamp));
     }
 
     /**

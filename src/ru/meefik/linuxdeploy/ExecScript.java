@@ -10,6 +10,7 @@ public class ExecScript extends Thread {
     public ExecScript(Context c, String arg) {
         this.c = c;
         this.arg = arg;
+        Logger.setLogFile(c);
     }
 
     @Override

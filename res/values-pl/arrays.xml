@@ -10,6 +10,7 @@
         <item>Partycja</item>
         <item>Katalog</item>
         <item>RAM</item>
+        <item>Automatyczny</item>
     </string-array>
     <string-array name="fstype_entries">
         <item>Automatyczny</item>
