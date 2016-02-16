@@ -407,10 +407,14 @@ public class PropertiesActivity extends SherlockPreferenceActivity implements
 					disksize.setEnabled(true);
 					fstype.setEnabled(false);
 					break;
+				case "directory":
+                    if (init) {
+                        diskimage.setText(PrefStore.getValues(this, R.string.targetpath_directory));
+                    }
+                    disksize.setEnabled(false);
+                    fstype.setEnabled(false);
+				    break;
 				default:
-					if (init) {
-						diskimage.setText(PrefStore.getValues(this, R.string.targetpath_directory));
-					}
 					disksize.setEnabled(false);
 					fstype.setEnabled(false);
 				}

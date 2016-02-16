@@ -10,6 +10,7 @@
         <item>Phân vùng</item>
         <item>Thư mục</item>
         <item>RAM</item>
+        <item>Tự động</item>
     </string-array>
     <string-array name="fstype_entries">
         <item>Tự động</item>
