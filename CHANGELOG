@@ -7,6 +7,8 @@ Added support kali-rolling in Kali Linux
 Added target type "Auto" for manual prepare target path
 Added timestamp support to log filename (${TIMESTAMP} variable)
 End of support Debian Squeeze and Kali Moto
+Added support /dev/net/tun (for OpenVPN)
+Automatically switch to root (unchroot)
 
 1.5.5
 Open a shell from Android Terminal Emulator
@@ -336,6 +338,8 @@ Updated list packages of base system installation
 Добавлен тип установки "Автоопределение" для ручной настройки места установки
 В логфайл добавлена временная метка (переменная ${TIMESTAMP})
 Закончена поддержка Debian Squeeze и Kali Moto
+Добавлена поддержка /dev/net/tun (для OpenVPN)
+Автоматическое переключение к root (unchroot)
 
 1.5.5
 Открытие командной оболочки в Android Terminal Emulator
