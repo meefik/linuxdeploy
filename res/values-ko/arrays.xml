@@ -2,18 +2,18 @@
 <resources>
 
     <string-array name="theme_entries">
-        <item>Dark</item>
-        <item>Light</item>
+        <item>어두운 테마</item>
+        <item>밝은 테마</item>
     </string-array>
     <string-array name="deploytype_entries">
-        <item>File</item>
-        <item>Partition</item>
-        <item>Directory</item>
+        <item>파일</item>
+        <item>파티션</item>
+        <item>폴더</item>
         <item>RAM</item>
-        <item>Auto</item>
+        <item>자동</item>
     </string-array>
     <string-array name="fstype_entries">
-        <item>Auto</item>
+        <item>자동</item>
         <item>ext2</item>
         <item>ext3</item>
         <item>ext4</item>
@@ -24,92 +24,92 @@
         <item>Xfce</item>
         <item>GNOME</item>
         <item>KDE</item>
-        <item>Other</item>
+        <item>기타</item>
     </string-array>
     <string-array name="fbfreeze_entries">
-        <item>Don\'t freeze</item>
-        <item>Pause</item>
-        <item>Stop</item>
+        <item>멈추지 않음</item>
+        <item>일시정지</item>
+        <item>정지</item>
     </string-array>
     
 
     <!-- Debian -->
 
     <string-array name="debian_components_entries">
-        <item>Desktop Environment</item>
-        <item>SSH server</item>
-        <item>VNC server</item>
-        <item>X server</item>
+        <item>데스크탑 환경</item>
+        <item>SSH 서버</item>
+        <item>VNC 서버</item>
+        <item>X 서버</item>
     </string-array>
 
     <!-- Ubuntu -->
 
     <string-array name="ubuntu_components_entries">
-        <item>Desktop Environment</item>
-        <item>SSH server</item>
-        <item>VNC server</item>
-        <item>X server</item>
+        <item>데스크탑 환경</item>
+        <item>SSH 서버</item>
+        <item>VNC 서버</item>
+        <item>X 서버</item>
     </string-array>
     
     <!-- Kali Linux -->
 
     <string-array name="kalilinux_components_entries">
-        <item>Desktop Environment</item>
-        <item>SSH server</item>
-        <item>VNC server</item>
-        <item>X server</item>
-        <item>Kali components</item>
+        <item>데스크탑 환경</item>
+        <item>SSH 서버</item>
+        <item>VNC 서버</item>
+        <item>X 서버</item>
+        <item>Kali 컴포넌트</item>
     </string-array>
     
     <!-- Fedora -->
 
     <string-array name="fedora_components_entries">
-        <item>Desktop Environment</item>
-        <item>SSH server</item>
-        <item>VNC server</item>
-        <item>X server</item>
+        <item>데스크탑 환경</item>
+        <item>SSH 서버</item>
+        <item>VNC 서버</item>
+        <item>X 서버</item>
     </string-array>
     
     <!-- CentOS -->
 
     <string-array name="centos_components_entries">
-        <item>Desktop Environment</item>
-        <item>SSH server</item>
-        <item>VNC server</item>
-        <item>X server</item>
+        <item>데스크탑 환경</item>
+        <item>SSH 서버</item>
+        <item>VNC 서버</item>
+        <item>X 서버</item>
     </string-array>
     
     <!-- Arch Linux -->
 
     <string-array name="archlinux_components_entries">
-        <item>Desktop Environment</item>
-        <item>SSH server</item>
-        <item>VNC server</item>
-        <item>X server</item>
+        <item>데스크탑 환경</item>
+        <item>SSH 서버</item>
+        <item>VNC 서버</item>
+        <item>X 서버</item>
     </string-array>
 
     <!-- openSUSE -->
 
     <string-array name="opensuse_components_entries">
-        <item>Desktop Environment</item>
-        <item>SSH server</item>
-        <item>VNC server</item>
-        <item>X server</item>
+        <item>데스크탑 환경</item>
+        <item>SSH 서버</item>
+        <item>VNC 서버</item>
+        <item>X 서버</item>
     </string-array>
     
     <!-- Gentoo -->
 
     <string-array name="gentoo_components_entries">
-        <item>Desktop Environment</item>
-        <item>SSH server</item>
-        <item>VNC server</item>
-        <item>X server</item>
+        <item>데스크탑 환경</item>
+        <item>SSH 서버</item>
+        <item>VNC 서버</item>
+        <item>X 서버</item>
     </string-array>
     
     <!-- Slackware -->
 
     <string-array name="slackware_components_entries">
-        <item>SSH server</item>
+        <item>SSH 서버</item>
     </string-array>
     
 </resources>
