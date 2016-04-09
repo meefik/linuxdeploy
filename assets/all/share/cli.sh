@@ -311,6 +311,16 @@ mount_part()
             msg "skip"
         fi
     ;;
+    tun)
+        msg -n "/dev/net/tun ... "
+        [ -d "/dev/net" ] || mkdir -p /dev/net
+        if [ ! -e "/dev/net/tun" ]; then
+            mknod /dev/net/tun c 10 200
+            is_ok "fail" "done"
+        else
+            msg "skip"
+        fi
+    ;;
     binfmt_misc)
         multiarch_support || return 0
         local binfmt_dir="/proc/sys/fs/binfmt_misc"
@@ -370,7 +380,7 @@ mount_part()
 container_mount()
 {
     if [ $# -eq 0 ]; then
-        container_mount root proc sys selinux dev tty pts shm binfmt_misc custom
+        container_mount root proc sys selinux dev tty pts shm tun binfmt_misc custom
         [ $? -ne 0 ] && return 1
     else
         msg "Mounting partitions: "
@@ -552,20 +562,16 @@ container_start()
         fb_refresh &
         (set -e
             sync
+            chroot_exec -u ${USER_NAME} "xinit -- :${FB_DISPLAY} -dpi ${FB_DPI} ${FB_ARGS} &"
             case "${FB_FREEZE}" in
             stop)
-                chroot_exec -u ${USER_NAME} "xinit -- :${FB_DISPLAY} -dpi ${FB_DPI} ${FB_ARGS} &"
                 setprop ctl.stop surfaceflinger
                 sleep 10
                 setprop ctl.stop zygote
             ;;
             pause)
-                chroot_exec -u ${USER_NAME} "xinit -- :${FB_DISPLAY} -dpi ${FB_DPI} ${FB_ARGS} &"
                 pkill -STOP system_server
                 pkill -STOP surfaceflinger
-            ;;
-            *)
-                chroot_exec -u ${USER_NAME} "xinit -- :${FB_DISPLAY} -dpi ${FB_DPI} ${FB_ARGS} &"
             ;;
             esac
         exit 0)
@@ -1091,6 +1097,9 @@ configure_part()
         unchroot)
             local unchroot="${CHROOT_DIR}/bin/unchroot"
             echo '#!/bin/sh' > "${unchroot}"
+            echo 'if [ "$(whoami)" != "root" ]; then' >> "${unchroot}"
+            echo 'sudo $0 $@; exit $?' >> "${unchroot}"
+            echo 'fi' >> "${unchroot}"
             echo "PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >> "${unchroot}"
             echo 'if [ $# -eq 0 ]; then' >> "${unchroot}"
             echo 'chroot /proc/1/cwd su -' >> "${unchroot}"
