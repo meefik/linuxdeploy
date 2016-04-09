@@ -614,6 +614,16 @@ mount_part()
             msg "skip"
         fi
     ;;
+    tun)
+        msg -n "/dev/net/tun ... "
+        [ -d "/dev/net" ] || mkdir -p /dev/net
+        if [ ! -e "/dev/net/tun" ]; then
+            mknod /dev/net/tun c 10 200
+            is_ok "fail" "done"
+        else
+            msg "skip"
+        fi
+    ;;
     binfmt_misc)
         multiarch_support || return 0
         local binfmt_dir="/proc/sys/fs/binfmt_misc"
@@ -633,7 +643,7 @@ mount_part()
 container_mount()
 {
     if [ $# -eq 0 ]; then
-        container_mount root proc sys selinux dev tty pts shm binfmt_misc
+        container_mount root proc sys selinux dev tty pts shm tun binfmt_misc
         return $?
     fi
 
