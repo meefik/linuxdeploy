@@ -1527,7 +1527,7 @@ container_install()
         [ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 
         msg -n "Retrieving packages list ... "
-        local pkg_list=$(wget -q -O - "${repo}/" | sed -n '/<a / s/^.*<a [^>]*href="\([^\"]*\)".*$/\1/p' | awk -F'/' '{print $NF}' | sort -rn)
+        local pkg_list=$(busybox wget -q -O - "${repo}/" | sed -n '/<a / s/^.*<a [^>]*href="\([^\"]*\)".*$/\1/p' | awk -F'/' '{print $NF}' | sort -rn)
         [ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 
         msg "Retrieving base packages: "
@@ -1542,7 +1542,7 @@ container_install()
             for item in 1 2 3
             do
                 [ ${item} -gt 1 ] && sleep 30s
-                wget -q -c -O "${cache_dir}/${pkg_file}" "${repo}/${pkg_file}"
+                busybox wget -q -c -O "${cache_dir}/${pkg_file}" "${repo}/${pkg_file}"
                 [ $? -eq 0 ] && break
             done
             # unpack
@@ -1597,9 +1597,9 @@ container_install()
         msg -n "Retrieving packages list ... "
         local pkg_list="${CHROOT_DIR}/tmp/packages.list"
         (set -e
-            repodata=$(wget -q -O - "${repo}/repodata/repomd.xml" | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\-primary\.xml\.gz\)".*$/\1/p')
+            repodata=$(busybox wget -q -O - "${repo}/repodata/repomd.xml" | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\-primary\.xml\.gz\)".*$/\1/p')
             [ -z "${repodata}" ] && exit 1
-            wget -q -O - "${repo}/${repodata}" | gzip -dc | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\)".*$/\1/p' > "${pkg_list}"
+            busybox wget -q -O - "${repo}/${repodata}" | gzip -dc | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\)".*$/\1/p' > "${pkg_list}"
         exit 0)
         [ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 
@@ -1616,7 +1616,7 @@ container_install()
             for item in 1 2 3
             do
                 [ ${item} -gt 1 ] && sleep 30s
-                wget -q -c -O "${CHROOT_DIR}/tmp/${pkg_file}" "${repo}/${pkg_url}"
+                busybox wget -q -c -O "${CHROOT_DIR}/tmp/${pkg_file}" "${repo}/${pkg_url}"
                 [ $? -eq 0 ] && break
             done
             # unpack
@@ -1668,9 +1668,9 @@ container_install()
         msg -n "Retrieving packages list ... "
         local pkg_list="${CHROOT_DIR}/tmp/packages.list"
         (set -e
-            repodata=$(wget -q -O - "${repo}/repodata/repomd.xml" | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\-primary\.xml\.gz\)".*$/\1/p')
+            repodata=$(busybox wget -q -O - "${repo}/repodata/repomd.xml" | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\-primary\.xml\.gz\)".*$/\1/p')
             [ -z "${repodata}" ] && exit 1
-            wget -q -O - "${repo}/${repodata}" | gzip -dc | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\)".*$/\1/p' > "${pkg_list}"
+            busybox wget -q -O - "${repo}/${repodata}" | gzip -dc | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\)".*$/\1/p' > "${pkg_list}"
         exit 0)
         [ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 
@@ -1687,7 +1687,7 @@ container_install()
             for item in 1 2 3
             do
                 [ ${item} -gt 1 ] && sleep 30s
-                wget -q -c -O "${CHROOT_DIR}/tmp/${pkg_file}" "${repo}/${pkg_url}"
+                busybox wget -q -c -O "${CHROOT_DIR}/tmp/${pkg_file}" "${repo}/${pkg_url}"
                 [ $? -eq 0 ] && break
             done
             # unpack
@@ -1749,9 +1749,9 @@ container_install()
         msg -n "Retrieving packages list ... "
         local pkg_list="$CHROOT_DIR/tmp/packages.list"
         (set -e
-            repodata=$(wget -q -O - "${repo}/repodata/repomd.xml" | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\-primary\.xml\.gz\)".*$/\1/p')
+            repodata=$(busybox wget -q -O - "${repo}/repodata/repomd.xml" | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\-primary\.xml\.gz\)".*$/\1/p')
             [ -z "${repodata}" ] && exit 1
-            wget -q -O - "${repo}/${repodata}" | gzip -dc | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\)".*$/\1/p' > "${pkg_list}"
+            busybox wget -q -O - "${repo}/${repodata}" | gzip -dc | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\)".*$/\1/p' > "${pkg_list}"
         exit 0)
         [ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 
@@ -1768,7 +1768,7 @@ container_install()
             for item in 1 2 3
             do
                 [ ${item} -gt 1 ] && sleep 30s
-                wget -q -c -O "${CHROOT_DIR}/tmp/${pkg_file}" "${repo}/${pkg_url}"
+                busybox wget -q -c -O "${CHROOT_DIR}/tmp/${pkg_file}" "${repo}/${pkg_url}"
                 [ $? -eq 0 ] && break
             done
             # unpack
@@ -1801,7 +1801,7 @@ container_install()
         msg -n "Getting repository path ... "
         local repo="${SOURCE_PATH%/}/autobuilds"
         local stage3="${CHROOT_DIR}/tmp/latest-stage3.tar.bz2"
-        local archive=$(wget -q -O - "${repo}/latest-stage3-${ARCH}.txt" | grep -v ^# | awk '{print $1}')
+        local archive=$(busybox wget -q -O - "${repo}/latest-stage3-${ARCH}.txt" | grep -v ^# | awk '{print $1}')
         [ -n "${archive}" ] && msg "done" || { msg "fail"; return 1; }
 
         msg -n "Retrieving stage3 archive ... "
@@ -1809,7 +1809,7 @@ container_install()
         for item in 1 2 3
         do
             [ ${item} -gt 1 ] && sleep 30s
-            wget -c -O "${stage3}" "${repo}/${archive}"
+            busybox wget -c -O "${stage3}" "${repo}/${archive}"
             [ $? -eq 0 ] && break
         done
         [ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
@@ -1859,9 +1859,9 @@ container_install()
         [ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 
         msg -n "Retrieving packages list ... "
-        local basic_packages=$(wget -q -O - "${repo}/a/tagfile" | grep -v -e 'kernel' -e 'efibootmgr' -e 'lilo' -e 'grub' | awk -F: '{if ($1!="") print "a/"$1}')
+        local basic_packages=$(busybox wget -q -O - "${repo}/a/tagfile" | grep -v -e 'kernel' -e 'efibootmgr' -e 'lilo' -e 'grub' | awk -F: '{if ($1!="") print "a/"$1}')
         local pkg_list="${cache_dir}/packages.list"
-        wget -q -O - "${repo}/FILE_LIST" | grep -o -e '/.*\.\tgz$' -e '/.*\.\txz$' > "${pkg_list}"
+        busybox wget -q -O - "${repo}/FILE_LIST" | grep -o -e '/.*\.\tgz$' -e '/.*\.\txz$' > "${pkg_list}"
         [ $? -eq 0 ] && msg "done" || { msg "fail"; return 1; }
 
         msg "Retrieving base packages: "
@@ -1877,7 +1877,7 @@ container_install()
             for item in 1 2 3
             do
                 [ ${item} -gt 1 ] && sleep 30s
-                wget -q -c -O "${cache_dir}/${pkg_file}" "${repo}${pkg_url}"
+                busybox wget -q -c -O "${cache_dir}/${pkg_file}" "${repo}${pkg_url}"
                     [ $? -eq 0 ] && break
                 done
             # unpack
@@ -1910,7 +1910,7 @@ container_install()
                 [ $? -eq 0 ] || return 1
             fi
             if [ -n "$(echo ${SOURCE_PATH} | grep -i '^http')" ]; then
-                wget -q -O - "${SOURCE_PATH}" | tar xzv -C "${CHROOT_DIR}"
+                busybox wget -q -O - "${SOURCE_PATH}" | tar xzv -C "${CHROOT_DIR}"
                 [ $? -eq 0 ] || return 1
             fi
         fi
@@ -1920,7 +1920,7 @@ container_install()
                 [ $? -eq 0 ] || return 1
             fi
             if [ -n "$(echo ${SOURCE_PATH} | grep -i '^http')" ]; then
-                wget -q -O - "${SOURCE_PATH}" | tar xjv -C "${CHROOT_DIR}"
+                busybox wget -q -O - "${SOURCE_PATH}" | tar xjv -C "${CHROOT_DIR}"
                 [ $? -eq 0 ] || return 1
             fi
         fi
@@ -1930,7 +1930,7 @@ container_install()
                 [ $? -eq 0 ] || return 1
             fi
             if [ -n "$(echo ${SOURCE_PATH} | grep -i '^http')" ]; then
-                wget -q -O - "${SOURCE_PATH}" | tar xJv -C "${CHROOT_DIR}"
+                busybox wget -q -O - "${SOURCE_PATH}" | tar xJv -C "${CHROOT_DIR}"
                 [ $? -eq 0 ] || return 1
             fi
         fi
