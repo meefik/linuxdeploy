@@ -14,7 +14,7 @@ PREFIX="../bb-$MARCH"
 pkg="busybox-$BB_VERSION"
 
 echo ">>> download"
-[ -e "$pkg.tar.bz2" ] || wget --progress=dot http://busybox.net/downloads/$pkg.tar.bz2 || exit 1
+[ -e "$pkg.tar.bz2" ] || busybox wget --progress=dot http://busybox.net/downloads/$pkg.tar.bz2 || exit 1
 
 echo ">>> unpack"
 [ -d "$pkg" ] && rm -rf $pkg

@@ -77,10 +77,10 @@ wgetprogress () {
 	[ ! "$VERBOSE" ] && QSWITCH="-q"
 	local ret=0
 	if [ "$USE_DEBIANINSTALLER_INTERACTION" ] && [ "$PROGRESS_NEXT" ]; then
-		wget "$@" 2>&1 >/dev/null | $PKGDETAILS "WGET%" $PROGRESS_NOW $PROGRESS_NEXT $PROGRESS_END >&3
+		busybox wget "$@" 2>&1 >/dev/null | $PKGDETAILS "WGET%" $PROGRESS_NOW $PROGRESS_NEXT $PROGRESS_END >&3
 		ret=$?
 	else
-		wget $QSWITCH "$@" 
+		busybox wget $QSWITCH "$@" 
 		ret=$?
 	fi
 	return $ret
