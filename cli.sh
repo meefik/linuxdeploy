@@ -2,11 +2,11 @@
 ################################################################################
 #
 # Linux Deploy CLI
-# (C) 2012-2015 Anton Skshidlevsky <meefik@gmail.com>, GPLv3
+# (C) 2012-2016 Anton Skshidlevsky <meefik@gmail.com>, GPLv3
 #
 ################################################################################
 
-VERSION="2.0.0"
+VERSION="2.0.1"
 
 ################################################################################
 # Common
@@ -108,19 +108,10 @@ is_mounted()
 {
     local mount_point="$1"
     [ -n "${mount_point}" ] || return 1
-    if $(grep -q " ${mount_point} " /proc/mounts); then
+    if $(grep -q " ${mount_point%/} " /proc/mounts); then
         return 0
     else
         return 1
-    fi
-}
-
-container_mounted()
-{
-    if [ "${FAKEROOT}" = "1" ]; then
-        return 0
-    else
-        is_mounted "${CHROOT_DIR}"
     fi
 }
 
@@ -323,7 +314,7 @@ params_check()
 # Configs
 ################################################################################
 
-config_path()
+config_which()
 {
     local conf_file="$1"
     if [ -n "${conf_file}" ]; then
@@ -340,28 +331,20 @@ config_update()
     local target_conf="$1"; shift
     params_read "${source_conf}"
     params_parse "$@"
-    if [ -z "${CONTAINER_ID}" ]; then
-        CONTAINER_ID="$(get_uuid)"
-    fi
-    CHROOT_DIR="${CHROOT_DIR%/}"
     params_write "${target_conf}"
 }
 
 config_list()
 {
     local conf_file="$1"
-    local conf DISTRIB ARCH SUITE INCLUDE
+    local conf
     for conf in $(ls "${CONFIG_DIR}/")
     do
-        local current='-'
-        [ "${conf_file##*/}" = "${conf}" ] && current='*'
-        unset DISTRIB ARCH SUITE INCLUDE
-        eval $(grep '^DISTRIB=' "${CONFIG_DIR}/${conf}")
-        eval $(grep '^ARCH=' "${CONFIG_DIR}/${conf}")
-        eval $(grep '^SUITE=' "${CONFIG_DIR}/${conf}")
-        eval $(grep '^INCLUDE=' "${CONFIG_DIR}/${conf}")
-        local formated_desc=$(printf "%-1s %-15s %-10s %-10s %-10s %.28s\n" "${current}" "${conf%.conf}" "${DISTRIB}" "${ARCH}" "${SUITE}" "${INCLUDE}")
-        msg "${formated_desc}"
+        (
+            . "${CONFIG_DIR}/${conf}"
+            formated_desc=$(printf "%-15s %-10s %-10s %-10s %.30s\n" "${conf%.conf}" "${DISTRIB}" "${ARCH}" "${SUITE}" "${INCLUDE}")
+            msg "${formated_desc}"
+        )
     done
 }
 
@@ -379,7 +362,7 @@ config_remove()
 # Components
 ################################################################################
 
-target_check()
+component_is_compatible()
 {
     local target="$@"
     [ -n "${target}" ] || return 0
@@ -395,7 +378,7 @@ target_check()
     return 1
 }
 
-is_exclude()
+component_is_exclude()
 {
     local component="$1"
     [ -n "${component}" ] || return 1
@@ -425,11 +408,10 @@ component_depends()
         conf_file="${INCLUDE_DIR}/${component}/deploy.conf"
         [ -e "${conf_file}" ] || continue
         # read component variables
-        eval $(grep '^TARGET=' "${conf_file}")
-        eval $(grep '^DEPENDS=' "${conf_file}")
+        eval $(grep -e '^TARGET=' -e '^DEPENDS=' "${conf_file}")
         # check compatibility
         if [ "${WITHOUT_CHECK}" != "1" ]; then
-            target_check ${TARGET} || continue
+            component_is_compatible ${TARGET} || continue
         fi
         if [ "${REVERSE_DEPENDS}" = "1" ]; then
             # output
@@ -475,7 +457,7 @@ component_exec()
                 fi
             done
             # exclude components
-            is_exclude ${COMPONENT} && continue
+            component_is_exclude ${COMPONENT} && continue
             # check parameters
             [ "${WITHOUT_CHECK}" != "1" ] && params_check ${PARAMS}
             # exec action
@@ -511,9 +493,57 @@ component_list()
     done
 }
 
+component_sync()
+{
+    [ -n "${REPO_URL}" ] || return 1
+    msg -n "Synchronization with repository ... "
+    if [ -d "${INCLUDE_DIR}" ]; then
+        rm -rf "${INCLUDE_DIR}"/*
+    else
+        mkdir "${INCLUDE_DIR}"
+    fi
+    wget -q -O - "${REPO_URL%/}/index.tgz" | tar xz -C "${INCLUDE_DIR}" 1>&2
+    is_ok "fail" "done"
+}
+
+component_get()
+{
+    local filename="$1"
+    if [ -e "${COMPONENT_DIR}/${filename}" ]; then
+        cat "${COMPONENT_DIR}/${filename}"
+    else
+        local filepath="${COMPONENT_DIR}/${filename%/*}"
+        [ -e "${filepath}" ] || mkdir -p "${filepath}"
+        wget -q -O - "${REPO_URL}/${COMPONENT}/${filename}" | tee "${filepath}/${filename}"
+    fi
+}
+
+component_init()
+{
+    local out_path="$1"
+    [ -d "${out_path}" ] || return 1
+    msg -n "Initialization repository ... "
+    (set -e
+        cd "${INCLUDE_DIR}"
+        tar czf "${out_path}/index.tgz" .
+        cd "${out_path}"
+        md5sum index.tgz > index.md5
+    exit 0)
+    is_ok "fail" "done"
+}
+
 ################################################################################
 # Containers
 ################################################################################
+
+container_mounted()
+{
+    if [ "${FAKEROOT}" = "1" ]; then
+        return 0
+    else
+        is_mounted "${CHROOT_DIR}"
+    fi
+}
 
 mount_part()
 {
@@ -673,9 +703,9 @@ container_umount()
     for i in 1 2 3
     do
         if [ "${lsof_full}" -eq 0 ]; then
-            local pids=$(lsof | grep "${CHROOT_DIR}" | awk '{print $1}' | uniq)
+            local pids=$(lsof | grep "${CHROOT_DIR%/}" | awk '{print $1}' | uniq)
         else
-            local pids=$(lsof | grep "${CHROOT_DIR}" | awk '{print $2}' | uniq)
+            local pids=$(lsof | grep "${CHROOT_DIR%/}" | awk '{print $2}' | uniq)
         fi
         if [ -n "${pids}" ]; then
             kill -9 ${pids}
@@ -692,11 +722,11 @@ container_umount()
     local mask
     for mask in '.*' '*'
     do
-        local parts=$(cat /proc/mounts | awk '{print $2}' | grep "^${CHROOT_DIR}/${mask}$" | sort -r)
+        local parts=$(cat /proc/mounts | awk '{print $2}' | grep "^${CHROOT_DIR%/}/${mask}$" | sort -r)
         local part
         for part in ${parts}
         do
-            local part_name=$(echo ${part} | sed "s|^${CHROOT_DIR}/*|/|g")
+            local part_name=$(echo ${part} | sed "s|^${CHROOT_DIR%/}/*|/|g")
             msg -n "${part_name} ... "
             if [ -z "${part_name##*selinux*}" -a -e "/sys/fs/selinux/enforce" -a -e "${TEMP_DIR}/selinux_state" ]; then
                 cat "${TEMP_DIR}/selinux_state" > /sys/fs/selinux/enforce
@@ -709,7 +739,7 @@ container_umount()
     [ "${is_mnt}" -eq 1 ]; is_ok " ...nothing mounted"
 
     msg -n "Disassociating loop device ... "
-    local loop=$(losetup -a | grep "${TARGET_PATH}" | awk -F: '{print $1}')
+    local loop=$(losetup -a | grep "${TARGET_PATH%/}" | awk -F: '{print $1}')
     if [ -n "${loop}" ]; then
         losetup -d "${loop}"
     fi
@@ -847,9 +877,6 @@ rootfs_export()
 
 container_status()
 {
-    msg -n "Linux Deploy: "
-    msg "${VERSION}"
-
     local model=$(getprop ro.product.model)
     if [ -n "${model}" ]; then
         msg -n "Device: "
@@ -895,13 +922,22 @@ container_status()
     local supported_fs=$(printf '%s ' $(grep -v nodev /proc/filesystems | sort))
     msg "${supported_fs}"
 
-    msg -n "Container: "
-    msg "${CONTAINER}"
+    [ -n "${CHROOT_DIR}" ] || return 0
 
     msg -n "Installed system: "
     local linux_version=$([ -r "${CHROOT_DIR}/etc/os-release" ] && . "${CHROOT_DIR}/etc/os-release"; [ -n "${PRETTY_NAME}" ] && echo "${PRETTY_NAME}" || echo "unknown")
     msg "${linux_version}"
-
+    
+    msg "Mounted parts: "
+    local is_mnt=0
+    local item
+    for item in $(grep "${CHROOT_DIR%/}" /proc/mounts | awk '{print $2}' | sed "s|${CHROOT_DIR%/}/*|/|g")
+    do
+        msg "* ${item}"
+        local is_mnt=1
+    done
+    [ "${is_mnt}" -ne 1 ] && msg " ...nothing mounted"
+    
     msg "Running services: "
     if [ -n "${STARTUP}" ]; then
         local WITHOUT_DEPENDS=1
@@ -916,20 +952,10 @@ container_status()
         msg " ...no active services"
     fi
 
-    msg "Mounted parts on Linux: "
-    local is_mnt=0
-    local item
-    for item in $(grep "${CHROOT_DIR}" /proc/mounts | awk '{print $2}' | sed "s|${CHROOT_DIR}/*|/|g")
-    do
-        msg "* ${item}"
-        local is_mnt=1
-    done
-    [ "${is_mnt}" -ne 1 ] && msg " ...nothing mounted"
-
     msg "Available mount points: "
     local is_mountpoints=0
     local mp
-    for mp in $(grep -v "${CHROOT_DIR}" /proc/mounts | grep ^/ | awk '{print $2":"$3}')
+    for mp in $(grep -v "${CHROOT_DIR%/}" /proc/mounts | grep ^/ | awk '{print $2":"$3}')
     do
         local part=$(echo ${mp} | awk -F: '{print $1}')
         local fstype=$(echo ${mp} | awk -F: '{print $2}')
@@ -937,7 +963,7 @@ container_status()
         local available=$(stat -c '%a' -f ${part} | awk '{printf("%.1f",$1*'${block_size}'/1024/1024/1024)}')
         local total=$(stat -c '%b' -f ${part} | awk '{printf("%.1f",$1*'${block_size}'/1024/1024/1024)}')
         if [ -n "${available}" -a -n "${total}" ]; then
-            msg "* ${part}: ${available}/${total} GB (${fstype})"
+            msg "* ${part}  ${available}/${total} GB (${fstype})"
             is_mountpoints=1
         fi
     done
@@ -958,7 +984,7 @@ container_status()
             do
                 local size=$(fdisk -l ${part} | grep 'Disk.*bytes' | awk '{ sub(/,/,""); print $3" "$4}')
                 local type=$(fdisk -l ${devpath} | grep ^${part} | tr -d '*' | awk '{str=$6; for (i=7;i<=10;i++) if ($i!="") str=str" "$i; printf("%s",str)}')
-                msg "* ${part}: ${size} (${type})"
+                msg "* ${part}  ${size} (${type})"
                 local is_partitions=1
             done
         fi
@@ -970,7 +996,7 @@ helper()
 {
 cat <<EOF
 Linux Deploy ${VERSION}
-(c) 2012-2015 Anton Skshidlevsky, GPLv3
+(c) 2012-2016 Anton Skshidlevsky, GPLv3
 
 USAGE:
    linuxdeploy [OPTIONS] COMMAND ...
@@ -992,7 +1018,7 @@ COMMANDS:
       -i - только установить, без конфигурирования
       -с - только конфигурировать, без установки
       -n NAME - пропустить установку указанного компонента
-   import <FILE|URL> - импортировать контейнер как rootfs-архив (tgz, tbz2 или txz)
+   import <FILE|URL> - импортировать rootfs-архив (tgz, tbz2 или txz) в текущий контейнер
    export <FILE> - экспортировать контейнер как rootfs-архив (tgz, tbz2 или txz)
    shell [-u USER] [APP] - смонтировать контейнер, если не смонтирован, и выполнить указанную команду внутри контейнера, по умолчанию /bin/bash
       -u USER - переключиться на указанного пользователя
@@ -1001,6 +1027,8 @@ COMMANDS:
    start - смонтировать контейнер, если не смонтирован, и запустить все подключенные компоненты
    stop [-u] - остановить все подключенные компоненты
       -u - размонтировать контейнер
+   sync - синхронизировать локальное дерево компонентов с репозиторием
+   init <DIR> - создать индекс репозитория в указанной директории
    status - отобразить состояние контейнера и компонетнов
    help [NAME ...] - вызвать справку
 
@@ -1020,6 +1048,29 @@ EOF
 }
 
 ################################################################################
+
+# init env
+umask 0022
+unset LANG
+if [ -z "${ENV_DIR}" ]; then
+    ENV_DIR=$(readlink "$0")
+    ENV_DIR="${ENV_DIR%/*}"
+    if [ -z "${ENV_DIR}" ]; then
+        ENV_DIR=$(cd "${0%/*}"; pwd)
+    fi
+fi
+if [ -e "${ENV_DIR}/deploy.conf" ]; then
+    . "${ENV_DIR}/deploy.conf"
+fi
+if [ -z "${INCLUDE_DIR}" ]; then
+    INCLUDE_DIR="${ENV_DIR}/include"
+fi
+if [ -z "${CONFIG_DIR}" ]; then
+    CONFIG_DIR="${ENV_DIR}/config"
+fi
+if [ -z "${TEMP_DIR}" ]; then
+    TEMP_DIR="${ENV_DIR}/tmp"
+fi
 
 # parse options
 OPTIND=1
@@ -1052,28 +1103,8 @@ if [ "${TRACE_MODE}" = "1" ]; then
     set -x
 fi
 
-# init env
-umask 0022
-unset LANG
-if [ -z "${ENV_DIR}" ]; then
-    ENV_DIR=$(readlink "$0")
-    ENV_DIR="${ENV_DIR%/*}"
-    if [ -z "${ENV_DIR}" ]; then
-        ENV_DIR=$(cd "${0%/*}"; pwd)
-    fi
-fi
-if [ -z "${INCLUDE_DIR}" ]; then
-    INCLUDE_DIR="${ENV_DIR}/include"
-fi
-if [ -z "${CONFIG_DIR}" ]; then
-    CONFIG_DIR="${ENV_DIR}/config"
-    [ -d "${CONFIG_DIR}" ] || mkdir "${CONFIG_DIR}"
-fi
-if [ -z "${TEMP_DIR}" ]; then
-    TEMP_DIR="${ENV_DIR}/tmp"
-    [ -d "${TEMP_DIR}" ] || mkdir "${TEMP_DIR}"
-fi
-CONF_FILE=$(config_path "${CONF_FILE}")
+# which config
+CONF_FILE=$(config_which "${CONF_FILE}")
 
 # read config
 OPTLST=" " # space is required
@@ -1084,10 +1115,6 @@ WITHOUT_CHECK=0
 WITHOUT_DEPENDS=0
 REVERSE_DEPENDS=0
 EXCLUDE_COMPONENTS=""
-CHROOT_DIR="${CHROOT_DIR%/}"
-if [ "${FAKEROOT}" = "1" -a -z "${CHROOT_DIR}" ]; then
-    CHROOT_DIR="${TARGET_PATH%/}"
-fi
 
 # exec command
 OPTCMD="$1"; shift
@@ -1112,7 +1139,7 @@ config|conf)
             dump_flag=1
         ;;
         i)
-            conf_file=$(config_path "${OPTARG}")
+            conf_file=$(config_which "${OPTARG}")
         ;;
         l)
             list_flag=1
@@ -1208,6 +1235,12 @@ stop)
     if [ "${umount_flag}" = "1" ]; then
         container_umount
     fi
+;;
+sync)
+    component_sync
+;;
+init)
+    component_init "$@"
 ;;
 status)
     container_status
