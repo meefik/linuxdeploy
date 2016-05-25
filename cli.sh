@@ -223,10 +223,16 @@ chroot_exec()
             PATH="${path}" proot -r "${CHROOT_DIR}" -w / ${mounts} ${emulator} -0 $*
         fi
     ;;
-    *)
-        msg "Unknown containerization method: ${METHOD}"
-    ;;
     esac
+}
+
+sync_env()
+{
+    [ -n "${REPO_URL}" ] || return 1
+    msg -n "Synchronization with repository ... "
+    [ -e "${ENV_DIR}" ] || mkdir -p "${ENV_DIR}"
+    wget -q -O - "${REPO_URL%/}/env.tgz" | tar xz -C "${ENV_DIR}" 1>&2
+    is_ok "fail" "done"
 }
 
 ################################################################################
@@ -492,45 +498,6 @@ component_list()
         output=$(printf "%-30s %.49s\n" "${component}" "${DESC}")
         msg "${output}"
     done
-}
-
-component_sync()
-{
-    [ -n "${REPO_URL}" ] || return 1
-    msg -n "Synchronization with repository ... "
-    if [ -d "${INCLUDE_DIR}" ]; then
-        rm -rf "${INCLUDE_DIR}"/*
-    else
-        mkdir "${INCLUDE_DIR}"
-    fi
-    wget -q -O - "${REPO_URL%/}/index.tgz" | tar xz -C "${INCLUDE_DIR}" 1>&2
-    is_ok "fail" "done"
-}
-
-component_get()
-{
-    local filename="$1"
-    if [ -e "${COMPONENT_DIR}/${filename}" ]; then
-        cat "${COMPONENT_DIR}/${filename}"
-    else
-        local filepath="${COMPONENT_DIR}/${filename%/*}"
-        [ -e "${filepath}" ] || mkdir -p "${filepath}"
-        wget -q -O - "${REPO_URL}/${COMPONENT}/${filename}" | tee "${filepath}/${filename}"
-    fi
-}
-
-component_init()
-{
-    local out_path="$1"
-    [ -d "${out_path}" ] || return 1
-    msg -n "Initialization repository ... "
-    (set -e
-        cd "${INCLUDE_DIR}"
-        tar czf "${out_path}/index.tgz" .
-        cd "${out_path}"
-        md5sum index.tgz > index.md5
-    exit 0)
-    is_ok "fail" "done"
 }
 
 ################################################################################
@@ -1095,6 +1062,8 @@ fi
 
 # which config
 CONF_FILE=$(config_which "${CONF_FILE}")
+CONF_ID=${CONF_FILE##*/}
+CONF_ID=${CONF_ID%*.conf}
 
 # read config
 OPTLST=" " # space is required
@@ -1235,10 +1204,7 @@ stop)
     fi
 ;;
 sync)
-    component_sync
-;;
-init)
-    component_init "$@"
+    sync_env
 ;;
 status)
     container_status

@@ -10,10 +10,10 @@ cat <<EOF
    --chroot-dir=PATH
      Директория монтирования контейнера.
      
-   --method=chroot|proot|lxc
+   --method=chroot|proot
      Метод контейнеризации.
 
-   --distrib=debian|ubuntu|kalilinux|fedora|archlinux|gentoo|opensuse|slackware
+   --distrib=debian|ubuntu|kalilinux|fedora|archlinux|centos|gentoo|opensuse|slackware
      Кодовое имя дистрибутива, который будет установлен.
 
    --arch=NAME

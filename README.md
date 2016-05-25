@@ -86,7 +86,7 @@ PARAMETERS:
    --fs-type=ext2|ext3|ext4|auto
      Файловая система, которая будет создана внутри образа или на разделе.
 
-   --method=chroot|proot|lxc
+   --method=chroot|proot
      Метод контейнеризации.
 
    --emulator=PATH
