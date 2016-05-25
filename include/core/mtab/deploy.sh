@@ -5,7 +5,7 @@
 do_configure()
 {
     msg ":: Configuring ${COMPONENT} ... "
-    if [ "${FAKEROOT}" = "1" ]; then
+    if [ "${METHOD}" = "proot" ]; then
         ln -sf /proc/mounts "${CHROOT_DIR}/etc/mtab"
     else
         rm -f "${CHROOT_DIR}/etc/mtab"
@@ -16,7 +16,7 @@ do_configure()
 
 do_start()
 {
-    if [ "${FAKEROOT}" != "1" -a -n "${MOUNTS}" ]; then
+    if [ "${METHOD}" != "proot" -a -n "${MOUNTS}" ]; then
         msg ":: Mounting partitions: "
         local item disk_src disk_dst target
         for item in ${MOUNTS}

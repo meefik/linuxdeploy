@@ -17,7 +17,7 @@ do_install()
 do_configure()
 {
     msg ":: Configuring ${COMPONENT} ... "
-    if is_fakeroot; then
+    if [ "${METHOD}" = "proot" ]; then
         if ! $(grep -q '^APACHE_ULIMIT_MAX_FILES='); then
             echo "APACHE_ULIMIT_MAX_FILES='/bin/true'" >> "${CHROOT_DIR}/etc/apache2/envvars"
         fi

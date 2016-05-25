@@ -20,7 +20,7 @@ fi
 
 do_configure()
 {
-    if [ -z "${EMULATOR}" -o "${FAKEROOT}" = "1" ]; then
+    if [ -z "${EMULATOR}" -o "${METHOD}" = "proot" ]; then
         return 0
     fi
     multiarch_support || return 0
@@ -42,7 +42,7 @@ do_configure()
 
 do_start()
 {
-    if [ -z "${EMULATOR}" -o "${FAKEROOT}" = "1" ]; then
+    if [ -z "${EMULATOR}" -o "${METHOD}" = "proot" ]; then
         return 0
     fi
     multiarch_support || return 0
@@ -74,7 +74,7 @@ do_start()
 
 do_stop()
 {
-    if [ -z "${EMULATOR}" -o "${FAKEROOT}" = "1" ]; then
+    if [ -z "${EMULATOR}" -o "${METHOD}" = "proot" ]; then
         return 0
     fi
     multiarch_support || return 0

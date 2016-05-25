@@ -56,11 +56,6 @@ get_uuid()
     cat /proc/sys/kernel/random/uuid
 }
 
-is_fakeroot()
-{
-    [ "${FAKEROOT}" = "1" ]
-}
-
 multiarch_support()
 {
     if [ -d "/proc/sys/fs/binfmt_misc" ]; then
@@ -194,7 +189,19 @@ chroot_exec()
         local username="$2"
         shift 2
     fi
-    if [ "${FAKEROOT}" = "1" ]; then
+    case "${METHOD}" in
+    chroot)
+        if [ -n "${username}" ]; then
+            if [ $# -gt 0 ]; then
+                chroot "${CHROOT_DIR}" /bin/su - ${username} -c "$*"
+            else
+                chroot "${CHROOT_DIR}" /bin/su - ${username}
+            fi
+        else
+            PATH="${path}" chroot "${CHROOT_DIR}" $*
+        fi
+    ;;
+    proot)
         if [ -z "${PROOT_TMP_DIR}" ]; then
             export PROOT_TMP_DIR="${TEMP_DIR}"
         fi
@@ -215,17 +222,11 @@ chroot_exec()
         else
             PATH="${path}" proot -r "${CHROOT_DIR}" -w / ${mounts} ${emulator} -0 $*
         fi
-    else
-        if [ -n "${username}" ]; then
-            if [ $# -gt 0 ]; then
-                chroot "${CHROOT_DIR}" /bin/su - ${username} -c "$*"
-            else
-                chroot "${CHROOT_DIR}" /bin/su - ${username}
-            fi
-        else
-            PATH="${path}" chroot "${CHROOT_DIR}" $*
-        fi
-    fi
+    ;;
+    *)
+        msg "Unknown containerization method: ${METHOD}"
+    ;;
+    esac
 }
 
 ################################################################################
@@ -538,10 +539,10 @@ component_init()
 
 container_mounted()
 {
-    if [ "${FAKEROOT}" = "1" ]; then
-        return 0
-    else
+    if [ "${METHOD}" = "chroot" ]; then
         is_mounted "${CHROOT_DIR}"
+    else
+        return 0
     fi
 }
 
@@ -672,14 +673,14 @@ mount_part()
 
 container_mount()
 {
+    [ "${METHOD}" = "chroot" ] || return 0
+        
     if [ $# -eq 0 ]; then
         container_mount root proc sys selinux dev tty pts shm tun binfmt_misc
         return $?
     fi
 
     params_check CHROOT_DIR TARGET_PATH || return 1
-
-    [ "${FAKEROOT}" != "1" ] || return 0
 
     msg "Mounting partitions: "
     local item
@@ -699,23 +700,12 @@ container_umount()
     msg -n "Release resources ... "
     local is_release=0
     local lsof_full=$(lsof | awk '{print $1}' | grep -c '^lsof')
-    local i
-    for i in 1 2 3
-    do
-        if [ "${lsof_full}" -eq 0 ]; then
-            local pids=$(lsof | grep "${CHROOT_DIR%/}" | awk '{print $1}' | uniq)
-        else
-            local pids=$(lsof | grep "${CHROOT_DIR%/}" | awk '{print $2}' | uniq)
-        fi
-        if [ -n "${pids}" ]; then
-            kill -9 ${pids}
-            sleep 1
-        else
-            is_release=1
-            break
-        fi
-    done
-    [ "${is_release}" -eq 1 ]; is_ok "fail" "done"
+    if [ "${lsof_full}" -eq 0 ]; then
+        local pids=$(lsof | grep "${CHROOT_DIR%/}" | awk '{print $1}' | uniq)
+    else
+        local pids=$(lsof | grep "${CHROOT_DIR%/}" | awk '{print $2}' | uniq)
+    fi
+    kill_pids ${pids}; is_ok "fail" "done"
 
     msg "Unmounting partitions: "
     local is_mnt=0
@@ -1115,6 +1105,14 @@ WITHOUT_CHECK=0
 WITHOUT_DEPENDS=0
 REVERSE_DEPENDS=0
 EXCLUDE_COMPONENTS=""
+case "${METHOD}" in
+proot)
+    CHROOT_DIR="${TARGET_PATH}"
+;;
+*)
+    METHOD="chroot"
+;;
+esac
 
 # exec command
 OPTCMD="$1"; shift

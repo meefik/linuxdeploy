@@ -9,6 +9,9 @@ do_help()
 cat <<EOF
    --chroot-dir=PATH
      Директория монтирования контейнера.
+     
+   --method=chroot|proot|lxc
+     Метод контейнеризации.
 
    --distrib=debian|ubuntu|kalilinux|fedora|archlinux|gentoo|opensuse|slackware
      Кодовое имя дистрибутива, который будет установлен.

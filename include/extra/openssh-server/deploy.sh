@@ -11,7 +11,7 @@ do_install()
     case "${DISTRIB}:${ARCH}:${SUITE}" in
     debian:*:*|ubuntu:*:*|kalilinux:*:*)
         packages="openssh-server"
-        is_fakeroot && packages="${packages} fakechroot"
+        [ "${METHOD}" = "proot" ] && packages="${packages} fakechroot"
         apt_install ${packages}
     ;;
     archlinux:*:*)
@@ -48,7 +48,7 @@ do_start()
         chroot_exec su - root -c 'ssh-keygen -A' >/dev/null
     fi
     # exec sshd
-    if is_fakeroot; then
+    if [ "${METHOD}" = "proot" ]; then
         chroot_exec su - root -c "fakechroot $(which sshd) -p ${SSH_PORT}" &
     else
         chroot_exec su - root -c "$(which sshd) -p ${SSH_PORT}"
