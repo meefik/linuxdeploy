@@ -1019,15 +1019,19 @@ fi
 if [ -e "${ENV_DIR}/deploy.conf" ]; then
     . "${ENV_DIR}/deploy.conf"
 fi
-if [ -z "${INCLUDE_DIR}" ]; then
-    INCLUDE_DIR="${ENV_DIR}/include"
-fi
 if [ -z "${CONFIG_DIR}" ]; then
     CONFIG_DIR="${ENV_DIR}/config"
+fi
+if [ -z "${INCLUDE_DIR}" ]; then
+    INCLUDE_DIR="${ENV_DIR}/include"
 fi
 if [ -z "${TEMP_DIR}" ]; then
     TEMP_DIR="${ENV_DIR}/tmp"
 fi
+
+[ -d "${CONFIG_DIR}" ] || mkdir "${CONFIG_DIR}"
+[ -d "${INCLUDE_DIR}" ] || mkdir "${INCLUDE_DIR}"
+[ -d "${TEMP_DIR}" ] || mkdir "${TEMP_DIR}"
 
 # parse options
 OPTIND=1
