@@ -6,7 +6,7 @@
 #
 ################################################################################
 
-VERSION="2.0.1"
+VERSION="2.0.2"
 
 ################################################################################
 # Common
@@ -137,7 +137,7 @@ get_pids()
         return 0
     else
         return 1
-    fi    
+    fi
 }
 
 is_started()
@@ -483,7 +483,7 @@ component_list()
     local component output DESC
     if [ -z "${components}" ]; then
         components=$(find "${INCLUDE_DIR}/" -type f -name "deploy.conf" | while read f
-            do 
+            do
                 component="${f%/*}"
                 component="${component//${INCLUDE_DIR}\//}"
                 echo "${component}"
@@ -641,7 +641,7 @@ mount_part()
 container_mount()
 {
     [ "${METHOD}" = "chroot" ] || return 0
-        
+
     if [ $# -eq 0 ]; then
         container_mount root proc sys selinux dev tty pts shm tun binfmt_misc
         return $?
@@ -884,7 +884,7 @@ container_status()
     msg -n "Installed system: "
     local linux_version=$([ -r "${CHROOT_DIR}/etc/os-release" ] && . "${CHROOT_DIR}/etc/os-release"; [ -n "${PRETTY_NAME}" ] && echo "${PRETTY_NAME}" || echo "unknown")
     msg "${linux_version}"
-    
+
     msg "Mounted parts: "
     local is_mnt=0
     local item
@@ -894,7 +894,7 @@ container_status()
         local is_mnt=1
     done
     [ "${is_mnt}" -ne 1 ] && msg " ...nothing mounted"
-    
+
     msg "Running services: "
     if [ -n "${STARTUP}" ]; then
         local WITHOUT_DEPENDS=1
@@ -1016,8 +1016,8 @@ if [ -z "${ENV_DIR}" ]; then
         ENV_DIR=$(cd "${0%/*}"; pwd)
     fi
 fi
-if [ -e "${ENV_DIR}/deploy.conf" ]; then
-    . "${ENV_DIR}/deploy.conf"
+if [ -e "${ENV_DIR}/cli.conf" ]; then
+    . "${ENV_DIR}/cli.conf"
 fi
 if [ -z "${CONFIG_DIR}" ]; then
     CONFIG_DIR="${ENV_DIR}/config"
