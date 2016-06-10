@@ -228,10 +228,10 @@ chroot_exec()
 
 sync_env()
 {
-    [ -n "${REPO_URL}" ] || return 1
+    [ -n "${SERVER_URL}" ] || return 1
     msg -n "Synchronization with repository ... "
     [ -e "${ENV_DIR}" ] || mkdir -p "${ENV_DIR}"
-    wget -q -O - "${REPO_URL%/}/env.tgz" | tar xz -C "${ENV_DIR}" 1>&2
+    wget -q -O - "${SERVER_URL%/}/env.tgz" | tar xz -C "${ENV_DIR}" 1>&2
     is_ok "fail" "done"
 }
 
