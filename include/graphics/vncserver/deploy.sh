@@ -4,6 +4,10 @@
 
 [ -n "${USER_PASSWORD}" ] || USER_PASSWORD="changeme"
 [ -n "${VNC_DISPLAY}" ] || VNC_DISPLAY="0"
+[ -n "${VNC_DEPTH}" ] || VNC_DEPTH="16"
+[ -n "${VNC_DPI}" ] || VNC_DPI="75"
+[ -n "${VNC_WIDTH}" ] || VNC_WIDTH="800"
+[ -n "${VNC_HEIGHT}" ] || VNC_HEIGHT="600"
 
 do_install()
 {
@@ -65,7 +69,7 @@ do_start()
     # remove locks
     remove_files "/tmp/.X${VNC_DISPLAY}-lock" "/tmp/.X11-unix/X${VNC_DISPLAY}"
     # exec vncserver
-    chroot_exec su - ${USER_NAME} -c "vncserver :${VNC_DISPLAY} ${VNC_ARGS}" &
+    chroot_exec su - ${USER_NAME} -c "vncserver :${VNC_DISPLAY} -depth ${VNC_DEPTH} -dpi ${VNC_DPI} -geometry ${VNC_WIDTH}x${VNC_HEIGHT} ${VNC_ARGS}" &
     is_ok "fail" "done"
     return 0
 }
@@ -81,8 +85,20 @@ do_stop()
 do_help()
 {
 cat <<EOF
-   --vnc-display=DISPLAY
-     Display of VNC server, e.g 0.
+   --vnc-display=NUM
+     Display of VNC server, default 0. TCP port computed as 5900 + display number.
+     
+   --vnc-depth=NUM
+     Color depth, default 16.
+   
+   --vnc-dpi=NUM
+     Dots per inch, default 75.
+   
+   --vnc-width=NUM
+     Screen width, default 800.
+   
+   --vnc-height=NUM
+     Screen height, default 480.
 
    --vnc-args=STR
      Defines other vncserver options, separated by a space.

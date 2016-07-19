@@ -84,7 +84,7 @@ do_start()
 {
     fb_refresh()
     {
-        [ "${FB_REFRESH}" = "1" ] || return 0
+        [ "${FB_REFRESH}" = "true" ] || return 0
         local fbdev="${FB_DEV##*/}"
         local fbrotate="/sys/class/graphics/${fbdev}/rotate"
         [ -e "${fbrotate}" ] || return 0

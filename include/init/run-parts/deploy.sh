@@ -4,61 +4,72 @@
 
 [ -n "${INIT_USER}" ] || INIT_USER="root"
 
+run_part()
+{
+    local path="$1"
+    local action="$2"
+    msg -n "${item} ... "
+    if [ "${INIT_ASYNC}" = "true" ]; then
+        chroot_exec -u ${INIT_USER} "${path} ${action}" 1>&2 &
+    else
+        chroot_exec -u ${INIT_USER} "${path} ${action}" 1>&2
+    fi
+    is_ok "fail" "done"
+}
+
 do_start()
 {
-    if [ -n "${INIT_DIR}" ]; then
-        local services=$(ls "${CHROOT_DIR}${INIT_DIR}/")
+    [ -n "${INIT_PATH}" ] || return 0
+    
+    if [ -f "${CHROOT_DIR}${INIT_PATH}" ]; then
+        run_part "${CHROOT_DIR}${INIT_PATH}" stop
+    else
+        local services=$(ls "${CHROOT_DIR}${INIT_PATH}/")
         if [ -n "${services}" ]; then
             msg ":: Starting services: "
             local item
             for item in ${services}
             do
-                msg -n "${item} ... "
-                if [ "${INIT_BG}" = "1" ]; then
-                    chroot_exec -u ${INIT_USER} "${INIT_DIR%/}/${item} start" 1>&2 &
-                else
-                    chroot_exec -u ${INIT_USER} "${INIT_DIR%/}/${item} start" 1>&2
-                fi
-                is_ok "fail" "done"
+                run_part "${INIT_PATH%/}/${item}" start
             done
         fi
     fi
+
     return 0
 }
 
 do_stop()
 {
-    if [ -n "${INIT_DIR}" ]; then
-        local services=$(ls "${CHROOT_DIR}${INIT_DIR}/" | tac)
+    [ -n "${INIT_PATH}" ] || return 0
+
+    if [ -f "${CHROOT_DIR}${INIT_PATH}" ]; then
+        run_part "${CHROOT_DIR}${INIT_PATH}" stop
+    else
+        local services=$(ls "${CHROOT_DIR}${INIT_PATH}/" | tac)
         if [ -n "${services}" ]; then
             msg ":: Stopping services: "
             local item
             for item in ${services}
             do
-                msg -n "${item} ... "
-                if [ "${INIT_BG}" = "1" ]; then
-                    chroot_exec -u ${INIT_USER} "${INIT_DIR%/}/${item} stop" 1>&2 &
-                else
-                    chroot_exec -u ${INIT_USER} "${INIT_DIR%/}/${item} stop" 1>&2
-                fi
-                is_ok "fail" "done"
+                run_part "${INIT_PATH%/}/${item}" stop
             done
         fi
     fi
+
     return 0
 }
 
 do_help()
 {
 cat <<EOF
-   --init-dir=PATH
-     Директория внутри контейнера, в которой находятся скрипты автозапуска.
+   --init-path=PATH
+     Директория или файл внутри контейнера, которые нужно выполнить.
 
    --init-user=USER
-     Пользователь из-под которого осуществляется запуск.
+     Пользователь из-под которого осуществляется запуск, по умолчанию root.
 
-   --init-bg
-     Запускать процессы в фоновом режиме.
+   --init-async
+     Асинхронный запуск процессов.
 
 EOF
 }

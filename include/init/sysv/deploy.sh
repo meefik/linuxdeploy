@@ -6,45 +6,48 @@
 
 do_start()
 {
-    if [ -n "${INIT_LEVEL}" ]; then
-        local services=$(ls "${CHROOT_DIR}/etc/rc${INIT_LEVEL}.d/" | grep '^S')
-        if [ -n "${services}" ]; then
-            msg ":: Starting services: "
-            local item
-            for item in ${services}
-            do
-                msg -n "${item/S[0-9][0-9]/} ... "
-                if [ "${INIT_BG}" = "1" ]; then
-                    chroot_exec -u ${INIT_USER} "/etc/rc${INIT_LEVEL}.d/${item} start" 1>&2 &
-                else
-                    chroot_exec -u ${INIT_USER} "/etc/rc${INIT_LEVEL}.d/${item} start" 1>&2
-                fi
-                is_ok "fail" "done"
-            done
-        fi
-   fi
+    #local init_level=$(grep ':initdefault:' "${CHROOT_DIR}/etc/inittab" | cut -f2 -d:)
+    [ -n "${INIT_LEVEL}" ] || return 0
+
+    local services=$(ls "${CHROOT_DIR}/etc/rc${INIT_LEVEL}.d/" | grep '^S')
+    if [ -n "${services}" ]; then
+        msg ":: Starting services: "
+        local item
+        for item in ${services}
+        do
+            msg -n "${item/S[0-9][0-9]/} ... "
+            if [ "${INIT_ASYNC}" = "true" ]; then
+                chroot_exec -u ${INIT_USER} "/etc/rc${INIT_LEVEL}.d/${item} start" 1>&2 &
+            else
+                chroot_exec -u ${INIT_USER} "/etc/rc${INIT_LEVEL}.d/${item} start" 1>&2
+            fi
+            is_ok "fail" "done"
+        done
+    fi
+
     return 0
 }
 
 do_stop()
 {
-    if [ -n "${INIT_LEVEL}" ]; then
-        local services=$(ls "${CHROOT_DIR}/etc/rc6.d/" | grep '^K')
-        if [ -n "${services}" ]; then
-            msg ":: Starting services: "
-            local item
-            for item in ${services}
-            do
-                msg -n "${item/K[0-9][0-9]/} ... "
-                if [ "${INIT_BG}" = "1" ]; then
-                    chroot_exec -u ${INIT_USER} "/etc/rc6.d/${item} stop" 1>&2 &
-                else
-                    chroot_exec -u ${INIT_USER} "/etc/rc6.d/${item} stop" 1>&2
-                fi
-                is_ok "fail" "done"
-            done
-        fi
+    [ -n "${INIT_LEVEL}" ] || return 0
+
+    local services=$(ls "${CHROOT_DIR}/etc/rc6.d/" | grep '^K')
+    if [ -n "${services}" ]; then
+        msg ":: Starting services: "
+        local item
+        for item in ${services}
+        do
+            msg -n "${item/K[0-9][0-9]/} ... "
+            if [ "${INIT_ASYNC}" = "true" ]; then
+                chroot_exec -u ${INIT_USER} "/etc/rc6.d/${item} stop" 1>&2 &
+            else
+                chroot_exec -u ${INIT_USER} "/etc/rc6.d/${item} stop" 1>&2
+            fi
+            is_ok "fail" "done"
+        done
     fi
+
     return 0
 }
 
@@ -55,10 +58,10 @@ cat <<EOF
      Number of init level, e.g 3.
 
    --init-user=USER
-     Пользователь из-под которого осуществляется запуск.
+     Пользователь из-под которого осуществляется запуск, по умолчанию root.
 
-   --init-bg
-     Запускать процессы в фоновом режиме.
+   --init-async
+     Асинхронный запуск процессов.
 
 EOF
 }

@@ -2,8 +2,6 @@
 # Linux Deploy Component
 # (c) Anton Skshidlevsky <meefik@gmail.com>, GPLv3
 
-[ -n "${PRIVILEGED_USERS}" ] || PRIVILEGED_USERS="root"
-
 do_configure()
 {
     [ -d "/system" ] || return 0

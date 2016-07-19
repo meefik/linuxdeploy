@@ -20,9 +20,7 @@ fi
 
 do_configure()
 {
-    if [ -z "${EMULATOR}" -o "${METHOD}" = "proot" ]; then
-        return 0
-    fi
+    [ -n "${EMULATOR}" -a "${METHOD}" = "chroot" ] || return 0
     multiarch_support || return 0
 
     msg ":: Configuring ${COMPONENT} ... "
@@ -42,9 +40,7 @@ do_configure()
 
 do_start()
 {
-    if [ -z "${EMULATOR}" -o "${METHOD}" = "proot" ]; then
-        return 0
-    fi
+    [ -n "${EMULATOR}" -a "${METHOD}" = "chroot" ] || return 0
     multiarch_support || return 0
 
     msg -n ":: Starting ${COMPONENT} ... "
@@ -74,9 +70,7 @@ do_start()
 
 do_stop()
 {
-    if [ -z "${EMULATOR}" -o "${METHOD}" = "proot" ]; then
-        return 0
-    fi
+    [ -n "${EMULATOR}" -a "${METHOD}" = "chroot" ] || return 0
     multiarch_support || return 0
 
     local binfmt_dir="/proc/sys/fs/binfmt_misc"

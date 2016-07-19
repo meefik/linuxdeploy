@@ -7,12 +7,12 @@ DISTRIB="${DISTRIB##*/}"
 do_help()
 {
 cat <<EOF
-   --chroot-dir=PATH
-     Директория монтирования контейнера.
-     
    --method=chroot|proot
      Метод контейнеризации.
-
+     
+   --chroot-dir=PATH
+     Директория монтирования контейнера для метода контейнеризации "chroot".
+     
    --distrib=debian|ubuntu|kalilinux|fedora|archlinux|centos|gentoo|opensuse|slackware
      Кодовое имя дистрибутива, который будет установлен.
 

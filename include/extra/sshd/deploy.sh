@@ -49,9 +49,9 @@ do_start()
     fi
     # exec sshd
     if [ "${METHOD}" = "proot" ]; then
-        chroot_exec su - root -c "fakechroot $(which sshd) -p ${SSH_PORT}" &
+        chroot_exec su - root -c "fakechroot $(which sshd) -p ${SSH_PORT} ${SSH_ARGS}" &
     else
-        chroot_exec su - root -c "$(which sshd) -p ${SSH_PORT}"
+        chroot_exec su - root -c "$(which sshd) -p ${SSH_PORT} ${SSH_ARGS}"
     fi
     is_ok "fail" "done"
     return 0
@@ -70,6 +70,9 @@ do_help()
 cat <<EOF
    --ssh-port=PORT
      Port of SSH server.
+
+   --ssh-args=STR
+     Defines other sshd options, separated by a space.
 
 EOF
 }

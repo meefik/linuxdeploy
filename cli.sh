@@ -6,7 +6,7 @@
 #
 ################################################################################
 
-VERSION="2.0.2"
+VERSION="2.0.3"
 
 ################################################################################
 # Common
@@ -281,7 +281,7 @@ params_parse()
         do
             key=$(expr "${item}" : '--\([0-9a-z-]\{1,32\}=\{0,1\}\)' | tr '\-abcdefghijklmnopqrstuvwxyz' '\_ABCDEFGHIJKLMNOPQRSTUVWXYZ')
             if [ -n "${key##*=*}" ]; then
-                val="1"
+                val="true"
             else
                 key=${key%*=}
                 val=$(expr "${item}" : '--[0-9a-z-]\{1,32\}=\(.*\)')
@@ -417,10 +417,10 @@ component_depends()
         # read component variables
         eval $(grep -e '^TARGET=' -e '^DEPENDS=' "${conf_file}")
         # check compatibility
-        if [ "${WITHOUT_CHECK}" != "1" ]; then
+        if [ "${WITHOUT_CHECK}" != "true" ]; then
             component_is_compatible ${TARGET} || continue
         fi
-        if [ "${REVERSE_DEPENDS}" = "1" ]; then
+        if [ "${REVERSE_DEPENDS}" = "true" ]; then
             # output
             echo ${component}
             # process depends
@@ -437,7 +437,7 @@ component_depends()
 component_exec()
 {
     local components="$@"
-    if [ "${WITHOUT_DEPENDS}" != "1" ]; then
+    if [ "${WITHOUT_DEPENDS}" != "true" ]; then
         components=$(IGNORE_DEPENDS=" " component_depends ${components})
     fi
     [ -n "${components}" ] || return 1
@@ -466,9 +466,9 @@ component_exec()
             # exclude components
             component_is_exclude ${COMPONENT} && continue
             # check parameters
-            [ "${WITHOUT_CHECK}" != "1" ] && params_check ${PARAMS}
+            [ "${WITHOUT_CHECK}" != "true" ] && params_check ${PARAMS}
             # exec action
-            [ "${DEBUG_MODE}" = "1" ] && msg "## ${COMPONENT} : ${DO_ACTION}"
+            [ "${DEBUG_MODE}" = "true" ] && msg "## ${COMPONENT} : ${DO_ACTION}"
             set +e
             eval ${DO_ACTION} || exit 1
             set -e
@@ -897,7 +897,7 @@ container_status()
 
     msg "Running services: "
     if [ -n "${STARTUP}" ]; then
-        local WITHOUT_DEPENDS=1
+        local WITHOUT_DEPENDS="true"
         local DO_ACTION='is_started'
         local component
         for component in ${STARTUP}
@@ -984,8 +984,7 @@ COMMANDS:
    start - смонтировать контейнер, если не смонтирован, и запустить все подключенные компоненты
    stop [-u] - остановить все подключенные компоненты
       -u - размонтировать контейнер
-   sync - синхронизировать локальное дерево компонентов с репозиторием
-   init <DIR> - создать индекс репозитория в указанной директории
+   sync - синхронизировать рабочее окружение с репозиторием
    status - отобразить состояние контейнера и компонетнов
    help [NAME ...] - вызвать справку
 
@@ -1042,13 +1041,13 @@ do
         CONF_FILE="${OPTARG}"
     ;;
     d)
-        DEBUG_MODE="1"
+        DEBUG_MODE="true"
     ;;
     t)
-        TRACE_MODE="1"
+        TRACE_MODE="true"
     ;;
     *)
-        let OPTIND=OPTIND+1
+        let OPTIND=OPTIND-1
         break
     ;;
     esac
@@ -1057,10 +1056,10 @@ shift $((OPTIND-1))
 
 # log level
 exec 3>&1
-if [ "${DEBUG_MODE}" != "1" -a "${TRACE_MODE}" != "1" ]; then
+if [ "${DEBUG_MODE}" != "true" -a "${TRACE_MODE}" != "true" ]; then
     exec 2>/dev/null
 fi
-if [ "${TRACE_MODE}" = "1" ]; then
+if [ "${TRACE_MODE}" = "true" ]; then
     set -x
 fi
 
@@ -1074,9 +1073,9 @@ OPTLST=" " # space is required
 params_read "${CONF_FILE}"
 
 # fix params
-WITHOUT_CHECK=0
-WITHOUT_DEPENDS=0
-REVERSE_DEPENDS=0
+WITHOUT_CHECK="false"
+WITHOUT_DEPENDS="false"
+REVERSE_DEPENDS="false"
 EXCLUDE_COMPONENTS=""
 case "${METHOD}" in
 proot)
@@ -1107,27 +1106,28 @@ config|conf)
             exit $?
         ;;
         x)
-            dump_flag=1
+            dump_flag="true"
         ;;
         i)
             conf_file=$(config_which "${OPTARG}")
         ;;
         l)
-            list_flag=1
+            list_flag="true"
         ;;
         a)
-            WITHOUT_CHECK=1
+            WITHOUT_CHECK="true"
         ;;
         *)
+            let OPTIND=OPTIND-1
             break
         ;;
         esac
     done
     shift $((OPTIND-1))
 
-    if [ "${dump_flag}" = "1" ]; then
+    if [ "${dump_flag}" = "true" ]; then
         [ -e "${CONF_FILE}" ] && cat "${CONF_FILE}"
-    elif [ "${list_flag}" = "1" ]; then
+    elif [ "${list_flag}" = "true" ]; then
         if [ $# -eq 0 ]; then
             component_list "${INCLUDE}"
         else
@@ -1155,6 +1155,7 @@ deploy)
             EXCLUDE_COMPONENTS="${EXCLUDE_COMPONENTS} ${OPTARG}"
         ;;
         *)
+            let OPTIND=OPTIND-1
             break
         ;;
         esac
@@ -1192,9 +1193,10 @@ stop)
     do
         case "${FLAG}" in
         u)
-            umount_flag=1
+            umount_flag="true"
         ;;
         *)
+            let OPTIND=OPTIND-1
             break
         ;;
         esac
@@ -1203,7 +1205,7 @@ stop)
 
     container_stop || exit 1
 
-    if [ "${umount_flag}" = "1" ]; then
+    if [ "${umount_flag}" = "true" ]; then
         container_umount
     fi
 ;;
@@ -1218,15 +1220,15 @@ help)
         helper
         if [ -n "${INCLUDE}" ]; then
             msg "PARAMETERS: "
-            WITHOUT_CHECK=1
-            REVERSE_DEPENDS=1
+            WITHOUT_CHECK="true"
+            REVERSE_DEPENDS="true"
             DO_ACTION='do_help'
             component_exec "${INCLUDE}" || 
             msg -e '   Included components do not have parameters.\n'
         fi
     else
-        WITHOUT_CHECK=1
-        WITHOUT_DEPENDS=1
+        WITHOUT_CHECK="true"
+        WITHOUT_DEPENDS="true"
         DO_ACTION='do_info && do_help'
         component_exec "$@"
     fi
