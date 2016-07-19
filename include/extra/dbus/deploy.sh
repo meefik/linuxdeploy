@@ -19,6 +19,10 @@ do_install()
         packages="dbus"
         yum_install ${packages}
     ;;
+    centos:*:*)
+        packages="dbus"
+        yum_install ${packages}
+    ;;
     opensuse:*:*)
         packages="dbus"
         zypper_install ${packages}

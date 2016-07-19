@@ -23,6 +23,10 @@ do_install()
         packages="xorg-x11-xinit xorg-x11-server-Xorg xorg-x11-drv-fbdev xorg-x11-drv-evdev"
         yum_install ${packages}
     ;;
+    centos:*:*)
+        packages="xorg-x11-xinit xorg-x11-server-Xorg xorg-x11-drv-fbdev xorg-x11-drv-evdev"
+        yum_install ${packages}
+    ;;
     opensuse:*:*)
         packages="xinit xorg-x11-server xf86-video-fbdev xf86-input-evdev"
         zypper_install ${packages}

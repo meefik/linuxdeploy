@@ -22,6 +22,10 @@ do_install()
         packages="openssh-server"
         yum_install ${packages}
     ;;
+    centos:*:*)
+        packages="openssh-server"
+        yum_install ${packages}
+    ;;
     opensuse:*:*)
         packages="openssh"
         zypper_install ${packages}

@@ -27,10 +27,10 @@ do_help()
 {
 cat <<EOF
    --x-display=DISPLAY 
-     Display of X server, e.g 0.
+     Display of X server, default 0.
      
    --x-host=HOST
-     Host of X server, e.g 127.0.0.1.
+     Host of X server, default 127.0.0.1.
 
 EOF
 }

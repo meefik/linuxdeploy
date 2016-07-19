@@ -6,7 +6,7 @@
 #
 ################################################################################
 
-VERSION="2.0.3"
+VERSION="2.0.4"
 
 ################################################################################
 # Common
@@ -959,7 +959,7 @@ USAGE:
    linuxdeploy [OPTIONS] COMMAND ...
 
 OPTIONS:
-   -f FILE - configuration file
+   -p NAME - configuration profile
    -d - enable debug mode
    -t - enable trace mode
 
@@ -1034,11 +1034,11 @@ fi
 
 # parse options
 OPTIND=1
-while getopts :f:dt FLAG
+while getopts :p:dt FLAG
 do
     case "${FLAG}" in
-    f)
-        CONF_FILE="${OPTARG}"
+    p)
+        PROFILE="${OPTARG}"
     ;;
     d)
         DEBUG_MODE="true"
@@ -1064,9 +1064,9 @@ if [ "${TRACE_MODE}" = "true" ]; then
 fi
 
 # which config
-CONF_FILE=$(config_which "${CONF_FILE}")
-CONF_ID=${CONF_FILE##*/}
-CONF_ID=${CONF_ID%*.conf}
+CONF_FILE=$(config_which "${PROFILE}")
+PROFILE=${CONF_FILE##*/}
+PROFILE=${PROFILE%*.conf}
 
 # read config
 OPTLST=" " # space is required

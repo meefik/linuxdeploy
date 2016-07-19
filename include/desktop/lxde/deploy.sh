@@ -19,6 +19,10 @@ do_install()
         installgroup="xorg-x11-server-utils xorg-x11-fonts-misc dejavu-* lxde-desktop"
         yum_groupinstall ${installgroup}
     ;;
+    centos:*:*)
+        installgroup="xorg-x11-server-utils xorg-x11-fonts-misc dejavu-* lxde-desktop-environment"
+        yum_groupinstall ${installgroup}
+    ;;
     opensuse:*:*)
         packages="xorg-x11-fonts-core dejavu-fonts xauth patterns-openSUSE-lxde"
         zypper_install ${packages}

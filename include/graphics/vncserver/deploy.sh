@@ -26,6 +26,10 @@ do_install()
         packages="tigervnc-server"
         yum_install ${packages}
     ;;
+    centos:*:*)
+        packages="tigervnc-server"
+        yum_install ${packages}
+    ;;
     opensuse:*:*)
         packages="tightvnc"
         zypper_install ${packages}
