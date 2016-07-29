@@ -18,12 +18,16 @@ pacman_install()
 
 pacman_repository()
 {
+    if [ "$(get_platform ${ARCH})" = "intel" ]
+    then local repo_url="${SOURCE_PATH%/}/\$repo/os/\$arch"
+    else local repo_url="${SOURCE_PATH%/}/\$arch/\$repo"
+    fi
     sed -i "s|^[[:space:]]*Architecture[[:space:]]*=.*$|Architecture = ${ARCH}|" "${CHROOT_DIR}/etc/pacman.conf"
     sed -i "s|^[[:space:]]*\(CheckSpace\)|#\1|" "${CHROOT_DIR}/etc/pacman.conf"
     sed -i "s|^[[:space:]]*SigLevel[[:space:]]*=.*$|SigLevel = Never|" "${CHROOT_DIR}/etc/pacman.conf"
     if $(grep -q "^[[:space:]]*Server" "${CHROOT_DIR}/etc/pacman.d/mirrorlist")
-    then sed -i "s|^[[:space:]]*Server[[:space:]]*=.*|Server = ${REPO_URL}|" "${CHROOT_DIR}/etc/pacman.d/mirrorlist"
-    else echo "Server = ${REPO_URL}" >> "${CHROOT_DIR}/etc/pacman.d/mirrorlist"
+    then sed -i "s|^[[:space:]]*Server[[:space:]]*=.*|Server = ${repo_url}|" "${CHROOT_DIR}/etc/pacman.d/mirrorlist"
+    else echo "Server = ${repo_url}" >> "${CHROOT_DIR}/etc/pacman.d/mirrorlist"
     fi
 }
 
@@ -33,16 +37,16 @@ do_install()
 
     msg ":: Installing ${COMPONENT} ... "
 
-    local basic_packages="filesystem acl archlinux-keyring attr bash bzip2 ca-certificates coreutils cracklib curl db e2fsprogs expat findutils gawk gcc-libs gdbm glibc gmp gnupg gpgme grep keyutils krb5 libarchive libassuan libcap libgcrypt libgpg-error libgssglue libidn libksba libldap libsasl libssh2 libtirpc linux-api-headers lzo ncurses nettle openssl pacman pacman-mirrorlist pam pambase perl pinentry pth readline run-parts sed shadow sudo tzdata util-linux xz which zlib"
+    local basic_packages="filesystem acl archlinux-keyring attr bash bzip2 ca-certificates coreutils cracklib curl db e2fsprogs expat findutils gawk gcc-libs gdbm glibc gmp gnupg gpgme grep keyutils krb5 libarchive libassuan libcap libgcrypt libgpg-error libgssglue libidn libksba libldap libsasl libssh2 libtirpc linux-api-headers lz4 lzo ncurses nettle openssl pacman pacman-mirrorlist pam pambase perl pinentry pth readline run-parts sed shadow sudo tzdata util-linux xz which zlib"
 
     if [ "$(get_platform ${ARCH})" = "intel" ]
-    then REPO_URL="${SOURCE_PATH%/}/core/os/${ARCH}"
-    else REPO_URL="${SOURCE_PATH%/}/${ARCH}/core"
+    then local repo_url="${SOURCE_PATH%/}/core/os/${ARCH}"
+    else local repo_url="${SOURCE_PATH%/}/${ARCH}/core"
     fi
 
     local cache_dir="${CHROOT_DIR}/var/cache/pacman/pkg"
 
-    msg "URL: ${REPO_URL}"
+    msg "URL: ${repo_url}"
 
     msg -n "Preparing for deployment ... "
     (set -e
@@ -60,7 +64,7 @@ do_install()
     is_ok "fail" "done" || return 1
 
     msg -n "Retrieving packages list ... "
-    local pkg_list=$(wget -q -O - "${REPO_URL}/" | sed -n '/<a / s/^.*<a [^>]*href="\([^\"]*\)".*$/\1/p' | awk -F'/' '{print $NF}' | sort -rn)
+    local pkg_list=$(wget -q -O - "${repo_url}/" | sed -n '/<a / s/^.*<a [^>]*href="\([^\"]*\)".*$/\1/p' | awk -F'/' '{print $NF}' | sort -rn)
     is_ok "fail" "done" || return 1
 
     msg "Retrieving base packages: "
@@ -72,20 +76,20 @@ do_install()
         local i
         for i in 1 2 3
         do
-            wget -q -c -O "${cache_dir}/${pkg_file}" "${REPO_URL}/${pkg_file}" && break
+            wget -q -c -O "${cache_dir}/${pkg_file}" "${repo_url}/${pkg_file}" && break
             sleep 30s
         done
         # unpack
         case "${pkg_file}" in
-        *gz) tar xzf "${cache_dir}/${pkg_file}" -C "${CHROOT_DIR}" --exclude='./dev' --exclude='./sys' --exclude='./proc';;
-        *bz2) tar xjf "${cache_dir}/${pkg_file}" -C "${CHROOT_DIR}" --exclude='./dev' --exclude='./sys' --exclude='./proc';;
-        *xz) tar xJf "${cache_dir}/${pkg_file}" -C "${CHROOT_DIR}" --exclude='./dev' --exclude='./sys' --exclude='./proc';;
+        *gz) tar xzf "${cache_dir}/${pkg_file}" -C "${CHROOT_DIR}" --exclude='./dev' --exclude='./sys' --exclude='./proc' --exclude='.INSTALL' --exclude='.MTREE' --exclude='.PKGINFO';;
+        *bz2) tar xjf "${cache_dir}/${pkg_file}" -C "${CHROOT_DIR}" --exclude='./dev' --exclude='./sys' --exclude='./proc' --exclude='.INSTALL' --exclude='.MTREE' --exclude='.PKGINFO';;
+        *xz) tar xJf "${cache_dir}/${pkg_file}" -C "${CHROOT_DIR}" --exclude='./dev' --exclude='./sys' --exclude='./proc' --exclude='.INSTALL' --exclude='.MTREE' --exclude='.PKGINFO';;
         *) msg "fail"; return 1;;
         esac
         is_ok "fail" "done" || return 1
     done
 
-    component_exec core/emulator core/dns core/mtab
+    component_exec core/emulator core/mnt core/net
 
     msg -n "Updating repository ... "
     pacman_repository
@@ -97,7 +101,7 @@ do_install()
     is_ok || return 1
 
     msg -n "Clearing cache ... "
-    rm -f "${cache_dir}"/* "${CHROOT_DIR}/.INSTALL" "${CHROOT_DIR}/.MTREE" "${CHROOT_DIR}/.PKGINFO" $(find "${CHROOT_DIR}" -type f -name "*.pacorig")
+    rm -f "${cache_dir}"/* $(find "${CHROOT_DIR}/etc" -type f -name "*.pacorig")
     is_ok "skip" "done"
 
     return 0

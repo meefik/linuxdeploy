@@ -16,7 +16,7 @@ do_configure()
 
 do_start()
 {
-    if [ "${METHOD}" != "proot" -a -n "${MOUNTS}" ]; then
+    if [ "${METHOD}" = "chroot" -a -n "${MOUNTS}" ]; then
         msg ":: Mounting partitions: "
         local item disk_src disk_dst target
         for item in ${MOUNTS}
@@ -25,7 +25,7 @@ do_start()
             disk_dst="${item##*:}"
             [ -n "${disk_src}" -a -n "${disk_dst}" ] || continue
             msg -n "${disk_src} ... "
-            target="${CHROOT_DIR}/${disk_dst}"
+            target="${CHROOT_DIR}${disk_dst}"
             if ! is_mounted "${target}" ; then
                 [ -d "${target}" ] || mkdir -p "${target}"
                 [ -e "${disk_src}" ] || mkdir -p "${disk_src}"

@@ -8,7 +8,7 @@ run_part()
 {
     local path="$1"
     local action="$2"
-    msg -n "${item} ... "
+    msg -n "${path##*/} ... "
     if [ "${INIT_ASYNC}" = "true" ]; then
         chroot_exec -u ${INIT_USER} "${path} ${action}" 1>&2 &
     else
@@ -22,15 +22,16 @@ do_start()
     [ -n "${INIT_PATH}" ] || return 0
     
     if [ -f "${CHROOT_DIR}${INIT_PATH}" ]; then
-        run_part "${CHROOT_DIR}${INIT_PATH}" stop
+        msg ":: Starting ${COMPONENT}: "
+        run_part "${CHROOT_DIR}${INIT_PATH}" start
     else
         local services=$(ls "${CHROOT_DIR}${INIT_PATH}/")
         if [ -n "${services}" ]; then
             msg ":: Starting services: "
-            local item
-            for item in ${services}
+            local part
+            for part in ${services}
             do
-                run_part "${INIT_PATH%/}/${item}" start
+                run_part "${INIT_PATH%/}/${part}" start
             done
         fi
     fi
@@ -43,15 +44,16 @@ do_stop()
     [ -n "${INIT_PATH}" ] || return 0
 
     if [ -f "${CHROOT_DIR}${INIT_PATH}" ]; then
+        msg ":: Stopping ${COMPONENT}: "
         run_part "${CHROOT_DIR}${INIT_PATH}" stop
     else
         local services=$(ls "${CHROOT_DIR}${INIT_PATH}/" | tac)
         if [ -n "${services}" ]; then
             msg ":: Stopping services: "
-            local item
-            for item in ${services}
+            local part
+            for part in ${services}
             do
-                run_part "${INIT_PATH%/}/${item}" stop
+                run_part "${INIT_PATH%/}/${part}" stop
             done
         fi
     fi

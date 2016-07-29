@@ -65,7 +65,7 @@ do_install()
     exit 0)
     is_ok "fail" "done" || return 1
 
-    component_exec core/emulator core/dns core/mtab core/groups
+    component_exec core/emulator core/mnt core/net
 
     msg -n "Updating repository ... "
     emerge_repository

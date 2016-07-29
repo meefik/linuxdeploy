@@ -50,30 +50,29 @@ do_install()
 
 do_configure()
 {
-    msg -n ":: Configuring ${COMPONENT} ... "
+    msg ":: Configuring ${COMPONENT} ... "
     local vnc_home="$(user_home ${USER_NAME})/.vnc"
     local vnc_home_chroot="${CHROOT_DIR}${vnc_home}"
     [ -e "${vnc_home_chroot}" ] || mkdir "${vnc_home_chroot}"
     # set vnc password
-    echo ${USER_PASSWORD} | chroot_exec "vncpasswd -f" > "${vnc_home_chroot}/passwd" ||
+    echo ${USER_PASSWORD} | chroot_exec -u root vncpasswd -f > "${vnc_home_chroot}/passwd" ||
     echo "MPTcXfgXGiY=" | base64 -d > "${vnc_home_chroot}/passwd"
     chmod 600 "${vnc_home_chroot}/passwd"
     rm "${vnc_home_chroot}/xstartup"
     ln -s ../.xinitrc "${vnc_home_chroot}/xstartup"
-    chroot_exec chown -R ${USER_NAME}:${USER_NAME} "${vnc_home}"
-    is_ok "fail" "done"
+    chroot_exec -u root chown -R ${USER_NAME}:${USER_NAME} "${vnc_home}"
     return 0
 }
 
 do_start()
 {
     msg -n ":: Starting ${COMPONENT} ... "
-    is_started /tmp/xsession.pid
+    is_stopped /tmp/xsession.pid
     is_ok "skip" || return 0
     # remove locks
     remove_files "/tmp/.X${VNC_DISPLAY}-lock" "/tmp/.X11-unix/X${VNC_DISPLAY}"
     # exec vncserver
-    chroot_exec su - ${USER_NAME} -c "vncserver :${VNC_DISPLAY} -depth ${VNC_DEPTH} -dpi ${VNC_DPI} -geometry ${VNC_WIDTH}x${VNC_HEIGHT} ${VNC_ARGS}" &
+    chroot_exec -u ${USER_NAME} vncserver :${VNC_DISPLAY} -depth ${VNC_DEPTH} -dpi ${VNC_DPI} -geometry ${VNC_WIDTH}x${VNC_HEIGHT} ${VNC_ARGS} &
     is_ok "fail" "done"
     return 0
 }
@@ -81,8 +80,17 @@ do_start()
 do_stop()
 {
     msg -n ":: Stopping ${COMPONENT} ... "
+    chroot_exec -u ${USER_NAME} vncserver -kill :${VNC_DISPLAY}
     kill_pids /tmp/xsession.pid
     is_ok "fail" "done"
+    return 0
+}
+
+do_status()
+{
+    msg -n ":: ${COMPONENT} ... "
+    is_started /tmp/xsession.pid
+    is_ok "stopped" "started"
     return 0
 }
 

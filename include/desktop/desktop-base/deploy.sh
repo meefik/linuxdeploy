@@ -14,6 +14,6 @@ do_configure()
     echo 'export LANG' >> "${xinitrc_chroot}"
     echo 'echo $$ > /tmp/xsession.pid' >> "${xinitrc_chroot}"
     chmod 755 "${xinitrc_chroot}"
-    chroot_exec chown ${USER_NAME}:${USER_NAME} "${xinitrc}"
+    chroot_exec -u root chown ${USER_NAME}:${USER_NAME} "${xinitrc}"
     return 0
 }

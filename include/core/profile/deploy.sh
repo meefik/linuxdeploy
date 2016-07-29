@@ -2,7 +2,7 @@
 # Linux Deploy Component
 # (c) Anton Skshidlevsky <meefik@gmail.com>, GPLv3
 
-[ -n "${USER_NAME}" ] || USER_NAME="android"
+[ -n "${USER_NAME}" ] || USER_NAME="root"
 [ -n "${USER_PASSWORD}" ] || USER_PASSWORD="changeme"
 
 do_configure()
@@ -13,14 +13,14 @@ do_configure()
     fi
     # user profile
     if [ "${USER_NAME}" != "root" ]; then
-        chroot_exec groupadd ${USER_NAME}
-        chroot_exec useradd -m -g ${USER_NAME} -s /bin/bash ${USER_NAME}
-        chroot_exec usermod -g ${USER_NAME} ${USER_NAME}
+        chroot_exec -u root groupadd ${USER_NAME}
+        chroot_exec -u root useradd -m -g ${USER_NAME} -s /bin/bash ${USER_NAME}
+        chroot_exec -u root usermod -g ${USER_NAME} ${USER_NAME}
     fi
     # set password for user
-    echo ${USER_NAME}:${USER_PASSWORD} | chroot_exec chpasswd
+    echo ${USER_NAME}:${USER_PASSWORD} | chroot_exec -u root chpasswd
     # set permissions
-    chroot_exec chown -R ${USER_NAME}:${USER_NAME} "$(user_home ${USER_NAME})"
+    chroot_exec -u root chown -R ${USER_NAME}:${USER_NAME} "$(user_home ${USER_NAME})"
     return 0
 }
 

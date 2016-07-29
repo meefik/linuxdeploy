@@ -4,8 +4,6 @@
 
 do_configure()
 {
-    [ -d "/system" ] || return 0
-
     msg ":: Configuring ${COMPONENT} ... "
     # set min uid and gid
     sed -i 's|^UID_MIN.*|UID_MIN 5000|g' "${CHROOT_DIR}/etc/login.defs"
@@ -20,7 +18,7 @@ do_configure()
         if ! $(grep -q "^${xname}:" "${CHROOT_DIR}/etc/group"); then
             echo "${xname}:x:${xid}:${USER_NAME}" >> "${CHROOT_DIR}/etc/group"
         fi
-        if ! $(grep -q "^:" "${CHROOT_DIR}/etc/passwd"); then
+        if ! $(grep -q "^${xname}:" "${CHROOT_DIR}/etc/passwd"); then
             echo "${xname}:x:${xid}:${xid}::/:/bin/false" >> "${CHROOT_DIR}/etc/passwd"
         fi
         # add users to aid_inet group

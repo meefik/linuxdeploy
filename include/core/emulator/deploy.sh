@@ -2,21 +2,7 @@
 # Linux Deploy Component
 # (c) Anton Skshidlevsky <meefik@gmail.com>, GPLv3
 
-HOST_PLATFORM=$(get_platform)
-GUEST_PLATFORM=$(get_platform "${ARCH}")
-if [ -z "${EMULATOR}" -a "${HOST_PLATFORM}" != "${GUEST_PLATFORM}" ]; then
-    case "${GUEST_PLATFORM}" in
-    arm)
-        EMULATOR="qemu-arm-static"
-    ;;
-    intel)
-        EMULATOR="qemu-i386-static"
-    ;;
-    *)
-        EMULATOR=""
-    ;;
-    esac
-fi
+[ -n "${EMULATOR}" ] || EMULATOR=$(get_qemu ${ARCH})
 
 do_configure()
 {
@@ -33,7 +19,7 @@ do_configure()
         mkdir -p "${CHROOT_DIR}/usr/local/bin"
     fi
     cp "${qemu_source}" "${qemu_target}"
-    chroot_exec chown root:root "/usr/local/bin/${EMULATOR}"
+    chroot_exec -u root chown root:root "/usr/local/bin/${EMULATOR}"
     chmod 755 "${qemu_target}"
     return 0
 }

@@ -28,10 +28,11 @@ yum_repository()
 {
     chroot_exec -u root yum-config-manager --disable '*' >/dev/null
     local repo_file="${CHROOT_DIR}/etc/yum.repos.d/CentOS-${SUITE}-${ARCH}.repo"
+    local repo_url="${SOURCE_PATH%/}/${SUITE}/os/${ARCH}"
     echo "[centos-${SUITE}-${ARCH}]" > "${repo_file}"
     echo "name=CentOS ${SUITE} - ${ARCH}" >> "${repo_file}"
     echo "failovermethod=priority" >> "${repo_file}"
-    echo "baseurl=${REPO_URL}" >> "${repo_file}"
+    echo "baseurl=${repo_url}" >> "${repo_file}"
     echo "enabled=1" >> "${repo_file}"
     echo "metadata_expire=7d" >> "${repo_file}"
     echo "gpgcheck=0" >> "${repo_file}"
@@ -45,9 +46,9 @@ do_install()
     msg ":: Installing ${COMPONENT} ... "
 
     local basic_packages="audit-libs basesystem bash bzip2-libs ca-certificates centos-release chkconfig coreutils cpio cracklib cracklib-dicts cryptsetup-libs curl cyrus-sasl-lib dbus dbus-libs device-mapper device-mapper-libs diffutils elfutils-libelf elfutils-libs expat file-libs filesystem gawk gdbm glib2 glibc glibc-common gmp gnupg2 gpgme grep gzip info keyutils-libs kmod kmod-libs krb5-libs libacl libassuan libattr libblkid libcap libcap-ng libcom_err libcurl libdb libdb-utils libffi libgcc libgcrypt libgpg-error libidn libmount libpwquality libselinux libsemanage libsepol libssh2 libstdc++ libtasn1 libuser libutempter libuuid libverto libxml2 lua ncurses ncurses-base ncurses-libs nspr nss nss-softokn nss-softokn-freebl nss-sysinit nss-tools nss-util openldap openssl-libs p11-kit p11-kit-trust pam pcre pinentry pkgconfig popt pth pygpgme pyliblzma python python-chardet python-iniparse python-kitchen python-libs python-pycurl python-urlgrabber pyxattr qrencode-libs readline rootfiles rpm rpm-build-libs rpm-libs rpm-python sed selinux-policy setup shadow-utils shared-mime-info sqlite sudo systemd systemd-libs tzdata ustr util-linux vim-minimal which xz-libs yum yum-metadata-parser yum-plugin-fastestmirror yum-utils zlib"
-    REPO_URL="${SOURCE_PATH%/}/${SUITE}/os/${ARCH}"
+    local repo_url="${SOURCE_PATH%/}/${SUITE}/os/${ARCH}"
 
-    msg "URL: ${REPO_URL}"
+    msg "URL: ${repo_url}"
 
     msg -n "Preparing for deployment ... "
     tar xzf "${COMPONENT_DIR}/filesystem.tgz" -C "${CHROOT_DIR}"
@@ -56,9 +57,9 @@ do_install()
     msg -n "Retrieving packages list ... "
     local pkg_list="${CHROOT_DIR}/tmp/packages.list"
     (set -e
-        repodata=$(wget -q -O - "${REPO_URL}/repodata/repomd.xml" | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\-primary\.xml\.gz\)".*$/\1/p')
+        repodata=$(wget -q -O - "${repo_url}/repodata/repomd.xml" | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\-primary\.xml\.gz\)".*$/\1/p')
         [ -z "${repodata}" ] && exit 1
-        wget -q -O - "${REPO_URL}/${repodata}" | gzip -dc | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\)".*$/\1/p' > "${pkg_list}"
+        wget -q -O - "${repo_url}/${repodata}" | gzip -dc | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\)".*$/\1/p' > "${pkg_list}"
     exit 0)
     is_ok "fail" "done" || return 1
 
@@ -72,7 +73,7 @@ do_install()
         # download
         for i in 1 2 3
         do
-            wget -q -c -O "${CHROOT_DIR}/tmp/${pkg_file}" "${REPO_URL}/${pkg_url}" && break
+            wget -q -c -O "${CHROOT_DIR}/tmp/${pkg_file}" "${repo_url}/${pkg_url}" && break
             sleep 30s
         done
         [ "${package}" = "filesystem" ] && { msg "done"; continue; }
@@ -91,7 +92,7 @@ do_install()
     rm -rf "${CHROOT_DIR}"/tmp/*
     is_ok "skip" "done"
 
-    component_exec core/dns core/mtab
+    component_exec core/mnt core/net
 
     msg -n "Updating repository ... "
     yum_repository

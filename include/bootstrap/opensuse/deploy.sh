@@ -15,13 +15,17 @@ zypper_install()
 
 zypper_repository()
 {
+    if [ "$(get_platform ${ARCH})" = "intel" ]
+    then local repo_url="${SOURCE_PATH%/}/distribution/${SUITE}/repo/oss/"
+    else local repo_url="${SOURCE_PATH%/}/${ARCH}/distribution/${SUITE}/repo/oss/"
+    fi
     local repo_name="openSUSE-${SUITE}-${ARCH}-Repo-OSS"
     local repo_file="${CHROOT_DIR}/etc/zypp/repos.d/${repo_name}.repo"
     echo "[${repo_name}]" > "${repo_file}"
     echo "name=${repo_name}" >> "${repo_file}"
     echo "enabled=1" >> "${repo_file}"
     echo "autorefresh=0" >> "${repo_file}"
-    echo "baseurl=${REPO_URL}" >> "${repo_file}"
+    echo "baseurl=${repo_url}" >> "${repo_file}"
     echo "type=NONE" >> "${repo_file}"
     chmod 644 "${repo_file}"
 }
@@ -41,11 +45,11 @@ do_install()
     esac
 
     if [ "$(get_platform ${ARCH})" = "intel" ]
-    then REPO_URL="${SOURCE_PATH%/}/distribution/${SUITE}/repo/oss/suse"
-    else REPO_URL="${SOURCE_PATH%/}/${ARCH}/distribution/${SUITE}/repo/oss/suse"
+    then local repo_url="${SOURCE_PATH%/}/distribution/${SUITE}/repo/oss/suse"
+    else local repo_url="${SOURCE_PATH%/}/${ARCH}/distribution/${SUITE}/repo/oss/suse"
     fi
 
-    msg "URL: ${REPO_URL}"
+    msg "URL: ${repo_url}"
 
     msg -n "Preparing for deployment ... "
     tar xzf "${COMPONENT_DIR}/filesystem.tgz" -C "${CHROOT_DIR}"
@@ -54,9 +58,9 @@ do_install()
     msg -n "Retrieving packages list ... "
     local pkg_list="${CHROOT_DIR}/tmp/packages.list"
     (set -e
-        repodata=$(wget -q -O - "${REPO_URL}/repodata/repomd.xml" | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\-primary\.xml\.gz\)".*$/\1/p')
+        repodata=$(wget -q -O - "${repo_url}/repodata/repomd.xml" | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\-primary\.xml\.gz\)".*$/\1/p')
         [ -z "${repodata}" ] && exit 1
-        wget -q -O - "${REPO_URL}/${repodata}" | gzip -dc | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\)".*$/\1/p' > "${pkg_list}"
+        wget -q -O - "${repo_url}/${repodata}" | gzip -dc | sed -n '/<location / s/^.*<location [^>]*href="\([^\"]*\)".*$/\1/p' > "${pkg_list}"
     exit 0)
     is_ok "fail" "done" || return 1
 
@@ -70,7 +74,7 @@ do_install()
         # download
         for i in 1 2 3
         do
-            wget -q -c -O "${CHROOT_DIR}/tmp/${pkg_file}" "${REPO_URL}/${pkg_url}" && break
+            wget -q -c -O "${CHROOT_DIR}/tmp/${pkg_file}" "${repo_url}/${pkg_url}" && break
             sleep 30s
         done
         [ "${package}" = "filesystem" ] && { msg "done"; continue; }

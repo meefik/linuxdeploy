@@ -37,7 +37,7 @@ first_stage_install () {
 
     setup_etc
     echo '# UNCONFIGURED FSTAB FOR BASE SYSTEM' > "$TARGET/etc/fstab"
-    chown 0:0 "$TARGET/etc/fstab"; chmod 644 "$TARGET/etc/fstab"
+    chmod 644 "$TARGET/etc/fstab"
 
     x_feign_install () {
         local pkg=$1

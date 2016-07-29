@@ -102,25 +102,25 @@ do_start()
         done
     }
     msg -n ":: Starting ${COMPONENT} ... "
-    is_started /tmp/xsession.pid
+    is_stopped /tmp/xsession.pid
     is_ok "skip" || return 0
     fb_refresh &
     (set -e
         sync
         case "${FB_FREEZE}" in
         stop)
-            chroot_exec su - ${USER_NAME} -c "xinit -- :${FB_DISPLAY} ${FB_ARGS}" &
+            chroot_exec -u ${USER_NAME} xinit -- :${FB_DISPLAY} ${FB_ARGS} &
             setprop ctl.stop surfaceflinger
             sleep 10
             setprop ctl.stop zygote
         ;;
         pause)
-            chroot_exec su - ${USER_NAME} -c "xinit -- :${FB_DISPLAY} ${FB_ARGS}" &
+            chroot_exec -u ${USER_NAME} xinit -- :${FB_DISPLAY} ${FB_ARGS} &
             pkill -STOP system_server
             pkill -STOP surfaceflinger
         ;;
         *)
-            chroot_exec su - ${USER_NAME} -c "xinit -- :${FB_DISPLAY} ${FB_ARGS}" &
+            chroot_exec -u ${USER_NAME} xinit -- :${FB_DISPLAY} ${FB_ARGS} &
         ;;
         esac
     exit 0)
@@ -144,6 +144,14 @@ do_stop()
     kill_pids /tmp/xsession.pid
     is_ok "fail" "done"
     remove_files /tmp/xsession.pid
+    return 0
+}
+
+do_status()
+{
+    msg -n ":: ${COMPONENT} ... "
+    is_started /tmp/xsession.pid
+    is_ok "stopped" "started"
     return 0
 }
 

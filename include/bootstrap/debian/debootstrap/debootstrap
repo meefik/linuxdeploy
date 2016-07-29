@@ -1,6 +1,6 @@
 #!/bin/sh -e
 
-VERSION='1.0.48-meefik'
+VERSION='1.0.67-meefik'
 
 unset TMP TEMP TMPDIR || true
 
@@ -45,6 +45,7 @@ CHECKCERTIF=""
 PRIVATEKEY=""
 
 DEF_MIRROR="http://ftp.us.debian.org/debian"
+DEF_HTTPS_MIRROR="https://mirrors.kernel.org/debian"
 
 export LANG USE_COMPONENTS
 umask 022
@@ -120,7 +121,7 @@ EOF
 ###########################################################################
 
 if [ -z "$PKGDETAILS" ]; then
-	error 1 NO_PKGDETAILS "No pkgdetails available; either install perl, or build pkgdetails.c from source"
+	error 1 NO_PKGDETAILS "No pkgdetails available; either install perl, or build pkgdetails.c from the base-installer source package"
 fi
 
 ###########################################################################
@@ -372,6 +373,7 @@ else
 	fi
 	SUITE="$1"
 	TARGET="$2"
+	USER_MIRROR="$3"
 	TARGET="${TARGET%/}"
 	if [ "${TARGET#/}" = "${TARGET}" ]; then
 		if [ "${TARGET%/*}" = "$TARGET" ] ; then
@@ -521,8 +523,8 @@ if [ "$SECOND_STAGE_ONLY" = "true" ]; then
 	MIRRORS=null:
 else
 	MIRRORS="$DEF_MIRROR"
-	if [ "$3" != "" ]; then
-		MIRRORS="$3"
+	if [ "$USER_MIRROR" != "" ]; then
+		MIRRORS="$USER_MIRROR"
 		MIRRORS="${MIRRORS%/}"
 	fi
 fi
@@ -637,7 +639,7 @@ if am_doing_phase second_stage; then
 	if [ -e "$TARGET/etc/apt/sources.list" ]; then
 		rm -f "$TARGET/etc/apt/sources.list"
 	fi
-	if [ "${MIRRORS#http*://}" != "$MIRRORS" ]; then
+	if [ "${MIRRORS#http://}" != "$MIRRORS" ]; then
 		setup_apt_sources "${MIRRORS%% *}"
 		mv_invalid_to "${MIRRORS%% *}"
 	else

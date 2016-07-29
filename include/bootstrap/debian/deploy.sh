@@ -17,30 +17,15 @@ apt_install()
 
 apt_repository()
 {
+    # Backup sources.list
     if [ -e "${CHROOT_DIR}/etc/apt/sources.list" ]; then
         cp "${CHROOT_DIR}/etc/apt/sources.list" "${CHROOT_DIR}/etc/apt/sources.list.bak"
     fi
-    # Fix for resolv problem in stretch and xenial
+    # Fix for resolv problem in stretch
     echo 'Debug::NoDropPrivs true;' > "${CHROOT_DIR}/etc/apt/apt.conf.d/00no-drop-privs"
-    case "${DISTRIB}" in
-    debian|kalilinux)
-        if ! $(grep -q "${SOURCE_PATH}.*${SUITE}" "${CHROOT_DIR}/etc/apt/sources.list"); then
-            echo "deb ${SOURCE_PATH} ${SUITE} main contrib non-free" > "${CHROOT_DIR}/etc/apt/sources.list"
-            echo "deb-src ${SOURCE_PATH} ${SUITE} main contrib non-free" >> "${CHROOT_DIR}/etc/apt/sources.list"
-        fi
-    ;;
-    ubuntu)
-        if ! $(grep -q "${SOURCE_PATH}.*${SUITE}" "${CHROOT_DIR}/etc/apt/sources.list"); then
-            echo "deb ${SOURCE_PATH} ${SUITE} main universe multiverse" > "${CHROOT_DIR}/etc/apt/sources.list"
-            echo "deb-src ${SOURCE_PATH} ${SUITE} main universe multiverse" >> "${CHROOT_DIR}/etc/apt/sources.list"
-        fi
-        # Fix for upstart
-        if [ -e "${CHROOT_DIR}/sbin/initctl" ]; then
-            chroot_exec dpkg-divert --local --rename --add /sbin/initctl
-            ln -s /bin/true "${CHROOT_DIR}/sbin/initctl"
-        fi
-    ;;
-    esac
+    # Update sources.list
+    echo "deb ${SOURCE_PATH} ${SUITE} main contrib non-free" > "${CHROOT_DIR}/etc/apt/sources.list"
+    echo "deb-src ${SOURCE_PATH} ${SUITE} main contrib non-free" >> "${CHROOT_DIR}/etc/apt/sources.list"
 }
 
 do_install()
@@ -50,7 +35,7 @@ do_install()
     msg ":: Installing ${COMPONENT} ... "
 
     local basic_packages="locales,sudo,man-db"
-    selinux_support && basic_packages="${basic_packages},selinux-basics"
+    #selinux_support && basic_packages="${basic_packages},selinux-basics"
 
     (set -e
         DEBOOTSTRAP_DIR="${COMPONENT_DIR}/debootstrap"
@@ -58,10 +43,10 @@ do_install()
     exit 0)
     is_ok || return 1
 
-    component_exec core/emulator core/dns core/mtab
+    component_exec core/emulator core/mnt core/net
 
     unset DEBOOTSTRAP_DIR
-    chroot_exec /debootstrap/debootstrap --second-stage
+    chroot_exec /debootstrap/debootstrap --no-check-gpg --second-stage
     is_ok || return 1
 
     msg -n "Updating repository ... "

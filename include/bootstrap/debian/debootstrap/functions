@@ -196,9 +196,17 @@ download_style () {
 }
 
 keyring () {
-	KEYRING_WANTED="$1"
-	if [ -z "$KEYRING" ] && [ -e "$KEYRING_WANTED" ]; then
-		KEYRING="$KEYRING_WANTED"
+	if [ -z "$KEYRING" ]; then
+		if [ -e "$1" ]; then
+			KEYRING="$1"
+		elif [ -z "$DISABLE_KEYRING" ]; then
+			if [ -n "$DEF_HTTPS_MIRROR" ] && [ -z "$USER_MIRROR" ] ; then
+				info KEYRING "Keyring file not available at %s; switching to https mirror %s" "$1" "$DEF_HTTPS_MIRROR"
+				USER_MIRROR="$DEF_HTTPS_MIRROR"
+			else
+				warning KEYRING "Cannot check Release signature; keyring file not available %s" "$1"
+			fi
+		fi
 	fi
 }
 
@@ -276,8 +284,10 @@ get () {
 	# args: from dest 'nocache'
 	# args: from dest [checksum size] [alt {checksum size type}]
 	local displayname
+	local versionname
 	if [ "${2%.deb}" != "$2" ]; then
 		displayname="$(echo "$2" | sed 's,^.*/,,;s,_.*$,,')"
+		versionname="$(echo "$2" | sed 's,^.*/,,' | cut -d_ -f2 | sed 's/%3a/:/')"
 	else
 		displayname="$(echo "$1" | sed 's,^.*/,,')"
 	fi
@@ -288,7 +298,7 @@ get () {
 		elif [ "$3" = nocache ]; then
 			rm -f "$2"
 		else
-			info VALIDATING "Validating %s" "$displayname"
+			info VALIDATING "Validating %s %s" "$displayname" "$versionname"
 			if verify_checksum "$2" "$3" "$4"; then
 				return 0
 			else
@@ -332,10 +342,10 @@ get () {
 		fi
 
 		while [ "$iters" -lt 10 ]; do
-			info RETRIEVING "Retrieving %s" "$displayname"
+			info RETRIEVING "Retrieving %s %s" "$displayname" "$versionname"
 			if ! just_get "$from" "$dest2"; then continue 2; fi
 			if [ "$checksum" != "" ]; then
-				info VALIDATING "Validating %s" "$displayname"
+				info VALIDATING "Validating %s %s" "$displayname" "$versionname"
 				if verify_checksum "$dest2" "$checksum" "$siz"; then
 					checksum=""
 				fi
@@ -518,8 +528,6 @@ download_release_sig () {
 		(gpgv --status-fd 1 --keyring "$KEYRING" --ignore-time-conflict \
 		 "$relsigdest" "$reldest" || true) | read_gpg_status
 		progress 100 100 DOWNRELSIG "Downloading Release file signature"
-	elif [ -z "$DISABLE_KEYRING" ] && [ -n "$KEYRING_WANTED" ]; then
-		warning KEYRING "Cannot check Release signature; keyring file not available %s" "$KEYRING_WANTED"
 	fi
 }
 
@@ -797,20 +805,33 @@ extract_dpkg_deb_data () {
 extract_ar_deb_field () {
 	local pkg="$1"
 	local field="$2"
+	local tarball=$(ar -t "$pkg" | grep "^control\.tar")
 
-	ar -p "$pkg" control.tar.gz | zcat |
-	    tar -O -xf - control ./control 2>/dev/null |
-	    grep -i "^$field:" | sed -e 's/[^:]*: *//' | head -n 1
+	case "$tarball" in
+		control.tar.gz) cat_cmd=zcat ;;
+		control.tar.xz) cat_cmd=xzcat ;;
+		control.tar) cat_cmd=cat ;;
+		*) error 1 UNKNOWNCONTROLCOMP "Unknown compression type for %s in %s" "$tarball" "$pkg" ;;
+	esac
+
+	if type $cat_cmd >/dev/null 2>&1; then
+		ar -p "$pkg" "$tarball" | $cat_cmd |
+		    tar -O -xf - control ./control 2>/dev/null |
+		    grep -i "^$field:" | sed -e 's/[^:]*: *//' | head -n 1
+	else
+		error 1 UNPACKCMDUNVL "Extracting %s requires the %s command, which is not available" "$pkg" "$cat_cmd"
+	fi
 }
 
 extract_ar_deb_data () {
 	local pkg="$1"
-	local tarball=$(ar -t "$pkg" | grep "^data.tar.[bgx]z")
+	local tarball=$(ar -t "$pkg" | grep "^data.tar")
 
 	case "$tarball" in
 		data.tar.gz) cat_cmd=zcat ;;
 		data.tar.bz2) cat_cmd=bzcat ;;
 		data.tar.xz) cat_cmd=xzcat ;;
+		data.tar) cat_cmd=cat ;;
 		*) error 1 UNKNOWNDATACOMP "Unknown compression type for %s in %s" "$tarball" "$pkg" ;;
 	esac
 
@@ -887,7 +908,7 @@ in_target_failmsg () {
 		msg="See %s for details"
 		if [ -e "$TARGET/debootstrap/debootstrap.log" ]; then
 			arg="$TARGET/debootstrap/debootstrap.log"
-			local pkg="$(grep '^dpkg: error processing ' "$TARGET/debootstrap/debootstrap.log" | head -n 1 | cut -d ' ' -f 4)"
+			local pkg="$(grep '^dpkg: error processing ' "$TARGET/debootstrap/debootstrap.log" | head -n 1 | sed 's/\(error processing \)\(package \|archive \)/\1/' | cut -d ' ' -f 4)"
 			if [ -n "$pkg" ]; then
 				msg="$msg (possibly the package $pkg is at fault)"
 			fi
@@ -928,9 +949,11 @@ mv_invalid_to () {
 
 setup_apt_sources () {
 	mkdir -p "$TARGET/etc/apt"
+	# Cope with the foreign case where COMPONENTS would be empty:
+	sources_components="${COMPONENTS:-$USE_COMPONENTS}"
 	for m in "$@"; do
 		local cs=""
-		for c in $COMPONENTS; do
+		for c in $sources_components; do
 			local path="dists/$SUITE/$c/binary-$ARCH/Packages"
 			local pkgdest="$TARGET/$($DLDEST pkg "$SUITE" "$c" "$ARCH" "$m" "$path")"
 			if [ -e "$pkgdest" ]; then cs="$cs $c"; fi
@@ -1048,15 +1071,19 @@ for $v (keys %fields) {
 			shift;
 			perl -e '
 $v = 0;
+$allow_percentage = 0;
 while (read STDIN, $x, 1) {
-	if ($x =~ m/\d/) {
+	if ($x =~ m/\s/) {
+		$allow_percentage = 1;
+	} elsif ($allow_percentage and $x =~ m/\d/) {
 		$v *= 10;
 		$v += $x;
-	} elsif ($x eq "%") {
+	} elsif ($allow_percentage and $x eq "%") {
 		printf "P: %d %d%s\n", int($v / 100.0 * ($ARGV[1] - $ARGV[0]) + $ARGV[0]), $ARGV[2], ($#ARGV == 3 ? " $ARGV[3]" : "");
 		$v = 0;
 	} else {
 		$v = 0;
+		$allow_percentage = 0;
 	}
 }' "$@"
 		elif [ "$1" = "GETDEPS" ]; then

@@ -11,7 +11,7 @@ do_start()
 
     local services=$(ls "${CHROOT_DIR}/etc/rc${INIT_LEVEL}.d/" | grep '^S')
     if [ -n "${services}" ]; then
-        msg ":: Starting services: "
+        msg ":: Starting ${COMPONENT}: "
         local item
         for item in ${services}
         do
@@ -34,7 +34,7 @@ do_stop()
 
     local services=$(ls "${CHROOT_DIR}/etc/rc6.d/" | grep '^K')
     if [ -n "${services}" ]; then
-        msg ":: Starting services: "
+        msg ":: Starting ${COMPONENT}: "
         local item
         for item in ${services}
         do

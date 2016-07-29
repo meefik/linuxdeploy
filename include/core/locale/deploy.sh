@@ -10,7 +10,7 @@ do_configure()
     if [ -n "${LOCALE}" -a "${LOCALE}" != "C" -a "${LOCALE}" != "POSIX" ]; then
         local inputfile=$(echo ${LOCALE} | awk -F. '{print $1}')
         local charmapfile=$(echo ${LOCALE} | awk -F. '{print $2}')
-        chroot_exec localedef -i ${inputfile} -c -f ${charmapfile} ${LOCALE}
+        chroot_exec -u root localedef -i ${inputfile} -c -f ${charmapfile} ${LOCALE}
     else
         LOCALE="C"
     fi

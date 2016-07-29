@@ -13,14 +13,16 @@ rootfs_make()
         if [ -e "${TARGET_PATH}" -a ! -f "${TARGET_PATH}" ]; then
             msg "fail"; return 1
         fi
-    ;;
-    partition)
-        if [ ! -b "${TARGET_PATH}" ]; then
-            msg "fail"; return 1
-        fi
+        mkdir -p "${TARGET_PATH%/*}"
     ;;
     directory|ram)
         if [ -e "${TARGET_PATH}" -a ! -d "${TARGET_PATH}" ]; then
+            msg "fail"; return 1
+        fi
+        mkdir -p "${TARGET_PATH}"
+    ;;
+    partition)
+        if [ ! -b "${TARGET_PATH}" ]; then
             msg "fail"; return 1
         fi
     ;;

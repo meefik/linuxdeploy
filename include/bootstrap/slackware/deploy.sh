@@ -31,7 +31,7 @@ do_install()
 
     msg ":: Installing ${COMPONENT} ... "
 
-    REPO_URL="${SOURCE_PATH%/}/slackware"
+    local repo_url="${SOURCE_PATH%/}/slackware"
     local cache_dir="${CHROOT_DIR}/tmp"
     local extra_packages="l/glibc l/glibc-i18n l/libtermcap l/ncurses ap/diffutils ap/groff ap/man ap/nano ap/slackpkg ap/sudo n/gnupg n/wget"
 
@@ -45,9 +45,9 @@ do_install()
     is_ok "fail" "done" || return 1
 
     msg -n "Retrieving packages list ... "
-    local basic_packages=$(wget -q -O - "${REPO_URL}/a/tagfile" | grep -v -e 'kernel' -e 'efibootmgr' -e 'lilo' -e 'grub' -e 'devs' | awk -F: '{if ($1!="") print "a/"$1}')
+    local basic_packages=$(wget -q -O - "${repo_url}/a/tagfile" | grep -v -e 'kernel' -e 'efibootmgr' -e 'lilo' -e 'grub' -e 'devs' | awk -F: '{if ($1!="") print "a/"$1}')
     local pkg_list="${cache_dir}/packages.list"
-    wget -q -O - "${REPO_URL}/FILE_LIST" | grep -o -e '/.*\.\tgz$' -e '/.*\.\txz$' > "${pkg_list}"
+    wget -q -O - "${repo_url}/FILE_LIST" | grep -o -e '/.*\.\tgz$' -e '/.*\.\txz$' > "${pkg_list}"
     is_ok "fail" "done" || return 1
 
     msg "Retrieving base packages: "
@@ -61,7 +61,7 @@ do_install()
         # download
         for i in 1 2 3
         do
-            wget -q -c -O "${cache_dir}/${pkg_file}" "${REPO_URL}${pkg_url}" && break
+            wget -q -c -O "${cache_dir}/${pkg_file}" "${repo_url}${pkg_url}" && break
             sleep 30s
         done
         # unpack

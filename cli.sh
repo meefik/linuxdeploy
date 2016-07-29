@@ -6,7 +6,7 @@
 #
 ################################################################################
 
-VERSION="2.0.4"
+VERSION="2.0.6"
 
 ################################################################################
 # Common
@@ -49,6 +49,28 @@ get_platform()
         echo "unknown"
     ;;
     esac
+}
+
+get_qemu()
+{
+    local arch="$1"
+    local qemu=""
+    local host_platform=$(get_platform)
+    local guest_platform=$(get_platform "${arch}")
+    if [ "${host_platform}" != "${guest_platform}" ]; then
+        case "${guest_platform}" in
+        arm)
+            qemu="qemu-arm-static"
+        ;;
+        intel)
+            qemu="qemu-i386-static"
+        ;;
+        *)
+            qemu=""
+        ;;
+        esac
+    fi
+    echo ${qemu}
 }
 
 get_uuid()
@@ -122,13 +144,14 @@ is_archive()
 
 get_pids()
 {
-    local item pidfile pid pids
-    for item in $*
+    local pid pidfile pids
+    for pid in $*
     do
-        pid=""
-        pidfile="${CHROOT_DIR}${item}"
-        [ -e "${pidfile}" ] && pid=$(cat "${pidfile}")
-        if [ -n "${pid}" -a -e "/proc/${pid}" ]; then
+        pidfile="${CHROOT_DIR}${pid}"
+        if [ -e "${pidfile}" ]; then
+            pid=$(cat "${pidfile}")
+        fi
+        if [ -e "/proc/${pid}" ]; then
             pids="${pids} ${pid}"
         fi
     done
@@ -143,6 +166,12 @@ get_pids()
 is_started()
 {
     get_pids $* >/dev/null
+}
+
+is_stopped()
+{
+    is_started $*
+    test $? -ne 0
 }
 
 kill_pids()
@@ -210,6 +239,9 @@ chroot_exec()
             mounts="${mounts} -b ${MOUNTS// / -b }"
         fi
         local emulator
+        if [ -z "${EMULATOR}" ]; then
+            EMULATOR=$(get_qemu ${ARCH})
+        fi
         if [ -n "${EMULATOR}" ]; then
             emulator="-q ${EMULATOR}"
         fi
@@ -310,7 +342,9 @@ params_check()
         fi
     done
     if [ -n "${params_lost}" ]; then
-        msg "Missing parameters:${params_lost}"
+        if [ "${DEBUG_MODE}" = "true" ]; then
+            msg "Missing parameters:${params_lost}"
+        fi
         return 1
     fi
     return 0
@@ -348,6 +382,7 @@ config_list()
     for conf in $(ls "${CONFIG_DIR}/")
     do
         (
+            unset DISTRIB ARCH SUITE INCLUDE
             . "${CONFIG_DIR}/${conf}"
             formated_desc=$(printf "%-15s %-10s %-10s %-10s %.30s\n" "${conf%.conf}" "${DISTRIB}" "${ARCH}" "${SUITE}" "${INCLUDE}")
             msg "${formated_desc}"
@@ -455,6 +490,7 @@ component_exec()
             do_configure() { return 0; }
             do_start() { return 0; }
             do_stop() { return 0; }
+            do_status() { return 0; }
             do_help() { return 0; }
             # load extends
             for component in ${EXTENDS} ${COMPONENT}
@@ -482,10 +518,10 @@ component_list()
     local components="$@"
     local component output DESC
     if [ -z "${components}" ]; then
-        components=$(find "${INCLUDE_DIR}/" -type f -name "deploy.conf" | while read f
+        components=$(cd "${INCLUDE_DIR}" && find . -type f -name "deploy.conf" | while read f
             do
                 component="${f%/*}"
-                component="${component//${INCLUDE_DIR}\//}"
+                component="${component#*/}"
                 echo "${component}"
             done)
     fi
@@ -522,7 +558,8 @@ mount_part()
             [ -d "${CHROOT_DIR}" ] || mkdir -p "${CHROOT_DIR}"
             local mnt_opts
             [ -d "${TARGET_PATH}" ] && mnt_opts="bind" || mnt_opts="rw,relatime"
-            mount -o ${mnt_opts} "${TARGET_PATH}" "${CHROOT_DIR}"
+            mount -o ${mnt_opts} "${TARGET_PATH}" "${CHROOT_DIR}" &&
+            mount -o remount,exec,suid,dev "${CHROOT_DIR}"
             is_ok "fail" "done" || return 1
         else
             msg "skip"
@@ -712,19 +749,27 @@ container_umount()
 container_start()
 {
     params_check CHROOT_DIR || return 1
-    container_mounted || container_mount || return 1
+    container_mounted || { msg "The container is not mounted." ; return 1; }
 
     DO_ACTION='do_start'
-    component_exec ${INCLUDE}
+    if [ $# -gt 0 ]; then
+        component_exec $@
+    else
+        component_exec ${INCLUDE}
+    fi
 }
 
 container_stop()
 {
     params_check CHROOT_DIR || return 1
-    container_mounted || { msg "The container is already stopped." ; return 1; }
+    container_mounted || { msg "The container is not mounted." ; return 1; }
 
     DO_ACTION='do_stop'
-    component_exec ${INCLUDE}
+    if [ $# -gt 0 ]; then
+        component_exec $@
+    else
+        component_exec ${INCLUDE}
+    fi
 }
 
 container_shell()
@@ -885,6 +930,11 @@ container_status()
     local linux_version=$([ -r "${CHROOT_DIR}/etc/os-release" ] && . "${CHROOT_DIR}/etc/os-release"; [ -n "${PRETTY_NAME}" ] && echo "${PRETTY_NAME}" || echo "unknown")
     msg "${linux_version}"
 
+    msg "Status of components: "
+    local DO_ACTION='do_status'
+    local component
+    component_exec "${INCLUDE}"
+
     msg "Mounted parts: "
     local is_mnt=0
     local item
@@ -894,21 +944,7 @@ container_status()
         local is_mnt=1
     done
     [ "${is_mnt}" -ne 1 ] && msg " ...nothing mounted"
-
-    msg "Running services: "
-    if [ -n "${STARTUP}" ]; then
-        local WITHOUT_DEPENDS="true"
-        local DO_ACTION='is_started'
-        local component
-        for component in ${STARTUP}
-        do
-            msg -n "* ${component}: "
-            component_exec "${components}" && msg "yes" || msg "no"
-        done
-    else
-        msg " ...no active services"
-    fi
-
+    
     msg "Available mount points: "
     local is_mountpoints=0
     local mp
@@ -956,7 +992,7 @@ Linux Deploy ${VERSION}
 (c) 2012-2016 Anton Skshidlevsky, GPLv3
 
 USAGE:
-   linuxdeploy [OPTIONS] COMMAND ...
+   ${0##*/} [OPTIONS] COMMAND ...
 
 OPTIONS:
    -p NAME - configuration profile
@@ -969,8 +1005,8 @@ COMMANDS:
       -r - удалить текущую конфигурацию
       -i FILE - импортировать конфигурацию
       -x - дамп текущей конфигурации
-      -l - список подключенных компонентов
-      -a - список всех компонентов
+      -l - список с зависимостями для подключенных или указанных компонентов
+      -a - список всех компонентов без учета совместимости
    deploy [-i|-c] [-n NAME] [NAME ...] - установка дистрибутива и подключенных компонентов
       -i - только установить, без конфигурирования
       -с - только конфигурировать, без установки
@@ -981,8 +1017,9 @@ COMMANDS:
       -u USER - переключиться на указанного пользователя
    mount - смонтировать контейнер
    umount - размонтировать контейнер
-   start - смонтировать контейнер, если не смонтирован, и запустить все подключенные компоненты
-   stop [-u] - остановить все подключенные компоненты
+   start [-m] [NAME ...] - запустить все подключенные компоненты или только указанные
+      -m - смотрировать контейнер
+   stop [-u] [NAME ...] - остановить все подключенные компоненты или только указанные
       -u - размонтировать контейнер
    sync - синхронизировать рабочее окружение с репозиторием
    status - отобразить состояние контейнера и компонетнов
@@ -1012,7 +1049,7 @@ if [ -z "${ENV_DIR}" ]; then
     ENV_DIR=$(readlink "$0")
     ENV_DIR="${ENV_DIR%/*}"
     if [ -z "${ENV_DIR}" ]; then
-        ENV_DIR=$(cd "${0%/*}"; pwd)
+        ENV_DIR=$(realpath "${0%/*}")
     fi
 fi
 if [ -e "${ENV_DIR}/cli.conf" ]; then
@@ -1047,7 +1084,9 @@ do
         TRACE_MODE="true"
     ;;
     *)
-        let OPTIND=OPTIND-1
+        if [ ${OPTIND} -gt 1 ]; then
+            let OPTIND=OPTIND-1
+        fi
         break
     ;;
     esac
@@ -1118,7 +1157,9 @@ config|conf)
             WITHOUT_CHECK="true"
         ;;
         *)
-            let OPTIND=OPTIND-1
+            if [ ${OPTIND} -gt 1 ]; then
+                let OPTIND=OPTIND-1
+            fi
             break
         ;;
         esac
@@ -1155,7 +1196,9 @@ deploy)
             EXCLUDE_COMPONENTS="${EXCLUDE_COMPONENTS} ${OPTARG}"
         ;;
         *)
-            let OPTIND=OPTIND-1
+            if [ ${OPTIND} -gt 1 ]; then
+                let OPTIND=OPTIND-1
+            fi
             break
         ;;
         esac
@@ -1184,7 +1227,29 @@ umount)
     container_umount
 ;;
 start)
-    container_start
+    # parse options
+    OPTIND=1
+    while getopts :m FLAG
+    do
+        case "${FLAG}" in
+        m)
+            mount_flag="true"
+        ;;
+        *)
+            if [ ${OPTIND} -gt 1 ]; then
+                let OPTIND=OPTIND-1
+            fi
+            break
+        ;;
+        esac
+    done
+    shift $((OPTIND-1))
+    
+    if [ "${mount_flag}" = "true" ]; then
+        container_mount || exit 1
+    fi
+    
+    container_start "$@"
 ;;
 stop)
     # parse options
@@ -1196,14 +1261,16 @@ stop)
             umount_flag="true"
         ;;
         *)
-            let OPTIND=OPTIND-1
+            if [ ${OPTIND} -gt 1 ]; then
+                let OPTIND=OPTIND-1
+            fi
             break
         ;;
         esac
     done
     shift $((OPTIND-1))
 
-    container_stop || exit 1
+    container_stop "$@" || exit 1
 
     if [ "${umount_flag}" = "true" ]; then
         container_umount
