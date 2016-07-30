@@ -1503,7 +1503,7 @@ container_install()
     archlinux)
         msg "Installing Arch Linux distribution: "
 
-        local basic_packages="filesystem acl archlinux-keyring attr bash bzip2 ca-certificates coreutils cracklib curl db e2fsprogs expat findutils gawk gcc-libs gdbm glibc gmp gnupg gpgme grep keyutils krb5 libarchive libassuan libcap libgcrypt libgpg-error libgssglue libidn libksba libldap libsasl libssh2 libtirpc linux-api-headers lzo ncurses nettle openssl pacman pacman-mirrorlist pam pambase perl pinentry pth readline run-parts sed shadow sudo tzdata util-linux xz which zlib"
+        local basic_packages="filesystem acl archlinux-keyring attr bash bzip2 ca-certificates coreutils cracklib curl db e2fsprogs expat findutils gawk gcc-libs gdbm glibc gmp gnupg gpgme grep keyutils krb5 libarchive libassuan libcap libgcrypt libgpg-error libgssglue libidn libksba libldap libsasl libssh2 libtirpc linux-api-headers lz4 lzo ncurses nettle openssl pacman pacman-mirrorlist pam pambase perl pinentry pth readline run-parts sed shadow sudo tzdata util-linux xz which zlib"
 
         local platform=$(get_platform ${ARCH})
         if [ "${platform}" = "intel" ]
@@ -1568,7 +1568,7 @@ container_install()
         [ $? -ne 0 ] && return 1
 
         msg -n "Clearing cache ... "
-        rm -f "${cache_dir}"/* "${CHROOT_DIR}/.INSTALL" "${CHROOT_DIR}/.MTREE" "${CHROOT_DIR}/.PKGINFO" $(find "${CHROOT_DIR}" -type f -name "*.pacorig")
+        rm -f "${cache_dir}"/* "${CHROOT_DIR}/.INSTALL" "${CHROOT_DIR}/.MTREE" "${CHROOT_DIR}/.PKGINFO" $(find "${CHROOT_DIR}/etc" -type f -name "*.pacorig")
         [ $? -eq 0 ] && msg "done" || msg "fail"
     ;;
     fedora)
