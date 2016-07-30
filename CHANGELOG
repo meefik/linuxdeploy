@@ -9,7 +9,8 @@ Added timestamp support to log filename (${TIMESTAMP} variable)
 End of support Debian Squeeze and Kali Moto
 Added support /dev/net/tun (for OpenVPN)
 Automatically switch to root (unchroot)
-Mount partition with options "exec,suid"
+Mount root with options "exec,suid,dev"
+Fixed Arch Linux packages (close #529)
 
 1.5.5
 Open a shell from Android Terminal Emulator
@@ -341,7 +342,8 @@ Updated list packages of base system installation
 Закончена поддержка Debian Squeeze и Kali Moto
 Добавлена поддержка /dev/net/tun (для OpenVPN)
 Автоматическое переключение к root (unchroot)
-Монтирование раздела с опциями "exec,suid"
+Монтирование корневого раздела с опциями "exec,suid,dev"
+Исправление в пакетах Arch Linux (тикет #529)
 
 1.5.5
 Открытие командной оболочки в Android Terminal Emulator
