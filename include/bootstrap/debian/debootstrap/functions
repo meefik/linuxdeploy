@@ -836,7 +836,7 @@ extract_ar_deb_data () {
 	esac
 
 	if type $cat_cmd >/dev/null 2>&1; then
-		ar -p "$pkg" "$tarball" | $cat_cmd | tar -xf -
+		ar -p "$pkg" "$tarball" | $cat_cmd | tar -xf - --hard-dereference
 	else
 		error 1 UNPACKCMDUNVL "Extracting %s requires the %s command, which is not available" "$pkg" "$cat_cmd"
 	fi

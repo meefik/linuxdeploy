@@ -6,7 +6,7 @@
 #
 ################################################################################
 
-VERSION="2.0.6"
+VERSION="2.0.8"
 
 ################################################################################
 # Common
@@ -247,12 +247,12 @@ chroot_exec()
         fi
         if [ -n "${username}" ]; then
             if [ $# -gt 0 ]; then
-                proot -r "${CHROOT_DIR}" -w / ${mounts} ${emulator} -0 /bin/su - ${username} -c "$*"
+                proot -r "${CHROOT_DIR}" -w / ${mounts} ${emulator} -0 -l -e /bin/su - ${username} -c "$*"
             else
-                proot -r "${CHROOT_DIR}" -w / ${mounts} ${emulator} -0 /bin/su - ${username}
+                proot -r "${CHROOT_DIR}" -w / ${mounts} ${emulator} -0 -l -e /bin/su - ${username}
             fi
         else
-            PATH="${path}" proot -r "${CHROOT_DIR}" -w / ${mounts} ${emulator} -0 $*
+            PATH="${path}" proot -r "${CHROOT_DIR}" -w / ${mounts} ${emulator} -0 -l -e $*
         fi
     ;;
     esac
@@ -260,10 +260,11 @@ chroot_exec()
 
 sync_env()
 {
-    [ -n "${SERVER_URL}" ] || return 1
-    msg -n "Synchronization with repository ... "
+    local env_url="$1"
+    [ -n "${env_url}" ] || return 1
+    msg -n "Synchronization with server ... "
     [ -e "${ENV_DIR}" ] || mkdir -p "${ENV_DIR}"
-    wget -q -O - "${SERVER_URL%/}/env.tgz" | tar xz -C "${ENV_DIR}" 1>&2
+    wget -q -O - "${env_url}" | tar xz -C "${ENV_DIR}" 1>&2
     is_ok "fail" "done"
 }
 
@@ -739,10 +740,6 @@ container_umount()
     fi
     is_ok "fail" "done"
 
-    if [ -d "${CHROOT_DIR}" ]; then
-        rmdir "${CHROOT_DIR}"
-    fi
-
     return 0
 }
 
@@ -857,17 +854,17 @@ rootfs_export()
     case "${rootfs_file}" in
     *gz)
         msg -n "Exporting rootfs as tar.gz archive ... "
-        tar czvf "${rootfs_file}" --one-file-system -C "${CHROOT_DIR}" . 1>&2
+        tar czvf "${rootfs_file}" --exclude='./dev' --exclude='./sys' --exclude='./proc' -C "${CHROOT_DIR}" . 1>&2
         is_ok "fail" "done" || return 1
     ;;
     *bz2)
         msg -n "Exporting rootfs as tar.bz2 archive ... "
-        tar cjvf "${rootfs_file}" --one-file-system -C "${CHROOT_DIR}" . 1>&2
+        tar cjvf "${rootfs_file}" --exclude='./dev' --exclude='./sys' --exclude='./proc' -C "${CHROOT_DIR}" . 1>&2
         is_ok "fail" "done" || return 1
     ;;
     *xz)
         msg -n "Exporting rootfs as tar.xz archive ... "
-        tar cJvf "${rootfs_file}" --one-file-system -C "${CHROOT_DIR}" . 1>&2
+        tar cJvf "${rootfs_file}" --exclude='./dev' --exclude='./sys' --exclude='./proc' -C "${CHROOT_DIR}" . 1>&2
         is_ok "fail" "done" || return 1
     ;;
     *)
@@ -1021,7 +1018,7 @@ COMMANDS:
       -m - смотрировать контейнер
    stop [-u] [NAME ...] - остановить все подключенные компоненты или только указанные
       -u - размонтировать контейнер
-   sync - синхронизировать рабочее окружение с репозиторием
+   sync <URL> - синхронизировать рабочее окружение с сервером
    status - отобразить состояние контейнера и компонетнов
    help [NAME ...] - вызвать справку
 
@@ -1277,7 +1274,7 @@ stop)
     fi
 ;;
 sync)
-    sync_env
+    sync_env "$@"
 ;;
 status)
     container_status
