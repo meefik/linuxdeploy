@@ -2,7 +2,7 @@
 ################################################################################
 #
 # Linux Deploy CLI
-# (C) 2012-2015 Anton Skshidlevsky <meefik@gmail.com>, GPLv3
+# (C) 2012-2016 Anton Skshidlevsky <meefik@gmail.com>, GPLv3
 #
 ################################################################################
 
@@ -2100,7 +2100,7 @@ helper()
 local version=$(cat "${ENV_DIR%/}/etc/version")
 cat <<EOF
 Linux Deploy ${version}
-(c) 2012-2015 Anton Skshidlevsky, GPLv3
+(c) 2012-2016 Anton Skshidlevsky, GPLv3
 
 USAGE:
    linuxdeploy [OPTIONS] COMMAND ...
