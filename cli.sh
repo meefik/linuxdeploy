@@ -997,30 +997,30 @@ OPTIONS:
    -t - enable trace mode
 
 COMMANDS:
-   config [...] [PARAMETERS] [NAME ...] - управление конфигурациями
-      - без параметров выводит список конфигураций
-      -r - удалить текущую конфигурацию
-      -i FILE - импортировать конфигурацию
-      -x - дамп текущей конфигурации
-      -l - список с зависимостями для подключенных или указанных компонентов
-      -a - список всех компонентов без учета совместимости
-   deploy [-i|-c] [-n NAME] [NAME ...] - установка дистрибутива и подключенных компонентов
-      -i - только установить, без конфигурирования
-      -с - только конфигурировать, без установки
-      -n NAME - пропустить установку указанного компонента
-   import <FILE|URL> - импортировать rootfs-архив (tgz, tbz2 или txz) в текущий контейнер
-   export <FILE> - экспортировать контейнер как rootfs-архив (tgz, tbz2 или txz)
-   shell [-u USER] [APP] - смонтировать контейнер, если не смонтирован, и выполнить указанную команду внутри контейнера, по умолчанию /bin/bash
-      -u USER - переключиться на указанного пользователя
-   mount - смонтировать контейнер
-   umount - размонтировать контейнер
-   start [-m] [NAME ...] - запустить все подключенные компоненты или только указанные
-      -m - смотрировать контейнер
-   stop [-u] [NAME ...] - остановить все подключенные компоненты или только указанные
-      -u - размонтировать контейнер
-   sync <URL> - синхронизировать рабочее окружение с сервером
-   status - отобразить состояние контейнера и компонетнов
-   help [NAME ...] - вызвать справку
+   config [...] [PARAMETERS] [NAME ...] - configuration management
+      - without parameters displays a list of configurations
+      -r - remove the current configuration
+      -i FILE - import the configuration
+      -x - dump of the current configuration
+      -l - list of dependencies for the specified or are connected components
+      -a - list of all components without check compatibility
+   deploy [-i|-c] [-n NAME] [NAME ...] - install the distribution and included components
+      -i - install without configure
+      -c - configure without install
+      -n NAME - skip installation of this component
+   import FILE|URL - import a rootfs into the current container from archive (tgz, tbz2 or txz)
+   export FILE - export the current container as a rootfs archive (tgz, tbz2 or txz)
+   shell [-u USER] [COMMAND] - execute the specified command in the container, by default /bin/bash
+      -u USER - switch to the specified user
+   mount - mount the container
+   umount - unmount the container
+   start [-m] [NAME ...] - start all included or only specified components
+      -m - mount the container
+   stop [-u] [NAME ...] - stop all included or only specified components
+      -u - unmount the container
+   sync URL - synchronize with the operating environment with server
+   status - display the status of the container and components
+   help [NAME ...] - show this help or help of components
 
 EOF
 }
@@ -1101,8 +1101,7 @@ fi
 
 # which config
 CONF_FILE=$(config_which "${PROFILE}")
-PROFILE=${CONF_FILE##*/}
-PROFILE=${PROFILE%*.conf}
+PROFILE=$(basename "${CONF_FILE}" ".conf")
 
 # read config
 OPTLST=" " # space is required

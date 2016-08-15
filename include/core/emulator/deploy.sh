@@ -6,21 +6,8 @@
 
 do_configure()
 {
-    [ -n "${EMULATOR}" -a "${METHOD}" = "chroot" ] || return 0
-    multiarch_support || return 0
-
-    msg ":: Configuring ${COMPONENT} ... "
-
-    local qemu_source=$(which "${EMULATOR}")
-    local qemu_target="${CHROOT_DIR}/usr/local/bin/${EMULATOR}"
-    [ -e "${qemu_target}" ] && return 0
-    [ -z "${qemu_source}" ] && return 1
-    if [ ! -d "${CHROOT_DIR}/usr/local/bin" ]; then
-        mkdir -p "${CHROOT_DIR}/usr/local/bin"
-    fi
-    cp "${qemu_source}" "${qemu_target}"
-    chroot_exec -u root chown root:root "/usr/local/bin/${EMULATOR}"
-    chmod 755 "${qemu_target}"
+    do_start
+    
     return 0
 }
 
@@ -30,18 +17,29 @@ do_start()
     multiarch_support || return 0
 
     msg -n ":: Starting ${COMPONENT} ... "
+    local qemu_path=$(which ${EMULATOR})
+    if [ ! -e "${CHROOT_DIR}${qemu_path%/*}" ]; then
+        mkdir -p "${CHROOT_DIR}${qemu_path%/*}"
+    fi
+    if [ ! -e "${CHROOT_DIR}${qemu_path}" ]; then
+        touch "${CHROOT_DIR}${qemu_path}"
+    fi
+    if ! is_mounted "${CHROOT_DIR}${qemu_path}"
+    then
+        mount -o bind "${qemu_path}" "${CHROOT_DIR}${qemu_path}"
+    fi
     case "$(get_platform)" in
     arm)
-        if [ ! -e "${binfmt_dir}/qemu-i386" ]; then
-            echo ":qemu-i386:M::\x7fELF\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x03\x00:\xff\xff\xff\xff\xff\xfe\xfe\xff\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff:/usr/local/bin/${EMULATOR}:" > "${binfmt_dir}/register"
+        if [ ! -e "/proc/sys/fs/binfmt_misc/qemu-i386" ]; then
+            echo ":qemu-i386:M::\x7fELF\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x03\x00:\xff\xff\xff\xff\xff\xfe\xfe\xff\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff:/usr/local/bin/${EMULATOR}:" > "/proc/sys/fs/binfmt_misc/register"
             is_ok "fail" "done"
         else
             msg "skip"
         fi
     ;;
     intel)
-        if [ ! -e "${binfmt_dir}/qemu-arm" ]; then
-            echo ":qemu-arm:M::\x7fELF\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x28\x00:\xff\xff\xff\xff\xff\xff\xff\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff:/usr/local/bin/${EMULATOR}:" > "${binfmt_dir}/register"
+        if [ ! -e "/proc/sys/fs/binfmt_misc/qemu-arm" ]; then
+            echo ":qemu-arm:M::\x7fELF\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x28\x00:\xff\xff\xff\xff\xff\xff\xff\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff:/usr/local/bin/${EMULATOR}:" > "/proc/sys/fs/binfmt_misc/register"
             is_ok "fail" "done"
         else
             msg "skip"
@@ -51,6 +49,7 @@ do_start()
         msg "skip"
     ;;
     esac
+    
     return 0
 }
 
@@ -59,20 +58,14 @@ do_stop()
     [ -n "${EMULATOR}" -a "${METHOD}" = "chroot" ] || return 0
     multiarch_support || return 0
 
-    local binfmt_dir="/proc/sys/fs/binfmt_misc"
-    local binfmt_qemu=""
-    case "$(get_platform)" in
-    arm)
-        binfmt_qemu="${binfmt_dir}/qemu-i386"
-    ;;
-    intel)
-        binfmt_qemu="${binfmt_dir}/qemu-arm"
-    ;;
-    esac
-    if [ -e "${binfmt_qemu}" ]; then
-        msg -n ":: Stopping ${COMPONENT} ... "
-        echo -1 > "${binfmt_qemu}"
+    msg -n ":: Stopping ${COMPONENT} ... "
+    local qemu_path=$(which ${EMULATOR})
+    if is_mounted "${CHROOT_DIR}${qemu_path}"
+    then
+        umount "${CHROOT_DIR}${qemu_path}"
         is_ok "fail" "done"
+    else
+        msg "skip"
     fi
     return 0
 }

@@ -20,7 +20,11 @@ slackpkg_repository()
     if [ -e "${CHROOT_DIR}/etc/slackpkg/mirrors" ]; then
         cp "${CHROOT_DIR}/etc/slackpkg/mirrors" "${CHROOT_DIR}/etc/slackpkg/mirrors.bak"
     fi
-    echo "${SOURCE_PATH}" > "${CHROOT_DIR}/etc/slackpkg/mirrors"
+    if [ "$(get_platform ${ARCH})" = "intel" ]
+    then local repo_url="${SOURCE_PATH%/}/slackware-${SUITE}/slackware"
+    else local repo_url="${SOURCE_PATH%/}/slackwarearm-${SUITE}/slackware"
+    fi
+    echo "${repo_url}" > "${CHROOT_DIR}/etc/slackpkg/mirrors"
     chmod 644 "${CHROOT_DIR}/etc/slackpkg/mirrors"
     sed -i 's|^WGETFLAGS=.*|WGETFLAGS="--passive-ftp -q"|g' "${CHROOT_DIR}/etc/slackpkg/slackpkg.conf"
 }
@@ -31,7 +35,10 @@ do_install()
 
     msg ":: Installing ${COMPONENT} ... "
 
-    local repo_url="${SOURCE_PATH%/}/slackware"
+    if [ "$(get_platform ${ARCH})" = "intel" ]
+    then local repo_url="${SOURCE_PATH%/}/slackware-${SUITE}/slackware"
+    else local repo_url="${SOURCE_PATH%/}/slackwarearm-${SUITE}/slackware"
+    fi
     local cache_dir="${CHROOT_DIR}/tmp"
     local extra_packages="l/glibc l/glibc-i18n l/libtermcap l/ncurses ap/diffutils ap/groff ap/man ap/nano ap/slackpkg ap/sudo n/gnupg n/wget"
 
