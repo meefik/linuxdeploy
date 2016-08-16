@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="theme_entries">
+        <item>Tối</item>
+        <item>Sáng</item>
+    </string-array>
+    <string-array name="target_type_entries">
+        <item>Tệp tin</item>
+        <item>Thư mục</item>
+        <item>Phân vùng</item>
+        <item>RAM</item>
+    </string-array>
+    <string-array name="fs_type_entries">
+        <item>Tự động</item>
+        <item>ext2</item>
+        <item>ext3</item>
+        <item>ext4</item>
+    </string-array>
+    <string-array name="desktop_entries">
+        <item>XTerm</item>
+        <item>LXDE</item>
+        <item>Xfce</item>
+        <item>GNOME</item>
+        <item>KDE</item>
+        <item>Khác</item>
+    </string-array>
+    <string-array name="fb_freeze_entries">
+        <item>Không đóng băng</item>
+        <item>Tạm dừng</item>
+        <item>Dừng lại</item>
+    </string-array>
+    
+</resources>

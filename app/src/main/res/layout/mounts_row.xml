@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="10dp"
+    android:paddingRight="4dp"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp"
+    android:gravity="center_vertical">
+
+    <TextView
+        android:id="@+id/mount_point"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:paddingRight="4dp"
+        android:paddingLeft="4dp"
+        android:textAppearance="@android:style/TextAppearance.Medium" />
+
+    <Button
+        android:id="@+id/delete_mount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:focusable="false"
+        android:textSize="0sp"
+        android:minHeight="0dp"
+        android:minWidth="0dp"
+        android:drawableLeft="@android:drawable/ic_menu_delete"
+        style="@style/Widget.AppCompat.Button.Borderless" />
+
+</LinearLayout>

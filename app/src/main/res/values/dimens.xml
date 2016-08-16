@@ -1,0 +1,3 @@
+<resources>
+    <dimen name="logger_view_border">5dp</dimen>
+</resources>

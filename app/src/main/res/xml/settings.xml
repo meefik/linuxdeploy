@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory android:title="@string/app_preferences" >
+        <CheckBoxPreference
+            android:defaultValue="@string/screenlock"
+            android:key="screenlock"
+            android:summary="@string/summary_screenlock_preference"
+            android:title="@string/title_screenlock_preference" />
+        <CheckBoxPreference
+            android:defaultValue="@string/wifilock"
+            android:key="wifilock"
+            android:summary="@string/summary_wifilock_preference"
+            android:title="@string/title_wifilock_preference" />
+        <CheckBoxPreference
+            android:defaultValue="@string/wakelock"
+            android:key="wakelock"
+            android:summary="@string/summary_wakelock_preference"
+            android:title="@string/title_wakelock_preference" />
+
+        <ListPreference
+            android:defaultValue="@string/language"
+            android:dialogTitle="@string/dialog_title_language_preference"
+            android:entries="@array/language_entries"
+            android:entryValues="@array/language_values"
+            android:key="language"
+            android:summary="@string/language"
+            android:title="@string/title_language_preference" />
+
+        <EditTextPreference
+            android:defaultValue="@string/fontsize"
+            android:dialogTitle="@string/dialog_title_fontsize_preference"
+            android:inputType="numberDecimal"
+            android:key="fontsize"
+            android:summary="@string/fontsize"
+            android:title="@string/title_fontsize_preference" />
+        
+        <EditTextPreference
+            android:defaultValue="@string/maxlines"
+            android:dialogTitle="@string/dialog_title_maxlines_preference"
+            android:inputType="numberDecimal"
+            android:key="maxlines"
+            android:summary="@string/maxlines"
+            android:title="@string/title_maxlines_preference" />
+
+        <ListPreference
+            android:defaultValue="@string/theme"
+            android:dialogTitle="@string/dialog_title_theme_preference"
+            android:entries="@array/theme_entries"
+            android:entryValues="@array/theme_values"
+            android:key="theme"
+            android:summary="@string/theme"
+            android:title="@string/title_theme_preference" />
+
+        <CheckBoxPreference
+            android:defaultValue="@string/timestamp"
+            android:key="timestamp"
+            android:summary="@string/summary_timestamp_preference"
+            android:title="@string/title_timestamp_preference" />
+        <CheckBoxPreference
+            android:defaultValue="@string/appicon"
+            android:key="appicon"
+            android:summary="@string/summary_appicon_preference"
+            android:title="@string/title_appicon_preference" />
+        <CheckBoxPreference
+            android:defaultValue="@string/autostart"
+            android:key="autostart"
+            android:summary="@string/summary_autostart_preference"
+            android:title="@string/title_autostart_preference" />
+        <CheckBoxPreference
+            android:defaultValue="@string/nettrack"
+            android:key="nettrack"
+            android:summary="@string/summary_nettrack_preference"
+            android:title="@string/title_nettrack_preference" />
+        <EditTextPreference
+            android:defaultValue="@string/terminalcmd"
+            android:dialogTitle="@string/dialog_title_terminalcmd_preference"
+            android:key="terminalcmd"
+            android:summary="@string/terminalcmd"
+            android:title="@string/title_terminalcmd_preference" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/env_preferences" >
+        <EditTextPreference
+            android:defaultValue="@string/env_dir"
+            android:dialogTitle="@string/dialog_title_env_dir_preference"
+            android:key="env_dir"
+            android:summary="@string/env_dir"
+            android:title="@string/title_env_dir_preference" />
+        <EditTextPreference
+            android:defaultValue="@string/path"
+            android:dialogTitle="@string/dialog_title_path_preference"
+            android:key="path"
+            android:summary="@string/path"
+            android:title="@string/title_path_preference" />
+        <!--
+        <CheckBoxPreference
+            android:defaultValue="@string/is_sync"
+            android:key="is_sync"
+            android:summary="@string/summary_is_sync_preference"
+            android:title="@string/title_is_sync_preference" />
+
+        <EditTextPreference
+            android:dependency="is_sync"
+            android:defaultValue="@string/server_url"
+            android:dialogTitle="@string/dialog_title_server_url_preference"
+            android:key="server_url"
+            android:summary="@string/server_url"
+            android:title="@string/title_server_url_preference" />
+        -->
+        <CheckBoxPreference
+            android:defaultValue="@string/is_cli"
+            android:key="is_cli"
+            android:summary="@string/summary_is_cli_preference"
+            android:title="@string/title_is_cli_preference" />
+
+        <PreferenceScreen
+            android:key="installenv"
+            android:summary="@string/summary_installenv_preference"
+            android:title="@string/title_installenv_preference" />
+        <PreferenceScreen
+            android:key="removeenv"
+            android:summary="@string/summary_removeenv_preference"
+            android:title="@string/title_removeenv_preference" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/manage_preferences" >
+        <CheckBoxPreference
+            android:defaultValue="@string/is_telnet"
+            android:key="is_telnet"
+            android:summary="@string/summary_is_telnet_preference"
+            android:title="@string/title_is_telnet_preference" />
+        <EditTextPreference
+            android:dependency="is_telnet"
+            android:defaultValue="@string/telnet_port"
+            android:dialogTitle="@string/dialog_title_telnet_port_preference"
+            android:inputType="numberDecimal"
+            android:key="telnet_port"
+            android:summary="@string/telnet_port"
+            android:title="@string/title_telnet_port_preference" />
+        <CheckBoxPreference
+            android:dependency="is_telnet"
+            android:defaultValue="@string/telnet_localhost"
+            android:key="telnet_localhost"
+            android:summary="@string/summary_telnet_localhost_preference"
+            android:title="@string/title_telnet_localhost_preference" />
+        <CheckBoxPreference
+            android:defaultValue="@string/is_http"
+            android:key="is_http"
+            android:summary="@string/summary_is_http_preference"
+            android:title="@string/title_is_http_preference" />
+        <EditTextPreference
+            android:dependency="is_http"
+            android:defaultValue="@string/http_port"
+            android:dialogTitle="@string/dialog_title_http_port_preference"
+            android:inputType="numberDecimal"
+            android:key="http_port"
+            android:summary="@string/http_port"
+            android:title="@string/title_http_port_preference" />
+        <EditTextPreference
+            android:dependency="is_http"
+            android:defaultValue="@string/http_conf"
+            android:dialogTitle="@string/dialog_title_http_conf_preference"
+            android:key="http_conf"
+            android:summary="@string/http_conf"
+            android:title="@string/title_http_conf_preference" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/debug_preferences" >
+        <CheckBoxPreference
+            android:defaultValue="@string/debug_mode"
+            android:key="debug_mode"
+            android:summary="@string/summary_debug_mode_preference"
+            android:title="@string/title_debug_mode_preference" />
+        <CheckBoxPreference
+            android:defaultValue="@string/trace_mode"
+            android:key="trace_mode"
+            android:summary="@string/summary_trace_mode_preference"
+            android:title="@string/title_trace_mode_preference" />
+        <CheckBoxPreference
+            android:defaultValue="@string/logger"
+            android:key="logger"
+            android:summary="@string/summary_logger_preference"
+            android:title="@string/title_logger_preference" />
+
+        <EditTextPreference
+            android:defaultValue="@string/logfile"
+            android:dependency="logger"
+            android:dialogTitle="@string/dialog_title_logfile_preference"
+            android:key="logfile"
+            android:summary="@string/logfile"
+            android:title="@string/title_logfile_preference" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

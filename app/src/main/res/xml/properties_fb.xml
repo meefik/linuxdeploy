@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    
+    <PreferenceCategory android:title="@string/fb_preferences" >
+        <EditTextPreference
+            android:defaultValue="@string/fb_display"
+            android:dialogTitle="@string/dialog_title_fb_display_preference"
+            android:inputType="numberDecimal"
+            android:key="fb_display"
+            android:summary="@string/fb_display"
+            android:title="@string/title_fb_display_preference" />
+        <EditTextPreference
+            android:defaultValue="@string/fb_dev"
+            android:dialogTitle="@string/dialog_title_fb_dev_preference"
+            android:key="fb_dev"
+            android:summary="@string/fb_dev"
+            android:title="@string/title_fb_dev_preference" />
+        <EditTextPreference
+            android:defaultValue="@string/fb_input"
+            android:dialogTitle="@string/dialog_title_fb_input_preference"
+            android:key="fb_input"
+            android:summary="@string/fb_input"
+            android:title="@string/title_fb_input_preference" />
+        <EditTextPreference
+            android:defaultValue="@string/fb_args"
+            android:dialogTitle="@string/dialog_title_fb_args_preference"
+            android:key="fb_args"
+            android:summary="@string/fb_args"
+            android:title="@string/title_fb_args_preference" />
+
+        <CheckBoxPreference
+            android:defaultValue="@string/fb_refresh"
+            android:key="fb_refresh"
+            android:summary="@string/summary_fb_refresh_preference"
+            android:title="@string/title_fb_refresh_preference" />
+
+        <ListPreference
+            android:defaultValue="@string/fb_freeze"
+            android:dialogTitle="@string/dialog_title_fb_freeze_preference"
+            android:entries="@array/fb_freeze_entries"
+            android:entryValues="@array/fb_freeze_values"
+            android:key="fb_freeze"
+            android:summary="@string/fb_freeze"
+            android:title="@string/title_fb_freeze_preference" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

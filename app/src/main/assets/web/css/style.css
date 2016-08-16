@@ -1,0 +1,46 @@
+body {
+    background-color: #111;
+}
+.terminal {
+    position: fixed;
+    top: 5px;
+    bottom: 5px;
+    left: 5px;
+    right: 5px;
+    width: auto;
+    height: auto;
+    color: #fafafa;
+    background-color: #111;
+}
+.terminal .xterm-viewport {
+    background-color: #111;
+}
+.terminal:focus .terminal-cursor {
+    background-color: #fafafa;
+}
+
+/* Let's get this party started */
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+/* Track */
+
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+}
+
+/* Handle */
+
+::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    background: rgba(128, 128, 128, 0.8);
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+}
+::-webkit-scrollbar-thumb:window-inactive {
+    background: rgba(128, 128, 128, 0.4);
+}

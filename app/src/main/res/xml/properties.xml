@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory android:title="@string/bootstrap_preferences" >
+        <ListPreference
+            android:defaultValue="@string/method"
+            android:dialogTitle="@string/dialog_title_method_preference"
+            android:entries="@array/method_values"
+            android:entryValues="@array/method_values"
+            android:key="method"
+            android:summary="@string/method"
+            android:title="@string/title_method_preference" />
+
+        <ListPreference
+            android:defaultValue="@string/distrib"
+            android:dialogTitle="@string/dialog_title_distrib_preference"
+            android:entries="@array/distrib_entries"
+            android:entryValues="@array/distrib_values"
+            android:key="distrib"
+            android:summary="@string/distrib"
+            android:title="@string/title_distrib_preference" />
+
+        <ListPreference
+            android:defaultValue="@string/arch"
+            android:dialogTitle="@string/dialog_title_arch_preference"
+            android:entries="@array/debian_arch_values"
+            android:entryValues="@array/debian_arch_values"
+            android:key="arch"
+            android:summary="@string/arch"
+            android:title="@string/title_arch_preference" />
+
+        <ListPreference
+            android:defaultValue="@string/suite"
+            android:dialogTitle="@string/dialog_title_suite_preference"
+            android:entries="@array/debian_suite_values"
+            android:entryValues="@array/debian_suite_values"
+            android:key="suite"
+            android:summary="@string/suite"
+            android:title="@string/title_suite_preference" />
+
+        <EditTextPreference
+            android:defaultValue="@string/source_path"
+            android:dialogTitle="@string/dialog_title_source_path_preference"
+            android:key="source_path"
+            android:summary="@string/source_path"
+            android:title="@string/title_source_path_preference" />
+
+        <ListPreference
+            android:defaultValue="@string/target_type"
+            android:dialogTitle="@string/dialog_title_target_type_preference"
+            android:entries="@array/target_type_entries"
+            android:entryValues="@array/target_type_values"
+            android:key="target_type"
+            android:summary="@string/target_type"
+            android:title="@string/title_target_type_preference" />
+
+        <EditTextPreference
+            android:defaultValue="@string/target_path"
+            android:dialogTitle="@string/dialog_title_target_path_preference"
+            android:key="target_path"
+            android:summary="@string/target_path"
+            android:title="@string/title_target_path_preference" />
+
+        <EditTextPreference
+            android:defaultValue="@string/disk_size"
+            android:dialogTitle="@string/dialog_title_disk_size_preference"
+            android:inputType="numberDecimal"
+            android:key="disk_size"
+            android:summary="@string/disk_size"
+            android:title="@string/title_disk_size_preference" />
+
+        <ListPreference
+            android:defaultValue="@string/fs_type"
+            android:dialogTitle="@string/dialog_title_fs_type_preference"
+            android:entries="@array/fs_type_entries"
+            android:entryValues="@array/fs_type_values"
+            android:key="fs_type"
+            android:summary="@string/fs_type"
+            android:title="@string/title_fs_type_preference" />
+
+        <EditTextPreference
+            android:defaultValue="@string/user_name"
+            android:dialogTitle="@string/dialog_title_user_name_preference"
+            android:key="user_name"
+            android:summary="@string/user_name"
+            android:title="@string/title_user_name_preference" />
+
+        <EditTextPreference
+            android:defaultValue="@string/user_password"
+            android:dialogTitle="@string/dialog_title_user_password_preference"
+            android:maxLength="8"
+            android:key="user_password"
+            android:summary="@string/user_password"
+            android:title="@string/title_user_password_preference" />
+
+        <EditTextPreference
+            android:defaultValue="@string/privileged_users"
+            android:dialogTitle="@string/dialog_title_privileged_users_preference"
+            android:key="privileged_users"
+            android:summary="@string/privileged_users"
+            android:title="@string/title_privileged_users_preference" />
+
+        <EditTextPreference
+            android:defaultValue="@string/dns"
+            android:dialogTitle="@string/dialog_title_dns_preference"
+            android:key="dns"
+            android:summary="@string/dns"
+            android:title="@string/title_dns_preference" />
+
+        <ListPreference
+            android:defaultValue="@string/locale"
+            android:dialogTitle="@string/dialog_title_locale_preference"
+            android:entries="@array/locale_values"
+            android:entryValues="@array/locale_values"
+            android:key="locale"
+            android:summary="@string/locale"
+            android:title="@string/title_locale_preference" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/init_preferences" >
+
+        <CheckBoxPreference
+            android:defaultValue="@string/is_init"
+            android:key="is_init"
+            android:summary="@string/summary_is_init_preference"
+            android:title="@string/title_is_init_preference" />
+
+        <ListPreference
+            android:dependency="is_init"
+            android:defaultValue="@string/init"
+            android:dialogTitle="@string/dialog_title_init_preference"
+            android:entries="@array/init_values"
+            android:entryValues="@array/init_values"
+            android:key="init"
+            android:summary="@string/init"
+            android:title="@string/title_init_preference" />
+
+        <PreferenceScreen
+            android:dependency="is_init"
+            android:key="init_properties"
+            android:summary="@string/summary_init_properties_preference"
+            android:title="@string/title_init_properties_preference" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/mounts_preferences" >
+
+        <CheckBoxPreference
+            android:defaultValue="@string/is_mounts"
+            android:key="is_mounts"
+            android:summary="@string/summary_is_mounts_preference"
+            android:title="@string/title_is_mounts_preference" />
+
+        <PreferenceScreen
+            android:dependency="is_mounts"
+            android:key="mounts_editor"
+            android:summary="@string/summary_mounts_editor_preference"
+            android:title="@string/title_mounts_editor_preference" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/ssh_preferences" >
+
+        <CheckBoxPreference
+            android:defaultValue="@string/is_ssh"
+            android:key="is_ssh"
+            android:summary="@string/summary_is_ssh_preference"
+            android:title="@string/title_is_ssh_preference" />
+
+        <PreferenceScreen
+            android:dependency="is_ssh"
+            android:key="ssh_properties"
+            android:summary="@string/summary_ssh_properties_preference"
+            android:title="@string/title_ssh_properties_preference" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/gui_preferences" >
+
+        <CheckBoxPreference
+            android:defaultValue="@string/is_gui"
+            android:key="is_gui"
+            android:summary="@string/summary_is_gui_preference"
+            android:title="@string/title_is_gui_preference" />
+
+        <ListPreference
+            android:dependency="is_gui"
+            android:defaultValue="@string/graphics"
+            android:dialogTitle="@string/dialog_title_graphics_preference"
+            android:entries="@array/graphics_entries"
+            android:entryValues="@array/graphics_values"
+            android:key="graphics"
+            android:summary="@string/graphics"
+            android:title="@string/title_graphics_preference" />
+
+        <PreferenceScreen
+            android:dependency="is_gui"
+            android:key="gui_properties"
+            android:summary="@string/summary_gui_properties_preference"
+            android:title="@string/title_gui_properties_preference" />
+
+        <ListPreference
+            android:dependency="is_gui"
+            android:defaultValue="@string/desktop"
+            android:dialogTitle="@string/dialog_title_desktop_preference"
+            android:entries="@array/desktop_entries"
+            android:entryValues="@array/desktop_values"
+            android:key="desktop"
+            android:summary="@string/desktop"
+            android:title="@string/title_desktop_preference" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

@@ -1,0 +1,19 @@
+#!/data/data/ru.meefik.linuxdeploy/bin/sh
+
+echo "Content-type: text/html"
+echo ""
+
+for param in ${QUERY_STRING//&/ }
+do
+    key="${param%=*}"
+    value="${param#*=}"
+    eval ${key//[^a-zA-Z0-9_]/}=\"$value\"
+done
+
+if [ "$dev" -a "$cols" -a "$rows" ]
+then
+    stty -F $dev rows $rows columns $cols
+fi
+
+echo ""
+echo ""
