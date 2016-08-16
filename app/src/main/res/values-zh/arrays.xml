@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="theme_entries">
+        <item>暗色</item>
+        <item>亮色</item>
+    </string-array>
+    <string-array name="target_type_entries">
+        <item>文件</item>
+        <item>目錄的</item>
+        <item>分区</item>
+        <item>RAM</item>
+    </string-array>
+    <string-array name="fs_type_entries">
+        <item>自动</item>
+        <item>ext2</item>
+        <item>ext3</item>
+        <item>ext4</item>
+    </string-array>
+    <string-array name="desktop_entries">
+        <item>XTerm</item>
+        <item>LXDE</item>
+        <item>Xfce</item>
+        <item>GNOME</item>
+        <item>KDE</item>
+        <item>其它</item>
+    </string-array>
+    <string-array name="fb_freeze_entries">
+        <item>不冻结</item>
+        <item>暂停</item>
+        <item>停止</item>
+    </string-array>
+
+</resources>

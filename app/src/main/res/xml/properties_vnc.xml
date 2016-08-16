@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory android:title="@string/vnc_preferences" >
+        <EditTextPreference
+            android:defaultValue="@string/vnc_display"
+            android:dialogTitle="@string/dialog_title_vnc_display_preference"
+            android:inputType="numberDecimal"
+            android:key="vnc_display"
+            android:summary="@string/vnc_display"
+            android:title="@string/title_vnc_display_preference" />
+
+        <ListPreference
+            android:defaultValue="@string/vnc_depth"
+            android:dialogTitle="@string/dialog_title_vnc_depth_preference"
+            android:entries="@array/vnc_depth_values"
+            android:entryValues="@array/vnc_depth_values"
+            android:inputType="numberDecimal"
+            android:key="vnc_depth"
+            android:summary="@string/vnc_depth"
+            android:title="@string/title_vnc_depth_preference" />
+
+        <EditTextPreference
+            android:defaultValue="@string/vnc_dpi"
+            android:dialogTitle="@string/dialog_title_vnc_dpi_preference"
+            android:inputType="numberDecimal"
+            android:key="vnc_dpi"
+            android:summary="@string/vnc_dpi"
+            android:title="@string/title_vnc_dpi_preference" />
+        <EditTextPreference
+            android:defaultValue="@string/vnc_width"
+            android:dialogTitle="@string/dialog_title_vnc_width_preference"
+            android:inputType="numberDecimal"
+            android:key="vnc_width"
+            android:summary="@string/vnc_width"
+            android:title="@string/title_vnc_width_preference" />
+        <EditTextPreference
+            android:defaultValue="@string/vnc_height"
+            android:dialogTitle="@string/dialog_title_vnc_height_preference"
+            android:inputType="numberDecimal"
+            android:key="vnc_height"
+            android:summary="@string/vnc_height"
+            android:title="@string/title_vnc_height_preference" />
+        <EditTextPreference
+            android:defaultValue="@string/vnc_args"
+            android:dialogTitle="@string/dialog_title_vnc_args_preference"
+            android:key="vnc_args"
+            android:summary="@string/vnc_args"
+            android:title="@string/title_vnc_args_preference" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

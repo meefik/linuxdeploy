@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory android:title="@string/init_preferences" >
+        <EditTextPreference
+            android:defaultValue="@string/init_path"
+            android:dialogTitle="@string/dialog_title_init_path_preference"
+            android:key="init_path"
+            android:summary="@string/init_path"
+            android:title="@string/title_init_path_preference" />
+        <EditTextPreference
+            android:defaultValue="@string/init_user"
+            android:dialogTitle="@string/dialog_title_init_user_preference"
+            android:key="init_user"
+            android:summary="@string/init_user"
+            android:title="@string/title_init_user_preference" />
+        <CheckBoxPreference
+            android:defaultValue="@string/init_async"
+            android:key="init_async"
+            android:summary="@string/summary_init_async_preference"
+            android:title="@string/title_init_async_preference" />
+    </PreferenceCategory>
+
+</PreferenceScreen>
