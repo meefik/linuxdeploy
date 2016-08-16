@@ -1,0 +1,173 @@
+<resources>
+
+    <string name="screenlock" translatable="false">true</string>
+    <string name="wifilock" translatable="false">false</string>
+    <string name="wakelock" translatable="false">false</string>
+    <string name="fontsize" translatable="false">10</string>
+    <string name="maxlines" translatable="false">100</string>
+    <string name="language" translatable="false"></string>
+    <string name="theme" translatable="false">dark</string>
+    <string name="timestamp" translatable="false">true</string>
+    <string name="appicon" translatable="false">true</string>
+    <string name="stealth" translatable="false">false</string>
+    <string name="autostart" translatable="false">false</string>
+    <string name="nettrack" translatable="false">false</string>
+    <string name="terminalcmd" translatable="false">telnet 127.0.0.1 5023</string>
+    <string name="env_dir" translatable="false"></string>
+    <string name="repository_url" translatable="false">http://s3.amazonaws.com/meefik/</string>
+    <string name="path" translatable="false"></string>
+    <!--<string name="is_sync" translatable="false">false</string>-->
+    <string name="is_cli" translatable="false">false</string>
+    <string name="is_telnet" translatable="false">false</string>
+    <string name="telnet_port" translatable="false">5023</string>
+    <string name="telnet_localhost" translatable="false">true</string>
+    <string name="is_http" translatable="false">false</string>
+    <string name="http_port" translatable="false">5080</string>
+    <string name="http_conf" translatable="false"></string>
+    <string name="profile" translatable="false">linux</string>
+    <string name="debug_mode" translatable="false">false</string>
+    <string name="trace_mode" translatable="false">false</string>
+    <string name="logger" translatable="false">false</string>
+    <string name="logfile" translatable="false">output.log</string>
+    <string name="chroot_dir" translatable="false">/data/local/mnt</string>
+    <string name="method" translatable="false">chroot</string>
+    <string name="distrib" translatable="false">debian</string>
+    <string name="suite" translatable="false">@string/debian_suite</string>
+    <string name="arch" translatable="false">@string/arm_debian_arch</string>
+    <string name="source_path" translatable="false">@string/arm_debian_source_path</string>
+    <string name="target_type" translatable="false">file</string>
+    <string name="target_path" translatable="false">@string/target_path_file</string>
+    <string name="target_path_file" translatable="false">${EXTERNAL_STORAGE}/linux.img</string>
+    <string name="target_path_directory" translatable="false">${ENV_DIR}/rootfs/linux</string>
+    <string name="target_path_partition" translatable="false">/dev/block/mmcblkXpY</string>
+    <string name="target_path_ram" translatable="false">/data/local/ram</string>
+    <string name="rootfs_archive" translatable="false">${EXTERNAL_STORAGE}/linux-rootfs.tar.gz</string>
+    <string name="disk_size" translatable="false">0</string>
+    <string name="fs_type" translatable="false">auto</string>
+    <string name="user_name" translatable="false">android</string>
+    <string name="user_password" translatable="false"></string>
+    <string name="privileged_users" translatable="false">root</string>
+    <string name="dns" translatable="false"></string>
+    <string name="locale" translatable="false">POSIX</string>
+    <string name="is_init" translatable="false">false</string>
+    <string name="init" translatable="false">run-parts</string>
+    <string name="init_path" translatable="false">/etc/rc.local</string>
+    <string name="init_level" translatable="false">3</string>
+    <string name="init_user" translatable="false">root</string>
+    <string name="init_async" translatable="false">true</string>
+    <string name="is_mounts" translatable="false">false</string>
+    <string name="mounts" translatable="false">/system /sdcard:/mnt/sdcard</string>
+    <string name="is_ssh" translatable="false">false</string>
+    <string name="ssh_port" translatable="false">22</string>
+    <string name="ssh_options" translatable="false"></string>
+    <string name="is_gui" translatable="false">false</string>
+    <string name="graphics" translatable="false">vnc</string>
+    <string name="desktop" translatable="false">lxde</string>
+    <string name="vnc_display" translatable="false">0</string>
+    <string name="vnc_depth" translatable="false">16</string>
+    <string name="vnc_dpi" translatable="false">75</string>
+    <string name="vnc_width" translatable="false"></string>
+    <string name="vnc_height" translatable="false"></string>
+    <string name="vnc_args" translatable="false"></string>
+    <string name="x11_display" translatable="false">0</string>
+    <string name="x11_host" translatable="false">127.0.0.1</string>
+    <string name="x11_sdl" translatable="false">false</string>
+    <string name="x11_sdl_delay" translatable="false">15</string>
+    <string name="fb_display" translatable="false">0</string>
+    <string name="fb_dev" translatable="false">/dev/graphics/fb0</string>
+    <string name="fb_input" translatable="false">/dev/input/event0</string>
+    <string name="fb_args" translatable="false">-dpi 100 -sharevts vt0</string>
+    <string name="fb_refresh" translatable="false">true</string>
+    <string name="fb_freeze" translatable="false">none</string>
+
+    <!-- Debian -->
+    <string name="debian_suite" translatable="false">jessie</string>
+    <!-- arm -->
+    <string name="arm_debian_source_path" translatable="false">http://ftp.debian.org/debian/</string>
+    <string name="arm_debian_arch" translatable="false">armhf</string>
+    <!-- intel -->
+    <string name="intel_debian_source_path" translatable="false">http://ftp.debian.org/debian/</string>
+    <string name="intel_debian_arch" translatable="false">i386</string>
+
+    <!-- Ubuntu -->
+    <string name="ubuntu_suite" translatable="false">trusty</string>
+    <!-- arm -->
+    <string name="arm_ubuntu_source_path" translatable="false">http://ports.ubuntu.com/</string>
+    <string name="arm_ubuntu_arch" translatable="false">armhf</string>
+    <!-- intel -->
+    <string name="intel_ubuntu_source_path" translatable="false">http://archive.ubuntu.com/ubuntu/</string>
+    <string name="intel_ubuntu_arch" translatable="false">i386</string>
+        
+    <!-- Kali Linux -->
+    <string name="kalilinux_suite" translatable="false">sana</string>
+    <!-- arm -->
+    <string name="arm_kalilinux_source_path" translatable="false">http://http.kali.org/kali/</string>
+    <string name="arm_kalilinux_arch" translatable="false">armhf</string>
+    <!-- intel -->
+    <string name="intel_kalilinux_source_path" translatable="false">http://http.kali.org/kali/</string>
+    <string name="intel_kalilinux_arch" translatable="false">i386</string>
+
+    <!-- Fedora -->
+    <string name="fedora_suite" translatable="false">21</string>
+    <!-- arm -->
+    <string name="arm_fedora_source_path" translatable="false">http://dl.fedoraproject.org/pub/</string>
+    <string name="arm_fedora_arch" translatable="false">armhfp</string>
+    <!-- intel -->
+    <string name="intel_fedora_source_path" translatable="false">http://dl.fedoraproject.org/pub/</string>
+    <string name="intel_fedora_arch" translatable="false">i386</string>
+
+    <!-- CentOS -->
+    <string name="centos_suite" translatable="false">7</string>
+    <!-- arm -->
+    <string name="arm_centos_source_path" translatable="false">http://mirror.centos.org/altarch/</string>
+    <string name="arm_centos_arch" translatable="false">armhfp</string>
+    <!-- intel -->
+    <string name="intel_centos_source_path" translatable="false">http://mirror.centos.org/altarch/</string>
+    <string name="intel_centos_arch" translatable="false">i386</string>
+    
+    <!-- Arch Linux -->
+    <string name="archlinux_suite" translatable="false">latest</string>
+    <!-- arm -->
+    <string name="arm_archlinux_source_path" translatable="false">http://mirror.archlinuxarm.org/</string>
+    <string name="arm_archlinux_arch" translatable="false">armv7h</string>
+    <!-- intel -->
+    <string name="intel_archlinux_source_path" translatable="false">http://mirrors.kernel.org/archlinux/</string>
+    <string name="intel_archlinux_arch" translatable="false">i686</string>
+
+    <!-- openSUSE -->
+    <string name="opensuse_suite" translatable="false">13.2</string>
+    <!-- arm -->
+    <string name="arm_opensuse_source_path" translatable="false">http://download.opensuse.org/ports/</string>
+    <string name="arm_opensuse_arch" translatable="false">armv7hl</string>
+    <!-- intel -->
+    <string name="intel_opensuse_source_path" translatable="false">http://download.opensuse.org/</string>
+    <string name="intel_opensuse_arch" translatable="false">i586</string>
+
+    <!-- Gentoo -->
+    <string name="gentoo_suite" translatable="false">latest</string>
+    <!-- arm -->
+    <string name="arm_gentoo_source_path" translatable="false">http://mirror.yandex.ru/gentoo-distfiles/releases/arm/</string>
+    <string name="arm_gentoo_arch" translatable="false">armv7a_hardfp</string>
+    <!-- intel -->
+    <string name="intel_gentoo_source_path" translatable="false">http://mirror.yandex.ru/gentoo-distfiles/releases/x86/</string>
+    <string name="intel_gentoo_arch" translatable="false">i686</string>
+    
+    <!-- Slackware -->
+    <string name="slackware_suite" translatable="false">14.2</string>
+    <!-- arm -->
+    <string name="arm_slackware_source_path" translatable="false">http://ftp.arm.slackware.com/slackwarearm/</string>
+    <string name="arm_slackware_arch" translatable="false">arm</string>
+    <!-- intel -->
+    <string name="intel_slackware_source_path" translatable="false">http://mirrors.slackware.com/slackware/</string>
+    <string name="intel_slackware_arch" translatable="false">x86</string>
+    
+    <!-- RootFS -->
+    <string name="rootfs_suite" translatable="false" />
+    <!-- arm -->
+    <string name="arm_rootfs_source_path" translatable="false" />
+    <string name="arm_rootfs_arch" translatable="false" />
+    <!-- intel -->
+    <string name="intel_rootfs_source_path" translatable="false" />
+    <string name="intel_rootfs_arch" translatable="false" />
+   
+</resources>

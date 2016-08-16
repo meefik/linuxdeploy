@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="theme_entries">
+        <item>Tmavá</item>
+        <item>Svetlá</item>
+    </string-array>
+    <string-array name="target_type_entries">
+        <item>Do súboru</item>
+        <item>Adresár</item>
+        <item>Na oddiel</item>
+        <item>Do pamäte RAM</item>
+    </string-array>
+    <string-array name="fs_type_entries">
+        <item>Automatický</item>
+        <item>ext2</item>
+        <item>ext3</item>
+        <item>ext4</item>
+    </string-array>
+    <string-array name="desktop_entries">
+        <item>XTerm</item>
+        <item>LXDE</item>
+        <item>Xfce</item>
+        <item>GNOME</item>
+        <item>KDE</item>
+        <item>Iné</item>
+    </string-array>
+    <string-array name="fb_freeze_entries">
+        <item>Nezmraziť</item>
+        <item>Pozastaviť</item>
+        <item>Zastaviť</item>
+    </string-array>
+
+</resources>

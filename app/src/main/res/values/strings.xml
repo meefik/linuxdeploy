@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name" translatable="false">Linux Deploy</string>
+    <string name="app_version">version %1$s</string>
+    <string name="menu_start">START</string>
+    <string name="menu_stop">STOP</string>
+    <string name="menu_properties">Properties</string>
+    <string name="nav_profiles">Profiles</string>
+    <string name="nav_repository">Repository</string>
+    <string name="nav_terminal">Terminal</string>
+    <string name="nav_settings">Settings</string>
+    <string name="nav_about">About</string>
+    <string name="nav_exit">Exit</string>
+    <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
+    <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
+    <string name="menu_install">Install</string>
+    <string name="menu_configure">Configure</string>
+    <string name="menu_export">Export</string>
+    <string name="menu_status">Status</string>
+    <string name="menu_clear">Clear</string>
+    <string name="menu_add">New</string>
+    <string name="menu_edit">Edit</string>
+    <string name="menu_delete">Delete</string>
+    <string name="menu_change_url">Change URL</string>
+    <string name="menu_refresh">Refresh</string>
+    <string name="loading_message">Loading data...</string>
+    <string name="notification_current_profile">Current profile</string>
+    <string name="title_activity_main" translatable="false">Linux Deploy</string>
+    <string name="title_activity_about">About</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="title_activity_properties">Properties</string>
+    <string name="title_activity_profiles">Profiles</string>
+    <string name="title_activity_mounts">Mounts</string>
+    <string name="title_activity_repository">Repository</string>
+    <string name="confirm_start_title">Start</string>
+    <string name="confirm_stop_title">Stop</string>
+    <string name="confirm_start_message">Mount the container and start services?</string>
+    <string name="confirm_stop_message">Stop services and unmount the container?</string>
+    <string name="new_profile_title">Profile name</string>
+    <string name="edit_profile_title">Profile name</string>
+    <string name="import_profile_title">Import profile</string>
+    <string name="export_profile_title">Export profile</string>
+    <string name="toast_import_profile_success">Profile has been successfully imported.</string>
+    <string name="toast_import_profile_error">Error importing profile!</string>
+    <string name="toast_export_profile_success">Profile has been successfully exported.</string>
+    <string name="toast_export_profile_error">Error exporting profile!</string>
+    <string name="toast_terminal_error">Error when starting the terminal!</string>
+    <string name="toast_loading_error">Error loading data!</string>
+    <string name="confirm_profile_discard_title">Remove profile</string>
+    <string name="confirm_profile_discard_message">Remove selected profile?</string>
+    <string name="new_mount_title">Mount point</string>
+    <string name="edit_mount_title">Mount point</string>
+    <string name="confirm_mount_discard_title">Remove point</string>
+    <string name="confirm_mount_discard_message">Remove selected mount point from the list?</string>
+    <string name="repository_import_message">%1$s\n\nSize: %2$s MB</string>
+    <string name="repository_import_button">Import</string>
+    <string name="repository_change_url_title">Repository URL</string>
+    <string name="repository_default_description">No description.</string>
+
+    <string name="app_preferences">Application</string>
+    <string name="title_screenlock_preference">Lock screen</string>
+    <string name="summary_screenlock_preference">Keep screen active while the application is running</string>
+    <string name="title_wifilock_preference">Lock Wi-Fi</string>
+    <string name="summary_wifilock_preference">Keep Wi-Fi active while the application is running</string>
+    <string name="title_wakelock_preference">Wake lock</string>
+    <string name="summary_wakelock_preference">Keep CPU running to do work while the screen is off</string>
+    <string name="title_language_preference">Language</string>
+    <string name="dialog_title_language_preference">Choose language</string>
+    <string name="title_fontsize_preference">Font size</string>
+    <string name="dialog_title_fontsize_preference">Font size</string>
+    <string name="title_maxlines_preference">Scroll size</string>
+    <string name="dialog_title_maxlines_preference">Scroll size</string>
+    <string name="title_theme_preference">Theme</string>
+    <string name="dialog_title_theme_preference">Choose theme</string>
+    <string name="title_timestamp_preference">Timestamp</string>
+    <string name="summary_timestamp_preference">Show timestamp</string>
+    <string name="title_appicon_preference">Show icon</string>
+    <string name="summary_appicon_preference">Display icon in notification bar</string>
+    <string name="title_stealth_preference">Stealth mode</string>
+    <string name="summary_stealth_preference">Hide application icon from launcher</string>
+    <string name="title_autostart_preference">Autostart</string>
+    <string name="summary_autostart_preference">Automatically run the container when starting Android</string>
+    <string name="title_nettrack_preference">Network trigger</string>
+    <string name="summary_nettrack_preference">Track changes of the network and update the container</string>
+    <string name="title_terminalcmd_preference">Terminal command</string>
+    <string name="dialog_title_terminalcmd_preference">Terminal command</string>
+
+    <string name="env_preferences">Environment</string>
+
+    <!-- ENV_DIR -->
+    <string name="title_env_dir_preference">ENV directory</string>
+    <string name="dialog_title_env_dir_preference">ENV directory</string>
+    <!-- PATH -->
+    <string name="title_path_preference">PATH variable</string>
+    <string name="dialog_title_path_preference">PATH variable</string>
+
+    <string name="title_is_sync_preference">Synchronize</string>
+    <string name="summary_is_sync_preference">Synchronize ENV with server</string>
+    <!-- SERVER_URL -->
+    <string name="title_server_url_preference">Server URL</string>
+    <string name="dialog_title_server_url_preference">Server URL</string>
+
+    <string name="title_is_cli_preference">Enable CLI</string>
+    <string name="summary_is_cli_preference">Set up a command line interface</string>
+
+    <string name="title_installenv_preference">Update ENV</string>
+    <string name="summary_installenv_preference">Update the operating environment</string>
+    <string name="message_installenv_confirm_dialog">Update the operating environment?</string>
+
+    <string name="title_removeenv_preference">Remove ENV</string>
+    <string name="summary_removeenv_preference">Remove the operating environment</string>
+    <string name="message_removeenv_confirm_dialog">Remove the operating environment?</string>
+
+    <string name="manage_preferences">Management</string>
+    <!-- TELNET -->
+    <string name="title_is_telnet_preference">TELNET</string>
+    <string name="summary_is_telnet_preference">Enable telnetd daemon</string>
+    <string name="title_telnet_port_preference">Port</string>
+    <string name="dialog_title_telnet_port_preference">TELNET port</string>
+    <string name="title_telnet_localhost_preference">Localhost</string>
+    <string name="summary_telnet_localhost_preference">Allow connections only from localhost</string>
+    <!-- HTTP -->
+    <string name="title_is_http_preference">HTTP</string>
+    <string name="summary_is_http_preference">Enable httpd daemon</string>
+    <string name="title_http_port_preference">Port</string>
+    <string name="dialog_title_http_port_preference">HTTP port</string>
+    <string name="title_http_conf_preference">Access restriction</string>
+    <string name="dialog_title_http_conf_preference">Access restriction</string>
+    <string name="debug_preferences">Debug</string>
+    <string name="title_debug_mode_preference">Debug mode</string>
+    <string name="summary_debug_mode_preference">Show debugging information</string>
+    <string name="title_trace_mode_preference">Trace mode</string>
+    <string name="summary_trace_mode_preference">Enable tracing mode</string>
+    <string name="title_logger_preference">Logging</string>
+    <string name="summary_logger_preference">Save logs to a file</string>
+    <string name="title_logfile_preference">Log file</string>
+    <string name="dialog_title_logfile_preference">Log file</string>
+    <string name="title_install_dialog">Install</string>
+    <string name="message_install_dialog">Start installation of GNU/Linux distribution?</string>
+    <string name="title_configure_dialog">Configure</string>
+    <string name="message_configure_dialog">Start configuration of the container?</string>
+    <string name="title_export_dialog">Export</string>
+
+    <string name="bootstrap_preferences">BOOTSTRAP</string>
+    <!-- METHOD -->
+    <string name="title_method_preference">Containerization method</string>
+    <string name="dialog_title_method_preference">Containerization method</string>
+    <!-- DISTRIB -->
+    <string name="title_distrib_preference">Distribution</string>
+    <string name="dialog_title_distrib_preference">Distribution</string>
+    <!-- ARCH -->
+    <string name="title_arch_preference">Architecture</string>
+    <string name="dialog_title_arch_preference">Architecture</string>
+    <!-- SUITE -->
+    <string name="title_suite_preference">Distribution suite</string>
+    <string name="dialog_title_suite_preference">Distribution suite</string>
+    <!-- SOURCE_PATH -->
+    <string name="title_source_path_preference">Source path</string>
+    <string name="dialog_title_source_path_preference">Source path</string>
+    <!-- TARGET_TYPE -->
+    <string name="title_target_type_preference">Installation type</string>
+    <string name="dialog_title_target_type_preference">Installation type</string>
+    <!-- TARGET_PATH -->
+    <string name="title_target_path_preference">Installation path</string>
+    <string name="dialog_title_target_path_preference">Installation path</string>
+    <!-- DISK_SIZE -->
+    <string name="title_disk_size_preference">Image size (MB)</string>
+    <string name="dialog_title_disk_size_preference">Disk image size (MB)</string>
+    <string name="summary_disk_size_preference">Automatic calculation</string>
+    <!-- FS_TYPE -->
+    <string name="title_fs_type_preference">File system</string>
+    <string name="dialog_title_fs_type_preference">File system</string>
+    <!-- USER_NAME -->
+    <string name="title_user_name_preference">User name</string>
+    <string name="dialog_title_user_name_preference">User name</string>
+    <!-- USER_PASSWORD -->
+    <string name="title_user_password_preference">User password</string>
+    <string name="dialog_title_user_password_preference">User password</string>
+    <!-- PRIVILEGED_USERS -->
+    <string name="title_privileged_users_preference">Privileged users</string>
+    <string name="dialog_title_privileged_users_preference">Privileged users</string>
+    <!-- DNS -->
+    <string name="title_dns_preference">DNS</string>
+    <string name="dialog_title_dns_preference">Address of DNS server</string>
+    <string name="summary_dns_preference">Automatic detection</string>
+    <!-- LOCALE -->
+    <string name="title_locale_preference">Localization</string>
+    <string name="dialog_title_locale_preference">Localization</string>
+
+    <!--<string name="title_root_preference">Superuser privileges</string>-->
+    <!--<string name="summary_root_preference">Grant root privileges to the container</string>-->
+    <!--<string name="dialog_title_components_preference">Components</string>-->
+    <!--<string name="summary_components_preference">Select the required components</string>-->
+    <!--<string name="title_components_preference">Select components</string>-->
+
+    <string name="init_preferences">INIT</string>
+
+    <!-- INIT -->
+    <string name="title_is_init_preference">Enable</string>
+    <string name="summary_is_init_preference">Allow to use a initialization system</string>
+    <string name="title_init_preference">Init system</string>
+    <string name="dialog_title_init_preference">Init system</string>
+    <string name="title_init_properties_preference">Init settings</string>
+    <string name="summary_init_properties_preference">Change settings for the initialization system</string>
+
+    <!-- INIT_PATH -->
+    <string name="title_init_path_preference">Init path</string>
+    <string name="dialog_title_init_path_preference">INIT: file or directory</string>
+    <!-- INIT_LEVEL -->
+    <string name="title_init_level_preference">Init level</string>
+    <string name="dialog_title_init_level_preference">INIT: level</string>
+    <!-- INIT_USER -->
+    <string name="title_init_user_preference">Init user</string>
+    <string name="dialog_title_init_user_preference">INIT: user</string>
+    <!-- INIT_ASYNC -->
+    <string name="title_init_async_preference">Async</string>
+    <string name="summary_init_async_preference">Run the processes asynchronously</string>
+
+    <string name="mounts_preferences">MOUNTS</string>
+
+    <!-- MOUNTS -->
+    <string name="title_is_mounts_preference">Enable</string>
+    <string name="summary_is_mounts_preference">Allow to mount the Android resources</string>
+    <string name="title_mounts_editor_preference">Mount points</string>
+    <string name="summary_mounts_editor_preference">Edit the mount points list</string>
+
+    <string name="ssh_preferences">SSH</string>
+
+    <string name="title_is_ssh_preference">Enable</string>
+    <string name="summary_is_ssh_preference">Allow to use a SSH server</string>
+
+    <string name="title_ssh_properties_preference">SSH settings</string>
+    <string name="summary_ssh_properties_preference">Change settings for SSH server</string>
+
+    <!-- SSH_PORT -->
+    <string name="title_ssh_port_preference">Port</string>
+    <string name="dialog_title_ssh_port_preference">SSH: port</string>
+    <!-- SSH_OPTIONS -->
+    <string name="title_ssh_options_preference">SSH options</string>
+    <string name="dialog_title_ssh_options_preference">SSH: sshd options</string>
+
+    <string name="gui_preferences">GUI</string>
+
+    <string name="title_is_gui_preference">Enable</string>
+    <string name="summary_is_gui_preference">Allow to use a graphical environment</string>
+
+    <string name="title_graphics_preference">Graphics subsystem</string>
+    <string name="dialog_title_graphics_preference">Graphics subsystem</string>
+
+    <string name="title_gui_properties_preference">GUI settings</string>
+    <string name="summary_gui_properties_preference">Change settings for the graphics subsystem</string>
+    <!-- DESKTOP -->
+    <string name="title_desktop_preference">Desktop environment</string>
+    <string name="dialog_title_desktop_preference">Desktop environment</string>
+
+    <string name="vnc_preferences">VNC</string>
+
+    <string name="title_vnc_display_preference">Display</string>
+    <string name="dialog_title_vnc_display_preference">VNC: display number</string>
+    <!-- VNC_DEPTH -->
+    <string name="title_vnc_depth_preference">Depth (bits)</string>
+    <string name="dialog_title_vnc_depth_preference">VNC: depth (bits)</string>
+    <!-- VNC_DPI -->
+    <string name="title_vnc_dpi_preference">DPI</string>
+    <string name="dialog_title_vnc_dpi_preference">VNC: dots per inch (DPI)</string>
+    <!-- VNC_WIDTH -->
+    <string name="title_vnc_width_preference">Width</string>
+    <string name="dialog_title_vnc_width_preference">VNC: screen width</string>
+    <!-- VNC_HEIGHT -->
+    <string name="title_vnc_height_preference">Height</string>
+    <string name="dialog_title_vnc_height_preference">VNC: screen height</string>
+    <!-- VNC_ARGS -->
+    <string name="title_vnc_args_preference">VNC options</string>
+    <string name="dialog_title_vnc_args_preference">VNC: vncserver options</string>
+
+    <string name="x11_preferences">X11</string>
+    <!-- X11_DISPLAY -->
+    <string name="title_x11_display_preference">Display</string>
+    <string name="dialog_title_x11_display_preference">X11: display number</string>
+    <!-- X11_HOST -->
+    <string name="title_x11_host_preference">X server address</string>
+    <string name="dialog_title_x11_host_preference">X11: IP or host name</string>
+    <!-- X11_SDL -->
+    <string name="title_x11_sdl_preference">XServer XSDL</string>
+    <string name="summary_x11_sdl_preference">Automatically open XServer XSDL</string>
+    <!-- X11_SDL_DELAY -->
+    <string name="title_x11_sdl_delay_preference">Start delay</string>
+    <string name="dialog_title_x11_sdl_delay_preference">X11: delay in seconds</string>
+
+    <string name="fb_preferences">Framebuffer</string>
+    <!-- FB_DISPLAY -->
+    <string name="title_fb_display_preference">Display</string>
+    <string name="dialog_title_fb_display_preference">FB: display number</string>
+    <!-- FB_DPI -->
+    <string name="title_fb_dpi_preference">DPI</string>
+    <string name="dialog_title_fb_dpi_preference">FB: dots per inch (DPI)</string>
+    <!-- FB_DEV -->
+    <string name="title_fb_dev_preference">Video device</string>
+    <string name="dialog_title_fb_dev_preference">FB: video device path</string>
+    <!-- FB_INPUT -->
+    <string name="title_fb_input_preference">Input device</string>
+    <string name="dialog_title_fb_input_preference">FB: input device path</string>
+    <!-- FB_ARGS -->
+    <string name="title_fb_args_preference">X options</string>
+    <string name="dialog_title_fb_args_preference">FB: X options</string>
+    <!-- FB_FREEZE -->
+    <string name="title_fb_freeze_preference">Freeze Android UI</string>
+    <string name="dialog_title_fb_freeze_preference">Freeze Android UI</string>
+    <!-- FB_REFRESH -->
+    <string name="title_fb_refresh_preference">Force refresh</string>
+    <string name="summary_fb_refresh_preference">Force refresh framebuffer</string>
+
+    <string name="help_text">\n<b>Help</b>\n\nThis application installs the selected GNU/Linux distribution and executes it in a chroot-container.\n\nProcedure:\n1. Get superuser privileges (root).\n2. Check the connection to Internet.\n3. Specify the installation options.\n4. Start the installation (\"Menu => Install\").\n5. Wait until the installation is complete.\n6. Tap \"START\" button to run the container.\n7. Connect to the container through CLI, SSH, VNC, or others.\n\nFor more information, see \"About\".</string>
+    <string name="about_text">This application installs the selected GNU/Linux distribution and executes it in a chroot-container.\n\nFor more information see <a href="https://github.com/meefik/linuxdeploy">project page</a>, <a href="http://4pda.ru/forum/index.php?showtopic=378043">forum</a> or <a href="http://meefik.ru">developer site</a>.\n\n&#169; 2012&#8211;2016 Anton Skshidlevsky, GPLv3</string>
+
+</resources>

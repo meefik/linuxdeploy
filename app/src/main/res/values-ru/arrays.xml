@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="theme_entries">
+        <item>Темная</item>
+        <item>Светлая</item>
+    </string-array>
+    <string-array name="target_type_entries">
+        <item>Файл</item>
+        <item>Директория</item>
+        <item>Раздел</item>
+        <item>Оперативная память</item>
+    </string-array>
+    <string-array name="fs_type_entries">
+        <item>Автоопределение</item>
+        <item>ext2</item>
+        <item>ext3</item>
+        <item>ext4</item>
+    </string-array>
+    <string-array name="desktop_entries">
+        <item>XTerm</item>
+        <item>LXDE</item>
+        <item>Xfce</item>
+        <item>GNOME</item>
+        <item>KDE</item>
+        <item>Другое</item>
+    </string-array>
+    <string-array name="fb_freeze_entries">
+        <item>Не замораживать</item>
+        <item>Приостановить</item>
+        <item>Остановить</item>
+    </string-array>
+
+</resources>

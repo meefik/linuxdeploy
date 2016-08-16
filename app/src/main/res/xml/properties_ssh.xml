@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory android:title="@string/ssh_preferences" >
+        <EditTextPreference
+            android:defaultValue="@string/ssh_port"
+            android:dialogTitle="@string/dialog_title_ssh_port_preference"
+            android:inputType="numberDecimal"
+            android:key="ssh_port"
+            android:summary="@string/ssh_port"
+            android:title="@string/title_ssh_port_preference" />
+        <EditTextPreference
+            android:defaultValue="@string/ssh_options"
+            android:dialogTitle="@string/dialog_title_ssh_options_preference"
+            android:key="ssh_args"
+            android:summary="@string/ssh_options"
+            android:title="@string/title_ssh_options_preference" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

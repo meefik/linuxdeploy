@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="theme_entries">
+        <item>Sombre</item>
+        <item>Clair</item>
+    </string-array>
+    <string-array name="target_type_entries">
+        <item>Fichier</item>
+        <item>Répertoire</item>
+        <item>Partition</item>
+        <item>RAM</item>
+    </string-array>
+    <string-array name="fs_type_entries">
+        <item>Automatique</item>
+        <item>ext2</item>
+        <item>ext3</item>
+        <item>ext4</item>
+    </string-array>
+    <string-array name="desktop_entries">
+        <item>XTerm</item>
+        <item>LXDE</item>
+        <item>Xfce</item>
+        <item>GNOME</item>
+        <item>KDE</item>
+        <item>Autre</item>
+    </string-array>
+    <string-array name="fb_freeze_entries">
+        <item>Ne pas freezer</item>
+        <item>Pause</item>
+        <item>Stop</item>
+    </string-array>
+
+</resources>

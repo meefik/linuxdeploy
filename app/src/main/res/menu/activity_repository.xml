@@ -1,0 +1,17 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_refresh"
+        android:icon="@android:drawable/ic_menu_rotate"
+        android:orderInCategory="100"
+        android:title="@string/menu_refresh"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/menu_change_url"
+        android:icon="@android:drawable/ic_menu_manage"
+        android:orderInCategory="100"
+        android:title="@string/menu_change_url"
+        app:showAsAction="ifRoom"/>
+
+</menu>
