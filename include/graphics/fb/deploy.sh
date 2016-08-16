@@ -92,7 +92,7 @@ do_start()
         local fbdev="${FB_DEV##*/}"
         local fbrotate="/sys/class/graphics/${fbdev}/rotate"
         [ -e "${fbrotate}" ] || return 0
-        local pid_file="${MNT_TARGET}/tmp/xsession.pid"
+        local pid_file="${CHROOT_DIR}/tmp/xsession.pid"
         touch "${pid_file}"
         chmod 666 "${pid_file}"
         while [ -e "${pid_file}" ]
@@ -105,26 +105,21 @@ do_start()
     is_stopped /tmp/xsession.pid
     is_ok "skip" || return 0
     fb_refresh &
-    (set -e
-        sync
-        case "${FB_FREEZE}" in
-        stop)
-            chroot_exec -u ${USER_NAME} xinit -- :${FB_DISPLAY} ${FB_ARGS} &
-            setprop ctl.stop surfaceflinger
-            sleep 10
-            setprop ctl.stop zygote
-        ;;
-        pause)
-            chroot_exec -u ${USER_NAME} xinit -- :${FB_DISPLAY} ${FB_ARGS} &
-            pkill -STOP system_server
-            pkill -STOP surfaceflinger
-        ;;
-        *)
-            chroot_exec -u ${USER_NAME} xinit -- :${FB_DISPLAY} ${FB_ARGS} &
-        ;;
-        esac
-    exit 0)
+    (chroot_exec -u ${USER_NAME} xinit -- :${FB_DISPLAY} ${FB_ARGS} ; do_stop) &
     is_ok "fail" "done"
+    case "${FB_FREEZE}" in
+    stop)
+        sync
+        setprop ctl.stop surfaceflinger
+        sleep 10
+        setprop ctl.stop zygote
+    ;;
+    pause)
+        sync
+        pkill -STOP system_server
+        pkill -STOP surfaceflinger
+    ;;
+    esac
     return 0
 }
 
