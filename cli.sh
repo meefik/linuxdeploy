@@ -6,7 +6,7 @@
 #
 ################################################################################
 
-VERSION="2.0.8"
+VERSION="2.0.9"
 
 ################################################################################
 # Common
@@ -777,12 +777,12 @@ container_shell()
     DO_ACTION='do_start'
     component_exec core
 
-    TERM="linux"
     USER="root"
     SHELL="$(user_shell $USER)"
     HOME="$(user_home $USER)"
-    PS1="\u@\h:\w\\$ "
-    export TERM USER SHELL HOME PS1
+    [ -n "${TERM}" ] || TERM="linux"
+    [ -n "${PS1}" ] || PS1="\u@\h:\w\\$ "
+    export USER SHELL HOME TERM PS1
 
     if [ -e "${CHROOT_DIR}/etc/motd" ]; then
         msg $(cat "${CHROOT_DIR}/etc/motd")
@@ -941,7 +941,7 @@ container_status()
         local is_mnt=1
     done
     [ "${is_mnt}" -ne 1 ] && msg " ...nothing mounted"
-    
+
     msg "Available mount points: "
     local is_mountpoints=0
     local mp
@@ -1166,7 +1166,11 @@ config|conf)
         [ -e "${CONF_FILE}" ] && cat "${CONF_FILE}"
     elif [ "${list_flag}" = "true" ]; then
         if [ $# -eq 0 ]; then
-            component_list "${INCLUDE}"
+            if [ "${WITHOUT_CHECK}" = "true" ]; then
+                component_list
+            else
+                component_list "${INCLUDE}"
+            fi
         else
             component_list "$@"
         fi
@@ -1240,11 +1244,11 @@ start)
         esac
     done
     shift $((OPTIND-1))
-    
+
     if [ "${mount_flag}" = "true" ]; then
         container_mount || exit 1
     fi
-    
+
     container_start "$@"
 ;;
 stop)
@@ -1286,7 +1290,7 @@ help)
             WITHOUT_CHECK="true"
             REVERSE_DEPENDS="true"
             DO_ACTION='do_help'
-            component_exec "${INCLUDE}" || 
+            component_exec "${INCLUDE}" ||
             msg -e '   Included components do not have parameters.\n'
         fi
     else
