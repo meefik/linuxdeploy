@@ -1,177 +1,318 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="app_name" translatable="false">Linux Deploy</string>
     <string name="app_version">version %1$s</string>
     <string name="menu_start">시작</string>
     <string name="menu_stop">정지</string>
     <string name="menu_properties">속성</string>
+    <string name="nav_profiles">프로파일</string>
+    <string name="nav_repository">저장소</string>
+    <string name="nav_terminal">터미널</string>
+    <string name="nav_settings">설정</string>
+    <string name="nav_about">정보</string>
+    <string name="nav_exit">나가기</string>
+    <string name="navigation_drawer_open" translatable="false">네비게이션 바 열기</string>
+    <string name="navigation_drawer_close" translatable="false">네비게이션 바 닫기</string>
+    <string name="menu_install">설치</string>
+    <string name="menu_configure">재설정</string>
+    <string name="menu_export">내보내기</string>
     <string name="menu_status">상태</string>
-    <string name="menu_clear">출력 초기화</string>
-    <string name="menu_add">새로 생성</string>
-    <string name="menu_edit">수정</string>
+    <string name="menu_clear">초기화</string>
+    <string name="menu_add">추가</string>
+    <string name="menu_edit">편집</string>
     <string name="menu_delete">삭제</string>
-    <string name="menu_markall">전체 마크</string>
+    <string name="menu_change_url">URL 변경</string>
+    <string name="menu_refresh">새로고침</string>
+    <string name="loading_message">데이터를 불러오는중...</string>
     <string name="notification_current_profile">현재 프로파일</string>
+    <string name="title_activity_main" translatable="false">Linux Deploy</string>
     <string name="title_activity_about">정보</string>
     <string name="title_activity_settings">설정</string>
     <string name="title_activity_properties">속성</string>
-    <string name="title_activity_profiles">프로파일</string>
-    <string name="title_activity_mounts">마운트</string>
+    <string name="title_activity_profiles">프로파일들</string>
+    <string name="title_activity_mounts">마운트들</string>
+    <string name="title_activity_repository">저장소</string>
     <string name="confirm_start_title">시작</string>
     <string name="confirm_stop_title">정지</string>
-    <string name="confirm_start_message">마운트하고 서비스를 시작하시겠습니까?</string>
-    <string name="confirm_stop_message">서비스를 종료하고 마운트를 헤제하시겠습니까?</string>
+    <string name="confirm_start_message">서비스를 시작하시겠습니까?</string>
+    <string name="confirm_stop_message">서비스를 종료하시겠습니까?</string>
     <string name="new_profile_title">프로파일 이름</string>
     <string name="edit_profile_title">프로파일 이름</string>
     <string name="import_profile_title">프로파일 불러오기</string>
     <string name="export_profile_title">프로파일 내보내기</string>
-    <string name="toast_import_profile_success">프로파일이 생성되었습니다.</string>
-    <string name="toast_import_profile_error">프로파일을 불러오는데 오류가 발생했습니다!</string>
+    <string name="toast_import_profile_success">프로파일 불러오기 성공.</string>
+    <string name="toast_import_profile_error">프로파일을 불러오는 데 오류가 발생했습니다!</string>
     <string name="toast_export_profile_success">프로파일 내보내기 성공.</string>
-    <string name="toast_export_profile_error">프로파일을 내보내는데 오류가 발생했습니다!</string>
-    <string name="toast_terminal_error">터미널로 시작하는데 오류가 발생했습니다!</string>
+    <string name="toast_export_profile_error">프로파일을 내보내기 하는데 오류가 발생했습니다!</string>
+    <string name="toast_terminal_error">터미널로 시작하는 데 오류가 발생했습니다.</string>
+    <string name="toast_loading_error">데이터 불러오기 오류</string>
     <string name="confirm_profile_discard_title">프로파일 삭제</string>
     <string name="confirm_profile_discard_message">선택된 프로파일을 삭제하시겠습니까?</string>
-    <string name="new_mount_title">마운트 포인트</string>
-    <string name="edit_mount_title">마운트 포인트</string>
-    <string name="confirm_mount_discard_title">포인트 삭제</string>
-    <string name="confirm_mount_discard_message">선택된 마운트 포인트를 목록에서 삭제하시겠습니까?</string>
-    <string name="app_preferences">응용 프로그램</string>
-    <string name="title_screenlock_preference">잠금화면</string>
-    <string name="summary_screenlock_preference">응용 프로그램이 실행되는동안 화면 잠금을 방지합니다.</string>
-    <string name="title_wifilock_preference">와이파이 잠금</string>
-    <string name="summary_wifilock_preference">응용 프로그램이 실행되는동안 와이파이 종료 방지합니다.</string>
+    <string name="new_mount_title">마운트 지점</string>
+    <string name="edit_mount_title">마운트 지점</string>
+    <string name="confirm_mount_discard_title">지점 삭제</string>
+    <string name="confirm_mount_discard_message">선택된 마운트 지점을 삭제하시겠습니까?</string>
+    <string name="repository_import_message">%1$s\n\n크기: %2$s MB</string>
+    <string name="repository_import_button">불러오기</string>
+    <string name="repository_change_url_title">저장소 URL</string>
+    <string name="repository_default_description">설명 없음.</string>
+
+    <string name="app_preferences">앱</string>
+    <string name="title_screenlock_preference">화면 잠금</string>
+    <string name="summary_screenlock_preference">앱이 실행되고 있는동안 화면이 꺼지지 않게 합니다.</string>
+    <string name="title_wifilock_preference">Wi-Fi 잠금</string>
+    <string name="summary_wifilock_preference">앱이 실행되고 있는동안 Wi-Fi 가 꺼지지 않도록 합니다.</string>
+    <string name="title_wakelock_preference">Wake lock</string>
+    <string name="summary_wakelock_preference">화면을 끄더라도 CPU가 계속 작동하도록 합니다.</string>
     <string name="title_language_preference">언어</string>
     <string name="dialog_title_language_preference">언어 변경</string>
     <string name="title_fontsize_preference">글자 크기</string>
-    <string name="dialog_title_fontsize_preference">글자 크기 입력</string>
+    <string name="dialog_title_fontsize_preference">글자 크기</string>
     <string name="title_maxlines_preference">스크롤 크기</string>
     <string name="dialog_title_maxlines_preference">스크롤 크기</string>
     <string name="title_theme_preference">테마</string>
     <string name="dialog_title_theme_preference">테마 변경</string>
     <string name="title_timestamp_preference">타임스태프</string>
-    <string name="summary_timestamp_preference">내용 출력시 시간대도 포함합니다.</string>
+    <string name="summary_timestamp_preference">타임스태프 보이기</string>
     <string name="title_appicon_preference">아이콘 보이기</string>
-    <string name="summary_appicon_preference">알림바에 아이콘 보이기</string>
+    <string name="summary_appicon_preference">상단 알림바에 아이콘을 보이게 합니다.</string>
+    <string name="title_stealth_preference">스텔스 모드</string>
+    <string name="summary_stealth_preference">홈런처에서 아이콘이 보이지 않게 합니다.</string>
     <string name="title_autostart_preference">자동 시작</string>
-    <string name="summary_autostart_preference">부팅시 자동으로 GNU/Linux를 시작합니다.</string>
-    <string name="title_terminalcmd_preference">터미널 명령</string>
-    <string name="dialog_title_terminalcmd_preference">터미널 명령</string>
+    <string name="summary_autostart_preference">Android 가 부팅되면 자동으로 서비스를 시작하게 합니다.</string>
+    <string name="title_nettrack_preference">Network trigger</string>
+    <string name="summary_nettrack_preference">Track changes of the network and update the container</string>
+    <string name="title_terminalcmd_preference">터미널 명령어</string>
+    <string name="dialog_title_terminalcmd_preference">터미널 명령어</string>
+
     <string name="env_preferences">운영체제 환경</string>
-    <string name="title_installenv_preference">환경설정 업데이트</string>
-    <string name="summary_installenv_preference">시스템에 설치된 바이너리를 업데이트 합니다.</string>
-    <string name="message_installenv_confirm_dialog">시스템에 설치된 바이너리 파일을 업데이트 하시겠습니까?</string>
-    <string name="title_removeenv_preference">바이너리 삭제</string>
-    <string name="summary_removeenv_preference">시스템에 설치된 바이너리 파일을 삭제합니다.</string>
-    <string name="message_removeenv_confirm_dialog">시스템에 설치된 바이너리 파일을 삭제하시겠습니까?</string>
-    <string name="debug_preferences">디버그</string>
-    <string name="title_logger_preference">기록</string>
-    <string name="summary_logger_preference">기록을 파일로 저장합니다.</string>
-    <string name="title_logfile_preference">기록 파일</string>
-    <string name="dialog_title_logfile_preference">기록 파일</string>
-    <string name="title_suite_preference">운영체제 버전</string>
-    <string name="dialog_title_suite_preference">운영체제 버전 선택</string>
-    <string name="title_locale_preference">언어</string>
-    <string name="dialog_title_locale_preference">언어 선택</string>
-    <string name="ssh_preferences">SSH</string>
-    <string name="vnc_preferences">VNC</string>
-    <string name="fb_preferences">Framebuffer</string>
-    <string name="help_text">\n<b>Help</b>\n\n이 응용 프로그램은 GNU/Linux 배포판을 설치하고 chroot로 마운트 하는 프로그램 입니다.\n\n순서 :\n1. 루트 권한을 허용해 주세요. (루팅해야 합니다.)\n2. <a href="https://play.google.com/store/apps/details?id=ru.meefik.busybox">이 경로</a> 를 통해 BusyBox 를 설치하세요. (반드시 이 BusyBox로 설치하셔야 합니다.)\n3. 인터넷 연결을 확인하세요.\n4. 밑에 있는 다운로드 아이콘을 눌러서 설치 환경을 설정하세요.\n5. 설치버튼을 누르세요.\n6. 설치가 모두 다되는동안 기다리세요.\n7. \"START\" 버튼을 눌러서 시작하세요.\n8. CLI, SSH, VNC 등으로 리눅스에 연결하세요.\n\n자세한 내용은 \"About\" 를 참조해 주세요.</string>
-    <string name="about_text">이 응용 프로그램은 GNU/Linux 배포판을 설치하고 chroot로 마운트 하는 프로그램 입니다.\n\n자세한 내용은 <a href="https://github.com/meefik/linuxdeploy">프로젝트 사이트</a>, <a href="http://4pda.ru/forum/index.php?showtopic=378043">포럼(러시아어)</a> 또는 <a href="http://meefik.ru">개발자 사이트(러시아어)</a> 를 확인하세요.\n\n&#169; 2012&#8211;2015 Anton Skshidlevsky, GPLv3</string>
-    <string name="dialog_title_arch_preference">아키텍처 선택</string>
-    <string name="dialog_title_env_dir_preference">ENV 폴더</string>
-    <string name="dialog_title_fb_args_preference">FB: X 옵션 입력</string>
-    <string name="dialog_title_fb_dev_preference">FB: 비디오 장치 경로 입력</string>
-    <string name="dialog_title_fb_display_preference">FB: 화면 포트 입력</string>
-    <string name="dialog_title_fb_dpi_preference">FB: DPI 입력</string>
-    <string name="dialog_title_fb_freeze_preference">안드로이드 UI 여부 설정</string>
-    <string name="dialog_title_fb_input_preference">FB: 입력 장치 경로 입력</string>
-    <string name="dialog_title_fs_type_preference">파일 시스템 선택</string>
-    <string name="dialog_title_graphics_preference">그래픽 환경 종류를 선택합니다.</string>
-    <string name="dialog_title_user_password_preference">계정 비밀번호 입력</string>
-    <string name="dialog_title_user_name_preference">계정 이름 입력</string>
-    <string name="nav_about">정보</string>
-    <string name="nav_exit">나가기</string>
-    <string name="nav_settings">설정</string>
-    <string name="message_install_dialog">GNU/Linux 시스템 설치를 시작하시겠습니까?</string>
-    <string name="message_configure_dialog">설정된 내용으로 GNU/Linux를 업데이트 할까요?</string>
-    <string name="dialog_title_x11_display_preference">X11: 서버 포트 입력</string>
-    <string name="dialog_title_x11_host_preference">X11: IP 또는 호스트 이름 입력</string>
-    <string name="dialog_title_vnc_args_preference">VNC: vncserver 옵션</string>
-    <string name="dialog_title_vnc_depth_preference">VNC: 비트수 입력</string>
-    <string name="dialog_title_vnc_dpi_preference">VNC: DPI 입력</string>
-    <string name="dialog_title_vnc_display_preference">VNC: 포트 숫자 입력</string>
-    <string name="dialog_title_vnc_height_preference">VNC: 화면 높이 입력</string>
-    <string name="dialog_title_vnc_width_preference">VNC: 화면 넓이 입력</string>
-    <string name="dialog_title_ssh_port_preference">SSH: 포트</string>
-    <string name="dialog_title_dns_preference">DNS 서버 주소 입력</string>
-    <string name="dialog_title_source_path_preference">저장소 미러 URL 선택</string>
-    <string name="dialog_title_desktop_preference">데스크탑 환경 선택</string>
-    <string name="dialog_title_target_type_preference">설치 방법 선택</string>
-    <string name="dialog_title_distrib_preference">운영체제 선택</string>
-    <string name="dialog_title_disk_size_preference">디스크 이미지 크기(MB)</string>
-    <string name="dialog_title_target_path_preference">설치 경로 선택</string>
-    <string name="title_disk_size_preference">이미지 크기 (MB)</string>
-    <string name="nav_terminal">터미널</string>
-    <string name="summary_debug_mode_preference">디버깅 모드를 활성화 합니다.</string>
-    <string name="summary_disk_size_preference">자동 계산</string>
-    <string name="summary_dns_preference">자동 감지</string>
-    <string name="summary_mounts_editor_preference">마운트 포인트를 변경합니다.</string>
-    <string name="summary_ssh_properties_preference">SSH 서버 설정을 변경합니다.</string>
-    <string name="summary_trace_mode_preference">추적 모드를 활성화 합니다.</string>
-    <string name="summary_x11_sdl_preference">자동으로 XServer XSDL 열기</string>
-    <string name="title_arch_preference">아키텍처</string>
-    <string name="title_debug_mode_preference">디버그 모드</string>
-    <string name="title_target_type_preference">설치 방법</string>
-    <string name="title_trace_mode_preference">추적 모드</string>
-    <string name="title_is_cli_preference">CLI 활성화</string>
-    <string name="title_user_name_preference">계정 이름</string>
-    <string name="title_vnc_args_preference">VNC 옵션</string>
-    <string name="title_vnc_depth_preference">색감 (bits)</string>
-    <string name="title_vnc_display_preference">디스플레이</string>
-    <string name="title_vnc_dpi_preference">DPI</string>
-    <string name="title_vnc_height_preference">높이</string>
-    <string name="title_vnc_width_preference">넓이</string>
-    <string name="title_x11_display_preference">화면</string>
-    <string name="title_x11_host_preference">X 서버 주소</string>
-    <string name="title_x11_sdl_preference">XServer XSDL</string>
-    <string name="x11_preferences">X11</string>
-    <string name="title_ssh_properties_preference">SSH 설정</string>
-    <string name="title_ssh_port_preference">포트</string>
-    <string name="title_configure_dialog">재설정</string>
-    <string name="summary_is_ssh_preference">시작할때 SSH 서버 시작합니다.</string>
-    <string name="summary_is_cli_preference">명령어 라인 인터페이스 설정</string>
-    <string name="summary_gui_properties_preference">그래픽 환경 설정을 변경합니다.</string>
-    <string name="summary_fb_refresh_preference">강제로 framebuffer 새로고침</string>
-    <string name="title_distrib_preference">운영체제</string>
-    <string name="title_export_dialog">내보내기</string>
-    <string name="title_fb_args_preference">X 옵션</string>
-    <string name="title_fb_dev_preference">비디오 장치</string>
-    <string name="title_fb_display_preference">화면</string>
-    <string name="title_fb_dpi_preference">DPI</string>
-    <string name="title_fb_freeze_preference">안드로이드 UI 멈추기</string>
-    <string name="title_fb_input_preference">입력 장치</string>
-    <string name="title_fb_refresh_preference">강제로 새로고침</string>
-    <string name="title_fs_type_preference">파일 시스템</string>
-    <string name="title_gui_properties_preference">GUI 설정</string>
-    <string name="title_graphics_preference">그래픽 환경 종류</string>
-    <string name="title_install_dialog">설치</string>
-    <string name="title_mounts_editor_preference">마운트 포인트</string>
-    <string name="title_user_password_preference">계정 비밀번호</string>
-    <string name="title_target_path_preference">설치 경로</string>
-    <string name="title_source_path_preference">저장소 미러 URL</string>
-    <string name="menu_configure">재설정</string>
-    <string name="manage_preferences">조치</string>
-    <string name="summary_is_mounts_preference">안드로이드 폴더를 마운트하는것을 허용합니다.</string>
-    <string name="title_desktop_preference">데스크탑 환경</string>
-    <string name="title_dns_preference">DNS</string>
-    <string name="menu_install">설치</string>
+
+    <!-- ENV_DIR -->
     <string name="title_env_dir_preference">ENV 폴더</string>
-    <string name="menu_export">내보내기</string>
-    <string name="nav_profiles">프로파일</string>
-        <string name="summary_is_gui_preference">시작할 때 그래픽 환경 시작합니다.</string>
-    <string name="summary_is_init_preference">사용자 스크립트를 활성화합니다.</string>
-    <string name="dialog_title_path_preference">PATH</string>
+    <string name="dialog_title_env_dir_preference">ENV 폴더</string>
+    <!-- PATH -->
+    <string name="title_path_preference">PATH 값</string>
+    <string name="dialog_title_path_preference">PATH 값</string>
+
+    <string name="title_is_sync_preference">동기화</string>
+    <string name="summary_is_sync_preference">운영체제 환경을 서버와 동기화 합니다.</string>
+    <!-- SERVER_URL -->
+    <string name="title_server_url_preference">서버 URL</string>
+    <string name="dialog_title_server_url_preference">서버 URL</string>
+
+    <string name="title_is_cli_preference">CLI 활성화</string>
+    <string name="summary_is_cli_preference">Set up a command line interface</string>
+
+    <string name="title_installenv_preference">ENV 업데이트</string>
+    <string name="summary_installenv_preference">운영체제 환경 업데이트</string>
+    <string name="message_installenv_confirm_dialog">운영체제 환경을 업데이트 하시겠습니까?</string>
+
+    <string name="title_removeenv_preference">ENV 삭제</string>
+    <string name="summary_removeenv_preference">운영체제 환경 삭제</string>
+    <string name="message_removeenv_confirm_dialog">운영체제 환경을 삭제하시겠습니까?</string>
+
+    <string name="manage_preferences">조치</string>
+    <!-- TELNET -->
+    <string name="title_is_telnet_preference">TELNET</string>
+    <string name="summary_is_telnet_preference">TELNET 데몬 활성화</string>
+    <string name="title_telnet_port_preference">포트</string>
+    <string name="dialog_title_telnet_port_preference">TELNET 포트</string>
+    <string name="title_telnet_localhost_preference">Localhost</string>
+    <string name="summary_telnet_localhost_preference">내부 연결로만 연결 허용</string>
+    <!-- HTTP -->
+    <string name="title_is_http_preference">HTTP</string>
+    <string name="summary_is_http_preference">HTTPD 데몬 활성화</string>
+    <string name="title_http_port_preference">포트</string>
+    <string name="dialog_title_http_port_preference">HTTP 포트</string>
+    <string name="title_http_conf_preference">접근 제한</string>
+    <string name="dialog_title_http_conf_preference">접근 제한</string>
+    <string name="debug_preferences">디버그</string>
+    <string name="title_debug_mode_preference">디버그 모드</string>
+    <string name="summary_debug_mode_preference">디버그 정보 보기</string>
+    <string name="title_trace_mode_preference">추적 모드</string>
+    <string name="summary_trace_mode_preference">추적 모드 활성화</string>
+    <string name="title_logger_preference">기록</string>
+    <string name="summary_logger_preference">기록을 파일로 저장</string>
+    <string name="title_logfile_preference">기록 파일</string>
+    <string name="dialog_title_logfile_preference">기록  파일</string>
+    <string name="title_install_dialog">설치</string>
+    <string name="message_install_dialog">GNU/Linux 설치를 시작하시겠습니까?</string>
+    <string name="title_configure_dialog">재설정</string>
+    <string name="message_configure_dialog">컨테이너를 재설정 하시겠습니까?</string>
+    <string name="title_export_dialog">내보내기</string>
+
+    <string name="bootstrap_preferences">부트스트랩</string>
+    <!-- METHOD -->
+    <string name="title_method_preference">Containerization 메소드</string>
+    <string name="dialog_title_method_preference">Containerization 메소드</string>
+    <!-- DISTRIB -->
+    <string name="title_distrib_preference">배포</string>
+    <string name="dialog_title_distrib_preference">배포</string>
+    <!-- ARCH -->
+    <string name="title_arch_preference">아키텍처</string>
+    <string name="dialog_title_arch_preference">아키텍처</string>
+    <!-- SUITE -->
+    <string name="title_suite_preference">배포판</string>
+    <string name="dialog_title_suite_preference">배포판</string>
+    <!-- SOURCE_PATH -->
+    <string name="title_source_path_preference">소스 경로</string>
+    <string name="dialog_title_source_path_preference">소스 경로</string>
+    <!-- TARGET_TYPE -->
+    <string name="title_target_type_preference">설치 종류</string>
+    <string name="dialog_title_target_type_preference">설치 종류</string>
+    <!-- TARGET_PATH -->
+    <string name="title_target_path_preference">설치 경로</string>
+    <string name="dialog_title_target_path_preference">설치 경로</string>
+    <!-- DISK_SIZE -->
+    <string name="title_disk_size_preference">이미지 크기(MB)</string>
+    <string name="dialog_title_disk_size_preference">디스크 이미지 크기(MB)</string>
+    <string name="summary_disk_size_preference">자동 계산</string>
+    <!-- FS_TYPE -->
+    <string name="title_fs_type_preference">파일 시스템</string>
+    <string name="dialog_title_fs_type_preference">파일 시스템</string>
+    <!-- USER_NAME -->
+    <string name="title_user_name_preference">사용자 이름</string>
+    <string name="dialog_title_user_name_preference">사용자 이름</string>
+    <!-- USER_PASSWORD -->
+    <string name="title_user_password_preference">사용자 비밀번호</string>
+    <string name="dialog_title_user_password_preference">사용자 비밀번호</string>
+    <!-- PRIVILEGED_USERS -->
+    <string name="title_privileged_users_preference">권한있는 사용자</string>
+    <string name="dialog_title_privileged_users_preference">권한있는 사용자</string>
+    <!-- DNS -->
+    <string name="title_dns_preference">DNS</string>
+    <string name="dialog_title_dns_preference">DNS 서버 주소</string>
+    <string name="summary_dns_preference">자동 감지</string>
+    <!-- LOCALE -->
+    <string name="title_locale_preference">지역화</string>
+    <string name="dialog_title_locale_preference">지역화</string>
+
+    <!-- If you remove the comment, I will start translation / Gureumi -->
+    <!--<string name="title_root_preference">Superuser privileges</string>-->
+    <!--<string name="summary_root_preference">Grant root privileges to the container</string>-->
+    <!--<string name="dialog_title_components_preference">Components</string>-->
+    <!--<string name="summary_components_preference">Select the required components</string>-->
+    <!--<string name="title_components_preference">Select components</string>-->
+
+    <string name="init_preferences">INIT</string>
+
+    <!-- INIT -->
+    <string name="title_is_init_preference">활성화</string>
+    <string name="summary_is_init_preference">초기화 시스템을 사용할 수 있도록 허용</string>
+    <string name="title_init_preference">Init 시스템</string>
+    <string name="dialog_title_init_preference">Init 시스템</string>
+    <string name="title_init_properties_preference">Init 설정</string>
+    <string name="summary_init_properties_preference">초기화 시스템에 대한 설정 변경</string>
+
+    <!-- INIT_PATH -->
+    <string name="title_init_path_preference">Init 경로</string>
+    <string name="dialog_title_init_path_preference">INIT: 파일 또는 폴더</string>
+    <!-- INIT_LEVEL -->
+    <string name="title_init_level_preference">Init 레벨</string>
+    <string name="dialog_title_init_level_preference">INIT: 레벨</string>
+    <!-- INIT_USER -->
+    <string name="title_init_user_preference">Init 사용자</string>
+    <string name="dialog_title_init_user_preference">INIT: 사용자</string>
+    <!-- INIT_ASYNC -->
+    <string name="title_init_async_preference">Async</string>
+    <string name="summary_init_async_preference">비동기 프로세스 실행</string>
+
+    <string name="mounts_preferences">MOUNTS</string>
+
+    <!-- MOUNTS -->
+    <string name="title_is_mounts_preference">활성화</string>
+    <string name="summary_is_mounts_preference">안드로이드 폴더들을 마운트할 수 있도록 허용</string>
+    <string name="title_mounts_editor_preference">마운트 지점</string>
+    <string name="summary_mounts_editor_preference">마운트 지점 편집</string>
+
+    <string name="ssh_preferences">SSH</string>
+
+    <string name="title_is_ssh_preference">활성화</string>
+    <string name="summary_is_ssh_preference">SSH 서버를 사용할 수 있도록 허용</string>
+
+    <string name="title_ssh_properties_preference">SSH 설정</string>
+    <string name="summary_ssh_properties_preference">SSH 서버 설정 변경</string>
+
+    <!-- SSH_PORT -->
+    <string name="title_ssh_port_preference">포트</string>
+    <string name="dialog_title_ssh_port_preference">SSH: 포트</string>
+    <!-- SSH_OPTIONS -->
+    <string name="title_ssh_options_preference">SSH 옵션</string>
+    <string name="dialog_title_ssh_options_preference">SSH: SSH 데몬 설정</string>
+
     <string name="gui_preferences">GUI</string>
+
+    <string name="title_is_gui_preference">활성화</string>
+    <string name="summary_is_gui_preference">그래픽 환경을 사용할 수 있도록 허용</string>
+
+    <string name="title_graphics_preference">그래픽 서브시스템</string>
+    <string name="dialog_title_graphics_preference">그래픽 서브시스템</string>
+
+    <string name="title_gui_properties_preference">GUI 설정</string>
+    <string name="summary_gui_properties_preference">그래픽 서브시스템에 대한 설정 변경</string>
+    <!-- DESKTOP -->
+    <string name="title_desktop_preference">데스크탑 환경</string>
+    <string name="dialog_title_desktop_preference">데스크탑 환경</string>
+
+    <string name="vnc_preferences">VNC</string>
+
+    <string name="title_vnc_display_preference">화면</string>
+    <string name="dialog_title_vnc_display_preference">VNC: 화면 번호</string>
+    <!-- VNC_DEPTH -->
+    <string name="title_vnc_depth_preference">Depth (bits)</string>
+    <string name="dialog_title_vnc_depth_preference">VNC: depth (bits)</string>
+    <!-- VNC_DPI -->
+    <string name="title_vnc_dpi_preference">DPI</string>
+    <string name="dialog_title_vnc_dpi_preference">VNC: DPI 입력</string>
+    <!-- VNC_WIDTH -->
+    <string name="title_vnc_width_preference">넓이</string>
+    <string name="dialog_title_vnc_width_preference">VNC: 화면 넓이</string>
+    <!-- VNC_HEIGHT -->
+    <string name="title_vnc_height_preference">높이</string>
+    <string name="dialog_title_vnc_height_preference">VNC: 화면 높이</string>
+    <!-- VNC_ARGS -->
+    <string name="title_vnc_args_preference">VNC 옵션</string>
+    <string name="dialog_title_vnc_args_preference">VNC: vncserver 옵션</string>
+
+    <string name="x11_preferences">X11</string>
+    <!-- X11_DISPLAY -->
+    <string name="title_x11_display_preference">화면</string>
+    <string name="dialog_title_x11_display_preference">X11: 화면 번호</string>
+    <!-- X11_HOST -->
+    <string name="title_x11_host_preference">X 서버 주소</string>
+    <string name="dialog_title_x11_host_preference">X11: IP 또는 호스트 이름</string>
+    <!-- X11_SDL -->
+    <string name="title_x11_sdl_preference">X서버 XSDL</string>
+    <string name="summary_x11_sdl_preference">자동으로 X서버 XSDL 실행</string>
+    <!-- X11_SDL_DELAY -->
+    <string name="title_x11_sdl_delay_preference">지연 시작</string>
+    <string name="dialog_title_x11_sdl_delay_preference">X11: 화면 지연</string>
+
+    <string name="fb_preferences">Framebuffer</string>
+    <!-- FB_DISPLAY -->
+    <string name="title_fb_display_preference">화면</string>
+    <string name="dialog_title_fb_display_preference">FB: 화면 번호</string>
+    <!-- FB_DPI -->
+    <string name="title_fb_dpi_preference">DPI</string>
+    <string name="dialog_title_fb_dpi_preference">FB: DPI 입력</string>
+    <!-- FB_DEV -->
+    <string name="title_fb_dev_preference">비디오 장치</string>
+    <string name="dialog_title_fb_dev_preference">FB: 비디오 장치 경로</string>
+    <!-- FB_INPUT -->
+    <string name="title_fb_input_preference">입력 장치</string>
+    <string name="dialog_title_fb_input_preference">FB: 입력 장치 경로</string>
+    <!-- FB_ARGS -->
+    <string name="title_fb_args_preference">X 옵션</string>
+    <string name="dialog_title_fb_args_preference">FB: X 옵션</string>
+    <!-- FB_FREEZE -->
+    <string name="title_fb_freeze_preference">Android UI 멈추기</string>
+    <string name="dialog_title_fb_freeze_preference">Android UI 멈추기</string>
+    <!-- FB_REFRESH -->
+    <string name="title_fb_refresh_preference">강제 새로고침</string>
+    <string name="summary_fb_refresh_preference">강제로 Framebuffer 새로고침</string>
+
+    <string name="help_text">\n<b>Help</b>\n\n이 응용 프로그램은 GNU/Linux 배포판을 설치하고 chroot로 마운트 하는 프로그램 입니다.\n\n순서 :\n1. 루트 권한을 허용해 주세요. (루팅해야 합니다.)\n2. <a href="https://play.google.com/store/apps/details?id=ru.meefik.busybox">이 경로</a> 를 통해 BusyBox 를 설치하세요. (반드시 이 BusyBox로 설치하셔야 합니다.)\n3. 인터넷 연결을 확인하세요.\n4. 밑에 있는 다운로드 아이콘을 눌러서 설치 환경을 설정하세요.\n5. 설치버튼을 누르세요.\n6. 설치가 모두 다되는동안 기다리세요.\n7. \"START\" 버튼을 눌러서 시작하세요.\n8. CLI, SSH, VNC 등으로 리눅스에 연결하세요.\n\n자세한 내용은 \"About\" 를 참조해 주세요.\n\n버그 신고는 <a href="https://github.com/meefik/linuxdeploy/issues">여기</a>(한글가능, Github 아이디 필요) 로 해 주세요.</string>
+    <string name="about_text">이 응용 프로그램은 GNU/Linux 배포판을 설치하고 chroot로 마운트 하는 프로그램 입니다.\n\n자세한 내용은 <a href="https://github.com/meefik/linuxdeploy">프로젝트 사이트</a>, <a href="http://4pda.ru/forum/index.php?showtopic=378043">포럼(러시아어)</a> 또는 <a href="http://meefik.ru">개발자 사이트(러시아어)</a> 를 확인하세요.\n\n&#169; 2012&#8211;2015 Anton Skshidlevsky, GPLv3</string>
 
 </resources>
