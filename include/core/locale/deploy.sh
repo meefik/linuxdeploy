@@ -38,7 +38,7 @@ do_configure()
 do_help()
 {
 cat <<EOF
-   --locale=LOCALE
+   --locale="${LOCALE}"
      Локализация дистрибутива, например ru_RU.UTF-8.
 
 EOF

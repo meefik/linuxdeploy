@@ -7,7 +7,7 @@
 do_configure()
 {
     do_start
-    
+
     return 0
 }
 
@@ -49,7 +49,7 @@ do_start()
         msg "skip"
     ;;
     esac
-    
+
     return 0
 }
 
@@ -73,7 +73,7 @@ do_stop()
 do_help()
 {
 cat <<EOF
-   --emulator=PATH
+   --emulator="${EMULATOR}"
      Указать какой использовать эмулятор, по умолчанию QEMU.
 
 EOF

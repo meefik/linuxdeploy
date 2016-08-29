@@ -9,32 +9,32 @@ do_install()
     msg ":: Installing ${COMPONENT} ... "
     local packages=""
     case "${DISTRIB}:${ARCH}:${SUITE}" in
-    debian:*:*|ubuntu:*:*|kalilinux:*:*)
+    debian:*|ubuntu:*|kalilinux:*)
         packages="openssh-server"
         [ "${METHOD}" = "proot" ] && packages="${packages} fakechroot"
         apt_install ${packages}
     ;;
-    archlinux:*:*)
+    archlinux:*)
         packages="openssh"
         pacman_install ${packages}
     ;;
-    fedora:*:*)
+    fedora:*)
+        packages="openssh-server"
+        dnf_install ${packages}
+    ;;
+    centos:*)
         packages="openssh-server"
         yum_install ${packages}
     ;;
-    centos:*:*)
-        packages="openssh-server"
-        yum_install ${packages}
-    ;;
-    opensuse:*:*)
+    opensuse:*)
         packages="openssh"
         zypper_install ${packages}
     ;;
-    gentoo:*:*)
+    gentoo:*)
         packages="openssh"
         emerge_install ${packages}
     ;;
-    slackware:*:*)
+    slackware:*)
         packages="openssh"
         slackpkg_install ${packages}
     ;;
@@ -80,10 +80,10 @@ do_status()
 do_help()
 {
 cat <<EOF
-   --ssh-port=PORT
+   --ssh-port="${SSH_PORT}"
      Port of SSH server.
 
-   --ssh-args=STR
+   --ssh-args="${SSH_ARGS}"
      Defines other sshd options, separated by a space.
 
 EOF

@@ -2,6 +2,26 @@
 # Linux Deploy Component
 # (c) Anton Skshidlevsky <meefik@gmail.com>, GPLv3
 
+[ -n "${SUITE}" ] || SUITE="7"
+
+if [ -z "${ARCH}" ]
+then
+    case "$(get_platform)" in
+    x86) ARCH="i386" ;;
+    x86_64) ARCH="x86_64" ;;
+    arm) ARCH="armhfp" ;;
+    arm_64) ARCH="aarch64" ;;
+    esac
+fi
+
+if [ -z "${SOURCE_PATH}" ]
+then
+    case "$(get_platform ${ARCH})" in
+    x86|arm*) SOURCE_PATH="http://mirror.centos.org/altarch/" ;;
+    x86_64) SOURCE_PATH="http://mirror.centos.org/centos/" ;;
+    esac
+fi
+
 yum_install()
 {
     local packages="$@"
@@ -104,3 +124,20 @@ do_install()
 
     return 0
 }
+
+
+do_help()
+{
+cat <<EOF
+   --arch="${ARCH}"
+     Архитектура сборки дистрибутива, поддерживаются armhfp, aarch64, i386 и x86_64.
+
+   --suite="${SUITE}"
+     Версия дистрибутива, поддерживаются версия 7.
+
+   --source-path="${SOURCE_PATH}"
+     Источник установки дистрибутива, можно указать адрес репозитория или путь к rootfs-ахриву.
+
+EOF
+}
+

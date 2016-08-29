@@ -2,6 +2,20 @@
 # Linux Deploy Component
 # (c) Anton Skshidlevsky <meefik@gmail.com>, GPLv3
 
+[ -n "${SUITE}" ] || SUITE="stable"
+
+if [ -z "${ARCH}" ]
+then
+    case "$(get_platform)" in
+    x86) ARCH="i386" ;;
+    x86_64) ARCH="amd64" ;;
+    arm) ARCH="armhf" ;;
+    arm_64) ARCH="arm64" ;;
+    esac
+fi
+
+[ -n "${SOURCE_PATH}" ] || SOURCE_PATH="http://ftp.debian.org/debian/"
+
 apt_install()
 {
     local packages="$@"
@@ -38,7 +52,7 @@ do_install()
     #selinux_support && basic_packages="${basic_packages},selinux-basics"
 
     (set -e
-        DEBOOTSTRAP_DIR="${COMPONENT_DIR}/debootstrap"
+        DEBOOTSTRAP_DIR="$(component_dir bootstrap/debian)/debootstrap"
         . "${DEBOOTSTRAP_DIR}/debootstrap" --no-check-gpg --foreign --extractor=ar --arch="${ARCH}" --include="${basic_packages}" "${SUITE}" "${CHROOT_DIR}" "${SOURCE_PATH}"
     exit 0)
     is_ok || return 1
@@ -54,4 +68,19 @@ do_install()
     is_ok "fail" "done"
 
     return 0
+}
+
+do_help()
+{
+cat <<EOF
+   --arch="${ARCH}"
+     Архитектура сборки дистрибутива, поддерживаются armel, armhf, arm64, i386 и amd64.
+
+   --suite="${SUITE}"
+     Версия дистрибутива, поддерживаются версии squeeze, wheezy, jessie и stretch (можно использовать версии stable, testing, unstable и sid).
+
+   --source-path="${SOURCE_PATH}"
+     Источник установки дистрибутива, можно указать адрес репозитория или путь к rootfs-ахриву.
+
+EOF
 }

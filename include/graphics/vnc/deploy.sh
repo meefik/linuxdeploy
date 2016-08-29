@@ -14,27 +14,27 @@ do_install()
     msg ":: Installing ${COMPONENT} ... "
     local packages=""
     case "${DISTRIB}:${ARCH}:${SUITE}" in
-    debian:*:*|ubuntu:*:*|kalilinux:*:*)
+    debian:*|ubuntu:*|kalilinux:*)
         packages="tightvncserver"
         apt_install ${packages}
     ;;
-    archlinux:*:*)
+    archlinux:*)
         packages="tigervnc"
         pacman_install ${packages}
     ;;
-    fedora:*:*)
+    fedora:*)
+        packages="tigervnc-server"
+        dnf_install ${packages}
+    ;;
+    centos:*)
         packages="tigervnc-server"
         yum_install ${packages}
     ;;
-    centos:*:*)
-        packages="tigervnc-server"
-        yum_install ${packages}
-    ;;
-    opensuse:*:*)
+    opensuse:*)
         packages="tightvnc"
         zypper_install ${packages}
     ;;
-    gentoo:*:*)
+    gentoo:*)
         # set server USE flag for tightvnc
         if ! $(grep -q '^net-misc/tightvnc' "${CHROOT_DIR}/etc/portage/package.use"); then
             echo "net-misc/tightvnc server" >> "${CHROOT_DIR}/etc/portage/package.use"
@@ -97,22 +97,22 @@ do_status()
 do_help()
 {
 cat <<EOF
-   --vnc-display=NUM
+   --vnc-display="${VNC_DISPLAY}"
      Display of VNC server, default 0. TCP port computed as 5900 + display number.
-     
-   --vnc-depth=NUM
+
+   --vnc-depth="${VNC_DEPTH}"
      Color depth, default 16.
-   
-   --vnc-dpi=NUM
+
+   --vnc-dpi="${VNC_DPI}"
      Dots per inch, default 75.
-   
-   --vnc-width=NUM
+
+   --vnc-width="${VNC_WIDTH}"
      Screen width, default 800.
-   
-   --vnc-height=NUM
+
+   --vnc-height="${VNC_HEIGHT}"
      Screen height, default 480.
 
-   --vnc-args=STR
+   --vnc-args="${VNC_ARGS}"
      Defines other vncserver options, separated by a space.
 
 EOF

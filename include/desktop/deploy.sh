@@ -7,7 +7,7 @@ DESKTOP="${DESKTOP##*/}"
 do_help()
 {
 cat <<EOF
-   --desktop=NAME
+   --desktop="${DESKTOP}"
      Окружение рабочего стола.
 
 EOF

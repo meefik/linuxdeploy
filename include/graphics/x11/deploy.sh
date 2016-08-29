@@ -34,10 +34,10 @@ do_status()
 do_help()
 {
 cat <<EOF
-   --x11-display=DISPLAY 
+   --x11-display="${X11_DISPLAY}"
      Display of X server, default 0.
-     
-   --x11-host=HOST
+
+   --x11-host="${X11_HOST}"
      Host of X server, default 127.0.0.1.
 
 EOF

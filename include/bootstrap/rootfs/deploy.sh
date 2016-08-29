@@ -2,6 +2,8 @@
 # Linux Deploy Component
 # (c) Anton Skshidlevsky <meefik@gmail.com>, GPLv3
 
+[ -n "${TARGET_TYPE}" ] || TARGET_TYPE="directory"
+[ -n "${TARGET_PATH}" ] || TARGET_PATH="${ENV_DIR}/rootfs/${PROFILE}"
 [ -n "${FS_TYPE}" ] || FS_TYPE="auto"
 [ -n "${DISK_SIZE}" ] || DISK_SIZE="0"
 
@@ -125,14 +127,17 @@ do_install()
 do_help()
 {
 cat <<EOF
-   --target-type=file|partition|directory|ram
-     Вариант развертывания контейнера.
+   --target-type="${TARGET_TYPE}"
+     Вариант развертывания контейнера, можно указать file, directory, partition или ram.
 
-   --disk-size=SIZE
+   --target-path="${TARGET_PATH}"
+     Путь установки, зависит от типа развертывания.
+
+   --disk-size="${DISK_SIZE}"
      Размер файла образа, когда выбран тип развертывания "file". Ноль означает автоматический выбор размера образа.
 
-   --fs-type=ext2|ext3|ext4|auto
-     Файловая система, которая будет создана внутри образа или на разделе.
+   --fs-type="${FS_TYPE}"
+     Файловая система, которая будет создана внутри образа или на разделе. Поддежриваются ext2, ext3, ext4 и auto.
 
 EOF
 }

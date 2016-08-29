@@ -7,27 +7,27 @@ do_install()
     msg ":: Installing ${COMPONENT} ... "
     local packages=""
     case "${DISTRIB}:${ARCH}:${SUITE}" in
-    debian:*:*|ubuntu:*:*|kalilinux:*:*)
+    debian:*|ubuntu:*|kalilinux:*)
         packages="desktop-base x11-xserver-utils xfonts-base xfonts-utils kde-standard"
         apt_install ${packages}
     ;;
-    archlinux:*:*)
+    archlinux:*)
         packages="xorg-utils xorg-fonts-misc ttf-dejavu kdebase"
         pacman_install ${packages}
     ;;
-    fedora:*:*)
-        installgroup="xorg-x11-server-utils xorg-x11-fonts-misc dejavu-* kde-desktop"
-        yum_groupinstall ${installgroup}
+    fedora:*)
+        packages="xorg-x11-server-utils xorg-x11-fonts-misc dejavu-* @kde-desktop"
+        dnf_install ${packages}
     ;;
-    centos:*:*)
-        installgroup="xorg-x11-server-utils xorg-x11-fonts-misc dejavu-* kde-desktop-environment"
-        yum_groupinstall ${installgroup}
+    centos:*)
+        packages="xorg-x11-server-utils xorg-x11-fonts-misc dejavu-* @kde-desktop-environment"
+        yum_install ${packages}
     ;;
-    opensuse:*:*)
+    opensuse:*)
         packages="xorg-x11-fonts-core dejavu-fonts xauth patterns-openSUSE-kde"
         zypper_install ${packages}
     ;;
-    gentoo:*:*)
+    gentoo:*)
         packages="xauth kde-meta"
         emerge_install ${packages}
     ;;

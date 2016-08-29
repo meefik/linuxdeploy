@@ -2,7 +2,23 @@
 # Linux Deploy Component
 # (c) Anton Skshidlevsky <meefik@gmail.com>, GPLv3
 
-[ -n "${SUITE}" ] || SUITE="latest"
+[ -n "${SUITE}" ] || SUITE="14.2"
+
+if [ -z "${ARCH}" ]
+then
+    case "$(get_platform)" in
+    x86*) ARCH="x86" ;;
+    arm*) ARCH="arm" ;;
+    esac
+fi
+
+if [ -z "${SOURCE_PATH}" ]
+then
+    case "$(get_platform ${ARCH})" in
+    x86*) SOURCE_PATH="http://mirrors.slackware.com/slackware/" ;;
+    arm*) SOURCE_PATH="http://ftp.arm.slackware.com/slackwarearm/" ;;
+    esac
+fi
 
 slackpkg_install()
 {
@@ -20,10 +36,11 @@ slackpkg_repository()
     if [ -e "${CHROOT_DIR}/etc/slackpkg/mirrors" ]; then
         cp "${CHROOT_DIR}/etc/slackpkg/mirrors" "${CHROOT_DIR}/etc/slackpkg/mirrors.bak"
     fi
-    if [ "$(get_platform ${ARCH})" = "intel" ]
-    then local repo_url="${SOURCE_PATH%/}/slackware-${SUITE}/slackware"
-    else local repo_url="${SOURCE_PATH%/}/slackwarearm-${SUITE}/slackware"
-    fi
+    case "$(get_platform ${ARCH})" in
+    x86*) local repo_url="${SOURCE_PATH%/}/slackware-${SUITE}/" ;;
+    arm*) local repo_url="${SOURCE_PATH%/}/slackwarearm-${SUITE}/" ;;
+    *) return 1 ;;
+    esac
     echo "${repo_url}" > "${CHROOT_DIR}/etc/slackpkg/mirrors"
     chmod 644 "${CHROOT_DIR}/etc/slackpkg/mirrors"
     sed -i 's|^WGETFLAGS=.*|WGETFLAGS="--passive-ftp -q"|g' "${CHROOT_DIR}/etc/slackpkg/slackpkg.conf"
@@ -35,10 +52,13 @@ do_install()
 
     msg ":: Installing ${COMPONENT} ... "
 
-    if [ "$(get_platform ${ARCH})" = "intel" ]
-    then local repo_url="${SOURCE_PATH%/}/slackware-${SUITE}/slackware"
-    else local repo_url="${SOURCE_PATH%/}/slackwarearm-${SUITE}/slackware"
-    fi
+    case "$(get_platform ${ARCH})" in
+    x86*) local repo_url="${SOURCE_PATH%/}/slackware-${SUITE}/slackware" ;;
+    arm*) local repo_url="${SOURCE_PATH%/}/slackwarearm-${SUITE}/slackware" ;;
+    esac
+
+    msg "URL: ${repo_url}"
+
     local cache_dir="${CHROOT_DIR}/tmp"
     local extra_packages="l/glibc l/glibc-i18n l/libtermcap l/ncurses ap/diffutils ap/groff ap/man ap/nano ap/slackpkg ap/sudo n/gnupg n/wget"
 
@@ -97,4 +117,19 @@ do_install()
     is_ok "skip" "done"
 
     return 0
+}
+
+do_help()
+{
+cat <<EOF
+   --arch="${ARCH}"
+     Архитектура сборки дистрибутива, поддерживаются arm и x86.
+
+   --suite="${SUITE}"
+     Версия дистрибутива, поддерживаются версия 14.2.
+
+   --source-path="${SOURCE_PATH}"
+     Источник установки дистрибутива, можно указать адрес репозитория или путь к rootfs-ахриву.
+
+EOF
 }

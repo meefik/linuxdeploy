@@ -35,7 +35,7 @@ do_configure()
 do_help()
 {
 cat <<EOF
-   --privileged-users=USERS
+   --privileged-users="${PRIVILEGED_USERS}"
      Список пользователей через пробел, которых добавить в группы Android.
 
 EOF

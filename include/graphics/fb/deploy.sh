@@ -11,27 +11,27 @@ do_install()
     msg ":: Installing ${COMPONENT} ... "
     local packages=""
     case "${DISTRIB}:${ARCH}:${SUITE}" in
-    debian:*:*|ubuntu:*:*|kalilinux:*:*)
+    debian:*|ubuntu:*|kalilinux:*)
         packages="xinit xserver-xorg xserver-xorg-video-fbdev xserver-xorg-input-evdev"
         apt_install ${packages}
     ;;
-    archlinux:*:*)
+    archlinux:*)
         packages="xorg-xinit xorg-server xf86-video-fbdev xf86-input-evdev"
         pacman_install ${packages}
     ;;
-    fedora:*:*)
+    fedora:*)
+        packages="xorg-x11-xinit xorg-x11-server-Xorg xorg-x11-drv-fbdev xorg-x11-drv-evdev"
+        dnf_install ${packages}
+    ;;
+    centos:*)
         packages="xorg-x11-xinit xorg-x11-server-Xorg xorg-x11-drv-fbdev xorg-x11-drv-evdev"
         yum_install ${packages}
     ;;
-    centos:*:*)
-        packages="xorg-x11-xinit xorg-x11-server-Xorg xorg-x11-drv-fbdev xorg-x11-drv-evdev"
-        yum_install ${packages}
-    ;;
-    opensuse:*:*)
+    opensuse:*)
         packages="xinit xorg-x11-server xf86-video-fbdev xf86-input-evdev"
         zypper_install ${packages}
     ;;
-    gentoo:*:*)
+    gentoo:*)
         packages="xinit xorg-server"
         emerge_install ${packages}
     ;;
@@ -153,20 +153,20 @@ do_status()
 do_help()
 {
 cat <<EOF
-   --fb-display=DISPLAY
+   --fb-display="${FB_DISPLAY}"
      Display of X server, e.g 0.
 
-   --fb-args=STR
+   --fb-args="${FB_ARGS}"
      Defines other X options, separated by a space.
 
-   --fb-dev=DEVICE
+   --fb-dev="${FB_DEV}"
      Framebuffer device for X, e.g. /dev/graphics/fb0.
 
-   --fb-input=DEVICE
+   --fb-input="${FB_INPUT}"
      Input device for X, e.g. /dev/input/event0.
 
-   --fb-freeze=none|pause|stop
-     Android UI freeze mode.
+   --fb-freeze="${FB_FREEZE}"
+     Android UI freeze mode: none, pause, stop.
 
    --fb-refresh
      Force refresh a framebuffer.

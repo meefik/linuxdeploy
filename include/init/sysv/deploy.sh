@@ -54,10 +54,10 @@ do_stop()
 do_help()
 {
 cat <<EOF
-   --init-level=NUM
+   --init-level="${INIT_LEVEL}"
      Number of init level, e.g 3.
 
-   --init-user=USER
+   --init-user="${INIT_USER}"
      Пользователь из-под которого осуществляется запуск, по умолчанию root.
 
    --init-async

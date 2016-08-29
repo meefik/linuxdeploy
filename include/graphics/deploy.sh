@@ -7,7 +7,7 @@ GRAPHICS="${GRAPHICS##*/}"
 do_help()
 {
 cat <<EOF
-   --graphics=NAME
+   --graphics="${GRAPHICS}"
      Графическая подсистема.
 
 EOF

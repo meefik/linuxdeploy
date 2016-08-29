@@ -7,27 +7,27 @@ do_install()
     msg ":: Installing ${COMPONENT} ... "
     local packages=""
     case "${DISTRIB}:${ARCH}:${SUITE}" in
-    debian:*:*|ubuntu:*:*|kalilinux:*:*)
+    debian:*|ubuntu:*|kalilinux:*)
         packages="dbus"
         apt_install ${packages}
     ;;
-    archlinux:*:*)
+    archlinux:*)
         packages="dbus"
         pacman_install ${packages}
     ;;
-    fedora:*:*)
+    fedora:*)
+        packages="dbus"
+        dnf_install ${packages}
+    ;;
+    centos:*)
         packages="dbus"
         yum_install ${packages}
     ;;
-    centos:*:*)
-        packages="dbus"
-        yum_install ${packages}
-    ;;
-    opensuse:*:*)
+    opensuse:*)
         packages="dbus"
         zypper_install ${packages}
     ;;
-    gentoo:*:*)
+    gentoo:*)
         packages="dbus"
         emerge_install ${packages}
     ;;

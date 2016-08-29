@@ -27,10 +27,10 @@ do_configure()
 do_help()
 {
 cat <<EOF
-   --user-name=USER
+   --user-name="${USER_NAME}"
      Имя пользователя, который будет создан после установки дистрибутива.
 
-   --user-password=PASSWORD
+   --user-password="${USER_PASSWORD}"
      Пароль пользователя будет назначен указанному пользователю.
 
 EOF

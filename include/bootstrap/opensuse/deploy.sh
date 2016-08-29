@@ -2,6 +2,26 @@
 # Linux Deploy Component
 # (c) Anton Skshidlevsky <meefik@gmail.com>, GPLv3
 
+[ -n "${SUITE}" ] || SUITE="13.2"
+
+if [ -z "${ARCH}" ]
+then
+    case "$(get_platform)" in
+    x86) ARCH="i586" ;;
+    x86_64) ARCH="x86_64" ;;
+    arm) ARCH="armv7hl" ;;
+    arm_64) ARCH="aarch64" ;;
+    esac
+fi
+
+if [ -z "${SOURCE_PATH}" ]
+then
+    case "$(get_platform ${ARCH})" in
+    x86*) SOURCE_PATH="http://download.opensuse.org/" ;;
+    arm*) SOURCE_PATH="http://download.opensuse.org/ports/" ;;
+    esac
+fi
+
 zypper_install()
 {
     local packages="$@"
@@ -15,10 +35,11 @@ zypper_install()
 
 zypper_repository()
 {
-    if [ "$(get_platform ${ARCH})" = "intel" ]
-    then local repo_url="${SOURCE_PATH%/}/distribution/${SUITE}/repo/oss/"
-    else local repo_url="${SOURCE_PATH%/}/${ARCH}/distribution/${SUITE}/repo/oss/"
-    fi
+    case "$(get_platform ${ARCH})" in
+    x86*) local repo_url="${SOURCE_PATH%/}/distribution/${SUITE}/repo/oss/suse" ;;
+    arm*) local repo_url="${SOURCE_PATH%/}/${ARCH}/distribution/${SUITE}/repo/oss/suse" ;;
+    *) return 1 ;;
+    esac
     local repo_name="openSUSE-${SUITE}-${ARCH}-Repo-OSS"
     local repo_file="${CHROOT_DIR}/etc/zypp/repos.d/${repo_name}.repo"
     echo "[${repo_name}]" > "${repo_file}"
@@ -44,10 +65,10 @@ do_install()
     ;;
     esac
 
-    if [ "$(get_platform ${ARCH})" = "intel" ]
-    then local repo_url="${SOURCE_PATH%/}/distribution/${SUITE}/repo/oss/suse"
-    else local repo_url="${SOURCE_PATH%/}/${ARCH}/distribution/${SUITE}/repo/oss/suse"
-    fi
+    case "$(get_platform ${ARCH})" in
+    x86*) local repo_url="${SOURCE_PATH%/}/distribution/${SUITE}/repo/oss/suse" ;;
+    arm*) local repo_url="${SOURCE_PATH%/}/${ARCH}/distribution/${SUITE}/repo/oss/suse" ;;
+    esac
 
     msg "URL: ${repo_url}"
 
@@ -98,4 +119,19 @@ do_install()
     is_ok "skip" "done"
 
     return 0
+}
+
+do_help()
+{
+cat <<EOF
+   --arch="${ARCH}"
+     Архитектура сборки дистрибутива, поддерживаются armv6hl, armv7hl, aarch64, i586 и x86_64.
+
+   --suite="${SUITE}"
+     Версия дистрибутива, поддерживаются версии 12.3 и 13.2.
+
+   --source-path="${SOURCE_PATH}"
+     Источник установки дистрибутива, можно указать адрес репозитория или путь к rootfs-ахриву.
+
+EOF
 }

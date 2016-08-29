@@ -2,7 +2,16 @@
 # Linux Deploy Component
 # (c) Anton Skshidlevsky <meefik@gmail.com>, GPLv3
 
-[ -n "${SUITE}" ] || SUITE="latest"
+if [ -z "${ARCH}" ]
+then
+    case "$(get_platform)" in
+    x86) ARCH="i686" ;;
+    x86_64) ARCH="amd64" ;;
+    arm*) ARCH="armv7a_hardfp" ;;
+    esac
+fi
+
+[ -n "${SOURCE_PATH}" ] || SOURCE_PATH="http://mirror.yandex.ru/gentoo-distfiles/releases/"
 
 emerge_install()
 {
@@ -44,16 +53,20 @@ do_install()
     is_ok "fail" "done" || return 1
 
     msg -n "Getting repository path ... "
-    local repo="${SOURCE_PATH%/}/autobuilds"
+    
+    case "$(get_platform ${ARCH})" in
+    x86*) local repo_url="${SOURCE_PATH%/}/x86/autobuilds" ;;
+    arm*) local repo_url="${SOURCE_PATH%/}/arm/autobuilds" ;;
+    esac
     local stage3="${CHROOT_DIR}/tmp/latest-stage3.tar.bz2"
-    local archive=$(wget -q -O - "${repo}/latest-stage3-${ARCH}.txt" | grep -v ^# | awk '{print $1}')
+    local archive=$(wget -q -O - "${repo_url}/latest-stage3-${ARCH}.txt" | grep -v ^# | awk '{print $1}')
     test "${archive}"; is_ok "fail" "done" || return 1
 
     msg -n "Retrieving stage3 archive ... "
     local i
     for i in 1 2 3
     do
-        wget -c -O "${stage3}" "${repo}/${archive}" && break
+        wget -c -O "${stage3}" "${repo_url}/${archive}" && break
         sleep 30s
     done
     is_ok "fail" "done" || return 1
@@ -88,3 +101,16 @@ do_install()
 
     return 0
 }
+
+do_help()
+{
+cat <<EOF
+   --arch="${ARCH}"
+     Архитектура сборки дистрибутива, поддерживаются armv4tl, armv5tel, armv6j, armv6j_hardfp, armv7a, armv7a_hardfp, i486, i686 и amd64.
+     
+   --source-path="${SOURCE_PATH}"
+     Источник установки дистрибутива, можно указать адрес репозитория или путь к rootfs-ахриву.
+
+EOF
+}
+

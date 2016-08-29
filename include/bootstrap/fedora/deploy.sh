@@ -2,24 +2,27 @@
 # Linux Deploy Component
 # (c) Anton Skshidlevsky <meefik@gmail.com>, GPLv3
 
-yum_install()
+[ -n "${SUITE}" ] || SUITE="24"
+
+if [ -z "${ARCH}" ]
+then
+    case "$(get_platform)" in
+    x86) ARCH="i386" ;;
+    x86_64) ARCH="x86_64" ;;
+    arm) ARCH="armhfp" ;;
+    arm_64) ARCH="aarch64" ;;
+    esac
+fi
+
+[ -n "${SOURCE_PATH}" ] || SOURCE_PATH="http://dl.fedoraproject.org/pub/"
+
+dnf_install()
 {
     local packages="$@"
     [ -n "${packages}" ] || return 1
     (set -e
-        chroot_exec -u root yum install ${packages} --nogpgcheck --skip-broken -y
-        chroot_exec -u root yum clean all
-    exit 0)
-    return $?
-}
-
-yum_groupinstall()
-{
-    local groupname="$@"
-    [ -n "${groupname}" ] || return 1
-    (set -e
-        chroot_exec -u root yum groupinstall ${groupname} --nogpgcheck --skip-broken -y
-        chroot_exec -u root yum clean all
+        chroot_exec -u root dnf --nogpgcheck -y install ${packages}
+        chroot_exec -u root dnf clean packages
     exit 0)
     return $?
 }
@@ -28,9 +31,9 @@ yum_repository()
 {
     find "${CHROOT_DIR}/etc/yum.repos.d/" -name '*.repo' | while read f; do sed -i 's/^enabled=.*/enabled=0/g' "${f}"; done
     local repo_file="${CHROOT_DIR}/etc/yum.repos.d/fedora-${SUITE}-${ARCH}.repo"
-    if [ "$(get_platform ${ARCH})" = "intel" ]
-    then local repo_url="${SOURCE_PATH%/}/fedora/linux/releases/${SUITE}/Everything/${ARCH}/os"
-    else local repo_url="${SOURCE_PATH%/}/fedora-secondary/releases/${SUITE}/Everything/${ARCH}/os"
+    if [ "${ARCH}" = "aarch64" ]
+    then local repo_url="${SOURCE_PATH%/}/fedora-secondary/releases/${SUITE}/Everything/${ARCH}/os"
+    else local repo_url="${SOURCE_PATH%/}/fedora/linux/releases/${SUITE}/Everything/${ARCH}/os"
     fi
     echo "[fedora-${SUITE}-${ARCH}]" > "${repo_file}"
     echo "name=Fedora ${SUITE} - ${ARCH}" >> "${repo_file}"
@@ -40,13 +43,6 @@ yum_repository()
     echo "metadata_expire=7d" >> "${repo_file}"
     echo "gpgcheck=0" >> "${repo_file}"
     chmod 644 "${repo_file}"
-    # Fix for yum
-    if [ -e "${CHROOT_DIR}/usr/bin/yum-deprecated" ]; then
-        rm -f "${CHROOT_DIR}/usr/bin/yum"
-        echo '#!/bin/sh' > "${CHROOT_DIR}/usr/bin/yum"
-        echo '/usr/bin/yum-deprecated $*' >> "${CHROOT_DIR}/usr/bin/yum"
-        chmod 755 "${CHROOT_DIR}/usr/bin/yum"
-    fi
 }
 
 do_install()
@@ -55,11 +51,11 @@ do_install()
 
     msg ":: Installing ${COMPONENT} ... "
 
-    local basic_packages="filesystem audit-libs basesystem bash bzip2-libs ca-certificates chkconfig coreutils cpio cracklib cracklib-dicts crypto-policies cryptsetup-libs curl cyrus-sasl-lib dbus dbus-libs device-mapper device-mapper-libs diffutils elfutils-libelf elfutils-libs expat fedora-release fedora-repos file-libs fipscheck fipscheck-lib gamin gawk gdbm glib2 glibc glibc-common gmp gnupg2 gnutls gpgme grep gzip hwdata info keyutils-libs kmod kmod-libs krb5-libs libacl libarchive libassuan libattr libblkid libcap libcap-ng libcom_err libcurl libdb libdb4 libdb-utils libffi libgcc libgcrypt libgpg-error libidn libmetalink libmicrohttpd libmount libpwquality libseccomp libselinux libselinux-utils libsemanage libsepol libsmartcols libssh2 libstdc++ libtasn1 libuser libutempter libuuid libverto libxml2 lua lzo man-pages ncurses ncurses-base ncurses-libs nettle nspr nss nss-myhostname nss-softokn nss-softokn-freebl nss-sysinit nss-tools nss-util openldap openssl-libs p11-kit p11-kit-trust pam pcre pinentry pkgconfig policycoreutils popt pth pygpgme pyliblzma python python-chardet python-iniparse python-kitchen python-libs python-pycurl python-six python-urlgrabber pyxattr qrencode-libs readline rootfiles rpm rpm-build-libs rpm-libs rpm-plugin-selinux rpm-python sed selinux-policy setup shadow-utils shared-mime-info sqlite sudo systemd systemd-libs systemd-sysv tcp_wrappers-libs trousers tzdata ustr util-linux vim-minimal xz-libs yum yum-metadata-parser yum-utils which zlib"
+    local basic_packages="filesystem audit-libs basesystem bash bash-completion bzip2-libs ca-certificates chkconfig coreutils cpio cracklib cracklib-dicts crypto-policies cryptsetup-libs curl cyrus-sasl-lib dbus dbus-libs deltarpm device-mapper device-mapper-libs diffutils dnf dnf-conf elfutils-libelf elfutils-libs expat fedora-release fedora-repos file-libs fipscheck fipscheck-lib gamin gawk gdbm glib2 glibc glibc-common gmp gnupg2 gnutls gpgme grep gzip hawkey hwdata info keyutils-libs kmod kmod-libs krb5-libs libacl libarchive libassuan libattr libblkid libcap libcap-ng libcom_err libcomps libcurl libdb libdb-utils libdb4 libffi libgcc libgcrypt libgpg-error libidn libmetalink libmicrohttpd libmount libnghttp2 libpipeline libpsl libpwquality librepo libreport-filesystem libseccomp libselinux libselinux-utils libsemanage libsepol libsmartcols libsolv libssh2 libstdc++ libtasn1 libunistring libuser libutempter libuuid libverto libxml2 lua lz4 lzo man-db man-pages ncurses ncurses-base ncurses-libs nettle nspr nss nss-softokn nss-softokn-freebl nss-sysinit nss-tools nss-util openldap openssl-libs p11-kit p11-kit-trust pam pcre pinentry pkgconfig policycoreutils popt pth pygpgme pyliblzma python python-chardet python-kitchen python-libs python-pycurl python-six python-urlgrabber python3 python3-dnf python3-hawkey python3-iniparse python3-libcomps python3-librepo python3-libs python3-pip python3-pygpgme python3-setuptools python3-six pyxattr qrencode-libs readline rootfiles rpm rpm-build-libs rpm-libs rpm-plugin-selinux rpm-plugin-systemd-inhibit rpm-python rpm-python3 sed selinux-policy setup shadow-utils shared-mime-info sqlite-libs sudo system-python-libs systemd systemd-libs tcp_wrappers-libs trousers tzdata ustr util-linux vim-minimal which xz-libs zlib"
 
-    if [ "$(get_platform ${ARCH})" = "intel" -o "${ARCH}" != "aarch64" -a "${SUITE}" -ge 20 ]
-    then local repo_url="${SOURCE_PATH%/}/fedora/linux/releases/${SUITE}/Everything/${ARCH}/os"
-    else local repo_url="${SOURCE_PATH%/}/fedora-secondary/releases/${SUITE}/Everything/${ARCH}/os"
+    if [ "${ARCH}" = "aarch64" ]
+    then local repo_url="${SOURCE_PATH%/}/fedora-secondary/releases/${SUITE}/Everything/${ARCH}/os"
+    else local repo_url="${SOURCE_PATH%/}/fedora/linux/releases/${SUITE}/Everything/${ARCH}/os"
     fi
 
     msg "URL: ${repo_url}"
@@ -81,7 +77,7 @@ do_install()
     local package i pkg_url pkg_file
     for package in ${basic_packages}; do
         msg -n "${package} ... "
-        pkg_url=$(grep -m1 -e "^.*/${package}-[0-9][0-9\.\-].*\.rpm$" "${pkg_list}")
+        pkg_url=$(grep -m1 -e "^.*/${package}-[0-9r][0-9\.\-].*\.rpm$" "${pkg_list}")
         test "${pkg_url}"; is_ok "skip" || continue
         pkg_file="${pkg_url##*/}"
         # download
@@ -98,7 +94,7 @@ do_install()
 
     component_exec core/emulator
 
-    msg "Updating a packages database ... "
+    msg -n "Updating a packages database ... "
     chroot_exec /bin/rpm -iv --excludepath / --force --nosignature --nodeps --justdb /tmp/*.rpm >/dev/null
     is_ok "fail" "done" || return 1
 
@@ -113,8 +109,23 @@ do_install()
     is_ok "fail" "done"
 
     msg "Installing minimal environment: "
-    yum_groupinstall minimal-environment --exclude filesystem,openssh-server
+    dnf_install @minimal-environment --exclude filesystem,openssh-server
     is_ok || return 1
 
     return 0
+}
+
+do_help()
+{
+cat <<EOF
+   --arch="${ARCH}"
+     Архитектура сборки дистрибутива, поддерживаются armhfp, aarch64, i386 и x86_64.
+
+   --suite="${SUITE}"
+     Версия дистрибутива, поддерживаются версии 23 и 24.
+
+   --source-path="${SOURCE_PATH}"
+     Источник установки дистрибутива, можно указать адрес репозитория или путь к rootfs-ахриву.
+
+EOF
 }

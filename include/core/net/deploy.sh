@@ -2,6 +2,8 @@
 # Linux Deploy Component
 # (c) Anton Skshidlevsky <meefik@gmail.com>, GPLv3
 
+[ -n "${DNS}" ] || DNS="auto"
+
 do_configure()
 {
     msg ":: Configuring ${COMPONENT} ... "
@@ -41,10 +43,10 @@ do_start()
 do_help()
 {
 cat <<EOF
-   --dns=IP|auto
+   --dns="${DNS}"
      IP-адрес DNS сервера, можно указать несколько адресов через пробел.
 
-   --net-trigger=PATH
+   --net-trigger="${NET_TRIGGER}"
      Путь с скрипту для обработки изменения сети внутри контейнера.
 
 EOF

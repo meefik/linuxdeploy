@@ -49,8 +49,8 @@ do_start()
 do_help()
 {
 cat <<EOF
-   --mounts=SOURCE:TARGET ...
-     Подключение ресурсов к контейнеру.
+   --mounts="${MOUNTS}"
+     Подключение ресурсов к контейнеру SOURCE:TARGET через пробел.
 
 EOF
 }

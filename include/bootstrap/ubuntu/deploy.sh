@@ -2,6 +2,26 @@
 # Linux Deploy Component
 # (c) Anton Skshidlevsky <meefik@gmail.com>, GPLv3
 
+[ -n "${SUITE}" ] || SUITE="trusty"
+
+if [ -z "${ARCH}" ]
+then
+    case "$(get_platform)" in
+    x86) ARCH="i386" ;;
+    x86_64) ARCH="amd64" ;;
+    arm) ARCH="armhf" ;;
+    arm_64) ARCH="arm64" ;;
+    esac
+fi
+
+if [ -z "${SOURCE_PATH}" ]
+then
+    case "$(get_platform ${ARCH})" in
+    x86*) SOURCE_PATH="http://archive.ubuntu.com/ubuntu/" ;;
+    arm*) SOURCE_PATH="http://ports.ubuntu.com/" ;;
+    esac
+fi
+
 apt_repository()
 {
     # Backup sources.list
@@ -20,15 +40,17 @@ apt_repository()
     fi
 }
 
-do_install()
+do_help()
 {
-    is_archive "${SOURCE_PATH}" && return 0
+cat <<EOF
+   --arch="${ARCH}"
+     Архитектура сборки дистрибутива, поддерживаются armel, armhf, arm64, i386 и amd64.
 
-    msg ":: Installing ${COMPONENT} ... "
+   --suite="${SUITE}"
+     Версия дистрибутива, поддерживаются версии lucid, precise, trusty, vivid, wily и xenial.
 
-    msg -n "Updating repository ... "
-    apt_repository
-    is_ok "fail" "done"
+   --source-path="${SOURCE_PATH}"
+     Источник установки дистрибутива, можно указать адрес репозитория или путь к rootfs-ахриву.
 
-    return 0
+EOF
 }

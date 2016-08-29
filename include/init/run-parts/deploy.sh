@@ -20,7 +20,7 @@ run_part()
 do_start()
 {
     [ -n "${INIT_PATH}" ] || return 0
-    
+
     if [ -f "${CHROOT_DIR}${INIT_PATH}" ]; then
         msg ":: Starting ${COMPONENT}: "
         run_part "${CHROOT_DIR}${INIT_PATH}" start
@@ -64,10 +64,10 @@ do_stop()
 do_help()
 {
 cat <<EOF
-   --init-path=PATH
+   --init-path="${INIT_PATH}"
      Директория или файл внутри контейнера, которые нужно выполнить.
 
-   --init-user=USER
+   --init-user="${INIT_USER}"
      Пользователь из-под которого осуществляется запуск, по умолчанию root.
 
    --init-async

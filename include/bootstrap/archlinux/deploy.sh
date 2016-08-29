@@ -2,7 +2,23 @@
 # Linux Deploy Component
 # (c) Anton Skshidlevsky <meefik@gmail.com>, GPLv3
 
-[ -n "${SUITE}" ] || SUITE="latest"
+if [ -z "${ARCH}" ]
+then
+    case "$(get_platform)" in
+    x86) ARCH="i386" ;;
+    x86_64) ARCH="x86_64" ;;
+    arm) ARCH="armhfp" ;;
+    arm_64) ARCH="aarch64" ;;
+    esac
+fi
+
+if [ -z "${SOURCE_PATH}" ]
+then
+    case "$(get_platform ${ARCH})" in
+    x86*) SOURCE_PATH="http://mirrors.kernel.org/archlinux/" ;;
+    arm*) SOURCE_PATH="http://mirror.archlinuxarm.org/" ;;
+    esac
+fi
 
 pacman_install()
 {
@@ -18,10 +34,11 @@ pacman_install()
 
 pacman_repository()
 {
-    if [ "$(get_platform ${ARCH})" = "intel" ]
-    then local repo_url="${SOURCE_PATH%/}/\$repo/os/\$arch"
-    else local repo_url="${SOURCE_PATH%/}/\$arch/\$repo"
-    fi
+    case "$(get_platform ${ARCH})" in
+    x86*) local repo_url="${SOURCE_PATH%/}/\$repo/os/\$arch" ;;
+    arm*) local repo_url="${SOURCE_PATH%/}/\$arch/\$repo" ;;
+    *) return 1 ;;
+    esac
     sed -i "s|^[[:space:]]*Architecture[[:space:]]*=.*$|Architecture = ${ARCH}|" "${CHROOT_DIR}/etc/pacman.conf"
     sed -i "s|^[[:space:]]*\(CheckSpace\)|#\1|" "${CHROOT_DIR}/etc/pacman.conf"
     sed -i "s|^[[:space:]]*SigLevel[[:space:]]*=.*$|SigLevel = Never|" "${CHROOT_DIR}/etc/pacman.conf"
@@ -39,10 +56,11 @@ do_install()
 
     local basic_packages="filesystem acl archlinux-keyring attr bash bzip2 ca-certificates coreutils cracklib curl db e2fsprogs expat findutils gawk gcc-libs gdbm glibc gmp gnupg gpgme grep keyutils krb5 libarchive libassuan libcap libgcrypt libgpg-error libgssglue libidn libksba libldap libsasl libssh2 libtirpc linux-api-headers lz4 lzo ncurses nettle openssl pacman pacman-mirrorlist pam pambase perl pinentry pth readline run-parts sed shadow sudo tzdata util-linux xz which zlib"
 
-    if [ "$(get_platform ${ARCH})" = "intel" ]
-    then local repo_url="${SOURCE_PATH%/}/core/os/${ARCH}"
-    else local repo_url="${SOURCE_PATH%/}/${ARCH}/core"
-    fi
+    case "$(get_platform ${ARCH})" in
+    x86*) local repo_url="${SOURCE_PATH%/}/core/os/${ARCH}" ;;
+    arm*) local repo_url="${SOURCE_PATH%/}/${ARCH}/core" ;;
+    *) return 1 ;;
+    esac
 
     local cache_dir="${CHROOT_DIR}/var/cache/pacman/pkg"
 
@@ -105,4 +123,16 @@ do_install()
     is_ok "skip" "done"
 
     return 0
+}
+
+do_help()
+{
+cat <<EOF
+   --arch="${ARCH}"
+     Архитектура сборки дистрибутива, поддерживаются arm, aarch64, i386 и x86_64.
+
+   --source-path="${SOURCE_PATH}"
+     Источник установки дистрибутива, можно указать адрес репозитория или путь к rootfs-ахриву.
+
+EOF
 }

@@ -6,7 +6,7 @@
 #
 ################################################################################
 
-VERSION="2.0.9"
+VERSION="2.1.0"
 
 ################################################################################
 # Common
@@ -39,11 +39,17 @@ get_platform()
         arch=$(uname -m)
     fi
     case "${arch}" in
-    arm*|aarch64)
+    arm64|aarch64)
+        echo "arm_64"
+    ;;
+    arm*)
         echo "arm"
     ;;
-    i[3-6]86|x86*|amd64)
-        echo "intel"
+    i[3-6]86|x86)
+        echo "x86"
+    ;;
+    x86_64|amd64)
+        echo "x86_64"
     ;;
     *)
         echo "unknown"
@@ -59,15 +65,9 @@ get_qemu()
     local guest_platform=$(get_platform "${arch}")
     if [ "${host_platform}" != "${guest_platform}" ]; then
         case "${guest_platform}" in
-        arm)
-            qemu="qemu-arm-static"
-        ;;
-        intel)
-            qemu="qemu-i386-static"
-        ;;
-        *)
-            qemu=""
-        ;;
+        arm*) qemu="qemu-arm-static" ;;
+        x86*) qemu="qemu-i386-static" ;;
+        *) qemu="" ;;
         esac
     fi
     echo ${qemu}
@@ -537,6 +537,10 @@ component_list()
     done
 }
 
+component_dir() {
+    echo "${INCLUDE_DIR}/$1"
+}
+
 ################################################################################
 # Containers
 ################################################################################
@@ -620,13 +624,10 @@ mount_part()
         fi
     ;;
     tty)
+        [ ! -e "/dev/tty0" ] || return 0
         msg -n "/dev/tty ... "
-        if [ ! -e "/dev/tty0" ]; then
-            ln -s /dev/null /dev/tty0
-            is_ok "fail" "done"
-        else
-            msg "skip"
-        fi
+        ln -s /dev/null /dev/tty0
+        is_ok "fail" "done"
     ;;
     pts)
         msg -n "/dev/pts ... "
@@ -641,7 +642,11 @@ mount_part()
     ;;
     shm)
         msg -n "/dev/shm ... "
-        local target="${CHROOT_DIR}/dev/shm"
+        local target="/dev/shm"
+        if [ -L "${target}" ]; then
+            target=$(readlink "${target}")
+        fi
+        target="${CHROOT_DIR}/${target}"
         if ! is_mounted "${target}" ; then
             [ -d "${target}" ] || mkdir -p "${target}"
             mount -t tmpfs tmpfs "${target}"
@@ -651,14 +656,11 @@ mount_part()
         fi
     ;;
     tun)
+        [ ! -e "/dev/net/tun" ] || return 0
         msg -n "/dev/net/tun ... "
         [ -d "/dev/net" ] || mkdir -p /dev/net
-        if [ ! -e "/dev/net/tun" ]; then
-            mknod /dev/net/tun c 10 200
-            is_ok "fail" "done"
-        else
-            msg "skip"
-        fi
+        mknod /dev/net/tun c 10 200
+        is_ok "fail" "done"
     ;;
     binfmt_misc)
         multiarch_support || return 0
