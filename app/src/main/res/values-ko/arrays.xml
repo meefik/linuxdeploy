@@ -2,14 +2,14 @@
 <resources>
 
     <string-array name="theme_entries">
-        <item>어두운 테마</item>
-        <item>밝은 테마</item>
+        <item>어두운</item>
+        <item>밝은</item>
     </string-array>
     <string-array name="target_type_entries">
         <item>파일</item>
         <item>폴더</item>
         <item>파티션</item>
-        <item>RAM</item>
+        <item>메모리(RAM)</item>
     </string-array>
     <string-array name="fs_type_entries">
         <item>자동</item>
@@ -23,7 +23,7 @@
         <item>Xfce</item>
         <item>GNOME</item>
         <item>KDE</item>
-        <item>기타</item>
+        <item>설치안함</item>
     </string-array>
     <string-array name="fb_freeze_entries">
         <item>멈추지 않음</item>
