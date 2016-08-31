@@ -931,7 +931,6 @@ container_status()
 
     msg "Status of components: "
     local DO_ACTION='do_status'
-    local component
     component_exec "${INCLUDE}"
 
     msg "Mounted parts: "
@@ -1021,7 +1020,7 @@ COMMANDS:
    stop [-u] [NAME ...] - stop all included or only specified components
       -u - unmount the container
    sync URL - synchronize with the operating environment with server
-   status - display the status of the container and components
+   status [NAME ...] - display the status of the container and components
    help [NAME ...] - show this help or help of components
 
 EOF
@@ -1282,7 +1281,12 @@ sync)
     sync_env "$@"
 ;;
 status)
-    container_status
+    if [ $# -gt 0 ]; then
+        DO_ACTION='do_status'
+        component_exec "$@"
+    else
+        container_status
+    fi
 ;;
 help)
     if [ $# -eq 0 ]; then

@@ -77,7 +77,7 @@ cat <<EOF
      Архитектура сборки дистрибутива, поддерживаются armel, armhf, arm64, i386 и amd64.
 
    --suite="${SUITE}"
-     Версия дистрибутива, поддерживаются версии squeeze, wheezy, jessie и stretch (можно использовать версии stable, testing, unstable и sid).
+     Версия дистрибутива, поддерживаются версии wheezy, jessie и stretch (можно использовать версии stable, testing, unstable и sid).
 
    --source-path="${SOURCE_PATH}"
      Источник установки дистрибутива, можно указать адрес репозитория или путь к rootfs-ахриву.
