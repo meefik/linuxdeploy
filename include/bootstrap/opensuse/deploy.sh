@@ -49,6 +49,7 @@ zypper_repository()
     echo "baseurl=${repo_url}" >> "${repo_file}"
     echo "type=NONE" >> "${repo_file}"
     chmod 644 "${repo_file}"
+    sed -i "s|[# ]*arch *=.*|arch = ${ARCH}|" "${CHROOT_DIR}/etc/zypp/zypp.conf"
 }
 
 do_install()
