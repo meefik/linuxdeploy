@@ -54,6 +54,8 @@ Status: install ok installed" >> "$TARGET/var/lib/dpkg/status"
         touch "$TARGET/var/lib/dpkg/info/${pkg}.list"
     }
 
+    setup_devices
+
     x_feign_install dpkg
 
     if [ -e "$TARGET/usr/bin/perl-5.005.dist" ]; then
@@ -71,7 +73,6 @@ second_stage_install () {
 
     export DEBIAN_FRONTEND=Noninteractive
 
-    setup_devices
     setup_proc
     ln "$TARGET/sbin/ldconfig.new" "$TARGET/sbin/ldconfig"
     in_target /sbin/ldconfig

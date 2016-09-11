@@ -17,7 +17,7 @@ Copyright (C) 2015-2016 Антон Скшидлевский, GPLv3
 Зависимости:
 * Ядро [Linux](http://kernel.org)
 * [BusyBox](https://github.com/meefik/busybox) или Bash и набор GNU утилит
-* [PRoot](http://proot.me) для работы без прав суперпользователя
+* [PRoot](https://github.com/meefik/PRoot) для работы без прав суперпользователя
 * [QEMU](http://qemu.org), пакет [qemu-user-static](https://packages.debian.org/stable/qemu-user-static) для Debian (для эмуляции ахритектуры)
 * Модуль ядра binfmt_misc (для поддержки режима эмуляции архитектуры без PRoot)
 
@@ -54,13 +54,13 @@ COMMANDS:
    stop [-u] [NAME ...] - остановить все подключенные компоненты или только указанные
       -u - размонтировать контейнер
    sync <URL> - синхронизировать рабочее окружение с сервером
-   status - отобразить состояние контейнера и компонетнов
+   status [NAME ...] - отобразить состояние контейнера и компонетнов
    help [NAME ...] - вызвать справку
 ```
 
 Справка по параметрам основных компонетнов:
 ```
-PARAMETERS: 
+PARAMETERS:
    --method=chroot|proot
      Метод контейнеризации.
 

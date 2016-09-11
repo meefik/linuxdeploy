@@ -48,12 +48,13 @@ do_install()
 
     msg ":: Installing ${COMPONENT} ... "
 
-    local basic_packages="locales,sudo,man-db"
-    #selinux_support && basic_packages="${basic_packages},selinux-basics"
+    local include_packages="locales,sudo,man-db"
+    local exclude_packages="init,systemd-sysv"
+    #selinux_support && include_packages="${include_packages},selinux-basics"
 
     (set -e
         DEBOOTSTRAP_DIR="$(component_dir bootstrap/debian)/debootstrap"
-        . "${DEBOOTSTRAP_DIR}/debootstrap" --no-check-gpg --foreign --extractor=ar --arch="${ARCH}" --include="${basic_packages}" "${SUITE}" "${CHROOT_DIR}" "${SOURCE_PATH}"
+        . "${DEBOOTSTRAP_DIR}/debootstrap" --no-check-gpg --foreign --extractor=ar --arch="${ARCH}" --exclude="${exclude_packages}" --include="${include_packages}" "${SUITE}" "${CHROOT_DIR}" "${SOURCE_PATH}"
     exit 0)
     is_ok || return 1
 

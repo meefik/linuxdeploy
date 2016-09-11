@@ -53,6 +53,8 @@ first_stage_install () {
 		chmod 644 "$TARGET/etc/fstab"
 	fi
 
+	setup_devices
+
 	x_feign_install () {
 		local pkg="$1"
 		local deb="$(debfor $pkg)"
@@ -73,7 +75,7 @@ Status: install ok installed" >> "$TARGET/var/lib/dpkg/status"
 }
 
 second_stage_install () {
-	setup_devices
+	setup_dynamic_devices
 
 	x_core_install () {
 		smallyes '' | in_target dpkg --force-depends --install $(debfor "$@")

@@ -28,6 +28,8 @@ fi
 
 case $ARCH in
 	alpha|ia64) LIBC="libc6.1" ;;
+	kfreebsd-*) LIBC="libc0.1" ;;
+	hurd-*)     LIBC="libc0.3" ;;
 	*)          LIBC="libc6" ;;
 esac
 
@@ -64,6 +66,8 @@ first_stage_install () {
 		chmod 644 "$TARGET/etc/fstab"
 	fi
 
+	setup_devices
+
 	x_feign_install () {
 		local pkg="$1"
 		local deb="$(debfor $pkg)"
@@ -90,8 +94,6 @@ second_stage_install () {
 	p () {
 		baseprog="$(($baseprog + ${1:-1}))"
 	}
-
-    setup_devices
 
 	if doing_variant fakechroot; then
 		setup_proc_fakechroot

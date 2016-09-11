@@ -1,6 +1,6 @@
 #!/bin/sh -e
 
-VERSION='1.0.67-meefik'
+VERSION='1.0.82-meefik'
 
 unset TMP TEMP TMPDIR || true
 
@@ -24,6 +24,7 @@ LANG=C
 USE_COMPONENTS=main
 KEYRING=""
 DISABLE_KEYRING=""
+FORCE_KEYRING=""
 VARIANT=""
 ARCH=""
 HOST_ARCH=""
@@ -34,7 +35,6 @@ SECOND_STAGE_ONLY=""
 PRINT_DEBS=""
 CHROOTDIR=""
 MAKE_TARBALL=""
-KEEP_DEBOOTSTRAP_DIR=""
 EXTRACTOR_OVERRIDE=""
 UNPACK_TARBALL=""
 ADDITIONAL=""
@@ -101,6 +101,9 @@ usage()
                               scratchbox, minbase)
       --keyring=K            check Release files against keyring K
       --no-check-gpg         avoid checking Release file signatures
+      --force-check-gpg      force checking Release file signatures
+                             (also disables automatic fallback to HTTPS in case
+                             of a missing keyring), aborting otherwise
       --no-resolve-deps      don't try to resolve dependencies automatically
 
       --unpack-tarball=T     acquire .debs from a tarball instead of http
@@ -316,6 +319,10 @@ if [ $# != 0 ] ; then
 			shift 1
 			DISABLE_KEYRING=1
 		;;
+	    --force-check-gpg)
+			shift 1
+			FORCE_KEYRING=1
+		;;
 	    --certificate|--certificate=?*)
 		if [ "$1" = "--certificate" -a -n "$2" ]; then
 			CERTIFICATE="--certificate=$2"
@@ -350,6 +357,12 @@ if [ $# != 0 ] ; then
 		;;
 	esac
     done
+fi
+
+###########################################################################
+
+if [ -n "$DISABLE_KEYRING" -a -n "$FORCE_KEYRING" ]; then
+	error 1 BADARG "Both --no-check-gpg and --force-check-gpg specified, please pick one (at most)"
 fi
 
 ###########################################################################

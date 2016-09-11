@@ -61,6 +61,8 @@ first_stage_install () {
         chmod 644 "$TARGET/etc/fstab"
     fi
 
+    setup_devices
+
     x_feign_install () {
         local pkg="$1"
         local deb="$(debfor $pkg)"
@@ -93,7 +95,6 @@ second_stage_install () {
     baseprog=0
     bases=40
 
-    setup_devices
     setup_proc
     in_target /sbin/ldconfig
 

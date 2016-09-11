@@ -200,11 +200,14 @@ keyring () {
 		if [ -e "$1" ]; then
 			KEYRING="$1"
 		elif [ -z "$DISABLE_KEYRING" ]; then
-			if [ -n "$DEF_HTTPS_MIRROR" ] && [ -z "$USER_MIRROR" ] ; then
+			if [ -n "$DEF_HTTPS_MIRROR" ] && [ -z "$USER_MIRROR" ] && [ -z "$FORCE_KEYRING" ]; then
 				info KEYRING "Keyring file not available at %s; switching to https mirror %s" "$1" "$DEF_HTTPS_MIRROR"
 				USER_MIRROR="$DEF_HTTPS_MIRROR"
 			else
 				warning KEYRING "Cannot check Release signature; keyring file not available %s" "$1"
+				if [ -n "$FORCE_KEYRING" ]; then
+					error 1 KEYRING "Keyring-based check was requested; aborting accordingly"
+				fi
 			fi
 		fi
 	fi
@@ -641,6 +644,7 @@ download_debs () {
 				local debdest="$($DLDEST deb "$p" "$ver" "$arc" "$m" "$fil")"
 				if get "$m/$fil" "$TARGET/$debdest" "$checksum" "$size"; then
 					dloaddebs="$(($dloaddebs + $size))"
+					echo >>$TARGET/debootstrap/deburis "$p $ver $m/$fil"
 					echo >>$TARGET/debootstrap/debpaths "$p $debdest"
 				else
 					warning COULDNTDL "Couldn't download package %s (ver %s arch %s)" "$p" "$ver" "$arc"
@@ -662,6 +666,11 @@ download_release () {
 
 	local totaldebs=0
 	local leftoverdebs="$*"
+
+	# Fix possible duplicate package names, which would screw up counts:
+	leftoverdebs=$(printf "$leftoverdebs"|tr ' ' '\n'|sort -u|tr '\n' ' ')
+	numdebs=$(printf "$leftoverdebs"|wc -w)
+
 	for c in $COMPONENTS; do
 		if [ "$countdebs" -ge "$numdebs" ]; then break; fi
 
@@ -982,12 +991,38 @@ setup_proc_fakechroot () {
 	ln -s /proc "$TARGET"
 }
 
+# create the static device nodes
 setup_devices () {
 	if doing_variant fakechroot; then
 		setup_devices_fakechroot
 		return 0
 	fi
 	return 0
+}
+
+# enable the dynamic device nodes
+setup_dynamic_devices () {
+	if doing_variant fakechroot; then
+		return 0
+	fi
+	return 0
+}
+
+setup_devices_simple () {
+	# The list of devices that can be created in a container comes from
+	# src/core/cgroup.c in the systemd source tree.
+	mknod -m 666 $TARGET/dev/null	c 1 3
+	mknod -m 666 $TARGET/dev/zero	c 1 5
+	mknod -m 666 $TARGET/dev/full	c 1 7
+	mknod -m 666 $TARGET/dev/random	c 1 8
+	mknod -m 666 $TARGET/dev/urandom	c 1 9
+	mknod -m 666 $TARGET/dev/tty	c 5 0
+	mkdir $TARGET/dev/pts/ $TARGET/dev/shm/
+	ln -s pts/ptmx $TARGET/dev/ptmx
+	ln -s /proc/self/fd   $TARGET/dev/fd
+	ln -s /proc/self/fd/0 $TARGET/dev/stdin
+	ln -s /proc/self/fd/1 $TARGET/dev/stdout
+	ln -s /proc/self/fd/2 $TARGET/dev/stderr
 }
 
 setup_devices_fakechroot () {
@@ -1165,14 +1200,14 @@ resolve_deps () {
 	local ALLPKGS2="";
 	while [ "$PKGS" != "" ]; do
 		local NEWPKGS=""
-		for c in $COMPONENTS; do
+		for c in ${COMPONENTS:-$USE_COMPONENTS}; do
 			local path="dists/$SUITE/$c/binary-$ARCH/Packages"
 			local pkgdest="$TARGET/$($DLDEST pkg "$SUITE" "$c" "$ARCH" "$m1" "$path")"
 			NEWPKGS="$NEWPKGS $("$PKGDETAILS" GETDEPS "$pkgdest" $PKGS)"
 		done
 		PKGS=$(echo "$PKGS $NEWPKGS" | tr ' ' '\n' | sort | uniq)
 		local REALPKGS=""
-		for c in $COMPONENTS; do
+		for c in ${COMPONENTS:-$USE_COMPONENTS}; do
 			local path="dists/$SUITE/$c/binary-$ARCH/Packages"
 			local pkgdest="$TARGET/$($DLDEST pkg "$SUITE" "$c" "$ARCH" "$m1" "$path")"
 			REALPKGS="$REALPKGS $("$PKGDETAILS" PKGS REAL "$pkgdest" $PKGS | sed -n 's/ .*REAL.*$//p')"
@@ -1188,7 +1223,7 @@ resolve_deps () {
 setup_available () {
 	local m1="${MIRRORS%% *}"
 
-	for c in $COMPONENTS; do
+	for c in ${COMPONENTS:-$USE_COMPONENTS}; do
 		local path="dists/$SUITE/$c/binary-$ARCH/Packages"
 		local pkgdest="$TARGET/$($DLDEST pkg "$SUITE" "$c" "$ARCH" "$m1" "$path")"
 		# XXX: What if a package is in more than one component?
