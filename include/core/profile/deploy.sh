@@ -28,10 +28,10 @@ do_help()
 {
 cat <<EOF
    --user-name="${USER_NAME}"
-     Имя пользователя, который будет создан после установки дистрибутива.
+     Username that will be created in the container.
 
    --user-password="${USER_PASSWORD}"
-     Пароль пользователя будет назначен указанному пользователю.
+     Password will be assigned to the specified user.
 
 EOF
 }

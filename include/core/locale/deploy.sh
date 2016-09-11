@@ -39,7 +39,7 @@ do_help()
 {
 cat <<EOF
    --locale="${LOCALE}"
-     Локализация дистрибутива, например ru_RU.UTF-8.
+     Localization, e.g. "ru_RU.UTF-8".
 
 EOF
 }

@@ -128,16 +128,16 @@ do_help()
 {
 cat <<EOF
    --target-type="${TARGET_TYPE}"
-     Вариант развертывания контейнера, можно указать file, directory, partition или ram.
+     The container deployment type, can specify "file", "directory", "partition" or "ram".
 
    --target-path="${TARGET_PATH}"
-     Путь установки, зависит от типа развертывания.
+     Installation path depends on the type of deployment.
 
    --disk-size="${DISK_SIZE}"
-     Размер файла образа, когда выбран тип развертывания "file". Ноль означает автоматический выбор размера образа.
+     Image file size when selected type of deployment "file". Zero means the automatic selection of the image size.
 
    --fs-type="${FS_TYPE}"
-     Файловая система, которая будет создана внутри образа или на разделе. Поддежриваются ext2, ext3, ext4 и auto.
+     File system that will be created inside a image file or on a partition. Supported "ext2", "ext3", "ext4" or "auto".
 
 EOF
 }

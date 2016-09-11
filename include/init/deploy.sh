@@ -8,7 +8,7 @@ do_help()
 {
 cat <<EOF
    --init="${INIT}"
-     Система инициализации.
+     Initialization system.
 
 EOF
 }

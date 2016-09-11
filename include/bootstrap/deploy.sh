@@ -8,7 +8,7 @@ do_help()
 {
 cat <<EOF
    --distrib="${DISTRIB}"
-     Кодовое имя дистрибутива, который будет установлен.
+     The code name of Linux distribution, which will be installed.
 
 EOF
 }

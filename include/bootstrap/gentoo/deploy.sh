@@ -53,7 +53,7 @@ do_install()
     is_ok "fail" "done" || return 1
 
     msg -n "Getting repository path ... "
-    
+
     case "$(get_platform ${ARCH})" in
     x86*) local repo_url="${SOURCE_PATH%/}/x86/autobuilds" ;;
     arm*) local repo_url="${SOURCE_PATH%/}/arm/autobuilds" ;;
@@ -106,11 +106,10 @@ do_help()
 {
 cat <<EOF
    --arch="${ARCH}"
-     Архитектура сборки дистрибутива, поддерживаются armv4tl, armv5tel, armv6j, armv6j_hardfp, armv7a, armv7a_hardfp, i486, i686 и amd64.
-     
+     Architecture of Linux distribution, supported "armv4tl", "armv5tel", "armv6j", "armv6j_hardfp", "armv7a", "armv7a_hardfp", "i486", "i686" and "amd64".
+
    --source-path="${SOURCE_PATH}"
-     Источник установки дистрибутива, можно указать адрес репозитория или путь к rootfs-ахриву.
+     Installation source, can specify address of the repository or path to the rootfs archive.
 
 EOF
 }
-

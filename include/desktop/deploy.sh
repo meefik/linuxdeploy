@@ -8,7 +8,7 @@ do_help()
 {
 cat <<EOF
    --desktop="${DESKTOP}"
-     Окружение рабочего стола.
+     Desktop environment.
 
 EOF
 }

@@ -50,7 +50,7 @@ do_help()
 {
 cat <<EOF
    --mounts="${MOUNTS}"
-     Подключение ресурсов к контейнеру SOURCE:TARGET через пробел.
+     Mounts resources to the container as "SOURCE:TARGET" separated by a space.
 
 EOF
 }

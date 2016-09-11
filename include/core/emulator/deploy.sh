@@ -74,7 +74,7 @@ do_help()
 {
 cat <<EOF
    --emulator="${EMULATOR}"
-     Указать какой использовать эмулятор, по умолчанию QEMU.
+     Specify which to use the emulator, by default QEMU.
 
 EOF
 }

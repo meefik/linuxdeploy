@@ -44,10 +44,10 @@ do_help()
 {
 cat <<EOF
    --dns="${DNS}"
-     IP-адрес DNS сервера, можно указать несколько адресов через пробел.
+     IP-address of DNS server, can specify multiple addresses separated by a space.
 
    --net-trigger="${NET_TRIGGER}"
-     Путь с скрипту для обработки изменения сети внутри контейнера.
+     Path to a script inside the container to process changes the network.
 
 EOF
 }

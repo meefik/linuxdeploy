@@ -74,13 +74,13 @@ do_help()
 {
 cat <<EOF
    --arch="${ARCH}"
-     Архитектура сборки дистрибутива, поддерживаются armel, armhf, arm64, i386 и amd64.
+     Architecture of Linux distribution, supported "armel", "armhf", "arm64", "i386" and "amd64".
 
    --suite="${SUITE}"
-     Версия дистрибутива, поддерживаются версии wheezy, jessie и stretch (можно использовать версии stable, testing, unstable и sid).
+     Version of Linux distribution, supported versions "wheezy", "jessie" и "stretch" (also can be used "stable", "testing", "unstable" and "sid").
 
    --source-path="${SOURCE_PATH}"
-     Источник установки дистрибутива, можно указать адрес репозитория или путь к rootfs-ахриву.
+     Installation source, can specify address of the repository or path to the rootfs archive.
 
 EOF
 }

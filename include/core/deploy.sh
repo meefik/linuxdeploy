@@ -6,10 +6,10 @@ do_help()
 {
 cat <<EOF
    --method="${METHOD}"
-     Метод контейнеризации chroot или proot.
+     Containerization method "chroot" or "proot".
 
    --chroot-dir="${CHROOT_DIR}"
-     Директория монтирования контейнера для метода контейнеризации "chroot".
+     Mount directory of the container for containerization method "chroot".
 
 EOF
 }

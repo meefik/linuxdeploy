@@ -36,7 +36,7 @@ do_help()
 {
 cat <<EOF
    --privileged-users="${PRIVILEGED_USERS}"
-     Список пользователей через пробел, которых добавить в группы Android.
+     List of users separated by a space, which add to Android groups.
 
 EOF
 }

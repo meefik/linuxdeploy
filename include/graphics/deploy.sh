@@ -8,7 +8,7 @@ do_help()
 {
 cat <<EOF
    --graphics="${GRAPHICS}"
-     Графическая подсистема.
+     Graphics subsystem.
 
 EOF
 }

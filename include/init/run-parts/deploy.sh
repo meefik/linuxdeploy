@@ -65,13 +65,13 @@ do_help()
 {
 cat <<EOF
    --init-path="${INIT_PATH}"
-     Директория или файл внутри контейнера, которые нужно выполнить.
+     Directory or file within the container that you want to execute.
 
    --init-user="${INIT_USER}"
-     Пользователь из-под которого осуществляется запуск, по умолчанию root.
+     Execute as specific user, by default "root".
 
    --init-async
-     Асинхронный запуск процессов.
+     Asynchronous startup of processes.
 
 EOF
 }

@@ -55,13 +55,13 @@ do_help()
 {
 cat <<EOF
    --init-level="${INIT_LEVEL}"
-     Number of init level, e.g 3.
+     Number of init level, e.g "3".
 
    --init-user="${INIT_USER}"
-     Пользователь из-под которого осуществляется запуск, по умолчанию root.
+     Execute as specific user, by default "root".
 
    --init-async
-     Асинхронный запуск процессов.
+     Asynchronous startup of processes.
 
 EOF
 }

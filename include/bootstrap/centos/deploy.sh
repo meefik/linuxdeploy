@@ -130,14 +130,13 @@ do_help()
 {
 cat <<EOF
    --arch="${ARCH}"
-     Архитектура сборки дистрибутива, поддерживаются armhfp, aarch64, i386 и x86_64.
+     Architecture of Linux distribution, supported "armhfp", "aarch64", "i386" and "x86_64".
 
    --suite="${SUITE}"
-     Версия дистрибутива, поддерживаются версия 7.
+     Version of Linux distribution, supported version "7".
 
    --source-path="${SOURCE_PATH}"
-     Источник установки дистрибутива, можно указать адрес репозитория или путь к rootfs-ахриву.
+     Installation source, can specify address of the repository or path to the rootfs archive.
 
 EOF
 }
-

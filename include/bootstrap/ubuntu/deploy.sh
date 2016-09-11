@@ -44,13 +44,13 @@ do_help()
 {
 cat <<EOF
    --arch="${ARCH}"
-     Архитектура сборки дистрибутива, поддерживаются armel, armhf, arm64, i386 и amd64.
+     Architecture of Linux distribution, supported "armel", "armhf", "arm64", "i386" and "amd64".
 
    --suite="${SUITE}"
-     Версия дистрибутива, поддерживаются версии lucid, precise, trusty, vivid, wily и xenial.
+     Version of Linux distribution, supported versions "precise", "trusty", "vivid", "wily", "xenial" and "yakkety".
 
    --source-path="${SOURCE_PATH}"
-     Источник установки дистрибутива, можно указать адрес репозитория или путь к rootfs-ахриву.
+     Installation source, can specify address of the repository or path to the rootfs archive.
 
 EOF
 }

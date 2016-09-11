@@ -126,13 +126,13 @@ do_help()
 {
 cat <<EOF
    --arch="${ARCH}"
-     Архитектура сборки дистрибутива, поддерживаются armv6hl, armv7hl, aarch64, i586 и x86_64.
+     Architecture of Linux distribution, supported "armv6hl", "armv7hl", "aarch64", "i586" and "x86_64".
 
    --suite="${SUITE}"
-     Версия дистрибутива, поддерживаются версии 12.3 и 13.2.
+     Version of Linux distribution, supported versions "12.3" and "13.2".
 
    --source-path="${SOURCE_PATH}"
-     Источник установки дистрибутива, можно указать адрес репозитория или путь к rootfs-ахриву.
+     Installation source, can specify address of the repository or path to the rootfs archive.
 
 EOF
 }
