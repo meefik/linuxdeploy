@@ -4,7 +4,7 @@ Changelog (English)
 2.0.0
 The application interface is rewritten with Material Design
 Completed transition to the new CLI
-Added support Fedora 24 and Ubuntu 16.10 (yakkety)
+Added support Debian 9 (stretch), Fedora 24 and Ubuntu 16.10 (yakkety)
 Added support for work without root permissions (based on PRoot)
 Added interface for managing from TELNET (based on telnetd)
 Added web interface (based on httpd, websocket.sh and xterm.js)
@@ -17,6 +17,8 @@ Added an option to keep CPU running to do work while the screen is off
 Added an option to change the delay of start after opening XServer XSDL
 Added stealth mode
 Added ability to send notifications from a container through am
+Added MATE desktop environment
+Removed GNOME and KDE desktop environments
 Extended syntax description of mount points, you can now specify to mount /from/dir:/to/dir
 Restore Android after closing Xorg session in framebuffer mode
 Make an unified container profiles for CLI and the application interface
@@ -358,7 +360,7 @@ Updated list packages of base system installation
 2.0.0
 Интерфейс приложения переписан под Material Design
 Выполнен переход на новый CLI
-Добавлена поддержка Fedora 24 и Ubuntu 16.10 (yakkety)
+Добавлена поддержка Debian 9 (stretch), Fedora 24, Ubuntu 16.10 (yakkety)
 Добавлена поддержка работы без прав суперпользователя (на базе PRoot)
 Добавлен интерфейс управление по TELNET (на базе telnetd)
 Добавлен веб-интерфейс (на базе httpd, websocket.sh и xterm.js)
@@ -371,6 +373,8 @@ Updated list packages of base system installation
 Добавлена опция изменения задержки перед запуском контейнера после открытия приложения XServer XSDL
 Добавлен скрытный режим
 Добавлена возможность отправлять оповещения из контейнера через am
+Обавлена поддержка рабочего окружения MATE
+Удалена поддержка рабочих окружений GNOME и KDE
 Расширен синтаксис описания точек монтирования, теперь можно указывать откуда и куда монтировать (/from/dir:/to/dir)
 Восстановление работы Android после завершение сессии Xorg в режиме кадрового буфера
 Сделаны единые профили контейнеров для CLI и интерфейса приложения

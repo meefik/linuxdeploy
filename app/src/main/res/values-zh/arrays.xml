@@ -21,8 +21,7 @@
         <item>XTerm</item>
         <item>LXDE</item>
         <item>Xfce</item>
-        <item>GNOME</item>
-        <item>KDE</item>
+        <item>MATE</item>
         <item>其它</item>
     </string-array>
     <string-array name="fb_freeze_entries">

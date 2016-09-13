@@ -17,7 +17,7 @@ Installing a new operating system takes about 30 minutes. The recommended minimu
 * Supported file systems: ext2, ext3, ext4
 * Supported architectures: ARM, ARM64, x86, x86_64, emulation mode (ARM ~ x86)
 * Control interface: CLI, SSH, VNC, X11, Framebuffer
-* Desktop environment: XTerm, LXDE, Xfce, GNOME, KDE, other (manual configuration)
+* Desktop environment: XTerm, LXDE, Xfce, MATE, other (manual configuration)
 * Supported languages: multilingual interface
 
 #### Install ####

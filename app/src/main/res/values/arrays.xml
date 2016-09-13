@@ -222,16 +222,14 @@
         <item>xterm</item>
         <item>lxde</item>
         <item>xfce</item>
-        <item>gnome</item>
-        <item>kde</item>
+        <item>mate</item>
         <item>other</item>
     </string-array>
     <string-array name="desktop_entries">
         <item>XTerm</item>
         <item>LXDE</item>
         <item>Xfce</item>
-        <item>GNOME</item>
-        <item>KDE</item>
+        <item>MATE</item>
         <item>Other</item>
     </string-array>
     <string-array name="distrib_values" translatable="false">

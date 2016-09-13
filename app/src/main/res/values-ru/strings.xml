@@ -142,7 +142,7 @@
     <string name="title_init_user_preference">Пользователь</string>
     <string name="title_init_preference">Система инициализации</string>
     <string name="title_init_path_preference">Путь запуска</string>
-    <string name="title_init_level_preference">Уровань запуска</string>
+    <string name="title_init_level_preference">Уровень запуска</string>
     <string name="title_init_async_preference">Асинхронный запуск</string>
     <string name="title_http_port_preference">Порт</string>
     <string name="gui_preferences">Графика</string>

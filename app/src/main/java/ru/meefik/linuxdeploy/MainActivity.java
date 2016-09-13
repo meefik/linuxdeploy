@@ -376,7 +376,7 @@ public class MainActivity extends AppCompatActivity implements
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int id) {
-                                EnvUtils.execService(getBaseContext(), "deploy", "-n bootstrap");
+                                EnvUtils.execService(getBaseContext(), "deploy", "-m -n bootstrap");
                             }
                         })
                 .setNegativeButton(android.R.string.no,

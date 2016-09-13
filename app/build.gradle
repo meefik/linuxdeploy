@@ -8,7 +8,7 @@ android {
         applicationId "ru.meefik.linuxdeploy"
         minSdkVersion 10
         targetSdkVersion 24
-        versionCode 206
+        versionCode 207
         versionName "2.0.0"
     }
     buildTypes {
@@ -16,6 +16,10 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    lintOptions {
+        disable 'MissingTranslation'
+        disable 'ExtraTranslation'
     }
 }
 
