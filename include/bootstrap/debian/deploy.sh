@@ -22,8 +22,8 @@ apt_install()
     [ -n "${packages}" ] || return 1
     (set -e
         chroot_exec -u root apt-get update -yq
-        chroot_exec -u root "DEBIAN_FRONTEND=noninteractive apt-get install -yf"
-        chroot_exec -u root "DEBIAN_FRONTEND=noninteractive apt-get install ${packages} --no-install-recommends -yq"
+        #chroot_exec -u root "DEBIAN_FRONTEND=noninteractive apt-get install -yf"
+        chroot_exec -u root "DEBIAN_FRONTEND=noninteractive apt-get install -yfq --no-install-recommends ${packages}"
         chroot_exec -u root apt-get clean
     exit 0)
     return $?

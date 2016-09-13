@@ -8,7 +8,7 @@ do_install()
     local packages=""
     case "${DISTRIB}:${ARCH}:${SUITE}" in
     debian:*|ubuntu:*|kalilinux:*)
-        packages="desktop-base x11-xserver-utils xfonts-base xfonts-utils xfce4 xfce4-terminal tango-icon-theme hicolor-icon-theme"
+        packages="desktop-base dbus-x11 x11-xserver-utils xfonts-base xfonts-utils xfce4 xfce4-terminal tango-icon-theme hicolor-icon-theme"
         apt_install ${packages}
     ;;
     archlinux:*)
@@ -16,7 +16,7 @@ do_install()
         pacman_install ${packages}
     ;;
     fedora:*)
-        packages="xorg-x11-server-utils xorg-x11-fonts-misc dejavu-* @xfce-desktop"
+        packages="xorg-x11-server-utils xorg-x11-fonts-misc dejavu-* @xfce-desktop-environment"
         dnf_install ${packages}
     ;;
     centos:*)
@@ -28,7 +28,7 @@ do_install()
         zypper_install ${packages}
     ;;
     gentoo:*)
-        packages="xauth xfce4-meta"
+        packages="x11-apps/xauth xfce-base/xfce4-meta"
         emerge_install ${packages}
     ;;
     esac
@@ -37,7 +37,7 @@ do_install()
 do_configure()
 {
     msg ":: Configuring ${COMPONENT} ... "
-    local xinitrc="${CHROOT_DIR}$(user_home ${USER_NAME})/.xinitrc"
-    echo 'startxfce4' >> "${xinitrc}"
+    local xsession="${CHROOT_DIR}$(user_home ${USER_NAME})/.xsession"
+    echo 'startxfce4' > "${xsession}"
     return 0
 }

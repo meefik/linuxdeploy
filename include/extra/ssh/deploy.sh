@@ -31,7 +31,7 @@ do_install()
         zypper_install ${packages}
     ;;
     gentoo:*)
-        packages="openssh"
+        packages="net-misc/openssh"
         emerge_install ${packages}
     ;;
     slackware:*)

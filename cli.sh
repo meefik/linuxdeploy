@@ -6,7 +6,7 @@
 #
 ################################################################################
 
-VERSION="2.1.0"
+VERSION="2.1.1"
 
 ################################################################################
 # Common
@@ -687,7 +687,7 @@ container_mount()
         return $?
     fi
 
-    params_check CHROOT_DIR TARGET_PATH || return 1
+    params_check TARGET_PATH || return 1
 
     msg "Mounting partitions: "
     local item
@@ -701,7 +701,7 @@ container_mount()
 
 container_umount()
 {
-    params_check CHROOT_DIR TARGET_PATH || return 1
+    params_check TARGET_PATH || return 1
     container_mounted || { msg "The container is not mounted." ; return 0; }
 
     msg -n "Release resources ... "
@@ -747,33 +747,30 @@ container_umount()
 
 container_start()
 {
-    params_check CHROOT_DIR || return 1
     container_mounted || { msg "The container is not mounted." ; return 1; }
 
     DO_ACTION='do_start'
     if [ $# -gt 0 ]; then
-        component_exec $@
+        component_exec "$@"
     else
-        component_exec ${INCLUDE}
+        component_exec "${INCLUDE}"
     fi
 }
 
 container_stop()
 {
-    params_check CHROOT_DIR || return 1
     container_mounted || { msg "The container is not mounted." ; return 1; }
 
     DO_ACTION='do_stop'
     if [ $# -gt 0 ]; then
-        component_exec $@
+        component_exec "$@"
     else
-        component_exec ${INCLUDE}
+        component_exec "${INCLUDE}"
     fi
 }
 
 container_shell()
 {
-    params_check CHROOT_DIR || return 1
     container_mounted || container_mount || return 1
 
     DO_ACTION='do_start'
@@ -800,7 +797,6 @@ rootfs_import()
     local rootfs_file="$1"
     [ -n "${rootfs_file}" ] || return 1
 
-    params_check CHROOT_DIR || return 1
     container_mounted || container_mount root || return 1
 
     case "${rootfs_file}" in
@@ -850,7 +846,6 @@ rootfs_export()
     local rootfs_file="$1"
     [ -n "${rootfs_file}" ] || return 1
 
-    params_check CHROOT_DIR || return 1
     container_mounted || container_mount root || return 1
 
     case "${rootfs_file}" in
@@ -1005,7 +1000,8 @@ COMMANDS:
       -x - dump of the current configuration
       -l - list of dependencies for the specified or are connected components
       -a - list of all components without check compatibility
-   deploy [-i|-c] [-n NAME] [NAME ...] - install the distribution and included components
+   deploy [...] [-n NAME] [NAME ...] - install the distribution and included components
+      -m - mount the container before deployment
       -i - install without configure
       -c - configure without install
       -n NAME - skip installation of this component
@@ -1016,9 +1012,9 @@ COMMANDS:
    mount - mount the container
    umount - unmount the container
    start [-m] [NAME ...] - start all included or only specified components
-      -m - mount the container
+      -m - mount the container before start
    stop [-u] [NAME ...] - stop all included or only specified components
-      -u - unmount the container
+      -u - unmount the container after stop
    sync URL - synchronize with the operating environment with server
    status [NAME ...] - display the status of the container and components
    help [NAME ...] - show this help or help of components
@@ -1062,10 +1058,14 @@ fi
 if [ -z "${TEMP_DIR}" ]; then
     TEMP_DIR="${ENV_DIR}/tmp"
 fi
+if [ -z "${CHROOT_DIR}" ]; then
+    CHROOT_DIR="${ENV_DIR}/mnt"
+fi
 
 [ -d "${CONFIG_DIR}" ] || mkdir "${CONFIG_DIR}"
 [ -d "${INCLUDE_DIR}" ] || mkdir "${INCLUDE_DIR}"
 [ -d "${TEMP_DIR}" ] || mkdir "${TEMP_DIR}"
+[ -d "${CHROOT_DIR}" ] || mkdir "${CHROOT_DIR}"
 
 # parse options
 OPTIND=1
@@ -1184,9 +1184,12 @@ deploy)
 
     # parse options
     OPTIND=1
-    while getopts :n:ic FLAG
+    while getopts :n:mic FLAG
     do
         case "${FLAG}" in
+        m)
+            mount_flag="true"
+        ;;
         i)
             DO_ACTION='do_install'
         ;;
@@ -1205,6 +1208,10 @@ deploy)
         esac
     done
     shift $((OPTIND-1))
+
+    if [ "${mount_flag}" = "true" ]; then
+        container_mount || exit 1
+    fi
 
     if [ $# -gt 0 ]; then
         component_exec "$@"

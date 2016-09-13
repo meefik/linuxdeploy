@@ -28,7 +28,7 @@ do_install()
         zypper_install ${packages}
     ;;
     gentoo:*)
-        packages="dbus"
+        packages="sys-apps/dbus"
         emerge_install ${packages}
     ;;
     esac

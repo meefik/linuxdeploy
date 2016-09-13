@@ -28,7 +28,7 @@ do_install()
         zypper_install ${packages}
     ;;
     gentoo:*)
-        packages="xauth xterm"
+        packages="x11-apps/xauth x11-terms/xterm"
         emerge_install ${packages}
     ;;
     esac
@@ -37,7 +37,7 @@ do_install()
 do_configure()
 {
     msg ":: Configuring ${COMPONENT} ... "
-    local xinitrc="${CHROOT_DIR}$(user_home ${USER_NAME})/.xinitrc"
-    echo 'xterm -max' >> "${xinitrc}"
+    local xsession="${CHROOT_DIR}$(user_home ${USER_NAME})/.xsession"
+    echo 'xterm -max' > "${xsession}"
     return 0
 }

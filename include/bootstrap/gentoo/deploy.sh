@@ -19,7 +19,7 @@ emerge_install()
     [ -n "${packages}" ] || return 1
     (set -e
         chroot_exec -u root emerge --autounmask-write ${packages} || {
-            mv "${CHROOT_DIR}/etc/portage/._cfg0000_package.use" "${CHROOT_DIR}/etc/portage/package.use"
+            chroot_exec -u root etc-update --automode -5
             chroot_exec -u root emerge ${packages}
         }
     exit 0)
