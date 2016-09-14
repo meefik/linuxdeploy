@@ -79,6 +79,7 @@ do_install()
     is_ok "fail" "done" || return 1
 
     component_exec core/emulator core/mnt core/net
+    PRIVILEGED_USERS="portage" component_exec core/aid
 
     msg -n "Updating repository ... "
     emerge_repository
