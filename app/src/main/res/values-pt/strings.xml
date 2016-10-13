@@ -176,5 +176,6 @@
     <string name="manage_preferences">Gestão</string>
     <string name="title_configure_dialog">Configurar</string>
     <string name="gui_preferences">GUI</string>
+    <string name="repository_purchase_button">Comprar</string>
 
 </resources>

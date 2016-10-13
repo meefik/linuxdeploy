@@ -3,6 +3,9 @@ package ru.meefik.linuxdeploy;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -162,29 +165,46 @@ public class RepositoryActivity extends AppCompatActivity {
     private List<Map<String, String>> profiles = new ArrayList<>();
     private ArrayAdapter adapter;
 
+    private boolean isDonated() {
+        return getPackageManager().checkSignatures(getPackageName(), "ru.meefik.donate")
+                == PackageManager.SIGNATURE_MATCH;
+    }
+
     private void importDialog(final Map<String, String> profile) {
         final String name = profile.get("PROFILE");
         final String message = getString(R.string.repository_import_message,
                 profile.get("DESC"),
                 profile.get("SIZE"));
-        new AlertDialog.Builder(this)
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this)
                 .setTitle(name)
                 .setMessage(message)
                 .setCancelable(false)
-                .setPositiveButton(R.string.repository_import_button,
+                .setNegativeButton(android.R.string.no,
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                importProfile(name);
+                                dialog.cancel();
                             }
-                        }).setNegativeButton(android.R.string.no,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog,
-                                        int whichButton) {
-                        dialog.cancel();
-                    }
-                }).show();
+                        });
+        if (profile.get("PROTECTED") != null && !isDonated()) {
+            dialog.setPositiveButton(R.string.repository_purchase_button,
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            startActivity(new Intent(Intent.ACTION_VIEW,
+                                    Uri.parse("https://play.google.com/store/apps/details?id=ru.meefik.donate")));
+                        }
+                    });
+        } else {
+            dialog.setPositiveButton(R.string.repository_import_button,
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            importProfile(name);
+                        }
+                    });
+        }
+        dialog.show();
     }
 
     private void changeUrlDialog() {
@@ -200,10 +220,9 @@ public class RepositoryActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialog,
                                                 int whichButton) {
                                 String text = input.getText().toString();
-                                if (text.length() > 0) {
-                                    PrefStore.setRepositoryUrl(getApplicationContext(), text);
-                                    retrieveIndex();
-                                }
+                                if (text.isEmpty()) text = getString(R.string.repository_url);
+                                PrefStore.setRepositoryUrl(getApplicationContext(), text);
+                                retrieveIndex();
                             }
                         }).setNegativeButton(android.R.string.cancel,
                 new DialogInterface.OnClickListener() {
@@ -240,8 +259,9 @@ public class RepositoryActivity extends AppCompatActivity {
                 View view = super.getView(position, convertView, parent);
                 TextView text1 = (TextView) view.findViewById(android.R.id.text1);
                 TextView text2 = (TextView) view.findViewById(android.R.id.text2);
-                text1.setText(profiles.get(position).get("PROFILE"));
+                String name = profiles.get(position).get("PROFILE");
                 String desc = profiles.get(position).get("DESC");
+                text1.setText(name);
                 if (desc != null && !desc.isEmpty()) text2.setText(desc);
                 else text2.setText(getString(R.string.repository_default_description));
                 return view;

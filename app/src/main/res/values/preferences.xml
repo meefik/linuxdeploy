@@ -14,7 +14,7 @@
     <string name="nettrack" translatable="false">false</string>
     <string name="terminalcmd" translatable="false">telnet 127.0.0.1 5023</string>
     <string name="env_dir" translatable="false"></string>
-    <string name="repository_url" translatable="false">http://s3.amazonaws.com/linuxdeploy/</string>
+    <string name="repository_url" translatable="false">http://hub.meefik.ru</string>
     <string name="path" translatable="false"></string>
     <string name="is_cli" translatable="false">false</string>
     <string name="is_telnet" translatable="false">false</string>

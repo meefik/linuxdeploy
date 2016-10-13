@@ -58,8 +58,10 @@
     <string name="confirm_mount_discard_message">Remove selected mount point from the list?</string>
     <string name="repository_import_message">%1$s\n\nSize: %2$s MB</string>
     <string name="repository_import_button">Import</string>
+    <string name="repository_purchase_button">Purchase</string>
     <string name="repository_change_url_title">Repository URL</string>
     <string name="repository_default_description">No description.</string>
+
 
     <string name="app_preferences">Application</string>
     <string name="title_screenlock_preference">Lock screen</string>

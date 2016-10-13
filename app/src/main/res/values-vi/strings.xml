@@ -169,5 +169,6 @@
     <string name="summary_is_gui_preference">Cho phép khởi động môi trường đồ hoạ</string>
     <string name="summary_is_init_preference">Bật thực thi tập lệnh tuỳ biến</string>
     <string name="dialog_title_path_preference">PATH</string>
+    <string name="repository_purchase_button">Mua</string>
 
 </resources>

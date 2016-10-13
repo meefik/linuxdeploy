@@ -426,11 +426,6 @@ public class MainActivity extends AppCompatActivity implements
      * Open repository action
      */
     private void openRepository() {
-//        PackageManager manager = getPackageManager();
-//        if (manager.checkSignatures(getPackageName(), "ru.meefik.linuxdeploy.key")
-//                == PackageManager.SIGNATURE_MATCH) {
-//            //full version
-//        }
         Intent intent = new Intent(this, RepositoryActivity.class);
         startActivity(intent);
     }
