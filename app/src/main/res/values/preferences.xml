@@ -53,7 +53,7 @@
     <string name="init_path" translatable="false">/etc/rc.local</string>
     <string name="init_level" translatable="false">3</string>
     <string name="init_user" translatable="false">root</string>
-    <string name="init_async" translatable="false">true</string>
+    <string name="init_async" translatable="false">false</string>
     <string name="is_mounts" translatable="false">false</string>
     <string name="mounts" translatable="false">/system /sdcard:/mnt/sdcard</string>
     <string name="is_ssh" translatable="false">false</string>
