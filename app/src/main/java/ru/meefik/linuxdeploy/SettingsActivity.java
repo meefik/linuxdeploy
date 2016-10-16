@@ -1,5 +1,6 @@
 package ru.meefik.linuxdeploy;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.DialogInterface;
@@ -7,12 +8,15 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 
 public class SettingsActivity extends AppCompatPreferenceActivity implements
@@ -159,6 +163,14 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements
             ListPreference listPref = (ListPreference) pref;
             pref.setSummary(listPref.getEntry());
         }
+
+        if (pref instanceof CheckBoxPreference) {
+            CheckBoxPreference checkPref = (CheckBoxPreference) pref;
+
+            if (checkPref.getKey().equals("logger") && checkPref.isChecked() && init) {
+                requestWritePermissions();
+            }
+        }
     }
 
     private void updateEnvDialog() {
@@ -205,6 +217,19 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements
                                 dialog.cancel();
                             }
                         }).show();
+    }
+
+    /**
+     * Request permission for write to storage
+     */
+    private void requestWritePermissions() {
+        int REQUEST_WRITE_STORAGE = 112;
+        boolean hasPermission = (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
+        if (!hasPermission) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_STORAGE);
+        }
     }
 
 }

@@ -1,5 +1,6 @@
 package ru.meefik.linuxdeploy;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,7 +11,10 @@ import android.net.wifi.WifiManager.WifiLock;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -35,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements
     private static ScrollView scroll;
     private static WifiLock wifiLock;
     private static PowerManager.WakeLock wakeLock;
+    private static final int REQUEST_WRITE_STORAGE = 112;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -114,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements
                 containerConfigure();
                 break;
             case R.id.menu_export:
-                containerExport();
+                containerExportWithRequestPermissions();
                 break;
             case R.id.menu_status:
                 containerStatus();
@@ -442,6 +447,34 @@ public class MainActivity extends AppCompatActivity implements
             startActivity(intent_terminal);
         } catch(Exception e) {
             Toast.makeText(this, R.string.toast_terminal_error, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * Request permission for write to storage
+     */
+    private void containerExportWithRequestPermissions() {
+        boolean hasPermission = (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
+        if (!hasPermission) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_STORAGE);
+        } else {
+            containerExport();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case REQUEST_WRITE_STORAGE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    containerExport();
+                } else {
+                    Toast.makeText(this, getString(R.string.write_permissions_disallow), Toast.LENGTH_LONG).show();
+                }
+            }
         }
     }
 

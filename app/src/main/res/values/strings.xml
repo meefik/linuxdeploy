@@ -61,7 +61,7 @@
     <string name="repository_purchase_button">Purchase</string>
     <string name="repository_change_url_title">Repository URL</string>
     <string name="repository_default_description">No description.</string>
-
+    <string name="write_permissions_disallow">The app was not allowed to write to your storage</string>
 
     <string name="app_preferences">Application</string>
     <string name="title_screenlock_preference">Lock screen</string>

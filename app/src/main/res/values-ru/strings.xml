@@ -237,5 +237,6 @@
     <string name="toast_updating_env_error">Ошибка при обновлении рабочего окружения!</string>
     <string name="updating_env_message">Обновление рабочего окружения...</string>
     <string name="repository_purchase_button">Купить</string>
+    <string name="write_permissions_disallow">Приложению была запрещена запись в память устройства</string>
 
 </resources>

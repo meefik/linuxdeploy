@@ -170,5 +170,6 @@
     <string name="dialog_title_path_preference">PATH</string>
     <string name="gui_preferences">GUI</string>
     <string name="repository_purchase_button">Acheter</string>
+    <string name="write_permissions_disallow">L\'application n\'a pas été autorisée à écrire sur votre stockage</string>
 
 </resources>
