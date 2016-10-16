@@ -15,12 +15,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class ParamUtils {
+class ParamUtils {
 
     private String name;
     private List<String> params;
 
-    public ParamUtils(String name, String[] params) {
+    ParamUtils(String name, String[] params) {
         this.name = name;
         this.params = Arrays.asList(params);
     }
@@ -40,7 +40,7 @@ public class ParamUtils {
         }
     }
 
-    public static Map<String, String> readConf(File confFile) {
+    private static Map<String, String> readConf(File confFile) {
         TreeMap<String, String> map = new TreeMap<>();
         BufferedReader br = null;
         String line;
@@ -62,7 +62,7 @@ public class ParamUtils {
         return map;
     }
 
-    public static boolean writeConf(Map<String, String> map, File confFile) {
+    private static boolean writeConf(Map<String, String> map, File confFile) {
         Boolean result = false;
         BufferedWriter bw = null;
         try {
@@ -153,11 +153,11 @@ public class ParamUtils {
         prefEditor.apply();
     }
 
-    public boolean dump(Context c, File f) {
+    boolean dump(Context c, File f) {
         return writeConf(get(c), f);
     }
 
-    public boolean restore(Context c, File f) {
+    boolean restore(Context c, File f) {
         clear(c, false);
         if (f.exists()) {
             set(c, readConf(f));
@@ -166,7 +166,7 @@ public class ParamUtils {
         return false;
     }
 
-    public void clear(Context c, boolean all) {
+    void clear(Context c, boolean all) {
         SharedPreferences pref = c.getSharedPreferences(this.name, Context.MODE_PRIVATE);
         SharedPreferences.Editor prefEditor = pref.edit();
         if (all) prefEditor.clear();

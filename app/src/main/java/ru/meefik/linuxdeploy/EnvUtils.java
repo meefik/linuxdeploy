@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class EnvUtils {
+class EnvUtils {
 
     /**
      * Closeable helper
@@ -141,7 +141,7 @@ public class EnvUtils {
      *
      * @return true if success
      */
-    public static boolean isRooted() {
+    private static boolean isRooted() {
         boolean result = false;
         OutputStream stdin = null;
         InputStream stdout = null;
@@ -215,7 +215,7 @@ public class EnvUtils {
      * @param c context
      * @return true if success
      */
-    public static boolean isLatestVersion(Context c) {
+    static boolean isLatestVersion(Context c) {
         File f = new File(PrefStore.getDataDir(c) + "/version");
         if (!f.exists()) return false;
         boolean result = false;
@@ -238,7 +238,7 @@ public class EnvUtils {
      * @param c context
      * @return true if success
      */
-    public static boolean resetVersion(Context c) {
+    private static boolean resetVersion(Context c) {
         File f = new File(PrefStore.getDataDir(c) + "/version");
         return f.delete();
     }
@@ -249,7 +249,7 @@ public class EnvUtils {
      * @param c context
      * @return true if success
      */
-    public static boolean makeScript(Context c) {
+    private static boolean makeScript(Context c) {
         boolean result = false;
         String scriptFile = PrefStore.getBinDir(c) + "/linuxdeploy";
         BufferedWriter bw = null;
@@ -342,7 +342,7 @@ public class EnvUtils {
      * @param c context
      * @return true if success
      */
-    public static boolean updateEnv(final Context c) {
+    static boolean updateEnv(final Context c) {
         // stop telnetd
         execService(c, "telnetd", "stop");
         //stop httpd
@@ -413,7 +413,7 @@ public class EnvUtils {
      * @param c context
      * @return true if success
      */
-    public static boolean makeSymlink(Context c) {
+    private static boolean makeSymlink(Context c) {
         List<String> params = new ArrayList<>();
         params.add("rm -f /system/bin/linuxdeploy");
         params.add("ln -s "
@@ -431,7 +431,7 @@ public class EnvUtils {
      * @param c context
      * @return true if success
      */
-    public static boolean removeSymlink(Context c) {
+    private static boolean removeSymlink(Context c) {
         List<String> params = new ArrayList<>();
         params.add("if [ -e /system/bin/linuxdeploy ]; then "
                 + "rm -f /system/bin/linuxdeploy || "
@@ -446,7 +446,7 @@ public class EnvUtils {
      * @param c context
      * @return true if success
      */
-    public static boolean removeEnv(Context c) {
+    static boolean removeEnv(Context c) {
         // remove version file
         resetVersion(c);
 
@@ -507,7 +507,7 @@ public class EnvUtils {
      * @param c context
      * @param args command and arguments
      */
-    public static void execService(Context c, String cmd, String args) {
+    static void execService(Context c, String cmd, String args) {
         Intent service = new Intent(c, ExecService.class);
         service.putExtra("cmd", cmd);
         service.putExtra("args", args);
@@ -521,7 +521,7 @@ public class EnvUtils {
      * @param cmd command: start, stop or restart
      * @return true if success
      */
-    public static boolean telnetd(Context c, String cmd) {
+    static boolean telnetd(Context c, String cmd) {
         List<String> params = new ArrayList<>();
         if (cmd == null) cmd = PrefStore.isTelnet(c) ? "start" : "stop";
         switch (cmd) {
@@ -553,7 +553,7 @@ public class EnvUtils {
      * @param cmd command: start, stop or restart
      * @return true if success
      */
-    public static boolean httpd(Context c, String cmd) {
+    static boolean httpd(Context c, String cmd) {
         List<String> params = new ArrayList<>();
         if (cmd == null) cmd = PrefStore.isHttp(c) ? "start" : "stop";
         switch (cmd) {
@@ -581,7 +581,7 @@ public class EnvUtils {
      * @param c context
      * @return true if success
      */
-    public static boolean makeHttpdConf(Context c, File conf) {
+    private static boolean makeHttpdConf(Context c, File conf) {
         boolean result = false;
         BufferedWriter bw = null;
         try {

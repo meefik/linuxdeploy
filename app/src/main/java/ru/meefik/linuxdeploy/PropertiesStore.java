@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class PropertiesStore extends ParamUtils {
+class PropertiesStore extends ParamUtils {
 
     public static final String name = "properties_conf";
     private static final String[] params = {"method", "distrib", "arch", "suite", "source_path",
@@ -19,7 +19,7 @@ public class PropertiesStore extends ParamUtils {
             "x11_sdl_delay", "fb_display", "fb_dev", "fb_input", "fb_args", "fb_refresh",
             "fb_freeze", "desktop", "mounts", "include"};
 
-    public PropertiesStore() {
+    PropertiesStore() {
         super(name, params);
     }
 

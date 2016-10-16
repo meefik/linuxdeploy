@@ -2,12 +2,12 @@ package ru.meefik.linuxdeploy;
 
 import android.content.Context;
 
-public class SettingsStore extends ParamUtils {
+class SettingsStore extends ParamUtils {
 
     public static final String name = "settings_conf";
     private static final String[] params = {"chroot_dir", "profile"};
 
-    public SettingsStore() {
+    SettingsStore() {
         super(name, params);
     }
 

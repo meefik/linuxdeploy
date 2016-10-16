@@ -28,9 +28,9 @@ import java.util.Locale;
 
 public class PrefStore {
 
-    public final static SettingsStore SETTINGS = new SettingsStore();
-    public final static PropertiesStore PROPERTIES = new PropertiesStore();
-    final static int NOTIFY_ID = 1;
+    private final static SettingsStore SETTINGS = new SettingsStore();
+    private final static PropertiesStore PROPERTIES = new PropertiesStore();
+    private final static int NOTIFY_ID = 1;
 
     /**
      * Get application version
@@ -38,7 +38,7 @@ public class PrefStore {
      * @param c context
      * @return version, format versionName-versionCode
      */
-    public static String getVersion(Context c) {
+    static String getVersion(Context c) {
         String version = "";
         try {
             PackageInfo pi = c.getPackageManager().getPackageInfo(c.getPackageName(), 0);
@@ -55,7 +55,7 @@ public class PrefStore {
      * @param c context
      * @return path, e.g. /data/data/package
      */
-    public static String getDataDir(Context c) {
+    static String getDataDir(Context c) {
         return c.getApplicationInfo().dataDir;
     }
 
@@ -65,7 +65,7 @@ public class PrefStore {
      * @param c context
      * @return path, e.g. /data/data/package/files/env
      */
-    public static String getEnvDir(Context c) {
+    static String getEnvDir(Context c) {
         String envDir = SETTINGS.get(c, "env_dir");
         if (envDir.isEmpty()) envDir = getDataDir(c) + "/env";
         return envDir;
@@ -77,7 +77,7 @@ public class PrefStore {
      * @param c context
      * @return path, e.g. ${ENV_DIR}/config
      */
-    public static String getConfigDir(Context c) {
+    static String getConfigDir(Context c) {
         return getEnvDir(c) + "/config";
     }
 
@@ -87,7 +87,7 @@ public class PrefStore {
      * @param c context
      * @return path, e.g. /data/data/package/bin
      */
-    public static String getBinDir(Context c) {
+    static String getBinDir(Context c) {
         return getDataDir(c) + "/bin";
     }
 
@@ -97,7 +97,7 @@ public class PrefStore {
      * @param c context
      * @return path, e.g. /data/data/package/tmp
      */
-    public static String getTmpDir(Context c) {
+    static String getTmpDir(Context c) {
         return getDataDir(c) + "/tmp";
     }
 
@@ -107,7 +107,7 @@ public class PrefStore {
      * @param c context
      * @return path, e.g. /data/data/package/web
      */
-    public static String getWebDir(Context c) {
+    static String getWebDir(Context c) {
         return getDataDir(c) + "/web";
     }
 
@@ -117,7 +117,7 @@ public class PrefStore {
      * @param c context
      * @return path of httpd.conf
      */
-    public static File getHttpConfFile(Context c) {
+    static File getHttpConfFile(Context c) {
         return new File(getWebDir(c) + "/httpd.conf");
     }
 
@@ -127,7 +127,7 @@ public class PrefStore {
      * @param c context
      * @return true if success
      */
-    public static boolean dumpSettings(Context c) {
+    static boolean dumpSettings(Context c) {
         return SETTINGS.dump(c, getSettingsConfFile(c));
     }
 
@@ -137,7 +137,7 @@ public class PrefStore {
      * @param c context
      * @return true if success
      */
-    public static boolean restoreSettings(Context c) {
+    static boolean restoreSettings(Context c) {
         return SETTINGS.restore(c, getSettingsConfFile(c));
     }
 
@@ -147,7 +147,7 @@ public class PrefStore {
      * @param c context
      * @return true if success
      */
-    public static boolean dumpProperties(Context c) {
+    static boolean dumpProperties(Context c) {
         return PROPERTIES.dump(c, getPropertiesConfFile(c));
     }
 
@@ -157,7 +157,7 @@ public class PrefStore {
      * @param c context
      * @return true if success
      */
-    public static boolean restoreProperties(Context c) {
+    static boolean restoreProperties(Context c) {
         PROPERTIES.clear(c, true);
         return PROPERTIES.restore(c, getPropertiesConfFile(c));
     }
@@ -167,8 +167,8 @@ public class PrefStore {
      *
      * @return name
      */
-    public static String getSettingsSharedName() {
-        return SETTINGS.name;
+    static String getSettingsSharedName() {
+        return SettingsStore.name;
     }
 
     /**
@@ -176,8 +176,8 @@ public class PrefStore {
      *
      * @return name
      */
-    public static String getPropertiesSharedName() {
-        return PROPERTIES.name;
+    static String getPropertiesSharedName() {
+        return PropertiesStore.name;
     }
 
     /**
@@ -185,7 +185,7 @@ public class PrefStore {
      *
      * @return true if required
      */
-    public static boolean isRootRequired(Context c) {
+    static boolean isRootRequired(Context c) {
         return PROPERTIES.get(c, "method").equals("chroot");
     }
 
@@ -195,7 +195,7 @@ public class PrefStore {
      * @param c context
      * @return language code, e.g. "en"
      */
-    public static String getLanguage(Context c) {
+    private static String getLanguage(Context c) {
         String language = SETTINGS.get(c, "language");
         if (language.length() == 0) {
             String countryCode = Locale.getDefault().getLanguage();
@@ -217,7 +217,7 @@ public class PrefStore {
      * @param c context
      * @return resource id
      */
-    public static int getTheme(Context c) {
+    static int getTheme(Context c) {
         String theme = SETTINGS.get(c, "theme");
         int themeId = R.style.DarkTheme;
         switch (theme) {
@@ -237,7 +237,7 @@ public class PrefStore {
      * @param c context
      * @return font size
      */
-    public static int getFontSize(Context c) {
+    static int getFontSize(Context c) {
         Integer fontSizeInt;
         String fontSize = SETTINGS.get(c, "fontsize");
         try {
@@ -256,7 +256,7 @@ public class PrefStore {
      * @param c context
      * @return number of lines
      */
-    public static int getMaxLines(Context c) {
+    static int getMaxLines(Context c) {
         Integer maxLinesInt;
         String maxLines = SETTINGS.get(c, "maxlines");
         try {
@@ -275,7 +275,7 @@ public class PrefStore {
      * @param c context
      * @return true if enabled
      */
-    public static Boolean isTimestamp(Context c) {
+    static Boolean isTimestamp(Context c) {
         return SETTINGS.get(c, "timestamp").equals("true");
     }
 
@@ -285,7 +285,7 @@ public class PrefStore {
      * @param c context
      * @return true if enabled
      */
-    public static Boolean isDebugMode(Context c) {
+    static Boolean isDebugMode(Context c) {
         return SETTINGS.get(c, "debug_mode").equals("true");
     }
 
@@ -295,7 +295,7 @@ public class PrefStore {
      * @param c context
      * @return true if enabled
      */
-    public static Boolean isTraceMode(Context c) {
+    static Boolean isTraceMode(Context c) {
         return SETTINGS.get(c, "trace_mode").equals("true");
     }
 
@@ -305,7 +305,7 @@ public class PrefStore {
      * @param c context
      * @return true if enabled
      */
-    public static Boolean isLogger(Context c) {
+    static Boolean isLogger(Context c) {
         return SETTINGS.get(c, "logger").equals("true");
     }
 
@@ -315,7 +315,7 @@ public class PrefStore {
      * @param c context
      * @return path
      */
-    public static String getLogFile(Context c) {
+    static String getLogFile(Context c) {
         String logfile = SETTINGS.get(c, "logfile");
         if (!logfile.contains("/")) logfile = getEnvDir(c) + "/" + logfile;
         return logfile;
@@ -327,7 +327,7 @@ public class PrefStore {
      * @param c context
      * @return true if enabled
      */
-    public static Boolean isScreenLock(Context c) {
+    static Boolean isScreenLock(Context c) {
         return SETTINGS.get(c, "screenlock").equals("true");
     }
 
@@ -337,7 +337,7 @@ public class PrefStore {
      * @param c context
      * @return true if enabled
      */
-    public static Boolean isWifiLock(Context c) {
+    static Boolean isWifiLock(Context c) {
         return SETTINGS.get(c, "wifilock").equals("true");
     }
 
@@ -347,7 +347,7 @@ public class PrefStore {
      * @param c context
      * @return true if enabled
      */
-    public static Boolean isWakeLock(Context c) {
+    static Boolean isWakeLock(Context c) {
         return SETTINGS.get(c, "wakelock").equals("true");
     }
 
@@ -357,7 +357,7 @@ public class PrefStore {
      * @param c context
      * @return true if enabled
      */
-    public static Boolean isAutostart(Context c) {
+    static Boolean isAutostart(Context c) {
         return SETTINGS.get(c, "autostart").equals("true");
     }
 
@@ -367,7 +367,7 @@ public class PrefStore {
      * @param c context
      * @return true if enabled
      */
-    public static Boolean isTrackNetwork(Context c) {
+    static Boolean isTrackNetwork(Context c) {
         return SETTINGS.get(c, "nettrack").equals("true");
     }
 
@@ -377,7 +377,7 @@ public class PrefStore {
      * @param c context
      * @return true if enabled
      */
-    public static Boolean isNotification(Context c) {
+    private static Boolean isNotification(Context c) {
         return SETTINGS.get(c, "appicon").equals("true");
     }
 
@@ -387,7 +387,7 @@ public class PrefStore {
      * @param c context
      * @return true if enabled
      */
-    public static Boolean isStealth(Context c) {
+    static Boolean isStealth(Context c) {
         return SETTINGS.get(c, "stealth").equals("true");
     }
 
@@ -398,7 +398,7 @@ public class PrefStore {
      * @param c context
      * @return command
      */
-    public static String getTerminalCmd(Context c) {
+    static String getTerminalCmd(Context c) {
         return SETTINGS.get(c, "terminalcmd");
     }
 
@@ -408,7 +408,7 @@ public class PrefStore {
      * @param c context
      * @return path, e.g. /data/data/package/files/bin
      */
-    public static String getPath(Context c) {
+    static String getPath(Context c) {
         String binDir = getDataDir(c) + "/bin";
         String path = SETTINGS.get(c, "path");
         if (path.isEmpty()) path = binDir;
@@ -422,7 +422,7 @@ public class PrefStore {
      * @param c context
      * @return path, e.g. /system/bin/sh
      */
-    public static String getShell(Context c) {
+    static String getShell(Context c) {
         String[] path = getPath(c).split(":");
         String shell = "/system/bin/sh";
         for (String p : path) {
@@ -439,7 +439,7 @@ public class PrefStore {
      * @param c context
      * @return url
      */
-    public static String getRepositoryUrl(Context c) {
+    static String getRepositoryUrl(Context c) {
         return SETTINGS.get(c, "repository_url");
     }
 
@@ -448,7 +448,7 @@ public class PrefStore {
      *
      * @param c context
      */
-    public static void setRepositoryUrl(Context c, String url) {
+    static void setRepositoryUrl(Context c, String url) {
         SETTINGS.set(c, "repository_url", url);
     }
 
@@ -458,7 +458,7 @@ public class PrefStore {
      * @param c context
      * @return true if enabled
      */
-    public static Boolean isCliSymlink(Context c) {
+    static Boolean isCliSymlink(Context c) {
         return SETTINGS.get(c, "is_cli").equals("true");
     }
 
@@ -468,7 +468,7 @@ public class PrefStore {
      * @param c context
      * @return true if enabled
      */
-    public static Boolean isTelnet(Context c) {
+    static Boolean isTelnet(Context c) {
         return SETTINGS.get(c, "is_telnet").equals("true");
     }
 
@@ -478,7 +478,7 @@ public class PrefStore {
      * @param c context
      * @return port
      */
-    public static String getTelnetPort(Context c) {
+    static String getTelnetPort(Context c) {
         return SETTINGS.get(c, "telnet_port");
     }
 
@@ -488,7 +488,7 @@ public class PrefStore {
      * @param c context
      * @return true if localhost
      */
-    public static boolean isTelnetLocalhost(Context c) {
+    static boolean isTelnetLocalhost(Context c) {
         return SETTINGS.get(c, "telnet_localhost").equals("true");
     }
 
@@ -498,7 +498,7 @@ public class PrefStore {
      * @param c context
      * @return true if enabled
      */
-    public static Boolean isHttp(Context c) {
+    static Boolean isHttp(Context c) {
         return SETTINGS.get(c, "is_http").equals("true");
     }
 
@@ -508,7 +508,7 @@ public class PrefStore {
      * @param c context
      * @return port
      */
-    public static String getHttpPort(Context c) {
+    static String getHttpPort(Context c) {
         return SETTINGS.get(c, "http_port");
     }
 
@@ -518,7 +518,7 @@ public class PrefStore {
      * @param c context
      * @return authentication string, e.g. /:user:password (for crypt password use httpd -m password)
      */
-    public static String getHttpConf(Context c) {
+    static String getHttpConf(Context c) {
         String auth = SETTINGS.get(c, "http_conf");
         if (auth.isEmpty()) auth = "/:android:" + generatePassword();
         return auth;
@@ -530,7 +530,7 @@ public class PrefStore {
      * @param c context
      * @return true if enabled
      */
-    public static boolean isXserver(Context c) {
+    static boolean isXserver(Context c) {
         return PROPERTIES.get(c, "is_gui").equals("true") &&
                 PROPERTIES.get(c, "graphics").equals("x11");
     }
@@ -541,7 +541,7 @@ public class PrefStore {
      * @param c context
      * @return true if enabled
      */
-    public static boolean isFramebuffer(Context c) {
+    static boolean isFramebuffer(Context c) {
         return PROPERTIES.get(c, "is_gui").equals("true") &&
                 PROPERTIES.get(c, "graphics").equals("fb");
     }
@@ -552,7 +552,7 @@ public class PrefStore {
      * @param c context
      * @return true if enabled
      */
-    public static boolean isXsdl(Context c) {
+    static boolean isXsdl(Context c) {
         return PROPERTIES.get(c, "x11_sdl").equals("true");
     }
 
@@ -562,7 +562,7 @@ public class PrefStore {
      * @param c context
      * @return delay in ms
      */
-    public static int getXsdlDelay(Context c) {
+    static int getXsdlDelay(Context c) {
         Integer deplayInt;
         String delay = PROPERTIES.get(c, "x11_sdl_delay");
         try {
@@ -581,7 +581,7 @@ public class PrefStore {
      * @param c context
      * @return path of cli.conf
      */
-    public static File getSettingsConfFile(Context c) {
+    static File getSettingsConfFile(Context c) {
         return new File(getEnvDir(c) + "/cli.conf");
     }
 
@@ -591,7 +591,7 @@ public class PrefStore {
      * @param c context
      * @return path of profile
      */
-    public static File getPropertiesConfFile(Context c) {
+    static File getPropertiesConfFile(Context c) {
         return new File(getConfigDir(c) + "/" + getProfileName(c) + ".conf");
     }
 
@@ -601,7 +601,7 @@ public class PrefStore {
      * @param c context
      * @return profile
      */
-    public static String getProfileName(Context c) {
+    static String getProfileName(Context c) {
         return SETTINGS.get(c, "profile");
     }
 
@@ -610,7 +610,7 @@ public class PrefStore {
      *
      * @param c context
      */
-    public static void changeProfile(Context c, String profile) {
+    static void changeProfile(Context c, String profile) {
         SETTINGS.set(c, "profile", profile);
         dumpSettings(c);
         File confFile = getPropertiesConfFile(c);
@@ -625,7 +625,7 @@ public class PrefStore {
      *
      * @param c context
      */
-    public static void setLocale(Context c) {
+    static void setLocale(Context c) {
         String language = getLanguage(c);
         Locale locale = new Locale(language);
         Locale.setDefault(locale);
@@ -641,7 +641,7 @@ public class PrefStore {
      * @param c context
      * @return list of mount points
      */
-    public static List<String> getMountsList(Context c) {
+    static List<String> getMountsList(Context c) {
         String str = PROPERTIES.get(c, "mounts");
         List<String> list = new ArrayList<>();
         if (!str.isEmpty()) Collections.addAll(list, str.split(" "));
@@ -654,7 +654,7 @@ public class PrefStore {
      * @param c    context
      * @param list list of mount points
      */
-    public static void setMountsList(Context c, List<String> list) {
+    static void setMountsList(Context c, List<String> list) {
         PROPERTIES.set(c, "mounts", TextUtils.join(" ", list));
     }
 
@@ -663,7 +663,7 @@ public class PrefStore {
      *
      * @return plain password
      */
-    public static String generatePassword() {
+    static String generatePassword() {
         return Long.toHexString(Double.doubleToLongBits(Math.random())).substring(8);
     }
 
@@ -673,7 +673,7 @@ public class PrefStore {
      * @param arch unformated architecture
      * @return intel, arm or mips
      */
-    public static String getArch(String arch) {
+    static String getArch(String arch) {
         String march = "unknown";
         if (arch.length() > 0) {
             char a = arch.toLowerCase().charAt(0);
@@ -700,7 +700,7 @@ public class PrefStore {
      *
      * @return intel, arm or mips
      */
-    public static String getArch() {
+    static String getArch() {
         return getArch(System.getProperty("os.arch"));
     }
 
@@ -711,7 +711,7 @@ public class PrefStore {
      * @return screen width
      */
     @SuppressLint("NewApi")
-    public static Integer getScreenWidth(Context c) {
+    static Integer getScreenWidth(Context c) {
         int width = 0;
         WindowManager wm = (WindowManager) c.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
@@ -732,7 +732,7 @@ public class PrefStore {
      * @return screen height
      */
     @SuppressLint("NewApi")
-    public static Integer getScreenHeight(Context c) {
+    static Integer getScreenHeight(Context c) {
         int height = 0;
         WindowManager wm = (WindowManager) c.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
@@ -751,7 +751,7 @@ public class PrefStore {
      *
      * @return ip address
      */
-    public static String getLocalIpAddress() {
+    static String getLocalIpAddress() {
         String ip = "127.0.0.1";
         try {
             for (Enumeration<NetworkInterface> en = NetworkInterface
@@ -780,7 +780,7 @@ public class PrefStore {
      * @param resourceType resource type
      * @return resource id
      */
-    public static int getResourceId(Context c, String resourceName, String resourceType) {
+    static int getResourceId(Context c, String resourceName, String resourceType) {
         try {
             return c.getResources().getIdentifier(resourceName, resourceType, c.getPackageName());
         } catch (Exception e) {
@@ -794,7 +794,7 @@ public class PrefStore {
      * @param context context
      * @param intent  intent
      */
-    public static void showNotification(Context context, Intent intent) {
+    static void showNotification(Context context, Intent intent) {
         NotificationManager mNotificationManager = (NotificationManager) context
                 .getSystemService(Context.NOTIFICATION_SERVICE);
         if (isNotification(context)) {
@@ -827,7 +827,7 @@ public class PrefStore {
      *
      * @param context context
      */
-    public static void hideNotification(Context context) {
+    static void hideNotification(Context context) {
         NotificationManager mNotificationManager = (NotificationManager) context
                 .getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.cancel(NOTIFY_ID);

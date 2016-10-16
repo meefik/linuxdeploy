@@ -5,7 +5,7 @@ import android.app.ProgressDialog;
 import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
 
-public class RemoveEnvTask extends AsyncTask<String, Void, Boolean> {
+class RemoveEnvTask extends AsyncTask<String, Void, Boolean> {
 
     private ProgressDialog dialog;
     private Activity activity;

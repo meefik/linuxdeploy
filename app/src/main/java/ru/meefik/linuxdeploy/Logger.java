@@ -16,7 +16,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class Logger {
+class Logger {
 
     private static volatile List<String> protocol = new ArrayList<>();
     private static char lastChar = '\n';
@@ -69,7 +69,7 @@ public class Logger {
      * @param c context
      * @return true if success
      */
-    public static boolean clear(Context c) {
+    static boolean clear(Context c) {
         protocol.clear();
         File logFile = new File(PrefStore.getLogFile(c));
         return logFile.delete();
@@ -80,14 +80,14 @@ public class Logger {
      *
      * @return size
      */
-    public static int size() {
+    static int size() {
         return protocol.size();
     }
 
     /**
      * Show log on main activity
      */
-    public static void show() {
+    static void show() {
         MainActivity.showLog(get());
     }
 
@@ -96,7 +96,7 @@ public class Logger {
      *
      * @return protocol as text
      */
-    public static String get() {
+    private static String get() {
         return android.text.TextUtils.join("\n", protocol);
     }
 
@@ -106,7 +106,7 @@ public class Logger {
      * @param c   context
      * @param msg message
      */
-    public static void log(Context c, String msg) {
+    static void log(Context c, String msg) {
         appendMessage(c, msg);
     }
 
@@ -131,7 +131,7 @@ public class Logger {
      * @param c   context
      * @param msg message
      */
-    public static void write(Context c, String msg) {
+    private static void write(Context c, String msg) {
         String logFile = PrefStore.getLogFile(c);
         BufferedWriter writer = null;
         try {
@@ -150,7 +150,7 @@ public class Logger {
      * @param c      context
      * @param stream stream
      */
-    public static void log(Context c, InputStream stream) {
+    static void log(Context c, InputStream stream) {
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new InputStreamReader(stream));
