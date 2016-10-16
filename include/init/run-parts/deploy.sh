@@ -23,7 +23,7 @@ do_start()
 
     if [ -f "${CHROOT_DIR}${INIT_PATH}" ]; then
         msg ":: Starting ${COMPONENT}: "
-        run_part "${CHROOT_DIR}${INIT_PATH}" start
+        run_part "${INIT_PATH}" start
     else
         local services=$(ls "${CHROOT_DIR}${INIT_PATH}/")
         if [ -n "${services}" ]; then
@@ -45,7 +45,7 @@ do_stop()
 
     if [ -f "${CHROOT_DIR}${INIT_PATH}" ]; then
         msg ":: Stopping ${COMPONENT}: "
-        run_part "${CHROOT_DIR}${INIT_PATH}" stop
+        run_part "${INIT_PATH}" stop
     else
         local services=$(ls "${CHROOT_DIR}${INIT_PATH}/" | tac)
         if [ -n "${services}" ]; then
