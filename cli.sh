@@ -6,7 +6,7 @@
 #
 ################################################################################
 
-VERSION="2.1.2"
+VERSION="2.1.3"
 
 ################################################################################
 # Common
@@ -1062,11 +1062,6 @@ if [ -z "${CHROOT_DIR}" ]; then
     CHROOT_DIR="${ENV_DIR}/mnt"
 fi
 
-[ -d "${CONFIG_DIR}" ] || mkdir "${CONFIG_DIR}"
-[ -d "${INCLUDE_DIR}" ] || mkdir "${INCLUDE_DIR}"
-[ -d "${TEMP_DIR}" ] || mkdir "${TEMP_DIR}"
-[ -d "${CHROOT_DIR}" ] || mkdir "${CHROOT_DIR}"
-
 # parse options
 OPTIND=1
 while getopts :p:dt FLAG
@@ -1121,6 +1116,12 @@ proot)
     METHOD="chroot"
 ;;
 esac
+
+# make dirs
+[ -d "${CONFIG_DIR}" ] || mkdir "${CONFIG_DIR}"
+[ -d "${INCLUDE_DIR}" ] || mkdir "${INCLUDE_DIR}"
+[ -d "${TEMP_DIR}" ] || mkdir "${TEMP_DIR}"
+[ -d "${CHROOT_DIR}" ] || mkdir "${CHROOT_DIR}"
 
 # exec command
 OPTCMD="$1"; shift
