@@ -174,11 +174,11 @@ public class MainActivity extends AppCompatActivity implements
                 startActivity(intent_about);
                 break;
             case R.id.nav_exit:
-                PrefStore.hideNotification(getBaseContext());
                 if (wifiLock.isHeld()) wifiLock.release();
                 if (wakeLock.isHeld()) wakeLock.release();
                 EnvUtils.execService(getBaseContext(), "telnetd", "stop");
                 EnvUtils.execService(getBaseContext(), "httpd", "stop");
+                PrefStore.hideNotification(getBaseContext());
                 finish();
                 break;
         }

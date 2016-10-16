@@ -13,7 +13,6 @@ public class ExecService extends Service {
     public void onCreate() {
         super.onCreate();
         mContext = getBaseContext();
-        PrefStore.showNotification(mContext, null);
     }
 
     @Override
@@ -37,6 +36,7 @@ public class ExecService extends Service {
                             EnvUtils.httpd(mContext, args);
                             break;
                         default:
+                            PrefStore.showNotification(mContext, null);
                             EnvUtils.cli(mContext, cmd, args);
                     }
                 }
