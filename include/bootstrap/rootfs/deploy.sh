@@ -58,28 +58,17 @@ rootfs_make()
     fi
 
     if [ "${TARGET_TYPE}" = "file" -o "${TARGET_TYPE}" = "partition" ]; then
-        local fs fs_support
-        for fs in ext4 ext3 ext2
-        do
-            if $(grep -q "${fs}" /proc/filesystems); then
-                fs_support="${fs}"
-                break
-            fi
-        done
-        if [ -z "${fs_support}" ]; then
-            msg "The filesystems ext2, ext3 or ext4 is not supported."; return 1
-        fi
-        if [ -z "${FS_TYPE}" -o "${FS_TYPE}" = "auto" ]; then
-            FS_TYPE="${fs_support}"
-        fi
-
-        msg -n "Making file system (${FS_TYPE}) ... "
+        msg -n "Making file system ... "
         local loop_exist=$(losetup -a | grep -c "${TARGET_PATH}")
         local img_mounted=$(grep -c "${TARGET_PATH}" /proc/mounts)
         if [ "${loop_exist}" -ne 0 -o "${img_mounted}" -ne 0 ]; then
             msg "fail"; return 1
         fi
-        mke2fs -qF -t "${FS_TYPE}" -O ^has_journal "${TARGET_PATH}" >/dev/null
+        local fs_args
+        if [ -n "${FS_TYPE}" -a "${FS_TYPE}" != "auto" ]; then
+            fs_args="-t ${FS_TYPE}"
+        fi
+        mke2fs -qF -O ^has_journal ${fs_args} "${TARGET_PATH}" >/dev/null
         is_ok "fail" "done" || return 1
     fi
 
