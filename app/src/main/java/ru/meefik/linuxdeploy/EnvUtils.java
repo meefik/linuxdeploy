@@ -110,7 +110,9 @@ class EnvUtils {
     private static void cleanDirectory(File path) {
         if (path == null) return;
         if (path.exists()) {
-            for (File f : path.listFiles()) {
+            File[] list = path.listFiles();
+            if (list == null) return;
+            for (File f : list) {
                 if (f.isDirectory()) cleanDirectory(f);
                 f.delete();
             }
@@ -128,7 +130,9 @@ class EnvUtils {
         if (path.exists()) {
             path.setReadable(true, false);
             path.setExecutable(true, false);
-            for (File f : path.listFiles()) {
+            File[] list = path.listFiles();
+            if (list == null) return;
+            for (File f : list) {
                 if (f.isDirectory()) setPermissions(f);
                 f.setReadable(true, false);
                 f.setExecutable(true, false);

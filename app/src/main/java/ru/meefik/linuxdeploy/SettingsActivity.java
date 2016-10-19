@@ -3,6 +3,7 @@ package ru.meefik.linuxdeploy;
 import android.Manifest;
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -174,7 +175,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements
     }
 
     private void updateEnvDialog() {
-        final Activity activity = this;
+        final Context context = this;
         new AlertDialog.Builder(this)
                 .setTitle(R.string.title_installenv_preference)
                 .setMessage(R.string.message_installenv_confirm_dialog)
@@ -184,7 +185,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int id) {
-                                new UpdateEnvTask(activity).execute();
+                                new UpdateEnvTask(context).execute();
                             }
                         })
                 .setNegativeButton(android.R.string.no,
@@ -197,7 +198,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements
     }
 
     private void removeEnvDialog() {
-        final Activity activity = this;
+        final Context context = this;
         new AlertDialog.Builder(this)
                 .setTitle(R.string.title_removeenv_preference)
                 .setMessage(R.string.message_removeenv_confirm_dialog)
@@ -207,7 +208,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int id) {
-                                new RemoveEnvTask(activity).execute();
+                                new RemoveEnvTask(context).execute();
                             }
                         })
                 .setNegativeButton(android.R.string.no,
