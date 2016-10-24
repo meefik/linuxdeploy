@@ -58,9 +58,9 @@
 
     <string name="app_preferences">앱</string>
     <string name="title_screenlock_preference">화면 잠금</string>
-    <string name="summary_screenlock_preference">앱이 실행되고 있는동안 화면이 꺼지지 않게 합니다.</string>
+    <string name="summary_screenlock_preference">앱이 실행되고 있는동안 화면이 꺼지지 않도록 합니다.</string>
     <string name="title_wifilock_preference">Wi-Fi 잠금</string>
-    <string name="summary_wifilock_preference">앱이 실행되고 있는동안 Wi-Fi 가 꺼지지 않도록 합니다.</string>
+    <string name="summary_wifilock_preference">앱이 실행되고 있는동안 Wi-Fi가 꺼지지 않도록 합니다.</string>
     <string name="title_wakelock_preference">Wake lock</string>
     <string name="summary_wakelock_preference">화면을 끄더라도 CPU가 계속 작동하도록 합니다.</string>
     <string name="title_language_preference">언어</string>
@@ -71,16 +71,16 @@
     <string name="dialog_title_maxlines_preference">스크롤 크기</string>
     <string name="title_theme_preference">테마</string>
     <string name="dialog_title_theme_preference">테마 변경</string>
-    <string name="title_timestamp_preference">타임스태프</string>
-    <string name="summary_timestamp_preference">타임스태프 보이기</string>
+    <string name="title_timestamp_preference">타임스탬프</string>
+    <string name="summary_timestamp_preference">타임스탬프 보이기</string>
     <string name="title_appicon_preference">아이콘 보이기</string>
     <string name="summary_appicon_preference">상단 알림바에 아이콘을 보이게 합니다.</string>
     <string name="title_stealth_preference">스텔스 모드</string>
     <string name="summary_stealth_preference">홈런처에서 아이콘이 보이지 않게 합니다.</string>
     <string name="title_autostart_preference">자동 시작</string>
-    <string name="summary_autostart_preference">Android 가 부팅되면 자동으로 서비스를 시작하게 합니다.</string>
-    <string name="title_nettrack_preference">Network trigger</string>
-    <string name="summary_nettrack_preference">Track changes of the network and update the container</string>
+    <string name="summary_autostart_preference">Android가 부팅되면 자동으로 서비스를 시작하게 합니다.</string>
+    <string name="title_nettrack_preference">네트워크 감지</string>
+    <string name="summary_nettrack_preference">네트워크 변경을 감지해서 컨테이너를 업데이트합니다.</string>
     <string name="title_terminalcmd_preference">터미널 명령어</string>
     <string name="dialog_title_terminalcmd_preference">터미널 명령어</string>
 
@@ -100,7 +100,7 @@
     <string name="dialog_title_server_url_preference">서버 URL</string>
 
     <string name="title_is_cli_preference">CLI 활성화</string>
-    <string name="summary_is_cli_preference">Set up a command line interface</string>
+    <string name="summary_is_cli_preference">명령 줄 인터페이스를 설정합니다.</string>
 
     <string name="title_installenv_preference">ENV 업데이트</string>
     <string name="summary_installenv_preference">운영체제 환경 업데이트</string>
@@ -110,7 +110,7 @@
     <string name="summary_removeenv_preference">운영체제 환경 삭제</string>
     <string name="message_removeenv_confirm_dialog">운영체제 환경을 삭제하시겠습니까?</string>
 
-    <string name="manage_preferences">조치</string>
+    <string name="manage_preferences">관리</string>
     <!-- TELNET -->
     <string name="title_is_telnet_preference">TELNET</string>
     <string name="summary_is_telnet_preference">TELNET 데몬 활성화</string>
@@ -142,8 +142,8 @@
 
     <string name="bootstrap_preferences">부트스트랩</string>
     <!-- METHOD -->
-    <string name="title_method_preference">Containerization 메소드</string>
-    <string name="dialog_title_method_preference">Containerization 메소드</string>
+    <string name="title_method_preference">컨테이너화 방식</string>
+    <string name="dialog_title_method_preference">컨테이너화 방식</string>
     <!-- DISTRIB -->
     <string name="title_distrib_preference">배포</string>
     <string name="dialog_title_distrib_preference">배포</string>
@@ -303,9 +303,9 @@
     <string name="title_fb_refresh_preference">강제 새로고침</string>
     <string name="summary_fb_refresh_preference">강제로 Framebuffer 새로고침</string>
 
-    <string name="help_text">\n<b>Help</b>\n\n이 응용 프로그램은 GNU/Linux 배포판을 설치하고 chroot로 마운트 하는 프로그램 입니다.\n\n순서 :\n1. 루트 권한을 허용해 주세요. (루팅해야 합니다.)\n2. <a href="https://play.google.com/store/apps/details?id=ru.meefik.busybox">이 경로</a> 를 통해 BusyBox 를 설치하세요. (반드시 이 BusyBox로 설치하셔야 합니다.)\n3. 인터넷 연결을 확인하세요.\n4. 밑에 있는 다운로드 아이콘을 눌러서 설치 환경을 설정하세요.\n5. 설치버튼을 누르세요.\n6. 설치가 모두 다되는동안 기다리세요.\n7. \"START\" 버튼을 눌러서 시작하세요.\n8. CLI, SSH, VNC 등으로 리눅스에 연결하세요.\n\n자세한 내용은 \"About\" 를 참조해 주세요.\n\n버그 신고는 <a href="https://github.com/meefik/linuxdeploy/issues">여기</a>(한글가능, Github 아이디 필요) 로 해 주세요.</string>
+    <string name="help_text">\n<b>도움말</b>\n\n이 응용 프로그램은 GNU/Linux 배포판을 설치하고 chroot로 마운트 하는 프로그램 입니다.\n\n순서 :\n1. 루트 권한을 허용해 주세요. (루팅해야 합니다.)\n2. <a href="https://play.google.com/store/apps/details?id=ru.meefik.busybox">이 경로</a>를 통해 BusyBox를 설치하세요. (반드시 이 BusyBox로 설치하셔야 합니다.)\n3. 인터넷 연결을 확인하세요.\n4. 밑에 있는 다운로드 아이콘을 눌러서 설치 환경을 설정하세요.\n5. 설치버튼을 누르세요.\n6. 설치가 모두 다되는동안 기다리세요.\n7. \"START\" 버튼을 눌러서 시작하세요.\n8. CLI, SSH, VNC 등으로 리눅스에 연결하세요.\n\n자세한 내용은 \"About\" 를 참조해 주세요.\n\n버그 신고는 <a href="https://github.com/meefik/linuxdeploy/issues">여기</a>(한글가능, Github 아이디 필요) 로 해 주세요.</string>
     <string name="about_text">이 응용 프로그램은 GNU/Linux 배포판을 설치하고 chroot로 마운트 하는 프로그램 입니다.\n\n자세한 내용은 <a href="https://github.com/meefik/linuxdeploy">프로젝트 사이트</a>, <a href="http://4pda.ru/forum/index.php?showtopic=378043">포럼(러시아어)</a> 또는 <a href="http://meefik.ru">개발자 사이트(러시아어)</a> 를 확인하세요.\n\n&#169; 2012&#8211;2015 Anton Skshidlevsky, GPLv3</string>
-    <string name="repository_purchase_button">사다</string>
+    <string name="repository_purchase_button">구입하기</string>
     <string name="write_permissions_disallow">이 앱이 사용자 저장소에 쓰기작업을 할 수 없습니다.</string>
 
 </resources>
