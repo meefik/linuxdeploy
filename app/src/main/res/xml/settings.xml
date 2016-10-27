@@ -34,7 +34,7 @@
             android:key="fontsize"
             android:summary="@string/fontsize"
             android:title="@string/title_fontsize_preference" />
-        
+
         <EditTextPreference
             android:defaultValue="@string/maxlines"
             android:dialogTitle="@string/dialog_title_maxlines_preference"
@@ -72,6 +72,13 @@
             android:key="autostart"
             android:summary="@string/summary_autostart_preference"
             android:title="@string/title_autostart_preference" />
+        <EditTextPreference
+            android:defaultValue="0"
+            android:dialogTitle="@string/summary_autostart_preference"
+            android:inputType="number"
+            android:key="autostart_delay"
+            android:summary="@string/summary_autostart_preference"
+            android:title="@string/title_autostart_delay_preference" />
         <CheckBoxPreference
             android:defaultValue="@string/nettrack"
             android:key="nettrack"
