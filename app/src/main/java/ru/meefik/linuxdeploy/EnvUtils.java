@@ -305,7 +305,7 @@ class EnvUtils {
             stdin = process.getOutputStream();
             stdout = process.getInputStream();
 
-            params.add(0, "PATH=" + PrefStore.getEnvDir(c) + "/bin:$PATH");
+            params.add(0, "PATH=" + PrefStore.getBinDir(c) + ":$PATH");
             if (PrefStore.isTraceMode(c)) params.add(0, "set -x");
             params.add("exit $?");
 
