@@ -11,6 +11,7 @@
     <string name="appicon" translatable="false">true</string>
     <string name="stealth" translatable="false">false</string>
     <string name="autostart" translatable="false">false</string>
+    <string name="autostart_delay" translatable="false">30</string>
     <string name="nettrack" translatable="false">false</string>
     <string name="terminalcmd" translatable="false">telnet 127.0.0.1 5023</string>
     <string name="env_dir" translatable="false"></string>

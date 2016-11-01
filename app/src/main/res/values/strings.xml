@@ -86,6 +86,8 @@
     <string name="summary_stealth_preference">Hide application icon from launcher</string>
     <string name="title_autostart_preference">Autostart</string>
     <string name="summary_autostart_preference">Automatically run the container when starting Android</string>
+    <string name="title_autostart_delay_preference">Autostart delay</string>
+    <string name="dialog_title_autostart_delay_preference">Delay (seconds)</string>
     <string name="title_nettrack_preference">Network trigger</string>
     <string name="summary_nettrack_preference">Track changes of the network and update the container</string>
     <string name="title_terminalcmd_preference">Terminal command</string>
@@ -312,6 +314,5 @@
 
     <string name="help_text">\n<b>Help</b>\n\nThis application installs the selected GNU/Linux distribution and executes it in a chroot-container.\n\nProcedure:\n1. Get superuser privileges (root).\n2. Check the connection to Internet.\n3. Specify the installation options.\n4. Start the installation (\"Menu => Install\").\n5. Wait until the installation is complete.\n6. Tap \"START\" button to run the container.\n7. Connect to the container through CLI, SSH, VNC, or others.\n\nFor more information, see \"About\".</string>
     <string name="about_text">This application installs the selected GNU/Linux distribution and executes it in a chroot-container.\n\nFor more information see <a href="https://github.com/meefik/linuxdeploy">project page</a>, <a href="http://4pda.ru/forum/index.php?showtopic=378043">forum</a> or <a href="http://meefik.ru">developer site</a>.\n\n&#169; 2012&#8211;2016 Anton Skshidlevsky, GPLv3</string>
-    <string name="title_autostart_delay_preference">Autostart Delay (Seconds)</string>
 
 </resources>

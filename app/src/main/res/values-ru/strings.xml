@@ -61,6 +61,8 @@
     <string name="summary_appicon_preference">Отображать значок на панели уведомлений</string>
     <string name="title_autostart_preference">Автозапуск</string>
     <string name="summary_autostart_preference">Автоматически запускать контейнер при загрузке Android</string>
+    <string name="title_autostart_delay_preference">Задержка автозапуска</string>
+    <string name="dialog_title_autostart_delay_preference">Задержка (секунды)</string>
     <string name="env_preferences">Рабочее окружение</string>
     <string name="title_installenv_preference">Обновить окружение</string>
     <string name="summary_installenv_preference">Обновить рабочее окружение программы</string>

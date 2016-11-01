@@ -23,6 +23,7 @@ Extended syntax description of mount points, you can now specify to mount /from/
 Restore Android after closing Xorg session in framebuffer mode
 Make an unified container profiles for CLI and the application interface
 Created a repository of containers
+Added autostart delay
 
 1.5.6
 Fixed apt resolve in stretch and xenial
@@ -379,6 +380,7 @@ Updated list packages of base system installation
 Восстановление работы Android после завершение сессии Xorg в режиме кадрового буфера
 Сделаны единые профили контейнеров для CLI и интерфейса приложения
 Создан репозиторий контейнеров
+Добавлена задержка при автозапуске
 
 1.5.6
 Исправлена проблема c apt в stretch и xenial

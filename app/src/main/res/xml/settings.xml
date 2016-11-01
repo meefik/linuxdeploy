@@ -73,11 +73,12 @@
             android:summary="@string/summary_autostart_preference"
             android:title="@string/title_autostart_preference" />
         <EditTextPreference
-            android:defaultValue="0"
-            android:dialogTitle="@string/summary_autostart_preference"
+            android:dependency="autostart"
+            android:defaultValue="@string/autostart_delay"
+            android:dialogTitle="@string/dialog_title_autostart_delay_preference"
             android:inputType="number"
             android:key="autostart_delay"
-            android:summary="@string/summary_autostart_preference"
+            android:summary="@string/autostart_delay"
             android:title="@string/title_autostart_delay_preference" />
         <CheckBoxPreference
             android:defaultValue="@string/nettrack"

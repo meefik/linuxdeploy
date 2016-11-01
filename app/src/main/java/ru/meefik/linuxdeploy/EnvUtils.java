@@ -293,18 +293,19 @@ class EnvUtils {
         }
         boolean result = false;
         OutputStream stdin = null;
-        InputStream stdout = null;
+        InputStream stdout;
         try {
             ProcessBuilder pb = new ProcessBuilder(shell);
             pb.directory(new File(PrefStore.getEnvDir(c)));
-            Map<String, String> env = pb.environment();
-            env.put("PATH", PrefStore.getPath(c) + ":" + env.get("PATH"));
+            // Map<String, String> env = pb.environment();
+            // env.put("PATH", PrefStore.getPath(c) + ":" + env.get("PATH"));
             if (PrefStore.isDebugMode(c)) pb.redirectErrorStream(true);
             Process process = pb.start();
 
             stdin = process.getOutputStream();
             stdout = process.getInputStream();
 
+            params.add(0, "PATH=" + PrefStore.getEnvDir(c) + "/bin:$PATH");
             if (PrefStore.isTraceMode(c)) params.add(0, "set -x");
             params.add("exit $?");
 
