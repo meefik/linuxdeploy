@@ -362,6 +362,20 @@ public class PrefStore {
     }
 
     /**
+     * Get Auto start delay
+     *
+     * @param c context
+     * @return Auto start delay in seconds
+     */
+    static Integer getAutostartDelay(Context c) {
+        try{
+            return Integer.parseInt(SETTINGS.get(c, "autostart_delay"));
+        }catch(Exception e){
+            return 0;
+        }
+    }
+
+    /**
      * Track changes of the network status is enabled
      *
      * @param c context
