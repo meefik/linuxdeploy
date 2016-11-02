@@ -200,7 +200,17 @@ public class PrefStore {
         if (language.length() == 0) {
             String countryCode = Locale.getDefault().getLanguage();
             switch (countryCode) {
+                case "de":
+                case "es":
+                case "fr":
+                case "it":
+                case "ko":
+                case "pl":
+                case "pt":
                 case "ru":
+                case "sk":
+                case "vi":
+                case "zh":
                     language = countryCode;
                     break;
                 default:
