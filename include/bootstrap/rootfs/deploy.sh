@@ -41,8 +41,8 @@ rootfs_make()
             local available_size=$(stat -c %a -f "${TARGET_PATH%/*}")
             let available_size="${block_size}*${available_size}+${file_size}"
             let DISK_SIZE="(${available_size}-${available_size}/10)/1048576"
-            if [ "${DISK_SIZE}" -gt 4095 ]; then
-                DISK_SIZE=4095
+            if [ "${DISK_SIZE}" -gt 2047 ]; then
+                DISK_SIZE=2047
             fi
             if [ "${DISK_SIZE}" -lt 512 ]; then
                 DISK_SIZE=512
