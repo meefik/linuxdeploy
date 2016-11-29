@@ -314,6 +314,7 @@
         <item>wily</item>
         <item>xenial</item>
         <item>yakkety</item>
+        <item>devel</item>
     </string-array>
     <string-array name="ubuntu_arch_values" translatable="false">
         <item>armel</item> <!-- precise only -->
