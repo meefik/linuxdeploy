@@ -10,9 +10,8 @@ public class BootReceiver extends BroadcastReceiver {
     public void onReceive(final Context context, Intent intent) {
         switch (intent.getAction()) {
             case Intent.ACTION_BOOT_COMPLETED:
-                try { // Auto start Delay
+                try { // Autostart delay
                     Integer delay_s = PrefStore.getAutostartDelay(context);
-                    // Logger.log(context, "AUTO START DELAY: Waiting for "+delay_s+"s");
                     Thread.sleep(delay_s * 1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -21,6 +20,12 @@ public class BootReceiver extends BroadcastReceiver {
                 break;
             case Intent.ACTION_SHUTDOWN:
                 EnvUtils.execService(context, "stop", "-u");
+                try { // Shutdown delay
+                    Integer delay_s = PrefStore.getAutostartDelay(context);
+                    Thread.sleep(delay_s * 1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 break;
         }
     }
