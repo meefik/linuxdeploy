@@ -68,7 +68,9 @@ rootfs_make()
         if [ -n "${FS_TYPE}" -a "${FS_TYPE}" != "auto" ]; then
             fs_args="-t ${FS_TYPE}"
         fi
-        mke2fs -qF -O ^has_journal ${fs_args} "${TARGET_PATH}" >/dev/null
+        local makefs=$(which mke2fs)
+        [ -n "${makefs}" ] || makefs=mke2fs
+        ${makefs} -qF -O ^has_journal ${fs_args} "${TARGET_PATH}" >/dev/null
         is_ok "fail" "done" || return 1
     fi
 
