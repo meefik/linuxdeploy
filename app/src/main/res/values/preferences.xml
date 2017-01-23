@@ -108,7 +108,7 @@
     <string name="intel_kalilinux_arch" translatable="false">i386</string>
 
     <!-- Fedora -->
-    <string name="fedora_suite" translatable="false">24</string>
+    <string name="fedora_suite" translatable="false">25</string>
     <!-- arm -->
     <string name="arm_fedora_source_path" translatable="false">http://dl.fedoraproject.org/pub/</string>
     <string name="arm_fedora_arch" translatable="false">armhfp</string>

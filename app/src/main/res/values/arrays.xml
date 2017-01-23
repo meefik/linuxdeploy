@@ -310,8 +310,6 @@
     <string-array name="ubuntu_suite_values" translatable="false">
         <item>precise</item>
         <item>trusty</item>
-        <item>vivid</item>
-        <item>wily</item>
         <item>xenial</item>
         <item>yakkety</item>
         <item>devel</item>
@@ -343,6 +341,7 @@
     <string-array name="fedora_suite_values" translatable="false">
         <item>23</item>
         <item>24</item>
+        <item>25</item>
     </string-array>
     <string-array name="fedora_arch_values" translatable="false">
         <item>armhfp</item> <!-- f19 and later -->

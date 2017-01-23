@@ -1,6 +1,11 @@
 Changelog (English)
 ===================
 
+2.0.1
+Added Fedora 25 (issue #683)
+Fixed Arch Linux bootstrap (issue #699)
+Fixed Fedora and CentOS bootstrap (issue #646)
+
 2.0.0
 The application interface is rewritten with Material Design
 Completed transition to the new CLI
@@ -357,6 +362,11 @@ Updated list packages of base system installation
 
 История изменений (Русский)
 ===========================
+
+2.0.1
+Добавлена поддержка Fedora 25 (тикет #683)
+Исправлен установщик Arch Linux (тикет #699)
+Исправлен установщик Fedora и CentOS (тикет #646)
 
 2.0.0
 Интерфейс приложения переписан под Material Design
