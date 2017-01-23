@@ -86,14 +86,14 @@ do_install()
     msg "Retrieving base packages: "
     local package i pkg_url pkg_file pkg_arch
     case "${ARCH}" in
-    i386) pkg_arch="\(i686\|noarch\)" ;;
-    x86_64) pkg_arch="\(x86_64\|noarch\)" ;;
-    armhfp) pkg_arch="\(armv7hl\|noarch\)" ;;
-    aarch64) pkg_arch="\(aarch64\|noarch\)" ;;
+    i386) pkg_arch="-e i686 -e noarch" ;;
+    x86_64) pkg_arch="-e x86_64 -e noarch" ;;
+    armhfp) pkg_arch="-e armv7hl -e noarch" ;;
+    aarch64) pkg_arch="-e aarch64 -e noarch" ;;
     esac
     for package in ${basic_packages}; do
         msg -n "${package} ... "
-        pkg_url=$(grep -m1 -e "^.*/${package}-[0-9][0-9\.\-].*${pkg_arch}\.rpm$" "${pkg_list}")
+        pkg_url=$(grep -e "^.*/${package}-[0-9][0-9\.\-].*rpm$" "${pkg_list}" | grep -m1 ${pkg_arch})
         test "${pkg_url}"; is_ok "skip" || continue
         pkg_file="${pkg_url##*/}"
         # download
@@ -110,8 +110,8 @@ do_install()
 
     component_exec core/emulator
 
-    msg -n "Updating a packages database ... "
-    chroot_exec /bin/rpm -iv --excludepath / --force --nosignature --nodeps --justdb /tmp/*.rpm >/dev/null
+    msg -n "Installing base packages ... "
+    chroot_exec /bin/rpm -i --force --nosignature --nodeps /tmp/*.rpm
     is_ok "fail" "done" || return 1
 
     msg -n "Clearing cache ... "
