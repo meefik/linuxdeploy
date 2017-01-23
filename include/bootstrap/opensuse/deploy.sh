@@ -108,7 +108,7 @@ do_install()
     component_exec core/emulator
 
     msg "Updating a packages database ... "
-    chroot_exec /bin/rpm -iv --excludepath / --force --nosignature --nodeps --justdb /tmp/*.rpm >/dev/null
+    chroot_exec /bin/rpm -i --excludepath / --force --nosignature --nodeps --justdb /tmp/*.rpm
     is_ok "fail" "done" || return 1
 
     msg -n "Updating repository ... "

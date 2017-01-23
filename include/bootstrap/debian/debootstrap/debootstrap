@@ -1,6 +1,7 @@
-#!/bin/sh -e
+#!/bin/sh
+set -e
 
-VERSION='1.0.82-meefik'
+VERSION='1.0.87-meefik'
 
 unset TMP TEMP TMPDIR || true
 
@@ -26,6 +27,7 @@ KEYRING=""
 DISABLE_KEYRING=""
 FORCE_KEYRING=""
 VARIANT=""
+MERGED_USR="no"
 ARCH=""
 HOST_ARCH=""
 HOST_OS=""
@@ -44,8 +46,8 @@ CERTIFICATE=""
 CHECKCERTIF=""
 PRIVATEKEY=""
 
-DEF_MIRROR="http://ftp.us.debian.org/debian"
-DEF_HTTPS_MIRROR="https://mirrors.kernel.org/debian"
+DEF_MIRROR="http://deb.debian.org/debian"
+DEF_HTTPS_MIRROR="https://deb.debian.org/debian"
 
 export LANG USE_COMPONENTS
 umask 022
@@ -98,7 +100,8 @@ usage()
                              archive
       --variant=X            use variant X of the bootstrap scripts
                              (currently supported variants: buildd, fakechroot,
-                              scratchbox, minbase)
+                              minbase)
+      --merged-usr           make /{bin,sbin,lib}/ symlinks to /usr/
       --keyring=K            check Release files against keyring K
       --no-check-gpg         avoid checking Release file signatures
       --force-check-gpg      force checking Release file signatures
@@ -301,6 +304,14 @@ if [ $# != 0 ] ; then
 			error 1 NEEDARG "option requires an argument %s" "$1"
 		fi
 		;;
+            --merged-usr)
+		MERGED_USR=yes
+		shift
+		;;
+	    --no-merged-usr)
+		MERGED_USR=no
+		shift
+		;;
 	    --keyring|--keyring=?*)
 		if ! gpgv --version >/dev/null 2>&1; then
 			error 1 NEEDGPGV "gpgv not installed, but required for Release verification"
@@ -349,7 +360,7 @@ if [ $# != 0 ] ; then
 		CHECKCERTIF="--no-check-certificate"
 		shift
 		;;
-	    --*)
+	    -*)
 		error 1 BADARG "unrecognized or invalid option %s" "$1"
 		;;
 	    *)
@@ -453,16 +464,6 @@ fi
 
 if [ "$TARGET" = "/" ]; then
 	CHROOT_CMD=""
-elif doing_variant scratchbox; then
-	for config in ~/.scratchbox2/*/sb2.config;
-	do
-		export `grep ^SBOX_TARGET_ROOT= $config`
-		if [ "x$SBOX_TARGET_ROOT" = "x$TARGET" ]; then
-			SB2_TARGET=$(basename $(dirname $config))
-		fi
-	done
-	[ "x$SB2_TARGET" != "x" ] || error 1 SBOXTARGETREQ "No scratchbox target configured for $TARGET"
-	CHROOT_CMD="sb2 -eR -t $SB2_TARGET"
 else
 	CHROOT_CMD="chroot $TARGET"
 fi

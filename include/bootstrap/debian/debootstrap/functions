@@ -331,6 +331,7 @@ get () {
 		local iters=0
 
 		case "$typ" in
+		    xz)  from="$1.xz"; dest="$2.xz" ;;
 		    bz2) from="$1.bz2"; dest="$2.bz2" ;;
 		    gz)  from="$1.gz"; dest="$2.gz" ;;
 		    *)   from="$1"; dest="$2" ;;
@@ -358,6 +359,7 @@ get () {
 				case "$typ" in
 				    gz)  gunzip "$dest" ;;
 				    bz2) bunzip2 "$dest" ;;
+				    xz)  unxz "$dest" ;;
 				esac
 				return 0
 			else
@@ -512,18 +514,86 @@ extract_release_components () {
 	fi
 }
 
-download_release_sig () {
-	local m1="$1"
+CODENAME=""
+validate_suite () {
+	local reldest="$1"
+
+	CODENAME=$(sed -n "s/^Codename: *//p" "$reldest")
+	local suite=$(sed -n "s/^Suite: *//p" "$reldest")
+
+	if [ "$SUITE" != "$suite" ] && [ "$SUITE" != "$CODENAME" ]; then
+		error 1 WRONGSUITE "Asked to install suite %s, but got %s (codename: %s) from mirror" "$SUITE" "$suite" "$CODENAME"
+	fi
+}
+
+split_inline_sig () {
+	local inreldest="$1"
 	local reldest="$2"
 	local relsigdest="$3"
 
+	# Note: InRelease files are fun since one needs to remove the
+	# last newline from the PGP SIGNED MESSAGE part, while keeping
+	# the PGP SIGNATURE part intact. This shell implementation
+	# should work on most if not all systems, instead of trying to
+	# sed/tr/head, etc.
+	rm -f "$reldest" "$relsigdest"
+	nl=""
+	state=pre-begin
+	while IFS= read -r line; do
+		case "${state}" in
+		    pre-begin)
+			if [ "x${line}" = "x-----BEGIN PGP SIGNED MESSAGE-----" ]; then
+				state=begin
+			fi
+			;;
+		    begin)
+			if [ "x${line}" = "x" ]; then
+				state=data
+			fi
+			;;
+		    data)
+			if [ "x${line}" = "x-----BEGIN PGP SIGNATURE-----" ]; then
+				printf "%s\n" "${line}" > "$relsigdest"
+				state=signature
+			else
+				printf "${nl}%s" "${line}" >> "$reldest"
+				nl="\n"
+			fi
+			;;
+		    signature)
+			printf "%s\n" "${line}" >> "$relsigdest"
+			if [ "x${line}" = "x-----END PGP SIGNATURE-----" ]; then
+				break
+			fi
+		esac
+	done < "$inreldest"
+}
+
+download_release_sig () {
+	local m1="$1"
+	local inreldest="$2"
+	local reldest="$3"
+	local relsigdest="$4"
+
+	progress 0 100 DOWNREL "Downloading Release file"
+	progress_next 100
+	if get "$m1/dists/$SUITE/InRelease" "$inreldest" nocache; then
+		split_inline_sig "$inreldest" "$reldest" "$relsigdest"
+		progress 100 100 DOWNREL "Downloading Release file"
+	else
+		get "$m1/dists/$SUITE/Release" "$reldest" nocache ||
+			error 1 NOGETREL "Failed getting release file %s" "$m1/dists/$SUITE/Release"
+		progress 100 100 DOWNREL "Downloading Release file"
+	fi
 	if [ -n "$KEYRING" ] && [ -z "$DISABLE_KEYRING" ]; then
 		progress 0 100 DOWNRELSIG "Downloading Release file signature"
-		progress_next 50
-		get "$m1/dists/$SUITE/Release.gpg" "$relsigdest" nocache ||
-			error 1 NOGETRELSIG "Failed getting release signature file %s" \
-			"$m1/dists/$SUITE/Release.gpg"
-		progress 50 100 DOWNRELSIG "Downloading Release file signature"
+		if ! [ -f "$relsigdest" ]; then
+			progress_next 50
+			get "$m1/dists/$SUITE/Release.gpg" "$relsigdest" nocache ||
+				error 1 NOGETRELSIG "Failed getting release signature file %s" \
+				"$m1/dists/$SUITE/Release.gpg"
+			progress 50 100 DOWNRELSIG "Downloading Release file signature"
+		fi
 
 		info RELEASESIG "Checking Release signature"
 		# Don't worry about the exit status from gpgv; parsing the output will
@@ -536,22 +606,20 @@ download_release_sig () {
 
 download_release_indices () {
 	local m1="${MIRRORS%% *}"
+	local inreldest="$TARGET/$($DLDEST rel "$SUITE" "$m1" "dists/$SUITE/InRelease")"
 	local reldest="$TARGET/$($DLDEST rel "$SUITE" "$m1" "dists/$SUITE/Release")"
-	local relsigdest
-	progress 0 100 DOWNREL "Downloading Release file"
-	progress_next 100
-	get "$m1/dists/$SUITE/Release" "$reldest" nocache ||
-		error 1 NOGETREL "Failed getting release file %s" "$m1/dists/$SUITE/Release"
-	relsigdest="$TARGET/$($DLDEST rel "$SUITE" "$m1" "dists/$SUITE/Release.gpg")"
-	progress 100 100 DOWNREL "Downloading Release file"
+	local relsigdest="$TARGET/$($DLDEST rel "$SUITE" "$m1" "dists/$SUITE/Release.gpg")"
 
-	download_release_sig "$m1" "$reldest" "$relsigdest"
+	download_release_sig "$m1" "$inreldest" "$reldest" "$relsigdest"
+
+	validate_suite "$reldest"
 
 	extract_release_components $reldest
 
 	local totalpkgs=0
 	for c in $COMPONENTS; do
 		local subpath="$c/binary-$ARCH/Packages"
+		local xzi="`get_release_checksum "$reldest" "$subpath.xz"`"
 		local bz2i="`get_release_checksum "$reldest" "$subpath.bz2"`"
 		local gzi="`get_release_checksum "$reldest" "$subpath.gz"`"
 		local normi="`get_release_checksum "$reldest" "$subpath"`"
@@ -560,6 +628,8 @@ download_release_indices () {
 			i="$normi"
 		elif in_path bunzip2 && [ "$bz2i" != "" ]; then
 			i="$bz2i"
+		elif in_path unxz && [ "$xzi" != "" ]; then
+			i="$xzi"
 		elif in_path gunzip && [ "$gzi" != "" ]; then
 			i="$gzi"
 		fi
@@ -577,6 +647,7 @@ download_release_indices () {
 	for c in $COMPONENTS; do
 		local subpath="$c/binary-$ARCH/Packages"
 		local path="dists/$SUITE/$subpath"
+		local xzi="`get_release_checksum "$reldest" "$subpath.xz"`"
 		local bz2i="`get_release_checksum "$reldest" "$subpath.bz2"`"
 		local gzi="`get_release_checksum "$reldest" "$subpath.gz"`"
 		local normi="`get_release_checksum "$reldest" "$subpath"`"
@@ -585,6 +656,10 @@ download_release_indices () {
 		if [ "$normi" != "" ]; then
 			ext="$ext $normi ."
 			i="$normi"
+		fi
+		if in_path unxz && [ "$xzi" != "" ]; then
+			ext="$ext $xzi xz"
+			i="${i:-$xzi}"
 		fi
 		if in_path bunzip2 && [ "$bz2i" != "" ]; then
 			ext="$ext $bz2i bz2"
@@ -795,6 +870,7 @@ get_debs () {
 ################################################################ extraction
 
 EXTRACTORS_SUPPORTED="dpkg-deb ar"
+EXTRACT_DEB_TAR_OPTIONS=
 
 # Native dpkg-deb based extractors
 extract_dpkg_deb_field () {
@@ -807,7 +883,7 @@ extract_dpkg_deb_field () {
 extract_dpkg_deb_data () {
 	local pkg="$1"
 
-	dpkg-deb --fsys-tarfile "$pkg" | tar -xf -
+	dpkg-deb --fsys-tarfile "$pkg" | tar $EXTRACT_DEB_TAR_OPTIONS -xf -
 }
 
 # Raw .deb extractors
@@ -845,7 +921,7 @@ extract_ar_deb_data () {
 	esac
 
 	if type $cat_cmd >/dev/null 2>&1; then
-		ar -p "$pkg" "$tarball" | $cat_cmd | tar -xf - --hard-dereference
+		ar -p "$pkg" "$tarball" | $cat_cmd | tar $EXTRACT_DEB_TAR_OPTIONS -xf -
 	else
 		error 1 UNPACKCMDUNVL "Extracting %s requires the %s command, which is not available" "$pkg" "$cat_cmd"
 	fi
@@ -1041,6 +1117,43 @@ setup_dselect_method () {
 		error 1 UNKNOWNDSELECT "unknown dselect method"
 		;;
 	esac
+}
+
+# Find out where the runtime dynamic linker and the shared libraries
+# can be installed on each architecture: native, multilib and multiarch.
+# This data can be verified by checking the files in the debian/sysdeps/
+# directory of the glibc package.
+#
+# This function must be updated to support any new architecture which
+# either installs the RTLD in a directory different from /lib or builds
+# multilib library packages.
+setup_merged_usr() {
+	if [ "$MERGED_USR" = "no" ]; then return 0; fi
+
+	local link_dir
+	case $ARCH in
+	    hurd-*)	return 0 ;;
+	    amd64)	link_dir="lib32 lib64 libx32" ;;
+	    i386)	link_dir="lib64 libx32" ;;
+	    mips|mipsel)
+			link_dir="lib32 lib64" ;;
+	    mips64*|mipsn32*)
+			link_dir="lib32 lib64 libo32" ;;
+	    powerpc)	link_dir="lib64" ;;
+	    ppc64)	link_dir="lib32 lib64" ;;
+	    ppc64el)	link_dir="lib64" ;;
+	    s390x)	link_dir="lib32" ;;
+	    sparc)	link_dir="lib64" ;;
+	    sparc64)	link_dir="lib32 lib64" ;;
+	    x32)	link_dir="lib32 lib64 libx32" ;;
+	esac
+	link_dir="bin sbin lib $link_dir"
+
+	local dir
+	for dir in $link_dir; do
+		ln -s usr/$dir $TARGET/$dir
+		mkdir -p $TARGET/usr/$dir
+	done
 }
 
 ################################################################ pkgdetails

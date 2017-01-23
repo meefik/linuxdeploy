@@ -1,7 +1,7 @@
 mirror_style release
 download_style apt
 finddebs_style from-indices
-variants - buildd fakechroot minbase scratchbox
+variants - buildd fakechroot minbase
 keyring /usr/share/keyrings/tanglu-archive-keyring.gpg
 default_mirror http://archive.tanglu.org/tanglu
 
@@ -26,7 +26,7 @@ work_out_debs () {
 
 		# we want the Tanglu minimal dependency set to be installed
 		base="$base tanglu-minimal"
-	elif doing_variant buildd || doing_variant scratchbox; then
+	elif doing_variant buildd; then
 		base="apt build-essential"
 	elif doing_variant minbase; then
 		base="apt"
@@ -91,8 +91,6 @@ second_stage_install () {
 
 	if doing_variant fakechroot; then
 		setup_proc_fakechroot
-	elif doing_variant scratchbox; then
-		true
 	else
 		setup_proc
 		in_target /sbin/ldconfig
