@@ -2,7 +2,7 @@
 # Linux Deploy Component
 # (c) Anton Skshidlevsky <meefik@gmail.com>, GPLv3
 
-[ -n "${SUITE}" ] || SUITE="stable"
+[ -n "${SUITE}" ] || SUITE="jessie"
 
 if [ -z "${ARCH}" ]
 then
@@ -78,7 +78,7 @@ cat <<EOF
      Architecture of Linux distribution, supported "armel", "armhf", "arm64", "i386" and "amd64".
 
    --suite="${SUITE}"
-     Version of Linux distribution, supported versions "wheezy", "jessie" и "stretch" (also can be used "stable", "testing", "unstable" and "sid").
+     Version of Linux distribution, supported versions "wheezy", "jessie" and "stretch" (also can be used "stable", "testing" and "unstable").
 
    --source-path="${SOURCE_PATH}"
      Installation source, can specify address of the repository or path to the rootfs archive.
