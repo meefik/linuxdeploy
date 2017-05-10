@@ -295,7 +295,6 @@
         <item>wheezy</item>
         <item>jessie</item>
         <item>stretch</item>
-        <item>sid</item>
     </string-array>
     <string-array name="debian_arch_values" translatable="false">
         <item>armel</item>
@@ -311,7 +310,6 @@
         <item>precise</item>
         <item>trusty</item>
         <item>xenial</item>
-        <item>yakkety</item>
         <item>devel</item>
     </string-array>
     <string-array name="ubuntu_arch_values" translatable="false">
@@ -325,7 +323,6 @@
     <!-- Kali Linux -->
 
     <string-array name="kalilinux_suite_values" translatable="false">
-        <item>sana</item>
         <item>kali-rolling</item>
     </string-array>
     <string-array name="kalilinux_arch_values" translatable="false">

@@ -2,14 +2,14 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion '24.0.0'
+    buildToolsVersion '25.0.0'
 
     defaultConfig {
         applicationId 'ru.meefik.linuxdeploy'
         minSdkVersion 10
         targetSdkVersion 25
-        versionCode 218
-        versionName "2.0.1"
+        versionCode 219
+        versionName "2.0.2"
     }
     buildTypes {
         release {
@@ -25,7 +25,7 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:support-v4:25.1.0'
-    compile 'com.android.support:appcompat-v7:25.1.0'
-    compile 'com.android.support:design:25.1.0'
+    compile 'com.android.support:support-v4:25.3.1'
+    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support:design:25.3.1'
 }
