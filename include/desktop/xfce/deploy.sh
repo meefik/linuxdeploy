@@ -12,7 +12,7 @@ do_install()
         apt_install ${packages}
     ;;
     archlinux:*)
-        packages="xorg-utils xorg-fonts-misc ttf-dejavu xfce4"
+        packages="xorg-xauth xorg-fonts-misc ttf-dejavu xfce4"
         pacman_install ${packages}
     ;;
     fedora:*)

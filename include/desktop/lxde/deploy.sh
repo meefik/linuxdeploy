@@ -12,7 +12,7 @@ do_install()
         apt_install ${packages}
     ;;
     archlinux:*)
-        packages="xorg-utils xorg-fonts-misc ttf-dejavu lxde gtk-engines"
+        packages="xorg-xauth xorg-fonts-misc ttf-dejavu lxde gtk-engines"
         pacman_install ${packages}
     ;;
     fedora:*)

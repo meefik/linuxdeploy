@@ -49,7 +49,7 @@ do_start()
     is_stopped /run/dbus/pid /var/run/messagebus.pid
     is_ok "skip" || return 0
     remove_files /run/dbus/pid /var/run/messagebus.pid
-    chroot_exec -u root dbus-daemon --system --fork &
+    chroot_exec -u root dbus-daemon --system --fork
     is_ok "fail" "done"
     return 0
 }
