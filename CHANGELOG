@@ -3,6 +3,7 @@ Changelog (English)
 
 2.0.2
 Fixed an architecture emulation via binfmt_misc
+Fixed Arch Linux bootstrap (+libnghttp2, -xorg-utils)
 
 2.0.1
 Added Fedora 25 (issue #683)
@@ -368,6 +369,7 @@ Updated list packages of base system installation
 
 2.0.2
 Исправлена проблема с эмуляцией архитектуры через binfmt_misc
+Исправлен установщик Arch Linux (+libnghttp2, -xorg-utils)
 
 2.0.1
 Добавлена поддержка Fedora 25 (тикет #683)
