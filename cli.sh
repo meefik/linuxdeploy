@@ -554,6 +554,26 @@ container_mounted()
     fi
 }
 
+fs_check(){
+    if [ "${METHOD}" = "chroot" ]; then
+        is_mounted "${CHROOT_DIR}" && return 0
+        case "$TARGET_TYPE" in
+        file)
+            local loop_device
+            loop_device="$(losetup -f 2>&1 |grep -o -E '/dev/.*loop[0-9]+')"
+            [ -z "$loop_device" ] && return 0
+            losetup "${loop_device}" "${TARGET_PATH}"
+            e2fsck -p "${loop_device}"
+            losetup -d "${loop_device}"
+        ;;
+        partition)
+            e2fsck -p "${TARGET_PATH}"
+        esac       
+    else
+        return 0
+    fi 
+}
+
 mount_part()
 {
     case "$1" in
@@ -686,6 +706,8 @@ container_mount()
         container_mount root proc sys selinux dev tty pts shm tun binfmt_misc
         return $?
     fi
+
+    fs_check
 
     params_check TARGET_PATH || return 1
 
