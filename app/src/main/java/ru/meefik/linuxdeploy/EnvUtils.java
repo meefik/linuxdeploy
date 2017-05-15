@@ -499,9 +499,9 @@ class EnvUtils {
         if (PrefStore.isTraceMode(c)) opts += "-t ";
         if (args == null) args = "";
         else args = " " + args;
-        params.add("printf '>>> " + cmd + "\n'");
+        params.add(PrefStore.getBinDir(c) + "/printf '>>> " + cmd + "\n'");
         params.add(PrefStore.getBinDir(c) + "/linuxdeploy " + opts + cmd + args);
-        params.add("printf '<<< " + cmd + "\n'");
+        params.add(PrefStore.getBinDir(c) + "/printf '<<< " + cmd + "\n'");
         String shell = PrefStore.isRootRequired(c) ? "su" : "sh";
         return exec(c, shell, params);
     }
