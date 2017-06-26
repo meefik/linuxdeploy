@@ -128,7 +128,7 @@
     <string name="summary_mounts_editor_preference">Bearbeite die Mountliste</string>
     <string name="summary_dns_preference">Automatische Erkennung</string>
     <string name="summary_is_mounts_preference">Erlaube das mount der Android resources</string>
-    <string name="dialog_title_target_path_preference">Installations Pfat</string>
+    <string name="dialog_title_target_path_preference">Installations Pfad</string>
     <string name="dialog_title_source_path_preference">Quellpfad</string>
     <string name="dialog_title_desktop_preference">Desktop Oberfläche</string>
     <string name="dialog_title_distrib_preference">Distribution</string>

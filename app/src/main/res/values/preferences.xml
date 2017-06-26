@@ -81,7 +81,7 @@
     <string name="fb_freeze" translatable="false">none</string>
 
     <!-- Debian -->
-    <string name="debian_suite" translatable="false">jessie</string>
+    <string name="debian_suite" translatable="false">stretch</string>
     <!-- arm -->
     <string name="arm_debian_source_path" translatable="false">http://ftp.debian.org/debian/</string>
     <string name="arm_debian_arch" translatable="false">armhf</string>

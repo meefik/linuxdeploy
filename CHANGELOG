@@ -4,6 +4,7 @@ Changelog (English)
 2.0.2
 Fixed an architecture emulation via binfmt_misc
 Fixed Arch Linux bootstrap (+libnghttp2, -xorg-utils)
+Fixed issue of launching Xfce and Mate (issue #807)
 Added file system check (issue #785)
 
 2.0.1
@@ -371,6 +372,7 @@ Updated list packages of base system installation
 2.0.2
 Исправлена проблема с эмуляцией архитектуры через binfmt_misc
 Исправлен установщик Arch Linux (+libnghttp2, -xorg-utils)
+Исправлена проблема запуска Xfce и Mate (тикет #807)
 Добавлена проверка файловой системы (тикет #785)
 
 2.0.1
