@@ -10,6 +10,7 @@
         <item>Директория</item>
         <item>Раздел</item>
         <item>Оперативная память</item>
+        <item>Пользовательский</item>
     </string-array>
     <string-array name="fs_type_entries">
         <item>Автоопределение</item>

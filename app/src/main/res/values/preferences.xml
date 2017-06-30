@@ -41,6 +41,7 @@
     <string name="target_path_directory" translatable="false">${ENV_DIR}/rootfs/linux</string>
     <string name="target_path_partition" translatable="false">/dev/block/mmcblkXpY</string>
     <string name="target_path_ram" translatable="false">/data/local/ram</string>
+    <string name="target_path_custom" translatable="false"></string>
     <string name="rootfs_archive" translatable="false">${EXTERNAL_STORAGE}/linux-rootfs.tar.gz</string>
     <string name="disk_size" translatable="false">0</string>
     <string name="fs_type" translatable="false">auto</string>

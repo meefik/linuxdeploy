@@ -42,12 +42,14 @@
         <item>directory</item>
         <item>partition</item>
         <item>ram</item>
+        <item>custom</item>
     </string-array>
     <string-array name="target_type_entries">
         <item>File</item>
         <item>Directory</item>
         <item>Partition</item>
         <item>RAM</item>
+        <item>Custom</item>
     </string-array>
     <string-array name="fs_type_values" translatable="false">
         <item>auto</item>
