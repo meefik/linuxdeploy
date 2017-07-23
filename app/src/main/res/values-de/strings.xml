@@ -58,7 +58,7 @@
     <string name="ssh_preferences">SSH</string>
     <string name="vnc_preferences">VNC</string>
     <string name="fb_preferences">Framebuffer</string>
-    <string name="about_text">This application installs the selected GNU/Linux distribution and executes it in a chroot-container.\n\nFor more information see <a href="https://github.com/meefik/linuxdeploy">project page</a>, <a href="http://4pda.ru/forum/index.php?showtopic=378043">forum</a> or <a href="http://meefik.ru">developer site</a>.\n\n© 2012–2016 Anton Skshidlevsky, GPLv3</string>
+    <string name="about_text">This application installs the selected GNU/Linux distribution and executes it in a chroot-container.\n\nFor more information see <a href="https://github.com/meefik/linuxdeploy">project page</a>, <a href="http://4pda.ru/forum/index.php?showtopic=378043">forum</a> or <a href="http://meefik.ru">developer site</a>.\n\n© 2012–2017 Anton Skshidlevsky, GPLv3</string>
     <string name="menu_install">Installieren</string>
     <string name="menu_configure">Configure</string>
     <string name="dialog_title_fb_args_preference">FB: X Eigenschaften</string>

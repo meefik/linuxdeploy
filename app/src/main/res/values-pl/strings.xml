@@ -172,7 +172,7 @@
     <string name="title_fb_freeze_preference">Zatrzymaj Android UI</string>
     <string name="dialog_title_fb_freeze_preference">Zatrzymaj Android UI</string>
     <string name="help_text">\n<b>Pomoc</b>\n\nTa aplikacja instaluje wybraną dystrybucję GNU/Linux i uruchamia ją w środowisku chroot.\n\nProcedura:\n1. Zdobądź uprawnienia root.\n2. Sprawdź połączenie internetowe.\n3. Określ ustawienia instalacji.\n4. Rozpocznij instalację (\"Właściwości => Instaluj\").\n5. Poczekaj do zakończenia instalacji.\n6. Naciśnij przycisk \"URUCHOM\", aby uruchomić profil.\n7. Połącz się używając CLI, SSH, VNC lub innych.\n\nAby uzyskać więcej informacji zobacz \"O programie\".</string>
-    <string name="about_text">Ta aplikacja instaluje wybraną dystrybucję GNU/Linux i uruchamia ją w środowisku chroot.\n\nAby uzyskać więcej informacji zobacz <a href="https://github.com/meefik/linuxdeploy">stronę projektu</a>, <a href="http://4pda.ru/forum/index.php?showtopic=378043">forum</a> lub <a href="http://meefik.ru">stronę programisty</a>.\n\n&#169; 2012&#8211;2015 Anton Skshidlevsky, GPLv3</string>
+    <string name="about_text">Ta aplikacja instaluje wybraną dystrybucję GNU/Linux i uruchamia ją w środowisku chroot.\n\nAby uzyskać więcej informacji zobacz <a href="https://github.com/meefik/linuxdeploy">stronę projektu</a>, <a href="http://4pda.ru/forum/index.php?showtopic=378043">forum</a> lub <a href="http://meefik.ru">stronę programisty</a>.\n\n&#169; 2012&#8211;2017 Anton Skshidlevsky, GPLv3</string>
     <string name="nav_profiles">Profile</string>
     <string name="manage_preferences">Zarządzanie</string>
     <string name="title_configure_dialog">Konfiguruj</string>

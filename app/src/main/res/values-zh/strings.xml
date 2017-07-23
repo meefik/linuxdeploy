@@ -82,7 +82,7 @@
     <string name="vnc_preferences">VNC</string>
     <string name="fb_preferences">Framebuffer</string>
     <string name="help_text">\n<b>帮助</b><![CDATA[\n\n此应用程序会在一个chroot容器中安装和运行选定的 GNU/Linux 发行版。\n\n步骤：\n1. 获取超级用户（即root）权限\n2. 检查网络连接\n3. 设置安装选项\n4. 开始安装（点击\"属性\" => \"安装\"）\n5. 等待安装完成\n6. 点击\"开始\"按钮启动容器\n7. 通过 CLI、SSH、VNC 或其他方式连接容器\n\n更多内容，详见\"关于\"。]]></string>
-    <string name="about_text">This application installs the selected GNU/Linux distribution and executes it in a chroot-container.\n\nFor more information see <a href="https://github.com/meefik/linuxdeploy">project page</a>, <a href="http://4pda.ru/forum/index.php?showtopic=378043">forum</a> or <a href="http://meefik.ru">developer site</a>.\n\n© 2012–2016 Anton Skshidlevsky, GPLv3</string>
+    <string name="about_text">This application installs the selected GNU/Linux distribution and executes it in a chroot-container.\n\nFor more information see <a href="https://github.com/meefik/linuxdeploy">project page</a>, <a href="http://4pda.ru/forum/index.php?showtopic=378043">forum</a> or <a href="http://meefik.ru">developer site</a>.\n\n© 2012–2017 Anton Skshidlevsky, GPLv3</string>
     <string name="menu_configure">配置</string>
     <string name="menu_install">安装</string>
     <string name="summary_debug_mode_preference">显示调试信息</string>

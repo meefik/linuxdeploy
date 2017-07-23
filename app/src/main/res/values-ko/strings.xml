@@ -306,6 +306,6 @@
     <string name="summary_fb_refresh_preference">강제로 Framebuffer 새로고침</string>
 
     <string name="help_text">\n<b>도움말</b>\n\n이 응용 프로그램은 GNU/Linux 배포판을 설치하고 chroot로 마운트 하는 프로그램 입니다.\n\n순서 :\n1. 루트 권한을 허용해 주세요. (루팅해야 합니다.)\n2. <a href="https://play.google.com/store/apps/details?id=ru.meefik.busybox">이 경로</a>를 통해 BusyBox를 설치하세요. (반드시 이 BusyBox로 설치하셔야 합니다.)\n3. 인터넷 연결을 확인하세요.\n4. 밑에 있는 다운로드 아이콘을 눌러서 설치 환경을 설정하세요.\n5. 설치버튼을 누르세요.\n6. 설치가 모두 다되는동안 기다리세요.\n7. \"START\" 버튼을 눌러서 시작하세요.\n8. CLI, SSH, VNC 등으로 리눅스에 연결하세요.\n\n자세한 내용은 \"About\" 를 참조해 주세요.\n\n버그 신고는 <a href="https://github.com/meefik/linuxdeploy/issues">여기</a>(한글가능, Github 아이디 필요) 로 해 주세요.</string>
-    <string name="about_text">이 응용 프로그램은 GNU/Linux 배포판을 설치하고 chroot로 마운트 하는 프로그램 입니다.\n\n자세한 내용은 <a href="https://github.com/meefik/linuxdeploy">프로젝트 사이트</a>, <a href="http://4pda.ru/forum/index.php?showtopic=378043">포럼(러시아어)</a> 또는 <a href="http://meefik.ru">개발자 사이트(러시아어)</a> 를 확인하세요.\n\n&#169; 2012&#8211;2015 Anton Skshidlevsky, GPLv3</string>
+    <string name="about_text">이 응용 프로그램은 GNU/Linux 배포판을 설치하고 chroot로 마운트 하는 프로그램 입니다.\n\n자세한 내용은 <a href="https://github.com/meefik/linuxdeploy">프로젝트 사이트</a>, <a href="http://4pda.ru/forum/index.php?showtopic=378043">포럼(러시아어)</a> 또는 <a href="http://meefik.ru">개발자 사이트(러시아어)</a> 를 확인하세요.\n\n&#169; 2012&#8211;2017 Anton Skshidlevsky, GPLv3</string>
 
 </resources>
