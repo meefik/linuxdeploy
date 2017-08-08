@@ -24,6 +24,7 @@
     <string name="menu_delete">Delete</string>
     <string name="menu_change_url">Change URL</string>
     <string name="menu_refresh">Refresh</string>
+    <string name="menu_more">Menu</string>
     <string name="loading_message">Loading data...</string>
     <string name="updating_env_message">Updating operating environment...</string>
     <string name="removing_env_message">Removing operating environment...</string>

@@ -7,6 +7,7 @@ Fixed Arch Linux bootstrap (+libnghttp2, -xorg-utils)
 Fixed issue of launching Xfce and Mate (issue #807)
 Added file system check (issue #785)
 Added custom target type
+Fixed problem with showing menu button (issue #693)
 
 2.0.1
 Added Fedora 25 (issue #683)
@@ -376,6 +377,7 @@ Updated list packages of base system installation
 Исправлена проблема запуска Xfce и Mate (тикет #807)
 Добавлена проверка файловой системы (тикет #785)
 Добавлен пользовательский тип установки
+Исправлена проблема с отображением кнопки меню (тикет #693)
 
 2.0.1
 Добавлена поддержка Fedora 25 (тикет #683)

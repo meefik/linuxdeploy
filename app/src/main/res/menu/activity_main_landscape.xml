@@ -6,43 +6,52 @@
         android:orderInCategory="100"
         android:title="@string/menu_start"
         android:icon="?attr/ic_action_start"
-        app:showAsAction="ifRoom|withText"/>
+        app:showAsAction="always|withText"/>
     <item
         android:id="@+id/menu_stop"
         android:orderInCategory="100"
         android:title="@string/menu_stop"
         android:icon="?attr/ic_action_stop"
-        app:showAsAction="ifRoom|withText"/>
+        app:showAsAction="always|withText"/>
     <item
         android:id="@+id/menu_properties"
         android:orderInCategory="100"
         android:title="@string/menu_properties"
         android:icon="?attr/ic_action_properties"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="always"/>
     <item
-        android:id="@+id/menu_install"
+        android:id="@+id/menu_more"
         android:orderInCategory="100"
-        android:title="@string/menu_install"
-        app:showAsAction="never"/>
-    <item
-        android:id="@+id/menu_configure"
-        android:orderInCategory="100"
-        android:title="@string/menu_configure"
-        app:showAsAction="never"/>
-    <item
-        android:id="@+id/menu_export"
-        android:orderInCategory="100"
-        android:title="@string/menu_export"
-        app:showAsAction="never"/>
-    <item
-        android:id="@+id/menu_status"
-        android:orderInCategory="100"
-        android:title="@string/menu_status"
-        app:showAsAction="never"/>
-    <item
-        android:id="@+id/menu_clear"
-        android:orderInCategory="100"
-        android:title="@string/menu_clear"
-        app:showAsAction="never"/>
+        android:title="@string/menu_more"
+        android:icon="?attr/ic_action_more"
+        app:showAsAction="always">
+        <menu>
+            <item
+                android:id="@+id/menu_install"
+                android:orderInCategory="100"
+                android:title="@string/menu_install"
+                app:showAsAction="never"/>
+            <item
+                android:id="@+id/menu_configure"
+                android:orderInCategory="100"
+                android:title="@string/menu_configure"
+                app:showAsAction="never"/>
+            <item
+                android:id="@+id/menu_export"
+                android:orderInCategory="100"
+                android:title="@string/menu_export"
+                app:showAsAction="never"/>
+            <item
+                android:id="@+id/menu_status"
+                android:orderInCategory="100"
+                android:title="@string/menu_status"
+                app:showAsAction="never"/>
+            <item
+                android:id="@+id/menu_clear"
+                android:orderInCategory="100"
+                android:title="@string/menu_clear"
+                app:showAsAction="never"/>
+        </menu>
+    </item>
 
 </menu>
