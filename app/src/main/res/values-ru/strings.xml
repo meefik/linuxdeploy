@@ -88,7 +88,7 @@
     <string name="vnc_preferences">VNC</string>
     <string name="fb_preferences">Framebuffer</string>
     <string name="help_text">\n<b>Справка</b>\n\nПриложение устанавливает выбранный GNU/Linux дистрибутив и запускает его в chroot-контейнере.\n\nПорядок действий:\n1. Получить права суперпользователя (root).\n2. Проверить подключение к интернету.\n3. Указать параметры установки.\n4. Запустить установку (\"Меню => Установить\").\n5. Дождаться окончания установки.\n6. Запустить контейнер кнопкой \"СТАРТ\".\n7. Подключиться к контейнеру через CLI, SSH, VNC или др.\n\nДополнительную информацию см. в разделе \"О программе\".</string>
-    <string name="about_text">Приложение устанавливает выбранный GNU/Linux дистрибутив и запускает его в chroot-контейнере.\n\nЗа дополнительной информацией обращайтесь на <a href="https://github.com/meefik/linuxdeploy">страницу проекта</a>, <a href="http://4pda.ru/forum/index.php?showtopic=378043">форум</a> или <a href="http://meefik.ru">сайт разработчика</a>.\n\n&#169; 2012&#8211;2016 Антон Скшидлевский, GPLv3</string>
+    <string name="about_text">Приложение устанавливает выбранный GNU/Linux дистрибутив и запускает его в chroot-контейнере.\n\nЗа дополнительной информацией обращайтесь на <a href="https://github.com/meefik/linuxdeploy">страницу проекта</a>, <a href="http://4pda.ru/forum/index.php?showtopic=378043">форум</a> или <a href="http://meefik.ru">сайт разработчика</a>.\n\n&#169; 2012&#8211;2017 Антон Скшидлевский, GPLv3</string>
     <string name="summary_debug_mode_preference">Включить отображение отладочной информации</string>
     <string name="summary_disk_size_preference">Вычисляется автоматически</string>
     <string name="summary_fb_refresh_preference">Принудительно обновлять фреймбуфер</string>
