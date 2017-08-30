@@ -1,0 +1,318 @@
+<resources>
+
+    <string name="app_name" translatable="false">"Linux Deploy"</string>
+    <string name="app_version">"Versi %s"</string>
+    <string name="menu_start">"MULAI"</string>
+    <string name="menu_stop">"BERHENTI"</string>
+    <string name="menu_properties">"Properti"</string>
+    <string name="nav_profiles">"Profil"</string>
+    <string name="nav_repository">"Repositori"</string>
+    <string name="nav_terminal">"Terminal"</string>
+    <string name="nav_settings">"Pengaturan"</string>
+    <string name="nav_about">"Tentang"</string>
+    <string name="nav_exit">"Keluar"</string>
+    <string name="navigation_drawer_open">"Buka navigasi"</string>
+    <string name="navigation_drawer_close">"Tutup navigasi"</string>
+    <string name="menu_install">"Memasang"</string>
+    <string name="menu_configure">"Konfigurasi"</string>
+    <string name="menu_export">"Ekspor"</string>
+    <string name="menu_status">"Status"</string>
+    <string name="menu_clear">"Bersihkan"</string>
+    <string name="menu_add">"Baru"</string>
+    <string name="menu_edit">"Mengedit"</string>
+    <string name="menu_delete">"Menghapus"</string>
+    <string name="menu_change_url">"Ubah URL"</string>
+    <string name="menu_refresh">"Menyegarkan"</string>
+    <string name="menu_more">"Menu"</string>
+    <string name="loading_message">"Memuat data ..."</string>
+    <string name="updating_env_message">"Memperbarui lingkungan operasi ..."</string>
+    <string name="removing_env_message">"Menghapus lingkungan operasi ..."</string>
+    <string name="notification_current_profile">"Profil saat ini"</string>
+    <string name="title_activity_main" translatable="false">"Linux Deploy"</string>
+    <string name="title_activity_about">"Tentang"</string>
+    <string name="title_activity_settings">"Pengaturan"</string>
+    <string name="title_activity_properties">"Properti"</string>
+    <string name="title_activity_profiles">"Profil"</string>
+    <string name="title_activity_mounts">"Mounts"</string>
+    <string name="title_activity_repository">"Repositori"</string>
+    <string name="confirm_start_title">"Mulai"</string>
+    <string name="confirm_stop_title">"Berhenti"</string>
+    <string name="confirm_start_message">"Me-mount container dan mulai layanan?"</string>
+    <string name="confirm_stop_message">"Hentikan layanan dan meng-unmount container?"</string>
+    <string name="new_profile_title">"Nama Profil"</string>
+    <string name="edit_profile_title">"Nama Profil"</string>
+    <string name="import_profile_title">"Impor profil"</string>
+    <string name="export_profile_title">"Ekspor profil"</string>
+    <string name="toast_import_profile_success">"Profil berhasil diimpor"</string>
+    <string name="toast_import_profile_error">"Kesalahan mengimpor profil!"</string>
+    <string name="toast_export_profile_success">"Profil telah berhasil diekspor."</string>
+    <string name="toast_export_profile_error">"Kesalahan mengekspor profil!"</string>
+    <string name="toast_terminal_error">"Kesalahan saat memulai terminal!"</string>
+    <string name="toast_loading_error">"Terjadi kesalahan saat memuat data!"</string>
+    <string name="toast_updating_env_error">"Kesalahan memperbarui lingkungan pengoperasian!"</string>
+    <string name="confirm_profile_discard_title">"Hapus profil"</string>
+    <string name="confirm_profile_discard_message">"Hapus profil yang dipilih?"</string>
+    <string name="new_mount_title">"Mount point"</string>
+    <string name="edit_mount_title">"Mount point"</string>
+    <string name="confirm_mount_discard_title">"Hapus point mount"</string>
+    <string name="confirm_mount_discard_message">"Hapus point mount yang dipilih dari daftar?"</string>
+    <string name="repository_import_message">"%1$s\n\nUkuran:%2$sMB"</string>
+    <string name="repository_import_button">"Impor"</string>
+    <string name="repository_purchase_button">"Membeli"</string>
+    <string name="repository_change_url_title">"URL repositori"</string>
+    <string name="repository_default_description">"Tidak ada deskripsi."</string>
+    <string name="write_permissions_disallow">"Aplikasi tidak diizinkan untuk menulis ke penyimpanan Anda"</string>
+
+    <string name="app_preferences">"Aplikasi"</string>
+    <string name="title_screenlock_preference">"Layar kunci"</string>
+    <string name="summary_screenlock_preference">"Jaga layar tetap aktif saat aplikasi sedang berjalan"</string>
+    <string name="title_wifilock_preference">"Kunci Wi-Fi"</string>
+    <string name="summary_wifilock_preference">"Jaga agar Wi-Fi tetap aktif saat aplikasi berjalan"</string>
+    <string name="title_wakelock_preference">"Kunci bangun"</string>
+    <string name="summary_wakelock_preference">"Biarkan CPU tetap bekerja saat layar mati"</string>
+    <string name="title_language_preference">"Bahasa"</string>
+    <string name="dialog_title_language_preference">"Pilih bahasa"</string>
+    <string name="title_fontsize_preference">"Ukuran huruf"</string>
+    <string name="dialog_title_fontsize_preference">"Ukuran huruf"</string>
+    <string name="title_maxlines_preference">"Ukuran gulir"</string>
+    <string name="dialog_title_maxlines_preference">"Ukuran gulir"</string>
+    <string name="title_theme_preference">"Tema"</string>
+    <string name="dialog_title_theme_preference">"Pilih tema"</string>
+    <string name="title_timestamp_preference">"Stempel waktu"</string>
+    <string name="summary_timestamp_preference">"Tampilkan stempel waktu"</string>
+    <string name="title_appicon_preference">"Tampilkan ikon"</string>
+    <string name="summary_appicon_preference">"Ikon tampilan di bilah notifikasi"</string>
+    <string name="title_stealth_preference">"Mode siluman"</string>
+    <string name="summary_stealth_preference">"Sembunyikan ikon aplikasi dari peluncur"</string>
+    <string name="title_autostart_preference">"Otomatis Mulai"</string>
+    <string name="summary_autostart_preference">"Jalankan container secara otomatis saat memulai Android"</string>
+    <string name="title_autostart_delay_preference">"Penundaan autostart"</string>
+    <string name="dialog_title_autostart_delay_preference">"Tunda (detik)"</string>
+    <string name="title_nettrack_preference">"Pemicu jaringan"</string>
+    <string name="summary_nettrack_preference">"Melacak perubahan jaringan dan memperbarui container"</string>
+    <string name="title_terminalcmd_preference">"Perintah terminal"</string>
+    <string name="dialog_title_terminalcmd_preference">"Perintah terminal"</string>
+
+    <string name="env_preferences">"Environment"</string>
+
+    <!-- ENV_DIR -->
+    <string name="title_env_dir_preference">"Direktori ENV"</string>
+    <string name="dialog_title_env_dir_preference">"Direktori ENV"</string>
+    <!-- PATH -->
+    <string name="title_path_preference">"Variabel PATH"</string>
+    <string name="dialog_title_path_preference">"Variabel PATH"</string>
+
+    <string name="title_is_sync_preference">"Sinkronisasi"</string>
+    <string name="summary_is_sync_preference">"Sinkronisasi ENV dengan server"</string>
+    <!-- SERVER_URL -->
+    <string name="title_server_url_preference">"URL server"</string>
+    <string name="dialog_title_server_url_preference">"URL server"</string>
+
+    <string name="title_is_cli_preference">"Aktifkan CLI"</string>
+    <string name="summary_is_cli_preference">"Siapkan antarmuka baris perintah"</string>
+
+    <string name="title_installenv_preference">"Perbarui ENV"</string>
+    <string name="summary_installenv_preference">"Perbarui lingkungan pengoperasian"</string>
+    <string name="message_installenv_confirm_dialog">"Update lingkungan operasi?"</string>
+
+    <string name="title_removeenv_preference">"Hapus ENV"</string>
+    <string name="summary_removeenv_preference">"Hapus lingkungan pengoperasian"</string>
+    <string name="message_removeenv_confirm_dialog">"Hapus lingkungan operasi?"</string>
+
+    <string name="manage_preferences">"Pengelolaan"</string>
+    <!-- TELNET -->
+    <string name="title_is_telnet_preference">"TELNET"</string>
+    <string name="summary_is_telnet_preference">"Aktifkan daemon telnetd"</string>
+    <string name="title_telnet_port_preference">"Port"</string>
+    <string name="dialog_title_telnet_port_preference">"Port TELNET"</string>
+    <string name="title_telnet_localhost_preference">"Localhost"</string>
+    <string name="summary_telnet_localhost_preference">"Izinkan koneksi hanya dari localhost"</string>
+    <!-- HTTP -->
+    <string name="title_is_http_preference">"HTTP"</string>
+    <string name="summary_is_http_preference">"Aktifkan daemon httpd"</string>
+    <string name="title_http_port_preference">"Port"</string>
+    <string name="dialog_title_http_port_preference">"Port HTTP"</string>
+    <string name="title_http_conf_preference">"Pembatasan akses"</string>
+    <string name="dialog_title_http_conf_preference">"Pembatasan akses"</string>
+    <string name="debug_preferences">"Debug"</string>
+    <string name="title_debug_mode_preference">"mode debug"</string>
+    <string name="summary_debug_mode_preference">"Tampilkan informasi debug"</string>
+    <string name="title_trace_mode_preference">"Mode jejak"</string>
+    <string name="summary_trace_mode_preference">"Aktifkan mode penelusuran"</string>
+    <string name="title_logger_preference">"Mencatat log"</string>
+    <string name="summary_logger_preference">"Simpan log ke file"</string>
+    <string name="title_logfile_preference">"Berkas log"</string>
+    <string name="dialog_title_logfile_preference">"Berkas log"</string>
+    <string name="title_install_dialog">"Memasang"</string>
+    <string name="message_install_dialog">"Mulai memasang distribusi GNU/Linux?"</string>
+    <string name="title_configure_dialog">"Konfigurasi"</string>
+    <string name="message_configure_dialog">"Mulai konfigurasi container?"</string>
+    <string name="title_export_dialog">"Ekspor"</string>
+
+    <string name="bootstrap_preferences">"BOOTSTRAP"</string>
+    <!-- METHOD -->
+    <string name="title_method_preference">"Metode kontainerisasi"</string>
+    <string name="dialog_title_method_preference">"Metode kontainerisasi"</string>
+    <!-- DISTRIB -->
+    <string name="title_distrib_preference">"Distribusi"</string>
+    <string name="dialog_title_distrib_preference">"Distribusi"</string>
+    <!-- ARCH -->
+    <string name="title_arch_preference">"Arsitektur"</string>
+    <string name="dialog_title_arch_preference">"Arsitektur"</string>
+    <!-- SUITE -->
+    <string name="title_suite_preference">"Paket distribusi"</string>
+    <string name="dialog_title_suite_preference">"Paket distribusi"</string>
+    <!-- SOURCE_PATH -->
+    <string name="title_source_path_preference">"Jalur sumber"</string>
+    <string name="dialog_title_source_path_preference">"Jalur sumber"</string>
+    <!-- TARGET_TYPE -->
+    <string name="title_target_type_preference">"Tipe instalasi"</string>
+    <string name="dialog_title_target_type_preference">"Tipe instalasi"</string>
+    <!-- TARGET_PATH -->
+    <string name="title_target_path_preference">"Jalur instalasi"</string>
+    <string name="dialog_title_target_path_preference">"Jalur instalasi"</string>
+    <!-- DISK_SIZE -->
+    <string name="title_disk_size_preference">"Ukuran img (MB)"</string>
+    <string name="dialog_title_disk_size_preference">"Ukuran img disk (MB)"</string>
+    <string name="summary_disk_size_preference">"Perhitungan otomatis"</string>
+    <!-- FS_TYPE -->
+    <string name="title_fs_type_preference">"Berkas sistem"</string>
+    <string name="dialog_title_fs_type_preference">"Berkas sistem"</string>
+    <!-- USER_NAME -->
+    <string name="title_user_name_preference">"Nama pengguna"</string>
+    <string name="dialog_title_user_name_preference">"Nama pengguna"</string>
+    <!-- USER_PASSWORD -->
+    <string name="title_user_password_preference">"Password Pengguna"</string>
+    <string name="dialog_title_user_password_preference">"Password Pengguna"</string>
+    <!-- PRIVILEGED_USERS -->
+    <string name="title_privileged_users_preference">"Pengguna istimewa"</string>
+    <string name="dialog_title_privileged_users_preference">"Pengguna istimewa"</string>
+    <!-- DNS -->
+    <string name="title_dns_preference">"DNS"</string>
+    <string name="dialog_title_dns_preference">"Alamat server DNS"</string>
+    <string name="summary_dns_preference">"Deteksi otomatis"</string>
+    <!-- LOCALE -->
+    <string name="title_locale_preference">"Lokalisasi"</string>
+    <string name="dialog_title_locale_preference">"Lokalisasi"</string>
+
+    <string name="init_preferences">"INIT"</string>
+
+    <!-- INIT -->
+    <string name="title_is_init_preference">"Aktif"</string>
+    <string name="summary_is_init_preference">"Izinkan untuk menggunakan sistem inisialisasi"</string>
+    <string name="title_init_preference">"Sistem init"</string>
+    <string name="dialog_title_init_preference">"Sistem init"</string>
+    <string name="title_init_properties_preference">"Pengaturan init"</string>
+    <string name="summary_init_properties_preference">"Ubah pengaturan untuk sistem inisialisasi"</string>
+
+    <!-- INIT_PATH -->
+    <string name="title_init_path_preference">"Path init"</string>
+    <string name="dialog_title_init_path_preference">"INIT: file atau direktori"</string>
+    <!-- INIT_LEVEL -->
+    <string name="title_init_level_preference">"Tingkat init"</string>
+    <string name="dialog_title_init_level_preference">"INIT: tingkat"</string>
+    <!-- INIT_USER -->
+    <string name="title_init_user_preference">"Pengguna init"</string>
+    <string name="dialog_title_init_user_preference">"INIT: pengguna"</string>
+    <!-- INIT_ASYNC -->
+    <string name="title_init_async_preference">"Async"</string>
+    <string name="summary_init_async_preference">"Jalankan proses secara asinkron"</string>
+
+    <string name="mounts_preferences">"MOUNTS"</string>
+
+    <!-- MOUNTS -->
+    <string name="title_is_mounts_preference">"Aktif"</string>
+    <string name="summary_is_mounts_preference">"Izinkan untuk me-mount sumber daya Android"</string>
+    <string name="title_mounts_editor_preference">"Mount point"</string>
+    <string name="summary_mounts_editor_preference">"Edit daftar mount point"</string>
+
+    <string name="ssh_preferences">"SSH"</string>
+
+    <string name="title_is_ssh_preference">"Aktif"</string>
+    <string name="summary_is_ssh_preference">"Izinkan untuk menggunakan server SSH"</string>
+
+    <string name="title_ssh_properties_preference">"Pengaturan SSH"</string>
+    <string name="summary_ssh_properties_preference">"Ubah pengaturan untuk server SSH"</string>
+
+    <!-- SSH_PORT -->
+    <string name="title_ssh_port_preference">"Port"</string>
+    <string name="dialog_title_ssh_port_preference">"SSH: port"</string>
+    <!-- SSH_OPTIONS -->
+    <string name="title_ssh_options_preference">"Pilihan SSH"</string>
+    <string name="dialog_title_ssh_options_preference">"SSH: opsi sshd"</string>
+
+    <string name="gui_preferences">"GUI"</string>
+
+    <string name="title_is_gui_preference">"Aktif"</string>
+    <string name="summary_is_gui_preference">"Izinkan untuk menggunakan lingkungan grafis"</string>
+
+    <string name="title_graphics_preference">"Subsistem grafis"</string>
+    <string name="dialog_title_graphics_preference">"Subsistem grafis"</string>
+
+    <string name="title_gui_properties_preference">"Pengaturan GUI"</string>
+    <string name="summary_gui_properties_preference">"Ubah pengaturan untuk subsistem grafis"</string>
+    <!-- DESKTOP -->
+    <string name="title_desktop_preference">"Lingkungan desktop"</string>
+    <string name="dialog_title_desktop_preference">"Lingkungan desktop"</string>
+
+    <string name="vnc_preferences">"VNC"</string>
+
+    <string name="title_vnc_display_preference">"Tampilan"</string>
+    <string name="dialog_title_vnc_display_preference">"VNC: nomor tampilan"</string>
+    <!-- VNC_DEPTH -->
+    <string name="title_vnc_depth_preference">"Kedalaman (bit)"</string>
+    <string name="dialog_title_vnc_depth_preference">"VNC: kedalaman (bit)"</string>
+    <!-- VNC_DPI -->
+    <string name="title_vnc_dpi_preference">"DPI"</string>
+    <string name="dialog_title_vnc_dpi_preference">"VNC: titik per inci (DPI)"</string>
+    <!-- VNC_WIDTH -->
+    <string name="title_vnc_width_preference">"Lebar"</string>
+    <string name="dialog_title_vnc_width_preference">"VNC: lebar layar"</string>
+    <!-- VNC_HEIGHT -->
+    <string name="title_vnc_height_preference">"Tinggi"</string>
+    <string name="dialog_title_vnc_height_preference">"VNC: tinggi layar"</string>
+    <!-- VNC_ARGS -->
+    <string name="title_vnc_args_preference">"Pilihan VNC"</string>
+    <string name="dialog_title_vnc_args_preference">"VNC: pilihan vncserver"</string>
+
+    <string name="x11_preferences">"X11"</string>
+    <!-- X11_DISPLAY -->
+    <string name="title_x11_display_preference">"Tampilan"</string>
+    <string name="dialog_title_x11_display_preference">"X11: nomor tampilan"</string>
+    <!-- X11_HOST -->
+    <string name="title_x11_host_preference">"Alamat server X"</string>
+    <string name="dialog_title_x11_host_preference">"X11: IP atau nama host"</string>
+    <!-- X11_SDL -->
+    <string name="title_x11_sdl_preference">"XServer XSDL"</string>
+    <string name="summary_x11_sdl_preference">"Buka xServer XSDL secara otomatis"</string>
+    <!-- X11_SDL_DELAY -->
+    <string name="title_x11_sdl_delay_preference">"Jeda mulai"</string>
+    <string name="dialog_title_x11_sdl_delay_preference">"X11: jeda dalam hitungan detik"</string>
+
+    <string name="fb_preferences">"Framebuffer"</string>
+    <!-- FB_DISPLAY -->
+    <string name="title_fb_display_preference">"Tampilan"</string>
+    <string name="dialog_title_fb_display_preference">"FB: nomor tampilan"</string>
+    <!-- FB_DPI -->
+    <string name="title_fb_dpi_preference">"DPI"</string>
+    <string name="dialog_title_fb_dpi_preference">"FB: titik per inci (DPI)"</string>
+    <!-- FB_DEV -->
+    <string name="title_fb_dev_preference">"Perangkat video"</string>
+    <string name="dialog_title_fb_dev_preference">"FB: jalur perangkat video"</string>
+    <!-- FB_INPUT -->
+    <string name="title_fb_input_preference">"Alat masukkan"</string>
+    <string name="dialog_title_fb_input_preference">"FB: jalur perangkat masukkan"</string>
+    <!-- FB_ARGS -->
+    <string name="title_fb_args_preference">"Pilihan X"</string>
+    <string name="dialog_title_fb_args_preference">"Pilihan FB: X"</string>
+    <!-- FB_FREEZE -->
+    <string name="title_fb_freeze_preference">"Bekukan UI Android"</string>
+    <string name="dialog_title_fb_freeze_preference">"Bekukan UI Android"</string>
+    <!-- FB_REFRESH -->
+    <string name="title_fb_refresh_preference">"Paksa penyegaran"</string>
+    <string name="summary_fb_refresh_preference">"Paksa refresh framebuffer"</string>
+
+    <string name="help_text">"\n&lt;b&gt;Bantuan&lt;/b&gt;\n\nAplikasi ini untuk menginstal distribusi GNU/Linux yang dipilih dan menjalankannya dalam container chroot.\n\nProsedur:\n1. Dapatkan hak istimewa superuser (root).\n2. Periksa koneksi Internet.\n3. Tentukan pilihan instalasi.\n4. Jalankan instalasi (\"Menu =&gt; Install\").\n5. Tunggu sampai penginstalan selesai.\n6. Ketuk tombol \"START\" untuk menjalankan container.\n7. Sambungkan melalui CLI, SSH, VNC, atau lainnya.\n\nUntuk informasi lebih lanjut, lihat \"Tentang\"."</string>
+    <string name="about_text">"Aplikasi ini untuk menginstal distribusi GNU/Linux yang dipilih dan menjalankannya dalam container chroot.\n\nUntuk informasi lebih lanjut, lihat &lt;a href=\"https://github.com/meefik/linuxdeploy\"&gt;halaman project&lt;/a&gt;, &lt;a href=\"http://4pda.ru/forum/index.php?showtopic=378043\"&gt;forum&lt;/a&gt; atau &lt;a href=\"http://meefik.ru\"&gt;situs pengembang&lt;/a&gt;.\n\n© 2012-2017 Anton Skshidlevsky, GPLv3"</string>
+
+</resources>
