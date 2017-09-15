@@ -401,6 +401,7 @@
         <item>armv6j_hardfp</item>
         <item>armv7a</item>
         <item>armv7a_hardfp</item>
+        <item>arm64</item>
         <item>i486</item>
         <item>i686</item>
         <item>amd64</item> <!-- need manually change the mirror url -->
