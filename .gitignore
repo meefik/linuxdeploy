@@ -43,6 +43,3 @@ captures/
 
 # Windows clutter
 Thumbs.db
-
-# Linux Deploy CLI
-app/src/main/assets/env/

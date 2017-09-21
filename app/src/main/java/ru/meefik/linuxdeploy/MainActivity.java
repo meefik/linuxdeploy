@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements
         output.setMovementMethod(LinkMovementMethod.getInstance());
 
         // WiFi lock init
-        WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         wifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL, getPackageName());
 
         // Wake lock

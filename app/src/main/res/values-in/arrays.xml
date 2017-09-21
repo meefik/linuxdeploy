@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+  
     <string-array name="theme_entries">
-        <item>Темная</item>
-        <item>Светлая</item>
+        <item>Gelap</item>
+        <item>Terang</item>
     </string-array>
     <string-array name="target_type_entries">
-        <item>Файл</item>
-        <item>Директория</item>
-        <item>Раздел</item>
-        <item>Оперативная память</item>
-        <item>Пользовательский</item>
+        <item>Berkas img</item>
+        <item>Folder</item>
+        <item>Partisi</item>
+        <item>RAM</item>
+        <item>Khusus</item>
     </string-array>
     <string-array name="fs_type_entries">
-        <item>Автоопределение</item>
+        <item>Auto</item>
         <item>ext2</item>
         <item>ext3</item>
         <item>ext4</item>
@@ -23,12 +23,12 @@
         <item>LXDE</item>
         <item>Xfce</item>
         <item>MATE</item>
-        <item>Другое</item>
+        <item>Lainnya</item>
     </string-array>
     <string-array name="fb_freeze_entries">
-        <item>Не замораживать</item>
-        <item>Приостановить</item>
-        <item>Остановить</item>
+        <item>Jangan dibekukan</item>
+        <item>Jeda</item>
+        <item>Berhenti</item>
     </string-array>
-
+    
 </resources>

@@ -41,6 +41,7 @@
     <string name="target_path_directory" translatable="false">${ENV_DIR}/rootfs/linux</string>
     <string name="target_path_partition" translatable="false">/dev/block/mmcblkXpY</string>
     <string name="target_path_ram" translatable="false">/data/local/ram</string>
+    <string name="target_path_custom" translatable="false"></string>
     <string name="rootfs_archive" translatable="false">${EXTERNAL_STORAGE}/linux-rootfs.tar.gz</string>
     <string name="disk_size" translatable="false">0</string>
     <string name="fs_type" translatable="false">auto</string>
@@ -81,7 +82,7 @@
     <string name="fb_freeze" translatable="false">none</string>
 
     <!-- Debian -->
-    <string name="debian_suite" translatable="false">jessie</string>
+    <string name="debian_suite" translatable="false">stretch</string>
     <!-- arm -->
     <string name="arm_debian_source_path" translatable="false">http://ftp.debian.org/debian/</string>
     <string name="arm_debian_arch" translatable="false">armhf</string>
@@ -108,7 +109,7 @@
     <string name="intel_kalilinux_arch" translatable="false">i386</string>
 
     <!-- Fedora -->
-    <string name="fedora_suite" translatable="false">24</string>
+    <string name="fedora_suite" translatable="false">25</string>
     <!-- arm -->
     <string name="arm_fedora_source_path" translatable="false">http://dl.fedoraproject.org/pub/</string>
     <string name="arm_fedora_arch" translatable="false">armhfp</string>

@@ -305,6 +305,13 @@ public class PropertiesActivity extends AppCompatPreferenceActivity implements
                         disksize.setEnabled(true);
                         fstype.setEnabled(false);
                         break;
+                    case "custom":
+                        if (init) {
+                            targetpath.setText(getString(R.string.target_path_custom));
+                        }
+                        disksize.setEnabled(false);
+                        fstype.setEnabled(false);
+                        break;
                 }
             }
         }

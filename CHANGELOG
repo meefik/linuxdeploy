@@ -1,6 +1,19 @@
 Changelog (English)
 ===================
 
+2.0.2
+Fixed an architecture emulation via binfmt_misc
+Fixed Arch Linux bootstrap (+libnghttp2, -xorg-utils)
+Fixed issue of launching Xfce and Mate (issue #807)
+Added file system check (issue #785)
+Added custom target type
+Fixed problem with showing menu button (issue #693)
+
+2.0.1
+Added Fedora 25 (issue #683)
+Fixed Arch Linux bootstrap (issue #699)
+Fixed Fedora and CentOS bootstrap (issue #646)
+
 2.0.0
 The application interface is rewritten with Material Design
 Completed transition to the new CLI
@@ -357,6 +370,19 @@ Updated list packages of base system installation
 
 История изменений (Русский)
 ===========================
+
+2.0.2
+Исправлена проблема с эмуляцией архитектуры через binfmt_misc
+Исправлен установщик Arch Linux (+libnghttp2, -xorg-utils)
+Исправлена проблема запуска Xfce и Mate (тикет #807)
+Добавлена проверка файловой системы (тикет #785)
+Добавлен пользовательский тип установки
+Исправлена проблема с отображением кнопки меню (тикет #693)
+
+2.0.1
+Добавлена поддержка Fedora 25 (тикет #683)
+Исправлен установщик Arch Linux (тикет #699)
+Исправлен установщик Fedora и CentOS (тикет #646)
 
 2.0.0
 Интерфейс приложения переписан под Material Design
