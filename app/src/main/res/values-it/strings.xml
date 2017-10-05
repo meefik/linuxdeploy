@@ -13,7 +13,6 @@
     <string name="menu_add">Nuovo</string>
     <string name="menu_edit">Modifica</string>
     <string name="menu_delete">Elimina</string>
-    <string name="menu_markall">Seleziona tutto</string>
     <string name="notification_current_profile">Profilo corrente</string>
     <string name="title_activity_about">Info su</string>
     <string name="title_activity_settings">Impostazioni</string>

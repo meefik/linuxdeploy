@@ -10,6 +10,7 @@
         <item>Directorio</item>
         <item>Partición</item>
         <item>RAM</item>
+        <item>Custom</item>
     </string-array>
     <string-array name="fs_type_entries">
         <item>Auto</item>

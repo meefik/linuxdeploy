@@ -10,6 +10,7 @@
         <item>Répertoire</item>
         <item>Partition</item>
         <item>RAM</item>
+        <item>Custom</item>
     </string-array>
     <string-array name="fs_type_entries">
         <item>Automatique</item>

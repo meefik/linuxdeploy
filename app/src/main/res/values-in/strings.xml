@@ -1,6 +1,5 @@
 <resources>
 
-    <string name="app_name" translatable="false">"Linux Deploy"</string>
     <string name="app_version">"Versi %s"</string>
     <string name="menu_start">"MULAI"</string>
     <string name="menu_stop">"BERHENTI"</string>
@@ -28,7 +27,6 @@
     <string name="updating_env_message">"Memperbarui lingkungan operasi ..."</string>
     <string name="removing_env_message">"Menghapus lingkungan operasi ..."</string>
     <string name="notification_current_profile">"Profil saat ini"</string>
-    <string name="title_activity_main" translatable="false">"Linux Deploy"</string>
     <string name="title_activity_about">"Tentang"</string>
     <string name="title_activity_settings">"Pengaturan"</string>
     <string name="title_activity_properties">"Properti"</string>
@@ -312,7 +310,7 @@
     <string name="title_fb_refresh_preference">"Paksa penyegaran"</string>
     <string name="summary_fb_refresh_preference">"Paksa refresh framebuffer"</string>
 
-    <string name="help_text">"\n&lt;b&gt;Bantuan&lt;/b&gt;\n\nAplikasi ini untuk menginstal distribusi GNU/Linux yang dipilih dan menjalankannya dalam container chroot.\n\nProsedur:\n1. Dapatkan hak istimewa superuser (root).\n2. Periksa koneksi Internet.\n3. Tentukan pilihan instalasi.\n4. Jalankan instalasi (\"Menu =&gt; Install\").\n5. Tunggu sampai penginstalan selesai.\n6. Ketuk tombol \"START\" untuk menjalankan container.\n7. Sambungkan melalui CLI, SSH, VNC, atau lainnya.\n\nUntuk informasi lebih lanjut, lihat \"Tentang\"."</string>
-    <string name="about_text">"Aplikasi ini untuk menginstal distribusi GNU/Linux yang dipilih dan menjalankannya dalam container chroot.\n\nUntuk informasi lebih lanjut, lihat &lt;a href=\"https://github.com/meefik/linuxdeploy\"&gt;halaman project&lt;/a&gt;, &lt;a href=\"http://4pda.ru/forum/index.php?showtopic=378043\"&gt;forum&lt;/a&gt; atau &lt;a href=\"http://meefik.ru\"&gt;situs pengembang&lt;/a&gt;.\n\n© 2012-2017 Anton Skshidlevsky, GPLv3"</string>
+    <string name="help_text">"\n<b>Bantuan</b>\n\nAplikasi ini untuk menginstal distribusi GNU/Linux yang dipilih dan menjalankannya dalam container chroot.\n\nProsedur:\n1. Dapatkan hak istimewa superuser (root).\n2. Periksa koneksi Internet.\n3. Tentukan pilihan instalasi.\n4. Jalankan instalasi (\"Menu =&gt; Install\").\n5. Tunggu sampai penginstalan selesai.\n6. Ketuk tombol \"START\" untuk menjalankan container.\n7. Sambungkan melalui CLI, SSH, VNC, atau lainnya.\n\nUntuk informasi lebih lanjut, lihat \"Tentang\"."</string>
+    <string name="about_text">"Aplikasi ini untuk menginstal distribusi GNU/Linux yang dipilih dan menjalankannya dalam container chroot.\n\nUntuk informasi lebih lanjut, lihat <a href="https://github.com/meefik/linuxdeploy">halaman project</a>, <a href="http://4pda.ru/forum/index.php?showtopic=378043">forum</a> atau <a href="http://meefik.ru">situs pengembang</a>.\n\n© 2012-2017 Anton Skshidlevsky, GPLv3"</string>
 
 </resources>

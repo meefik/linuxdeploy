@@ -1,6 +1,12 @@
 Changelog (English)
 ===================
 
+2.0.3
+Added GNU dd utility (issue #729)
+Added support for arm64 architecture in Gentoo
+Fixed problem with set the variable name using the "config" command
+Translated into Indonesian (issue #851)
+
 2.0.2
 Fixed an architecture emulation via binfmt_misc
 Fixed Arch Linux bootstrap (+libnghttp2, -xorg-utils)
@@ -370,6 +376,12 @@ Updated list packages of base system installation
 
 История изменений (Русский)
 ===========================
+
+2.0.3
+Добавлена GNU версия утилиты dd (тикет #729)
+Добавлена поддержка архитектуры arm64 в Gentoo
+Исправлена проблема с установкой имен переменных через команду "config"
+Переведено на индонезийский язык (тикет #851)
 
 2.0.2
 Исправлена проблема с эмуляцией архитектуры через binfmt_misc

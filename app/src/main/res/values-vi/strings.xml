@@ -13,7 +13,6 @@
     <string name="menu_add">Mới</string>
     <string name="menu_edit">Sửa</string>
     <string name="menu_delete">Xoá</string>
-    <string name="menu_markall">Đánh dấu tất cả</string>
     <string name="notification_current_profile">Hồ sơ hiện tại</string>
     <string name="title_activity_about">Thông tin</string>
     <string name="title_activity_settings">Cài đặt</string>

@@ -10,7 +10,6 @@
     <string name="menu_add">Nový</string>
     <string name="menu_edit">Upraviť</string>
     <string name="menu_delete">Odstrániť</string>
-    <string name="menu_markall">Označiť všetko</string>
     <string name="notification_current_profile">Aktuálny profil</string>
     <string name="title_activity_about">O aplikácii</string>
     <string name="title_activity_settings">Nastavenia</string>

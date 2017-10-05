@@ -10,6 +10,7 @@
         <item>폴더</item>
         <item>파티션</item>
         <item>메모리(RAM)</item>
+        <item>Custom</item>
     </string-array>
     <string-array name="fs_type_entries">
         <item>자동</item>
