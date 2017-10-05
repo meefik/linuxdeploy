@@ -10,7 +10,6 @@
     <string name="menu_clear">Leeren</string>
     <string name="menu_add">Neu</string>
     <string name="menu_edit">Bearbeiten</string>
-    <string name="menu_markall">Alles markieren</string>
     <string name="title_activity_settings">Einstellungen</string>
     <string name="title_activity_properties">Eigenschaften</string>
     <string name="title_activity_profiles">Profile</string>

@@ -15,7 +15,6 @@
     <string name="menu_edit">Edytuj</string>
     <string name="menu_delete">Usuń</string>
     <string name="menu_export">Eksportuj</string>
-    <string name="menu_markall">Zaznacz wszystko</string>
     <string name="notification_current_profile">Obecny profil</string>
     <string name="title_activity_about">O programie</string>
     <string name="title_activity_settings">Ustawienia</string>

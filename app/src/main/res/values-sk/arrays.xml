@@ -10,6 +10,7 @@
         <item>Adresár</item>
         <item>Na oddiel</item>
         <item>Do pamäte RAM</item>
+        <item>Custom</item>
     </string-array>
     <string-array name="fs_type_entries">
         <item>Automatický</item>

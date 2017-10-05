@@ -13,7 +13,6 @@
     <string name="menu_add">新建</string>
     <string name="menu_edit">编辑</string>
     <string name="menu_delete">删除</string>
-    <string name="menu_markall">全选</string>
     <string name="notification_current_profile">当前配置文件</string>
     <string name="title_activity_about">关于</string>
     <string name="title_activity_settings">设置</string>
