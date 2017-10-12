@@ -4,25 +4,45 @@
     <string name="app_version">版本 %1$s</string>
     <string name="menu_start">启动</string>
     <string name="menu_stop">停止</string>
-    <string name="menu_properties">属性</string>
+    <string name="menu_properties">菜单</string>
+    <string name="nav_profiles">配置文件</string>
+    <string name="nav_repository">“仓库”</string>
+    <string name="nav_terminal">终端</string>
     <string name="nav_settings">设置</string>
     <string name="nav_about">关于</string>
     <string name="nav_exit">退出</string>
+    <string name="navigation_drawer_open">打开导航栏</string>
+    <string name="navigation_drawer_close">关闭导航栏</string>
+    <string name="menu_install">安装</string>
+    <string name="menu_configure">配置</string>
+    <string name="menu_export">导出</string>
     <string name="menu_status">状态</string>
     <string name="menu_clear">清空</string>
     <string name="menu_add">新建</string>
     <string name="menu_edit">编辑</string>
     <string name="menu_delete">删除</string>
+    <!---->
+    <!--旧的内容-->
+    <string name="menu_markall">全选</string>
+    <!--同上注释-->
+    <!---->
+    <string name="menu_change_url">更改网址</string>
+    <string name="menu_refresh">刷新</string>
+    <string name="menu_more">菜单</string>
+    <string name="loading_message">加载数据中……</string>
+    <string name="updating_env_message">更新操作环境中……</string>
+    <string name="removing_env_message">移除操作环境中……</string>
     <string name="notification_current_profile">当前配置文件</string>
     <string name="title_activity_about">关于</string>
     <string name="title_activity_settings">设置</string>
     <string name="title_activity_properties">属性</string>
     <string name="title_activity_profiles">配置文件</string>
     <string name="title_activity_mounts">挂载</string>
+    <string name="title_activity_repository">“仓库”</string>
     <string name="confirm_start_title">启动</string>
     <string name="confirm_stop_title">停止</string>
-    <string name="confirm_start_message">挂载 GNU/Linux 操作系统并启动服务？</string>
-    <string name="confirm_stop_message">停止服务并取消 GNU/Linux 操作系统？</string>
+    <string name="confirm_start_message">装载 GNU/Linux 容器并启动服务？</string>
+    <string name="confirm_stop_message">停止服务并卸载 GNU/Linux 容器？</string>
     <string name="new_profile_title">配置文件名称</string>
     <string name="edit_profile_title">配置文件名称</string>
     <string name="import_profile_title">导入配置文件</string>
@@ -31,17 +51,29 @@
     <string name="toast_import_profile_error">导入配置文件出错！</string>
     <string name="toast_export_profile_success">配置文件已成功导出。</string>
     <string name="toast_export_profile_error">导出配置文件出错！</string>
-    <string name="confirm_profile_discard_title">移除配置文件</string>
-    <string name="confirm_profile_discard_message">删除选中的配置文件？</string>
+    <string name="toast_terminal_error">启动终端时出错！</string>
+    <string name="toast_loading_error">加载数据时出错！</string>
+    <string name="toast_updating_env_error">操作环境更新错误！</string>
+    <string name="confirm_profile_discard_title">删除配置文件</string>
+    <string name="confirm_profile_discard_message">确定删除这个配置文件？</string>
     <string name="new_mount_title">挂载点</string>
     <string name="edit_mount_title">挂载点</string>
     <string name="confirm_mount_discard_title">移除挂载点</string>
-    <string name="confirm_mount_discard_message">从列表中移除挂载点？</string>
-    <string name="app_preferences">应用程序</string>
-    <string name="title_screenlock_preference">锁定屏幕</string>
-    <string name="summary_screenlock_preference">在应用程序运行时保持屏幕开启</string>
+    <string name="confirm_mount_discard_message">确定移除这个挂载点？</string>
+    <string name="repository_import_message">%1$s\n\n大小: %2$s MB</string>
+    <string name="repository_import_button">添加</string>
+    <string name="repository_purchase_button">购买</string>
+    <string name="repository_change_url_title">“仓库”地址</string>
+    <string name="repository_default_description">没有说明。</string>
+    <string name="write_permissions_disallow">应用无法正常写入存储，请确认你是否授予本应用储存权限</string>
+    <!--设置-->
+    <string name="app_preferences">应用</string>
+    <string name="title_screenlock_preference">屏幕常亮</string>
+    <string name="summary_screenlock_preference">在本应用运行时保持屏幕常亮</string>
     <string name="title_wifilock_preference">锁定 Wi-Fi</string>
-    <string name="summary_wifilock_preference">在应用程序运行时保持 Wi-Fi 开启</string>
+    <string name="summary_wifilock_preference">在本应用运行时保持 Wi-Fi 开启</string>
+    <string name="title_wakelock_preference">保持CPU唤醒</string>
+    <string name="summary_wakelock_preference">在屏幕关闭的情况下，让 CPU 保持运行状态</string>
     <string name="title_language_preference">语言</string>
     <string name="dialog_title_language_preference">选择语言</string>
     <string name="title_fontsize_preference">字体大小</string>
@@ -50,125 +82,243 @@
     <string name="dialog_title_maxlines_preference">滚动大小</string>
     <string name="title_theme_preference">主题</string>
     <string name="dialog_title_theme_preference">选择主题</string>
+    <string name="title_timestamp_preference">时间戳</string>
+    <string name="summary_timestamp_preference">显示时间戳</string>
     <string name="title_appicon_preference">显示图标</string>
-    <string name="summary_appicon_preference">在通知栏显示图标</string>
-    <string name="title_timestamp_preference">Timestamp</string>
-    <string name="summary_timestamp_preference">Show timestamp</string>
-    <string name="title_autostart_preference">开机启动</string>
-    <string name="summary_autostart_preference">在 Android 启动时自动启动 GNU/Linux</string>
-    <string name="env_preferences">系统环境</string>
+    <string name="summary_appicon_preference">在通知栏中显示图标</string>
+    <string name="title_stealth_preference">隐身模式</string>
+    <string name="summary_stealth_preference">从桌面（启动器）中隐藏本应用图标</string>
+    <string name="title_autostart_preference">开机自动启动</string>
+    <string name="summary_autostart_preference">在 Android 启动时自动运行容器</string>
+    <string name="title_autostart_delay_preference">自启延迟</string>
+    <string name="dialog_title_autostart_delay_preference">延迟时长（单位：秒）</string>
+    <string name="title_nettrack_preference">联网更新</string>
+    <string name="summary_nettrack_preference">跟踪网络的更改对容器进行更新</string>
+    <string name="title_terminalcmd_preference">终端命令</string>
+    <string name="dialog_title_terminalcmd_preference">终端命令设置</string>
+
+    <string name="env_preferences">环境</string>
+
+    <!-- ENV_DIR -->
+    <string name="title_env_dir_preference">ENV 目录</string>
+    <string name="dialog_title_env_dir_preference">ENV 目录</string>
+    <!-- PATH -->
+    <string name="title_path_preference">PATH 变量</string>
+    <string name="dialog_title_path_preference">PATH 变量</string>
+
+    <string name="title_is_sync_preference">同步</string>
+    <string name="summary_is_sync_preference">将环境与服务器同步</string>
+    <!-- SERVER_URL -->
+    <string name="title_server_url_preference">服务器地址</string>
+    <string name="dialog_title_server_url_preference">服务器地址</string>
+
+    <string name="title_is_cli_preference">启用 CLI</string>
+    <string name="summary_is_cli_preference">设置命令行界面</string>
+
     <string name="title_installenv_preference">更新环境</string>
     <string name="summary_installenv_preference">更新操作环境</string>
     <string name="message_installenv_confirm_dialog">更新操作环境？</string>
+
     <string name="title_removeenv_preference">移除环境</string>
     <string name="summary_removeenv_preference">移除操作环境</string>
     <string name="message_removeenv_confirm_dialog">移除操作环境？</string>
+
+    <string name="manage_preferences">管理</string>
+    <!-- TELNET -->
+    <string name="title_is_telnet_preference">TELNET</string>
+    <string name="summary_is_telnet_preference">启动 telnetd 守护模式</string>
+    <string name="title_telnet_port_preference">端口</string>
+    <string name="dialog_title_telnet_port_preference">TELNET 端口</string>
+    <string name="title_telnet_localhost_preference">本地主机</string>
+    <string name="summary_telnet_localhost_preference">仅允许从本地主机连接</string>
+    <!-- HTTP -->
+    <string name="title_is_http_preference">HTTP</string>
+    <string name="summary_is_http_preference">启动 httpd 守护模式</string>
+    <string name="title_http_port_preference">端口</string>
+    <string name="dialog_title_http_port_preference">HTTP 端口</string>
+    <string name="title_http_conf_preference">访问限制</string>
+    <string name="dialog_title_http_conf_preference">访问名单</string>
     <string name="debug_preferences">调试</string>
+    <string name="title_debug_mode_preference">调试模式</string>
+    <string name="summary_debug_mode_preference">显示调试信息</string>
+    <string name="title_trace_mode_preference">跟踪模式</string>
+    <string name="summary_trace_mode_preference">启用跟踪模式</string>
     <string name="title_logger_preference">日志</string>
-    <string name="summary_logger_preference">将日志储存到文件</string>
+    <string name="summary_logger_preference">将日志保存到文件</string>
     <string name="title_logfile_preference">日志文件</string>
-    <string name="dialog_title_logfile_preference">日志文件</string>
+    <string name="dialog_title_logfile_preference">日志文件名</string>
     <string name="title_install_dialog">安装</string>
     <string name="message_install_dialog">开始 GNU/Linux 的安装？</string>
     <string name="title_configure_dialog">配置</string>
-    <string name="message_configure_dialog">开始重新配置 GNU/Linux？</string>
+    <string name="message_configure_dialog">启动容器的配置？</string>
     <string name="title_export_dialog">导出</string>
-    <string name="title_suite_preference">发行版版本</string>
-    <string name="dialog_title_suite_preference">发行版版本</string>
-    <string name="title_locale_preference">本地化</string>
-    <string name="dialog_title_locale_preference">本地化</string>
-    <string name="ssh_preferences">SSH</string>
-    <string name="vnc_preferences">VNC</string>
-    <string name="fb_preferences">Framebuffer</string>
-    <string name="help_text">\n<b>帮助</b><![CDATA[\n\n此应用程序会在一个chroot容器中安装和运行选定的 GNU/Linux 发行版。\n\n步骤：\n1. 获取超级用户（即root）权限\n2. 检查网络连接\n3. 设置安装选项\n4. 开始安装（点击\"属性\" => \"安装\"）\n5. 等待安装完成\n6. 点击\"开始\"按钮启动容器\n7. 通过 CLI、SSH、VNC 或其他方式连接容器\n\n更多内容，详见\"关于\"。]]></string>
-    <string name="about_text">This application installs the selected GNU/Linux distribution and executes it in a chroot-container.\n\nFor more information see <a href="https://github.com/meefik/linuxdeploy">project page</a>, <a href="http://4pda.ru/forum/index.php?showtopic=378043">forum</a> or <a href="http://meefik.ru">developer site</a>.\n\n© 2012–2017 Anton Skshidlevsky, GPLv3</string>
-    <string name="menu_configure">配置</string>
-    <string name="menu_install">安装</string>
-    <string name="summary_debug_mode_preference">显示调试信息</string>
-    <string name="summary_disk_size_preference">自动</string>
-    <string name="summary_gui_properties_preference">更改图形子系统的设定</string>
-    <string name="title_x11_display_preference">显示</string>
-    <string name="title_x11_host_preference">X11 服务器地址</string>
-    <string name="title_x11_sdl_preference">XServer XSDL</string>
-    <string name="x11_preferences">X11</string>
-    <string name="title_vnc_args_preference">VNC 参数</string>
-    <string name="title_vnc_depth_preference">颜色深度 (bits)</string>
-    <string name="title_vnc_display_preference">显示</string>
-    <string name="title_vnc_dpi_preference">DPI</string>
-    <string name="title_vnc_height_preference">高</string>
-    <string name="title_vnc_width_preference">宽</string>
-    <string name="title_user_name_preference">用户名</string>
-    <string name="title_trace_mode_preference">跟踪模式</string>
-    <string name="title_user_password_preference">用户密码</string>
-    <string name="title_target_path_preference">安装路径</string>
-    <string name="title_target_type_preference">安装类型</string>
-    <string name="title_debug_mode_preference">调试模式</string>
-    <string name="title_desktop_preference">桌面环境</string>
-    <string name="title_disk_size_preference">镜像大小 (MB)</string>
-    <string name="title_distrib_preference">发行版</string>
-    <string name="title_fb_args_preference">X11 参数</string>
-    <string name="title_fb_dev_preference">输出设备</string>
-    <string name="title_fb_display_preference">显示</string>
-    <string name="title_fb_dpi_preference">DPI</string>
-    <string name="title_fb_freeze_preference">冻结 Android 界面</string>
-    <string name="title_fb_input_preference">输入设备</string>
-    <string name="title_fs_type_preference">文件系统</string>
-    <string name="title_graphics_preference">图形子系统</string>
-    <string name="title_gui_properties_preference">图形化界面设定</string>
-    <string name="title_mounts_editor_preference">挂载点</string>
-    <string name="title_ssh_port_preference">端口</string>
-    <string name="title_ssh_properties_preference">SSH 设置</string>
-    <string name="title_is_cli_preference">啟用 CLI</string>
-    <string name="gui_preferences">图形界面</string>
+
+    <string name="bootstrap_preferences">引导设置</string>
+    <!-- METHOD -->
+    <string name="title_method_preference">容器类型</string>
+    <string name="dialog_title_method_preference">容器类型</string>
+    <!-- DISTRIB -->
+    <string name="title_distrib_preference">发行版 GNU/Linux </string>
+    <string name="dialog_title_distrib_preference">选择发行版 GNU/Linux </string>
+    <!-- ARCH -->
     <string name="title_arch_preference">架构</string>
-    <string name="title_dns_preference">DNS 服务器</string>
+    <string name="dialog_title_arch_preference">选择架构</string>
+    <!-- SUITE -->
+    <string name="title_suite_preference">发行版 GNU/Linux 版本</string>
+    <string name="dialog_title_suite_preference">选择发行版 GNU/Linux 版本</string>
+    <!-- SOURCE_PATH -->
     <string name="title_source_path_preference">源地址</string>
-    <string name="summary_x11_sdl_preference">自动打开 XServer XSDL</string>
-    <string name="summary_is_cli_preference">Set up a command line interface</string>
-    <string name="summary_trace_mode_preference">启用跟踪模式</string>
-    <string name="summary_ssh_properties_preference">更改 SSH 服务器的设定</string>
-    <string name="summary_is_ssh_preference">允许 SSH 服务器启动</string>
-    <string name="summary_mounts_editor_preference">编辑挂载点列表</string>
-    <string name="summary_dns_preference">自动</string>
-    <string name="summary_is_mounts_preference">允许挂载 Android 上的资源</string>
-    <string name="dialog_title_x11_display_preference">X11: 窗口序号</string>
-    <string name="dialog_title_x11_host_preference">X11: IP地址或域名</string>
-    <string name="dialog_title_user_name_preference">用户名</string>
-    <string name="dialog_title_user_password_preference">用户密码</string>
-    <string name="dialog_title_target_path_preference">安装路径</string>
-    <string name="dialog_title_ssh_port_preference">SSH: 端口</string>
-    <string name="dialog_title_fs_type_preference">文件系统</string>
-    <string name="dialog_title_graphics_preference">图形子系统</string>
-    <string name="dialog_title_source_path_preference">源地址</string>
-    <string name="dialog_title_desktop_preference">桌面环境</string>
-    <string name="dialog_title_distrib_preference">发行版</string>
+    <string name="dialog_title_source_path_preference">输入源地址</string>
+    <!-- TARGET_TYPE -->
+    <string name="title_target_type_preference">安装类型</string>
+    <string name="dialog_title_target_type_preference">选择安装类型</string>
+    <!-- TARGET_PATH -->
+    <string name="title_target_path_preference">安装路径</string>
+    <string name="dialog_title_target_path_preference">输入安装路径</string>
+    <!-- DISK_SIZE -->
+    <string name="title_disk_size_preference">镜像大小 (单位：MB)</string>
+    <string name="dialog_title_disk_size_preference">输入镜像大小 (单位：MB)</string>
+    <string name="summary_disk_size_preference">自动分配</string>
+    <!-- FS_TYPE -->
+    <string name="title_fs_type_preference">文件系统</string>
+    <string name="dialog_title_fs_type_preference">选择文件系统</string>
+    <!-- USER_NAME -->
+    <string name="title_user_name_preference">用户名</string>
+    <string name="dialog_title_user_name_preference">输入用户名</string>
+    <!-- USER_PASSWORD -->
+    <string name="title_user_password_preference">用户密码</string>
+    <string name="dialog_title_user_password_preference">输入用户密码</string>
+    <!-- PRIVILEGED_USERS -->
+    <string name="title_privileged_users_preference">特权用户</string>
+    <string name="dialog_title_privileged_users_preference">特权用户</string>
+    <!-- DNS -->
+    <string name="title_dns_preference">DNS</string>
     <string name="dialog_title_dns_preference">DNS 服务器地址</string>
-    <string name="dialog_title_fb_args_preference">FB: X 参数</string>
-    <string name="dialog_title_fb_dev_preference">FB: 输出设备路径</string>
+    <string name="summary_dns_preference">自动</string>
+    <!-- LOCALE -->
+    <string name="title_locale_preference">本地化</string>
+    <string name="dialog_title_locale_preference">选择本地语言</string>
+
+    <string name="init_preferences">初始化</string>
+
+    <!-- INIT -->
+    <string name="title_is_init_preference">启用</string>
+    <string name="summary_is_init_preference">允许使用初始化系统</string>
+    <string name="title_init_preference">初始化系统</string>
+    <string name="dialog_title_init_preference">初始化系统</string>
+    <string name="title_init_properties_preference">初始化设置</string>
+    <string name="summary_init_properties_preference">更改初始化系统设置</string>
+
+    <!-- INIT_PATH -->
+    <string name="title_init_path_preference">初始路径</string>
+    <string name="dialog_title_init_path_preference">INIT ：文件或者目录</string>
+    <!-- INIT_LEVEL -->
+    <string name="title_init_level_preference">初始化级别</string>
+    <string name="dialog_title_init_level_preference">初始化：级别</string>
+    <!-- INIT_USER -->
+    <string name="title_init_user_preference">初始用户</string>
+    <string name="dialog_title_init_user_preference">初始用户</string>
+    <!-- INIT_ASYNC -->
+    <string name="title_init_async_preference">异步处理</string>
+    <string name="summary_init_async_preference">异步运行进程</string>
+
+    <string name="mounts_preferences">挂载</string>
+
+    <!-- MOUNTS -->
+    <string name="title_is_mounts_preference">启用</string>
+    <string name="summary_is_mounts_preference">允许挂载 Android 上的资源</string>
+    <string name="title_mounts_editor_preference">挂载点列表</string>
+    <string name="summary_mounts_editor_preference">编辑挂载点列表</string>
+
+    <string name="ssh_preferences">SSH</string>
+
+    <string name="title_is_ssh_preference">启用</string>
+    <string name="summary_is_ssh_preference">允许使用 SSH 服务器</string>
+
+    <string name="title_ssh_properties_preference">SSH 设置</string>
+    <string name="summary_ssh_properties_preference">更改 SSH 服务器的设置</string>
+
+    <!-- SSH_PORT -->
+    <string name="title_ssh_port_preference">端口</string>
+    <string name="dialog_title_ssh_port_preference">SSH：端口</string>
+    <!-- SSH_OPTIONS -->
+    <string name="title_ssh_options_preference">SSH 选项</string>
+    <string name="dialog_title_ssh_options_preference">SSH：sshd 选项</string>
+
+    <string name="gui_preferences">图形界面</string>
+
+    <string name="title_is_gui_preference">启用</string>
+    <string name="summary_is_gui_preference">允许使用图形环境</string>
+
+    <string name="title_graphics_preference">图形子系统</string>
+    <string name="dialog_title_graphics_preference">图形子系统</string>
+
+    <string name="title_gui_properties_preference">图形界面设置</string>
+    <string name="summary_gui_properties_preference">更改图形子系统的设置</string>
+    <!-- DESKTOP -->
+    <string name="title_desktop_preference">桌面环境</string>
+    <string name="dialog_title_desktop_preference">桌面环境</string>
+
+    <string name="vnc_preferences">VNC</string>
+
+    <string name="title_vnc_display_preference">显示</string>
+    <string name="dialog_title_vnc_display_preference">VNC：显示编号</string>
+    <!-- VNC_DEPTH -->
+    <string name="title_vnc_depth_preference">颜色深度 (bits)</string>
+    <string name="dialog_title_vnc_depth_preference">VNC：颜色深度 (bits)</string>
+    <!-- VNC_DPI -->
+    <string name="title_vnc_dpi_preference">DPI</string>
+    <string name="dialog_title_vnc_dpi_preference">VNC：每英寸的点数 (DPI)</string>
+    <!-- VNC_WIDTH -->
+    <string name="title_vnc_width_preference">宽</string>
+    <string name="dialog_title_vnc_width_preference">VNC：屏幕宽度</string>
+    <!-- VNC_HEIGHT -->
+    <string name="title_vnc_height_preference">高</string>
+    <string name="dialog_title_vnc_height_preference">VNC：屏幕高度</string>
+    <!-- VNC_ARGS -->
+    <string name="title_vnc_args_preference">VNC 选项</string>
+    <string name="dialog_title_vnc_args_preference">VNC=VNC 服务器选项</string>
+
+    <string name="x11_preferences">X11</string>
+    <!-- X11_DISPLAY -->
+    <string name="title_x11_display_preference">显示</string>
+    <string name="dialog_title_x11_display_preference">X11：显示编号</string>
+    <!-- X11_HOST -->
+    <string name="title_x11_host_preference">X 服务器地址</string>
+    <string name="dialog_title_x11_host_preference">X11：IP地址或域名</string>
+    <!-- X11_SDL -->
+    <string name="title_x11_sdl_preference">XServer XSDL</string>
+    <string name="summary_x11_sdl_preference">自动打开 XServer XSDL</string>
+    <!-- X11_SDL_DELAY -->
+    <string name="title_x11_sdl_delay_preference">开始延迟</string>
+    <string name="dialog_title_x11_sdl_delay_preference">X11：以秒为单位的延迟</string>
+
+    <string name="fb_preferences">帧缓冲区</string>
+    <!-- FB_DISPLAY -->
+    <string name="title_fb_display_preference">显示</string>
+    <string name="dialog_title_fb_display_preference">帧缓冲区：显示编号</string>
+    <!-- FB_DPI -->
+    <string name="title_fb_dpi_preference">DPI</string>
+    <string name="dialog_title_fb_dpi_preference">帧缓冲区：每英寸的点数 (DPI)</string>
+    <!-- FB_DEV -->
+    <string name="title_fb_dev_preference">视频设备</string>
+    <string name="dialog_title_fb_dev_preference">帧缓冲区：视频设备路径</string>
+    <!-- FB_INPUT -->
+    <string name="title_fb_input_preference">输入设备</string>
+    <string name="dialog_title_fb_input_preference">帧缓冲区：输入设备路径</string>
+    <!-- FB_ARGS -->
+    <string name="title_fb_args_preference">X 参数</string>
+    <string name="dialog_title_fb_args_preference">帧缓冲区：X 参数</string>
+    <!-- FB_FREEZE -->
+    <string name="title_fb_freeze_preference">冻结 Android 界面</string>
     <string name="dialog_title_fb_freeze_preference">冻结 Android 界面</string>
-    <string name="dialog_title_fb_display_preference">FB: 窗口序号</string>
-    <string name="dialog_title_fb_dpi_preference">FB: 每英寸的点数 (DPI)</string>
-    <string name="dialog_title_fb_input_preference">FB: 输入设备路径</string>
-    <string name="dialog_title_disk_size_preference">磁盘镜像大小 (MB)</string>
-    <string name="dialog_title_target_type_preference">安装类型</string>
-    <string name="dialog_title_env_dir_preference">ENV 目录</string>
-    <string name="dialog_title_arch_preference">架构</string>
-    <string name="manage_preferences">管理</string>
-    <string name="dialog_title_vnc_args_preference">VNC: 服务器参数</string>
-    <string name="dialog_title_vnc_depth_preference">VNC: 颜色深度 (bits)</string>
-    <string name="dialog_title_vnc_display_preference">VNC: 窗口序号</string>
-    <string name="dialog_title_vnc_dpi_preference">VNC: 每英寸的点数 (DPI)</string>
-    <string name="dialog_title_vnc_height_preference">VNC: 屏幕高度</string>
-    <string name="dialog_title_vnc_width_preference">VNC: 屏幕宽度</string>
-    <string name="summary_fb_refresh_preference">强制刷新Frambuffer</string>
+    <!-- FB_REFRESH -->
     <string name="title_fb_refresh_preference">强制刷新</string>
-    <string name="title_env_dir_preference">ENV 目录</string>
-    <string name="menu_export">导出</string>
-    <string name="nav_profiles">配置文件</string>
-    <string name="summary_is_gui_preference">允许图形界面启动</string>
-    <string name="summary_is_init_preference">启用自定义脚本执行</string>
-    <string name="dialog_title_path_preference">PATH</string>
-    <string name="repository_purchase_button">購買</string>
-    <string name="write_permissions_disallow">The app was not allowed to write to your storage</string>
+    <string name="summary_fb_refresh_preference">强制刷新帧缓冲区</string>
+
+    <string name="help_text">\n<b>帮助：</b>\n\n本应用程序会在一个 chroot 容器中安装和运行选定的 GNU/Linux 发行版。\n\n步骤：\n1. 让本应用获取超级用户（即root）权限。\n2. 检查设备是否正常连接网络。\n3. 设置安装选项。\n4. 开始安装（点击\"菜单（也就是右上角）\" => \"安装\"）。\n5. 等待安装完成。\n6. 点击\"启动\"按钮启动容器。\n7. 通过 CLI、SSH、VNC 或其他方式连接容器。\n\n更多内容，详见\"关于\"。</string>
+    <string name="about_text">本应用程序安装选定的 GNU / Linux 发行版，并在容器中运行。\n\n有关更多信息，请参阅：<a href="https://github.com/meefik/linuxdeploy"> Github 项目页面</a>、<a href="http://4pda.ru/forum/index.php?showtopic=378043">论坛</a> 或者是 <a href="http://meefik.ru">本应用的官方网站</a>。\n\n© 2012–2017 Anton Skshidlevsky, GPLv3</string>
+
+    <!--如果有人再次翻译本xml并不使用机械翻译的话，最好重新以英文xml开始翻译，因为英文xml的内容理论是最全的，并且这里的翻译可能有很多错误-->
 
 </resources>
