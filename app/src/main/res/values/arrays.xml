@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
     <string-array name="language_entries" translatable="false">
@@ -244,7 +243,6 @@
         <item>centos</item>
         <item>archlinux</item>
         <item>gentoo</item>
-        <item>opensuse</item>
         <item>slackware</item>
         <item>rootfs</item>
     </string-array>
@@ -256,7 +254,6 @@
         <item>CentOS</item>
         <item>Arch Linux</item>
         <item>Gentoo</item>
-        <item>openSUSE</item>
         <item>Slackware</item>
         <item>RootFS</item>
     </string-array>
@@ -332,7 +329,7 @@
     <string-array name="kalilinux_arch_values" translatable="false">
         <item>armel</item>
         <item>armhf</item>
-        <item>arm64</item> <!-- kali-rolling only -->
+        <item>arm64</item>
         <item>i386</item>
         <item>amd64</item>
     </string-array>
@@ -340,14 +337,14 @@
     <!-- Fedora -->
 
     <string-array name="fedora_suite_values" translatable="false">
-        <item>23</item>
-        <item>24</item>
         <item>25</item>
+        <item>26</item>
+        <item>27</item>
     </string-array>
     <string-array name="fedora_arch_values" translatable="false">
         <item>armhfp</item> <!-- f19 and later -->
         <item>aarch64</item> <!-- f21 and later -->
-        <item>i386</item>
+        <item>i386</item>  <!-- up to f25 -->
         <item>x86_64</item>
     </string-array>
 
@@ -374,20 +371,6 @@
         <item>armv7h</item>
         <item>aarch64</item>
         <item>i686</item>
-        <item>x86_64</item>
-    </string-array>
-
-    <!-- openSUSE -->
-
-    <string-array name="opensuse_suite_values" translatable="false">
-        <item>12.3</item>
-        <item>13.2</item>
-    </string-array>
-    <string-array name="opensuse_arch_values" translatable="false">
-        <item>armv6hl</item>
-        <item>armv7hl</item>
-        <item>aarch64</item>
-        <item>i586</item>
         <item>x86_64</item>
     </string-array>
 

@@ -133,16 +133,7 @@
     <string name="arm_archlinux_arch" translatable="false">armv7h</string>
     <!-- intel -->
     <string name="intel_archlinux_source_path" translatable="false">http://mirrors.kernel.org/archlinux/</string>
-    <string name="intel_archlinux_arch" translatable="false">i686</string>
-
-    <!-- openSUSE -->
-    <string name="opensuse_suite" translatable="false">13.2</string>
-    <!-- arm -->
-    <string name="arm_opensuse_source_path" translatable="false">http://download.opensuse.org/ports/</string>
-    <string name="arm_opensuse_arch" translatable="false">armv7hl</string>
-    <!-- intel -->
-    <string name="intel_opensuse_source_path" translatable="false">http://download.opensuse.org/</string>
-    <string name="intel_opensuse_arch" translatable="false">i586</string>
+    <string name="intel_archlinux_arch" translatable="false">x86_64</string>
 
     <!-- Gentoo -->
     <string name="gentoo_suite" translatable="false">latest</string>

@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
     <string name="app_version">版本 %1$s</string>
@@ -21,11 +20,6 @@
     <string name="menu_add">新建</string>
     <string name="menu_edit">编辑</string>
     <string name="menu_delete">删除</string>
-    <!---->
-    <!--旧的内容-->
-    <string name="menu_markall">全选</string>
-    <!--同上注释-->
-    <!---->
     <string name="menu_change_url">更改网址</string>
     <string name="menu_refresh">刷新</string>
     <string name="menu_more">菜单</string>
