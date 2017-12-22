@@ -1,0 +1,12 @@
+--- a/lib/ext2fs/ismounted.c	2017-12-22 16:13:08.000000000 +0300
++++ b/lib/ext2fs/ismounted.c	2017-12-22 16:15:10.000000000 +0300
+@@ -348,7 +348,7 @@
+  */
+ errcode_t ext2fs_check_if_mounted(const char *file, int *mount_flags)
+ {
+-	return ext2fs_check_mount_point(file, mount_flags, NULL, 0);
++	return 0; // ext2fs_check_mount_point(file, mount_flags, NULL, 0);
+ }
+ 
+ #ifdef DEBUG
+

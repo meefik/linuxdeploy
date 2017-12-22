@@ -5,6 +5,7 @@ Changelog (English)
 Added support Fedora 26 and 27
 Updated Arch Linux bootstrap
 openSUSE end of support
+Enabled journal for FS ext3/4
 
 2.0.3
 Added GNU dd utility (issue #729)
@@ -386,6 +387,7 @@ Updated list packages of base system installation
 Добавлена поддержка Fedora 26 и 27
 Обновлен установщик Arch Linux
 Закончена поддержка openSUSE
+Включено журналирование для ФС ext3/4
 
 2.0.3
 Добавлена GNU версия утилиты dd (тикет #729)

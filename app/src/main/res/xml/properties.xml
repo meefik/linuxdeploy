@@ -72,7 +72,7 @@
         <ListPreference
             android:defaultValue="@string/fs_type"
             android:dialogTitle="@string/dialog_title_fs_type_preference"
-            android:entries="@array/fs_type_entries"
+            android:entries="@array/fs_type_values"
             android:entryValues="@array/fs_type_values"
             android:key="fs_type"
             android:summary="@string/fs_type"

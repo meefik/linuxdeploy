@@ -1,20 +1,5 @@
 <resources>
 
-    <string-array name="language_entries" translatable="false">
-        <item>English</item>
-        <item>Русский</item>
-        <item>Deutsch</item>
-        <item>Français</item>
-        <item>Italiano</item>
-        <item>Español</item>
-        <item>简体中文</item>
-        <item>Tiếng Việt</item>
-        <item>Slovenský</item>
-        <item>Português</item>
-        <item>한국어</item>
-        <item>Polish</item>
-        <item>Bahasa Indonesia</item>
-    </string-array>
     <string-array name="language_values" translatable="false">
         <item>en</item>
         <item>ru</item>
@@ -30,13 +15,28 @@
         <item>pl</item>
         <item>in</item>
     </string-array>
-    <string-array name="theme_entries">
-        <item>Dark</item>
-        <item>Light</item>
+    <string-array name="language_entries" translatable="false">
+        <item>English</item>
+        <item>Русский</item>
+        <item>Deutsch</item>
+        <item>Français</item>
+        <item>Italiano</item>
+        <item>Español</item>
+        <item>简体中文</item>
+        <item>Tiếng Việt</item>
+        <item>Slovenský</item>
+        <item>Português</item>
+        <item>한국어</item>
+        <item>Polish</item>
+        <item>Bahasa Indonesia</item>
     </string-array>
     <string-array name="theme_values" translatable="false">
         <item>dark</item>
         <item>light</item>
+    </string-array>
+    <string-array name="theme_entries">
+        <item>Dark</item>
+        <item>Light</item>
     </string-array>
     <string-array name="target_type_values" translatable="false">
         <item>file</item>
@@ -53,13 +53,6 @@
         <item>Custom</item>
     </string-array>
     <string-array name="fs_type_values" translatable="false">
-        <item>auto</item>
-        <item>ext2</item>
-        <item>ext3</item>
-        <item>ext4</item>
-    </string-array>
-    <string-array name="fs_type_entries">
-        <item>Auto</item>
         <item>ext2</item>
         <item>ext3</item>
         <item>ext4</item>

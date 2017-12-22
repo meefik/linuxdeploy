@@ -11,12 +11,6 @@
         <item>RAM</item>
         <item>Custom</item>
     </string-array>
-    <string-array name="fs_type_entries">
-        <item>Auto</item>
-        <item>ext2</item>
-        <item>ext3</item>
-        <item>ext4</item>
-    </string-array>
     <string-array name="desktop_entries">
         <item>XTerm</item>
         <item>LXDE</item>
