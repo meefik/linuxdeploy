@@ -1,11 +1,17 @@
 Changelog (English)
 ===================
 
+2.0.5
+Enabled journal for FS ext3/4, ext2 without journal
+Added an attempt to re-unmount in case of failure
+The e2fsck utility is included in the assembly
+Fixed problem with running dbus in Fedora
+Fixed issue of creating a FS (mke2fs) when using busybox from system (issue # 891)
+
 2.0.4
 Added support Fedora 26 and 27
 Updated Arch Linux bootstrap
 openSUSE end of support
-Enabled journal for FS ext3/4
 
 2.0.3
 Added GNU dd utility (issue #729)
@@ -383,11 +389,17 @@ Updated list packages of base system installation
 История изменений (Русский)
 ===========================
 
+2.0.5
+Включено журналирование для ФС ext3/4, без журналирования ext2
+Добавлена попытка повторного размонтирования в случае неудачи
+Утилита e2fsck включена в сборку
+Исправлена проблема с запуском dbus в Fedora
+Исправлена проблема создания ФС (mke2fs) при использовании системного busybox (тикет #891)
+
 2.0.4
 Добавлена поддержка Fedora 26 и 27
 Обновлен установщик Arch Linux
 Закончена поддержка openSUSE
-Включено журналирование для ФС ext3/4
 
 2.0.3
 Добавлена GNU версия утилиты dd (тикет #729)
