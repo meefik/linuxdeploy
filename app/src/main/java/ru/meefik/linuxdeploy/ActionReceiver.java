@@ -2,13 +2,17 @@ package ru.meefik.linuxdeploy;
 
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.support.v4.app.NotificationCompat;
 
 public class ActionReceiver extends BroadcastReceiver {
 
     final static int NOTIFY_ID = 2;
+    static long attemptTime = 0;
+    static long attemptNumber = 1;
 
     private void showNotification(Context c, int icon, String text) {
         NotificationManager mNotificationManager = (NotificationManager) c
@@ -42,6 +46,34 @@ public class ActionReceiver extends BroadcastReceiver {
         // am broadcast -a ru.meefik.linuxdeploy.BROADCAST_ACTION --user 0 --es "alert" "Hello World!"
         if (intent.hasExtra("alert")) {
             showNotification(context, android.R.drawable.ic_dialog_alert, intent.getStringExtra("alert"));
+            return;
+        }
+        // am broadcast -a ru.meefik.linuxdeploy.BROADCAST_ACTION --user 0 --esn "start"
+        if (intent.hasExtra("start")) {
+            System.out.println("START");
+            EnvUtils.execService(context, "start", "-m");
+            return;
+        }
+        // am broadcast -a ru.meefik.linuxdeploy.BROADCAST_ACTION --user 0 --esn "stop"
+        if (intent.hasExtra("stop")) {
+            System.out.println("STOP");
+            EnvUtils.execService(context, "stop", "-u");
+            return;
+        }
+        // am broadcast -a ru.meefik.linuxdeploy.BROADCAST_ACTION --user 0 --esn "show"
+        if (intent.hasExtra("show")) {
+            if (attemptTime > System.currentTimeMillis() - 5000) {
+                attemptNumber++;
+            } else {
+                attemptNumber = 1;
+            }
+            attemptTime = System.currentTimeMillis();
+            if (attemptNumber >= 5) {
+                attemptNumber = 1;
+                Intent mainIntent = new Intent(context.getApplicationContext(), MainActivity.class);
+                mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(mainIntent);
+            }
             return;
         }
     }

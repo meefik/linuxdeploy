@@ -1,6 +1,7 @@
 package ru.meefik.linuxdeploy;
 
 import android.annotation.SuppressLint;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -828,15 +829,35 @@ public class PrefStore {
                     .setContentTitle(context.getString(R.string.app_name))
                     .setContentText(context.getString(R.string.notification_current_profile)
                             + ": " + getProfileName(context));
-            if (!isStealth(context)) {
+
+            if (isStealth(context)) {
+                Intent stealthReceive = new Intent();
+                stealthReceive.setAction("ru.meefik.linuxdeploy.BROADCAST_ACTION");
+                stealthReceive.putExtra("show", true);
+                PendingIntent pendingIntentStealth = PendingIntent.getBroadcast(context, 2, stealthReceive, PendingIntent.FLAG_UPDATE_CURRENT);
+                mBuilder.setContentIntent(pendingIntentStealth);
+            } else {
                 Intent resultIntent = intent;
                 if (resultIntent == null) resultIntent = new Intent(context, MainActivity.class);
                 TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
                 stackBuilder.addParentStack(MainActivity.class);
                 stackBuilder.addNextIntent(resultIntent);
-                PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(
-                        0, PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(1, PendingIntent.FLAG_UPDATE_CURRENT);
                 mBuilder.setContentIntent(resultPendingIntent);
+
+                Intent startReceive = new Intent();
+                startReceive.setAction("ru.meefik.linuxdeploy.BROADCAST_ACTION");
+                startReceive.putExtra("start", true);
+                PendingIntent pendingIntentStart = PendingIntent.getBroadcast(context, 3, startReceive, PendingIntent.FLAG_UPDATE_CURRENT);
+                int startIcon = SETTINGS.get(context, "theme").equals("dark") ?  R.drawable.ic_action_start_dark : R.drawable.ic_action_start_light;
+                mBuilder.addAction(startIcon, context.getString(R.string.menu_start), pendingIntentStart);
+
+                Intent stopReceive = new Intent();
+                stopReceive.setAction("ru.meefik.linuxdeploy.BROADCAST_ACTION");
+                stopReceive.putExtra("stop", true);
+                PendingIntent pendingIntentStop = PendingIntent.getBroadcast(context, 4, stopReceive, PendingIntent.FLAG_UPDATE_CURRENT);
+                int stopIcon = SETTINGS.get(context, "theme").equals("dark") ?  R.drawable.ic_action_stop_dark : R.drawable.ic_action_stop_light;
+                mBuilder.addAction(stopIcon, context.getString(R.string.menu_stop), pendingIntentStop);
             }
             mBuilder.setOngoing(true);
             mBuilder.setWhen(0);

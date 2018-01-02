@@ -121,9 +121,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements
             case "stealth":
                 // set stealth mode
                 // Run app without launcher: am start -n ru.meefik.linuxdeploy/.MainActivity
-                int stealthFlag = (PrefStore.isStealth(this) ?
+                int stealthFlag = PrefStore.isStealth(this) ?
                         PackageManager.COMPONENT_ENABLED_STATE_DISABLED
-                        : PackageManager.COMPONENT_ENABLED_STATE_ENABLED);
+                        : PackageManager.COMPONENT_ENABLED_STATE_ENABLED;
                 ComponentName mainComponent = new ComponentName(getPackageName(), getPackageName() + ".Launcher");
                 getPackageManager().setComponentEnabledSetting(mainComponent, stealthFlag,
                         PackageManager.DONT_KILL_APP);

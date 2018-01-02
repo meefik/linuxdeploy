@@ -7,6 +7,8 @@ Added an attempt to re-unmount in case of failure
 The e2fsck utility is included in the assembly
 Fixed problem with running dbus in Fedora
 Fixed issue of creating a FS (mke2fs) when using busybox from system (issue # 891)
+START and STOP buttons in notification
+Show app after five taps on notification in stealth mode
 
 2.0.4
 Added support Fedora 26 and 27
@@ -395,6 +397,8 @@ Updated list packages of base system installation
 Утилита e2fsck включена в сборку
 Исправлена проблема с запуском dbus в Fedora
 Исправлена проблема создания ФС (mke2fs) при использовании системного busybox (тикет #891)
+Кнопки СТАРТ и СТОП в уведомлении
+Показать приложение после пяти нажатий на уведомление в скрытном режиме
 
 2.0.4
 Добавлена поддержка Fedora 26 и 27
