@@ -311,7 +311,7 @@
     <string name="summary_fb_refresh_preference">强制刷新帧缓冲区</string>
 
     <string name="help_text">\n<b>帮助：</b>\n\n本应用程序会在一个 chroot 容器中安装和运行选定的 GNU/Linux 发行版。\n\n步骤：\n1. 让本应用获取超级用户（即root）权限。\n2. 检查设备是否正常连接网络。\n3. 设置安装选项。\n4. 开始安装（点击\"菜单（也就是右上角）\" => \"安装\"）。\n5. 等待安装完成。\n6. 点击\"启动\"按钮启动容器。\n7. 通过 CLI、SSH、VNC 或其他方式连接容器。\n\n更多内容，详见\"关于\"。</string>
-    <string name="about_text">本应用程序安装选定的 GNU / Linux 发行版，并在容器中运行。\n\n有关更多信息，请参阅：<a href="https://github.com/meefik/linuxdeploy"> Github 项目页面</a>、<a href="http://4pda.ru/forum/index.php?showtopic=378043">论坛</a> 或者是 <a href="http://meefik.ru">本应用的官方网站</a>。\n\n© 2012–2017 Anton Skshidlevsky, GPLv3</string>
+    <string name="about_text">本应用程序安装选定的 GNU / Linux 发行版，并在容器中运行。\n\n有关更多信息，请参阅：<a href="https://github.com/meefik/linuxdeploy"> Github 项目页面</a>、<a href="http://4pda.ru/forum/index.php?showtopic=378043">论坛</a> 或者是 <a href="http://meefik.ru">本应用的官方网站</a>。\n\n© 2012–2018 Anton Skshidlevsky, GPLv3</string>
 
     <!--如果有人再次翻译本xml并不使用机械翻译的话，最好重新以英文xml开始翻译，因为英文xml的内容理论是最全的，并且这里的翻译可能有很多错误-->
 

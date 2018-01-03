@@ -205,6 +205,7 @@ public class PrefStore {
                 case "de":
                 case "es":
                 case "fr":
+                case "in":
                 case "it":
                 case "ko":
                 case "pl":

@@ -72,7 +72,7 @@
     <string name="vnc_preferences">VNC</string>
     <string name="fb_preferences">Framebuffer</string>
     <string name="help_text">\n<b>Pomocník</b><![CDATA[\n\nTáto aplikácia nainštaluje vybratú distribúciu systému GNU/Linux a spustí ju v kontajneri chroot.\n\nPostup:\n1. Získajte práva superužívateľa (root).\n2. Skontrolujte pripojenie na internet.\n3. Určte voľby inštalácie.\n4. Spustite inštaláciu (\"Vlastnosti => Inštalácia\").\n5. Počkajte, kým sa dokončí inštalácia.\n6. Ťuknite na tlačidlo \"SPUSTIŤ\" na spustenie kontajnera.\n7. Pripojte sa ku kontajneru pomocou CLI, SSH, VNC, alebo iným spôsobom.\n\nPre viac informácií si prezrite \"O aplikácii\".]]></string>
-    <string name="about_text">Táto aplikácia nainštaluje vybratú distribúciu systému GNU/Linux a spustí ju v kontajneri chroot.\n\nPre viac informácií si prezrite <a href="https://github.com/meefik/linuxdeploy">stránku projektu</a>, <a href="http://4pda.ru/forum/index.php?showtopic=378043">fórum</a> alebo <a href="http://meefik.ru">stránku vývojára</a>.\n\n© 2012–2017 Anton Skshidlevsky, GPLv3</string>
+    <string name="about_text">Táto aplikácia nainštaluje vybratú distribúciu systému GNU/Linux a spustí ju v kontajneri chroot.\n\nPre viac informácií si prezrite <a href="https://github.com/meefik/linuxdeploy">stránku projektu</a>, <a href="http://4pda.ru/forum/index.php?showtopic=378043">fórum</a> alebo <a href="http://meefik.ru">stránku vývojára</a>.\n\n© 2012–2018 Anton Skshidlevsky, GPLv3</string>
     <string name="nav_about">O aplikácii</string>
     <string name="nav_exit">Skončiť</string>
     <string name="nav_settings">Nastavenia</string>

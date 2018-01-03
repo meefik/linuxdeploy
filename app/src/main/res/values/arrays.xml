@@ -1,34 +1,34 @@
 <resources>
 
     <string-array name="language_values" translatable="false">
-        <item>en</item>
-        <item>ru</item>
         <item>de</item>
-        <item>fr</item>
-        <item>it</item>
+        <item>en</item>
         <item>es</item>
-        <item>zh</item>
-        <item>vi</item>
-        <item>sk</item>
-        <item>pt</item>
+        <item>fr</item>
+        <item>in</item>
+        <item>it</item>
         <item>ko</item>
         <item>pl</item>
-        <item>in</item>
+        <item>pt</item>
+        <item>ru</item>
+        <item>sk</item>
+        <item>vi</item>
+        <item>zh</item>
     </string-array>
     <string-array name="language_entries" translatable="false">
-        <item>English</item>
-        <item>Русский</item>
         <item>Deutsch</item>
-        <item>Français</item>
-        <item>Italiano</item>
+        <item>English</item>
         <item>Español</item>
-        <item>简体中文</item>
-        <item>Tiếng Việt</item>
-        <item>Slovenský</item>
-        <item>Português</item>
+        <item>Français</item>
+        <item>Bahasa Indonesia</item>
+        <item>Italiano</item>
         <item>한국어</item>
         <item>Polish</item>
-        <item>Bahasa Indonesia</item>
+        <item>Português</item>
+        <item>Русский</item>
+        <item>Slovenský</item>
+        <item>Tiếng Việt</item>
+        <item>简体中文</item>
     </string-array>
     <string-array name="theme_values" translatable="false">
         <item>dark</item>
