@@ -151,7 +151,7 @@
     <string name="dialog_title_target_type_preference">Tipo installazione</string>
     <string name="dialog_title_env_dir_preference">Cartella ENV</string>
     <string name="dialog_title_arch_preference">Architettura</string>
-    <string name="manage_preferences">Gestione</string>
+    <string name="services_preferences">Gestione</string>
     <string name="dialog_title_vnc_args_preference">VNC: Opzioni server</string>
     <string name="dialog_title_vnc_depth_preference">VNC: Profondità</string>
     <string name="dialog_title_vnc_dpi_preference">VNC: Punti per pollice (DPI)</string>

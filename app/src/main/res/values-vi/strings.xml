@@ -152,7 +152,7 @@
     <string name="dialog_title_target_type_preference">Loại cài đặt</string>
     <string name="dialog_title_env_dir_preference">Đường dẫn ENV</string>
     <string name="dialog_title_arch_preference">Chuẩn nén</string>
-    <string name="manage_preferences">Sự quản lý</string>
+    <string name="services_preferences">Sự quản lý</string>
     <string name="dialog_title_vnc_args_preference">VNC:  tuỳ chọn máy chủ vnc</string>
     <string name="dialog_title_vnc_depth_preference">VNC: chiều sâu (bits)</string>
     <string name="dialog_title_vnc_display_preference">VNC: số lượng hiển thị</string>

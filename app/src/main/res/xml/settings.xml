@@ -135,7 +135,7 @@
             android:summary="@string/summary_removeenv_preference"
             android:title="@string/title_removeenv_preference" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/manage_preferences" >
+    <PreferenceCategory android:title="@string/services_preferences" >
         <CheckBoxPreference
             android:defaultValue="@string/is_telnet"
             android:key="is_telnet"

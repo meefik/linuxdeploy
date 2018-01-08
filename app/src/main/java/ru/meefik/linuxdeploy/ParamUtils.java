@@ -51,7 +51,7 @@ class ParamUtils {
                     String[] pair = line.split("=");
                     String key = pair[0];
                     String value = pair[1];
-                    map.put(key, value.replaceAll("\"",""));
+                    map.put(key, value.replaceAll("\"", ""));
                 }
             }
         } catch (Exception e) {
@@ -70,7 +70,7 @@ class ParamUtils {
             for (Map.Entry<String, String> entry : map.entrySet()) {
                 String key = entry.getKey();
                 String value = entry.getValue();
-                bw.write(key + "=\"" + value+"\"");
+                bw.write(key + "=\"" + value + "\"");
                 bw.newLine();
             }
             result = true;

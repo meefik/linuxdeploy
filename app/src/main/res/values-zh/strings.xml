@@ -100,8 +100,6 @@
     <string name="title_path_preference">PATH 变量</string>
     <string name="dialog_title_path_preference">PATH 变量</string>
 
-    <string name="title_is_sync_preference">同步</string>
-    <string name="summary_is_sync_preference">将环境与服务器同步</string>
     <!-- SERVER_URL -->
     <string name="title_server_url_preference">服务器地址</string>
     <string name="dialog_title_server_url_preference">服务器地址</string>
@@ -117,7 +115,7 @@
     <string name="summary_removeenv_preference">移除操作环境</string>
     <string name="message_removeenv_confirm_dialog">移除操作环境？</string>
 
-    <string name="manage_preferences">管理</string>
+    <string name="services_preferences">管理</string>
     <!-- TELNET -->
     <string name="title_is_telnet_preference">TELNET</string>
     <string name="summary_is_telnet_preference">启动 telnetd 守护模式</string>

@@ -176,6 +176,22 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/pulse_preferences" >
+
+        <CheckBoxPreference
+            android:defaultValue="@string/is_pulse"
+            android:key="is_pulse"
+            android:summary="@string/summary_is_pulse_preference"
+            android:title="@string/title_is_pulse_preference" />
+
+        <PreferenceScreen
+            android:dependency="is_pulse"
+            android:key="pulse_properties"
+            android:summary="@string/summary_pulse_properties_preference"
+            android:title="@string/title_pulse_properties_preference" />
+
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/gui_preferences" >
 
         <CheckBoxPreference

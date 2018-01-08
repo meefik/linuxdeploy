@@ -153,7 +153,7 @@
     <string name="dialog_title_target_type_preference">Typ inštalácie</string>
     <string name="dialog_title_env_dir_preference">Adresár ENV</string>
     <string name="dialog_title_arch_preference">Architektúra</string>
-    <string name="manage_preferences">Manažment</string>
+    <string name="services_preferences">Manažment</string>
     <string name="dialog_title_vnc_args_preference">VNC: voľby programu vncserver</string>
     <string name="dialog_title_vnc_depth_preference">VNC: hĺbka (v bitoch)</string>
     <string name="dialog_title_vnc_display_preference">VNC: číslo displeja</string>

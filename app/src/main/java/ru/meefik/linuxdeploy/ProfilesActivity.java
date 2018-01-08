@@ -45,7 +45,7 @@ public class ProfilesActivity extends AppCompatActivity implements OnTouchListen
     /**
      * Rename conf file associated with the profile
      *
-     * @param c context
+     * @param c       context
      * @param oldName old profile name
      * @param newName new profile name
      * @return true if success

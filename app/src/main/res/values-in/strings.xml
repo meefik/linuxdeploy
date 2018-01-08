@@ -100,8 +100,6 @@
     <string name="title_path_preference">"Variabel PATH"</string>
     <string name="dialog_title_path_preference">"Variabel PATH"</string>
 
-    <string name="title_is_sync_preference">"Sinkronisasi"</string>
-    <string name="summary_is_sync_preference">"Sinkronisasi ENV dengan server"</string>
     <!-- SERVER_URL -->
     <string name="title_server_url_preference">"URL server"</string>
     <string name="dialog_title_server_url_preference">"URL server"</string>
@@ -117,7 +115,7 @@
     <string name="summary_removeenv_preference">"Hapus lingkungan pengoperasian"</string>
     <string name="message_removeenv_confirm_dialog">"Hapus lingkungan operasi?"</string>
 
-    <string name="manage_preferences">"Pengelolaan"</string>
+    <string name="services_preferences">"Pengelolaan"</string>
     <!-- TELNET -->
     <string name="title_is_telnet_preference">"TELNET"</string>
     <string name="summary_is_telnet_preference">"Aktifkan daemon telnetd"</string>

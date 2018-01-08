@@ -18,7 +18,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 class EnvUtils {
 
@@ -293,7 +292,6 @@ class EnvUtils {
         }
         boolean result = false;
         OutputStream stdin = null;
-        InputStream stdout;
         try {
             ProcessBuilder pb = new ProcessBuilder(shell);
             pb.directory(new File(PrefStore.getEnvDir(c)));
@@ -303,8 +301,10 @@ class EnvUtils {
             Process process = pb.start();
 
             stdin = process.getOutputStream();
-            stdout = process.getInputStream();
+            final InputStream stdout = process.getInputStream();
+//            final InputStream stderr = process.getErrorStream();
 
+//            params.add(0, "LD_LIBRARY_PATH=" + PrefStore.getLibsDir(c) + ":$LD_LIBRARY_PATH");
             params.add(0, "PATH=" + PrefStore.getBinDir(c) + ":$PATH");
             if (PrefStore.isTraceMode(c)) params.add(0, "set -x");
             params.add("exit $?");
@@ -322,12 +322,10 @@ class EnvUtils {
                 close(os);
             }
 
-            // show stdout log
-            final InputStream out = stdout;
             (new Thread() {
                 @Override
                 public void run() {
-                    Logger.log(c, out);
+                    Logger.log(c, stdout);
                 }
             }).start();
 
@@ -348,10 +346,8 @@ class EnvUtils {
      * @return true if success
      */
     static boolean updateEnv(final Context c) {
-        // stop telnetd
-        execService(c, "telnetd", "stop");
-        //stop httpd
-        execService(c, "httpd", "stop");
+        // stop services
+        execServices(c, new String[]{"telnetd", "httpd"}, "stop");
 
         // extract bin assets
         if (!extractDir(c, PrefStore.getBinDir(c), "bin/all", "")) return false;
@@ -365,6 +361,10 @@ class EnvUtils {
 
         // make linuxdeploy script
         if (!makeScript(c)) return false;
+
+        // make etc directory
+        File etcDir = new File(PrefStore.getEtcDir(c));
+        etcDir.mkdirs();
 
         // make tmp directory
         File tmpDir = new File(PrefStore.getTmpDir(c));
@@ -404,10 +404,8 @@ class EnvUtils {
         // update version
         if (!setVersion(c)) return false;
 
-        // start telnetd
-        execService(c, "telnetd", "start");
-        //start httpd
-        execService(c, "httpd", "start");
+        // start services
+        execServices(c, new String[]{"telnetd", "httpd"}, "start");
 
         return true;
     }
@@ -455,11 +453,8 @@ class EnvUtils {
         // remove version file
         resetVersion(c);
 
-        // stop telnetd
-        execService(c, "telnetd", "stop");
-
-        //stop httpd
-        execService(c, "httpd", "stop");
+        // stop services
+        execServices(c, new String[]{"telnetd", "httpd"}, "stop");
 
         // remove symlink
         File ldSymlink = new File("/system/bin/linuxdeploy");
@@ -473,13 +468,17 @@ class EnvUtils {
         File envDir = new File(PrefStore.getEnvDir(c));
         cleanDirectory(envDir);
 
-        // clean tmp directory
-        File tmpDir = new File(PrefStore.getTmpDir(c));
-        cleanDirectory(tmpDir);
+        // clean etc directory
+        File etcDir = new File(PrefStore.getEtcDir(c));
+        cleanDirectory(etcDir);
 
         // clean bin directory
         File binDir = new File(PrefStore.getBinDir(c));
         cleanDirectory(binDir);
+
+        // clean tmp directory
+        File tmpDir = new File(PrefStore.getTmpDir(c));
+        cleanDirectory(tmpDir);
 
         return true;
     }
@@ -509,8 +508,9 @@ class EnvUtils {
     /**
      * Execute command via service
      *
-     * @param c context
-     * @param args command and arguments
+     * @param c    context
+     * @param cmd  command
+     * @param args arguments
      */
     static void execService(Context c, String cmd, String args) {
         Intent service = new Intent(c, ExecService.class);
@@ -520,9 +520,22 @@ class EnvUtils {
     }
 
     /**
+     * Execute commands via service
+     *
+     * @param c        context
+     * @param commands commands
+     * @param args     command and arguments
+     */
+    static void execServices(Context c, String[] commands, String args) {
+        for (String cmd : commands) {
+            execService(c, cmd, args);
+        }
+    }
+
+    /**
      * Start/stop telnetd daemon
      *
-     * @param c context
+     * @param c   context
      * @param cmd command: start, stop or restart
      * @return true if success
      */
@@ -554,7 +567,7 @@ class EnvUtils {
     /**
      * Start/stop httpd daemon
      *
-     * @param c context
+     * @param c   context
      * @param cmd command: start, stop or restart
      * @return true if success
      */
@@ -568,14 +581,13 @@ class EnvUtils {
                 if (cmd.equals("stop")) break;
             case "start":
                 if (!PrefStore.isHttp(c)) break;
-                File conf = PrefStore.getHttpConfFile(c);
-                EnvUtils.makeHttpdConf(c, conf);
+                makeHttpdConf(c);
                 params.add("pgrep httpd >/dev/null && exit");
                 params.add("export WS_SHELL=\"telnet 127.0.0.1 " + PrefStore.getTelnetPort(c) + "\"");
                 params.add("export ENV_DIR=\"" + PrefStore.getEnvDir(c) + "\"");
                 params.add("export HOME=\"" + PrefStore.getEnvDir(c) + "\"");
                 params.add("cd " + PrefStore.getWebDir(c));
-                params.add("httpd " + " -p " + PrefStore.getHttpPort(c) + " -c " + conf);
+                params.add("httpd " + " -p " + PrefStore.getHttpPort(c) + " -c " + PrefStore.getEtcDir(c) + "/httpd.conf");
         }
         return params.size() > 0 && exec(c, "sh", params);
     }
@@ -586,12 +598,13 @@ class EnvUtils {
      * @param c context
      * @return true if success
      */
-    private static boolean makeHttpdConf(Context c, File conf) {
+    private static boolean makeHttpdConf(Context c) {
         boolean result = false;
         BufferedWriter bw = null;
         try {
-            bw = new BufferedWriter(new FileWriter(conf));
-            for(String part: PrefStore.getHttpConf(c).split(" ")) {
+            String f = PrefStore.getEtcDir(c) + "/httpd.conf";
+            bw = new BufferedWriter(new FileWriter(f));
+            for (String part : PrefStore.getHttpConf(c).split(" ")) {
                 bw.write(part + "\n");
             }
             result = true;

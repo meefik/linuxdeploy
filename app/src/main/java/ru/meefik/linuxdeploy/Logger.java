@@ -3,7 +3,6 @@ package ru.meefik.linuxdeploy;
 import android.content.Context;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileWriter;
@@ -59,8 +58,6 @@ class Logger {
         }
         // show protocol
         show();
-        // write log
-        if (PrefStore.isLogger(c)) write(c, msg);
     }
 
     /**
@@ -126,25 +123,6 @@ class Logger {
     }
 
     /**
-     * Write to log file
-     *
-     * @param c   context
-     * @param msg message
-     */
-    private static void write(Context c, String msg) {
-        String logFile = PrefStore.getLogFile(c);
-        BufferedWriter writer = null;
-        try {
-            writer = new BufferedWriter(new FileWriter(logFile, true));
-            writer.write(msg);
-        } catch (IOException e) {
-            // e.printStackTrace();
-        } finally {
-            close(writer);
-        }
-    }
-
-    /**
      * Append stream messages to protocol
      *
      * @param c      context
@@ -152,17 +130,23 @@ class Logger {
      */
     static void log(Context c, InputStream stream) {
         BufferedReader reader = null;
+        FileWriter writer = null;
         try {
             reader = new BufferedReader(new InputStreamReader(stream));
+            if (PrefStore.isLogger(c)) {
+                writer = new FileWriter(PrefStore.getLogFile(c));
+            }
             int n;
             char[] buffer = new char[1024];
             while ((n = reader.read(buffer)) != -1) {
                 String msg = String.valueOf(buffer, 0, n);
                 appendMessage(c, msg);
+                if (writer != null) writer.write(msg);
             }
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
+            close(writer);
             close(reader);
             close(stream);
         }

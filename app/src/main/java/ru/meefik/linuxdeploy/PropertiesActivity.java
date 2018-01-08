@@ -53,6 +53,9 @@ public class PropertiesActivity extends AppCompatPreferenceActivity implements
             case 6:
                 addPreferencesFromResource(R.xml.properties_sysv);
                 break;
+            case 7:
+                addPreferencesFromResource(R.xml.properties_pulse);
+                break;
             default:
                 addPreferencesFromResource(R.xml.properties);
         }
@@ -131,6 +134,13 @@ public class PropertiesActivity extends AppCompatPreferenceActivity implements
             if (init.getValue().equals("sysv")) {
                 b.putInt("pref", 6);
             }
+            intent.putExtras(b);
+            startActivity(intent);
+        }
+        if (preference.getKey().equals("pulse_properties")) {
+            Intent intent = new Intent(this, PropertiesActivity.class);
+            Bundle b = new Bundle();
+            b.putInt("pref", 7);
             intent.putExtras(b);
             startActivity(intent);
         }

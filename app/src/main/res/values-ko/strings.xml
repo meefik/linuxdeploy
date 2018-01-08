@@ -94,8 +94,6 @@
     <string name="title_path_preference">PATH 값</string>
     <string name="dialog_title_path_preference">PATH 값</string>
 
-    <string name="title_is_sync_preference">동기화</string>
-    <string name="summary_is_sync_preference">운영체제 환경을 서버와 동기화 합니다.</string>
     <!-- SERVER_URL -->
     <string name="title_server_url_preference">서버 URL</string>
     <string name="dialog_title_server_url_preference">서버 URL</string>
@@ -111,7 +109,7 @@
     <string name="summary_removeenv_preference">운영체제 환경 삭제</string>
     <string name="message_removeenv_confirm_dialog">운영체제 환경을 삭제하시겠습니까?</string>
 
-    <string name="manage_preferences">관리</string>
+    <string name="services_preferences">관리</string>
     <!-- TELNET -->
     <string name="title_is_telnet_preference">TELNET</string>
     <string name="summary_is_telnet_preference">TELNET 데몬 활성화</string>

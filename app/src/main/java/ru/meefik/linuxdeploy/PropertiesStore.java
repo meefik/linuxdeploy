@@ -14,10 +14,10 @@ class PropertiesStore extends ParamUtils {
     private static final String[] params = {"method", "distrib", "arch", "suite", "source_path",
             "target_type", "target_path", "disk_size", "fs_type", "user_name", "user_password",
             "privileged_users", "dns", "locale", "init", "init_path", "init_level", "init_user",
-            "init_async", "ssh_port", "ssh_args", "graphics", "vnc_display", "vnc_depth", "vnc_dpi",
-            "vnc_width", "vnc_height", "vnc_args", "x11_display", "x11_host", "x11_sdl",
-            "x11_sdl_delay", "fb_display", "fb_dev", "fb_input", "fb_args", "fb_refresh",
-            "fb_freeze", "desktop", "mounts", "include"};
+            "init_async", "ssh_port", "ssh_args", "pulse_host", "pulse_port", "graphics",
+            "vnc_display", "vnc_depth", "vnc_dpi", "vnc_width", "vnc_height", "vnc_args",
+            "x11_display", "x11_host", "x11_sdl", "x11_sdl_delay", "fb_display", "fb_dev",
+            "fb_input", "fb_args", "fb_refresh", "fb_freeze", "desktop", "mounts", "include"};
 
     PropertiesStore() {
         super(name, params);
@@ -53,6 +53,11 @@ class PropertiesStore extends ParamUtils {
                 } else {
                     includes.remove("extra/ssh");
                 }
+                if (get(c, "is_pulse").equals("true")) {
+                    includes.add("extra/pulse");
+                } else {
+                    includes.remove("extra/pulse");
+                }
                 if (get(c, "is_gui").equals("true")) {
                     includes.add("graphics");
                     includes.add("desktop");
@@ -77,6 +82,7 @@ class PropertiesStore extends ParamUtils {
                     List includes = Arrays.asList(value.split(" "));
                     if (includes.contains("init")) set(c, "is_init", "true");
                     if (includes.contains("extra/ssh")) set(c, "is_ssh", "true");
+                    if (includes.contains("extra/pulse")) set(c, "is_pulse", "true");
                     if (includes.contains("graphics")) set(c, "is_gui", "true");
                     break;
             }

@@ -74,9 +74,7 @@ public class MainActivity extends AppCompatActivity implements
 
         if (EnvUtils.isLatestVersion(this)) {
             // start telnetd
-            EnvUtils.execService(getBaseContext(), "telnetd", "start");
-            // start httpd
-            EnvUtils.execService(getBaseContext(), "httpd", "start");
+            EnvUtils.execServices(getBaseContext(), new String[]{"telnetd", "httpd"}, "start");
         } else {
             // Update ENV
             new UpdateEnvTask(this).execute();
@@ -176,8 +174,7 @@ public class MainActivity extends AppCompatActivity implements
             case R.id.nav_exit:
                 if (wifiLock.isHeld()) wifiLock.release();
                 if (wakeLock.isHeld()) wakeLock.release();
-                EnvUtils.execService(getBaseContext(), "telnetd", "stop");
-                EnvUtils.execService(getBaseContext(), "httpd", "stop");
+                EnvUtils.execServices(getBaseContext(), new String[]{"telnetd", "httpd"}, "stop");
                 PrefStore.hideNotification(getBaseContext());
                 finish();
                 break;
@@ -214,16 +211,14 @@ public class MainActivity extends AppCompatActivity implements
         // WiFi lock
         if (PrefStore.isWifiLock(this)) {
             if (!wifiLock.isHeld()) wifiLock.acquire();
-        }
-        else {
+        } else {
             if (wifiLock.isHeld()) wifiLock.release();
         }
 
         // Wake lock
         if (PrefStore.isWakeLock(this)) {
             if (!wakeLock.isHeld()) wakeLock.acquire();
-        }
-        else {
+        } else {
             if (wakeLock.isHeld()) wakeLock.release();
         }
     }
@@ -445,7 +440,7 @@ public class MainActivity extends AppCompatActivity implements
             intent_terminal.putExtra("jackpal.androidterm.iInitialCommand",
                     PrefStore.getTerminalCmd(this));
             startActivity(intent_terminal);
-        } catch(Exception e) {
+        } catch (Exception e) {
             Toast.makeText(this, R.string.toast_terminal_error, Toast.LENGTH_SHORT).show();
         }
     }

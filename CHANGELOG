@@ -1,6 +1,10 @@
 Changelog (English)
 ===================
 
+2.0.6
+Improved mount and unmount functions
+Added support for PulseAudio
+
 2.0.5
 Enabled journal for FS ext3/4, ext2 without journal
 Added an attempt to re-unmount in case of failure
@@ -390,6 +394,10 @@ Updated list packages of base system installation
 
 История изменений (Русский)
 ===========================
+
+2.0.6
+Изменен подход к монтированию и размонтированию контейнера
+Добавлена поддержка PulseAudio
 
 2.0.5
 Включено журналирование для ФС ext3/4, без журналирования ext2

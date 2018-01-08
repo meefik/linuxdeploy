@@ -134,7 +134,6 @@
     <string name="title_nettrack_preference">Обрабатывать изменения сети</string>
     <string name="title_is_cli_preference">Включить CLI</string>
     <string name="title_is_http_preference">Веб-интерфейс</string>
-    <string name="title_is_sync_preference">Синхронизация</string>
     <string name="title_path_preference">Переменная PATH</string>
     <string name="title_ssh_port_preference">Порт</string>
     <string name="title_ssh_properties_preference">Параметры SSH</string>
@@ -184,7 +183,7 @@
     <string name="dialog_title_disk_size_preference">Размер образа (МБ)</string>
     <string name="dialog_title_target_type_preference">Тип установки</string>
     <string name="dialog_title_arch_preference">Архитектура</string>
-    <string name="manage_preferences">Управление</string>
+    <string name="services_preferences">Сервисы</string>
     <string name="mounts_preferences">Монтирование</string>
     <string name="dialog_title_vnc_args_preference">VNC: опции VNC-сервера</string>
     <string name="dialog_title_vnc_depth_preference">VNC: глубина цвета (бит)</string>
@@ -211,7 +210,6 @@
     <string name="title_privileged_users_preference">Привилегированные пользователи</string>
     <string name="bootstrap_preferences">Развертывание</string>
     <string name="summary_is_http_preference">Включить встроенный веб-сервер httpd</string>
-    <string name="summary_is_sync_preference">Синхронизировать рабочее окружение с сервером</string>
     <string name="summary_is_telnet_preference">Включить встроенный сервер telnetd</string>
     <string name="summary_nettrack_preference">Отслеживать изменения сети и обновлять контейнер</string>
     <string name="dialog_title_x11_sdl_delay_preference">X11: задержка в секундах</string>
@@ -239,5 +237,14 @@
     <string name="repository_purchase_button">Купить</string>
     <string name="write_permissions_disallow">Приложению была запрещена запись в память устройства</string>
     <string name="menu_more">Меню</string>
+    <string name="pulse_preferences">PulseAudio</string>
+    <string name="title_is_pulse_preference">Включить</string>
+    <string name="summary_is_pulse_preference">Разрешить выводить звук</string>
+    <string name="title_pulse_properties_preference">Настройки звука</string>
+    <string name="summary_pulse_properties_preference">Изменить настройки вывода звука</string>
+    <string name="title_pulse_port_preference">Порт</string>
+    <string name="dialog_title_pulse_port_preference">PulseAudio: порт</string>
+    <string name="title_pulse_host_preference">Адрес сервера</string>
+    <string name="dialog_title_pulse_host_preference">PulseAudio: адрес сервера</string>
 
 </resources>
