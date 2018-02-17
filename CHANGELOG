@@ -3,6 +3,7 @@ Changelog (English)
 
 2.0.6
 Improved mount and unmount functions
+Force make a filesystem
 Added support for PulseAudio
 
 2.0.5
@@ -397,6 +398,7 @@ Updated list packages of base system installation
 
 2.0.6
 Изменен подход к монтированию и размонтированию контейнера
+Исправление проблемы с созданием файловой системы
 Добавлена поддержка PulseAudio
 
 2.0.5
