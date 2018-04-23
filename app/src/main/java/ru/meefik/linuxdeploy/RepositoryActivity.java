@@ -1,10 +1,13 @@
 package ru.meefik.linuxdeploy;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -17,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -207,6 +211,7 @@ public class RepositoryActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    @SuppressLint("RestrictedApi")
     private void changeUrlDialog() {
         final EditText input = new EditText(this);
         input.setText(PrefStore.getRepositoryUrl(this));
@@ -253,17 +258,49 @@ public class RepositoryActivity extends AppCompatActivity {
         // ListView Adapter
         ListView listView = (ListView) findViewById(R.id.repositoryView);
         adapter = new ArrayAdapter<Map<String, String>>(this,
-                android.R.layout.simple_list_item_2, android.R.id.text1, profiles) {
+                R.layout.repository_row, R.id.repo_entry_title, profiles) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
-                TextView text1 = (TextView) view.findViewById(android.R.id.text1);
-                TextView text2 = (TextView) view.findViewById(android.R.id.text2);
+                TextView title = (TextView) view.findViewById(R.id.repo_entry_title);
+                TextView subTitle = (TextView) view.findViewById(R.id.repo_entry_subtitle);
+                ImageView icon = (ImageView) view.findViewById(R.id.repo_entry_icon);
                 String name = profiles.get(position).get("PROFILE");
                 String desc = profiles.get(position).get("DESC");
-                text1.setText(name);
-                if (desc != null && !desc.isEmpty()) text2.setText(desc);
-                else text2.setText(getString(R.string.repository_default_description));
+                String type = profiles.get(position).get("TYPE");
+                int iconRes = R.raw.linux;
+                switch (type) {
+                    case "archlinux":
+                        iconRes = R.raw.archlinux;
+                        break;
+                    case "centos":
+                        iconRes = R.raw.centos;
+                        break;
+                    case "debian":
+                        iconRes = R.raw.debian;
+                        break;
+                    case "fedora":
+                        iconRes = R.raw.fedora;
+                        break;
+                    case "gentoo":
+                        iconRes = R.raw.gentoo;
+                        break;
+                    case "kalilinux":
+                        iconRes = R.raw.kalilinux;
+                        break;
+                    case "slackware":
+                        iconRes = R.raw.slackware;
+                        break;
+                    case "ubuntu":
+                        iconRes = R.raw.ubuntu;
+                        break;
+                }
+                InputStream imageStream = view.getResources().openRawResource(iconRes);
+                Bitmap bitmap = BitmapFactory.decodeStream(imageStream);
+                icon.setImageBitmap(bitmap);
+                title.setText(name);
+                if (desc != null && !desc.isEmpty()) subTitle.setText(desc);
+                else subTitle.setText(getString(R.string.repository_default_description));
                 return view;
             }
         };

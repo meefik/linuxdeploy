@@ -1,6 +1,10 @@
 Changelog (English)
 ===================
 
+2.0.7
+Fixed problem with seccomp (issue #869)
+Improved Gentoo bootstrap
+
 2.0.6
 Improved mount and unmount functions
 Force make a filesystem
@@ -11,7 +15,7 @@ Enabled journal for FS ext3/4, ext2 without journal
 Added an attempt to re-unmount in case of failure
 The e2fsck utility is included in the assembly
 Fixed problem with running dbus in Fedora
-Fixed issue of creating a FS (mke2fs) when using busybox from system (issue # 891)
+Fixed issue of creating a FS (mke2fs) when using busybox from system (issue #891)
 START and STOP buttons in notification
 Show app after five taps on notification in stealth mode
 
@@ -395,6 +399,10 @@ Updated list packages of base system installation
 
 История изменений (Русский)
 ===========================
+
+2.0.7
+Исправлена проблема с seccomp (тикет #869)
+Доработан инсталлятор Gentoo
 
 2.0.6
 Изменен подход к монтированию и размонтированию контейнера
