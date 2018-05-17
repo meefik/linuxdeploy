@@ -1,6 +1,11 @@
 Changelog (English)
 ===================
 
+2.1.0
+Added support Ubuntu 18.04 LTS (bionic)
+Disabled auto changing SELinux mode
+End of support for Android is below version 4.0
+
 2.0.7
 Fixed problem with seccomp (issue #869)
 Improved Gentoo bootstrap
@@ -399,6 +404,11 @@ Updated list packages of base system installation
 
 История изменений (Русский)
 ===========================
+
+2.1.0
+Добавлена поддержка Ubuntu 18.04 LTS (bionic)
+Отключено автоматическое изменение режима SELinux
+Закончена поддержка Android ниже версии 4.0
 
 2.0.7
 Исправлена проблема с seccomp (тикет #869)

@@ -304,7 +304,7 @@
         <item>precise</item>
         <item>trusty</item>
         <item>xenial</item>
-        <item>devel</item>
+        <item>bionic</item>
     </string-array>
     <string-array name="ubuntu_arch_values" translatable="false">
         <item>armel</item> <!-- precise only -->
