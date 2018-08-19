@@ -88,8 +88,6 @@
     <string name="dialog_title_autostart_delay_preference">延迟时长（单位：秒）</string>
     <string name="title_nettrack_preference">联网更新</string>
     <string name="summary_nettrack_preference">跟踪网络的更改对容器进行更新</string>
-    <string name="title_terminalcmd_preference">终端命令</string>
-    <string name="dialog_title_terminalcmd_preference">终端命令设置</string>
 
     <string name="env_preferences">环境</string>
 

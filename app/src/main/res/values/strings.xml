@@ -104,9 +104,6 @@
     <!-- Network trigger -->
     <string name="title_nettrack_preference">Network trigger</string>
     <string name="summary_nettrack_preference">Track changes of the network and update the container</string>
-    <!-- Terminal command -->
-    <string name="title_terminalcmd_preference">Terminal command</string>
-    <string name="dialog_title_terminalcmd_preference">Terminal command</string>
 
     <!-- ENVIRONMENT -->
     <string name="env_preferences">Environment</string>

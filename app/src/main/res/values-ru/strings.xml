@@ -191,8 +191,6 @@
     <string name="dialog_title_vnc_dpi_preference">VNC: точек на дюйм (DPI)</string>
     <string name="dialog_title_vnc_height_preference">VNC: высота экрана</string>
     <string name="dialog_title_vnc_width_preference">VNC: ширина экрана</string>
-    <string name="dialog_title_terminalcmd_preference">Команда терминала</string>
-    <string name="title_terminalcmd_preference">Команда терминала</string>
     <string name="dialog_title_telnet_port_preference">Порт TELNET</string>
     <string name="title_server_url_preference">URL сервера</string>
     <string name="menu_export">Экспортировать</string>

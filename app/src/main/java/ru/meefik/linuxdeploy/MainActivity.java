@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
 import android.os.Bundle;
@@ -161,7 +162,10 @@ public class MainActivity extends AppCompatActivity implements
                 openRepository();
                 break;
             case R.id.nav_terminal:
-                openTerminal();
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+                        Uri.parse("http://localhost:" + PrefStore.getHttpPort(this) +
+                                "/cgi-bin/terminal?size=" + PrefStore.getFontSize(this)));
+                startActivity(browserIntent);
                 break;
             case R.id.nav_settings:
                 Intent intent_settings = new Intent(this, SettingsActivity.class);
@@ -428,21 +432,6 @@ public class MainActivity extends AppCompatActivity implements
     private void openRepository() {
         Intent intent = new Intent(this, RepositoryActivity.class);
         startActivity(intent);
-    }
-
-    /**
-     * Open terminal action
-     */
-    private void openTerminal() {
-        try {
-            Intent intent_terminal = new Intent("jackpal.androidterm.RUN_SCRIPT");
-            intent_terminal.addCategory(Intent.CATEGORY_DEFAULT);
-            intent_terminal.putExtra("jackpal.androidterm.iInitialCommand",
-                    PrefStore.getTerminalCmd(this));
-            startActivity(intent_terminal);
-        } catch (Exception e) {
-            Toast.makeText(this, R.string.toast_terminal_error, Toast.LENGTH_SHORT).show();
-        }
     }
 
     /**

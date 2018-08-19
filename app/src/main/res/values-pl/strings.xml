@@ -58,8 +58,6 @@
     <string name="summary_appicon_preference">Wyświetl ikonę w pasku powiadomień</string>
     <string name="title_autostart_preference">Autostart</string>
     <string name="summary_autostart_preference">Automatycznie uruchom profil podczas włączania systemu</string>
-    <string name="title_terminalcmd_preference">Polecenie Terminalu</string>
-    <string name="dialog_title_terminalcmd_preference">Polecenie Terminalu</string>
     <string name="env_preferences">Środowisko operacyjne</string>
     <string name="title_path_preference">Katalog BusyBox</string>
     <string name="dialog_title_path_preference">PATH</string>

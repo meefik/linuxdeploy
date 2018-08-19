@@ -13,7 +13,6 @@
     <string name="autostart" translatable="false">false</string>
     <string name="autostart_delay" translatable="false">30</string>
     <string name="nettrack" translatable="false">false</string>
-    <string name="terminalcmd" translatable="false">telnet 127.0.0.1 5023</string>
     <string name="env_dir" translatable="false"></string>
     <string name="repository_url" translatable="false">http://hub.meefik.ru</string>
     <string name="path" translatable="false"></string>
@@ -23,7 +22,8 @@
     <string name="telnet_localhost" translatable="false">true</string>
     <string name="is_http" translatable="false">false</string>
     <string name="http_port" translatable="false">5080</string>
-    <string name="http_conf" translatable="false"></string>
+    <!-- https://wiki.openwrt.org/doc/howto/http.httpd -->
+    <string name="http_conf" translatable="false">A:127.0.0.1</string>
     <string name="profile" translatable="false">linux</string>
     <string name="debug_mode" translatable="false">false</string>
     <string name="trace_mode" translatable="false">false</string>

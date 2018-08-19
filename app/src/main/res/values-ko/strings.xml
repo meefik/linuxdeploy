@@ -82,8 +82,6 @@
     <string name="summary_autostart_preference">Android가 부팅되면 자동으로 서비스를 시작하게 합니다.</string>
     <string name="title_nettrack_preference">네트워크 감지</string>
     <string name="summary_nettrack_preference">네트워크 변경을 감지해서 컨테이너를 업데이트합니다.</string>
-    <string name="title_terminalcmd_preference">터미널 명령어</string>
-    <string name="dialog_title_terminalcmd_preference">터미널 명령어</string>
 
     <string name="env_preferences">운영체제 환경</string>
 

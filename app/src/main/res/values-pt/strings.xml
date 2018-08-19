@@ -58,8 +58,6 @@
     <string name="summary_appicon_preference">Mostrar ícone na barra de notificação</string>
     <string name="title_autostart_preference">Inicio automático</string>
     <string name="summary_autostart_preference">Executar automaticamente o GNU/Linux ao iniciar o Android</string>
-    <string name="title_terminalcmd_preference">Terminal command</string>
-    <string name="dialog_title_terminalcmd_preference">Terminal command</string>
     <string name="env_preferences">Ambiente de operação</string>
     <string name="title_path_preference">Diretório do BusyBox</string>
     <string name="dialog_title_path_preference">Diretório do BusyBox</string>

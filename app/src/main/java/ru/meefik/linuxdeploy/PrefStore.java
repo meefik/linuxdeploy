@@ -417,17 +417,6 @@ public class PrefStore {
         return SETTINGS.get(c, "stealth").equals("true");
     }
 
-
-    /**
-     * Get terminal command
-     *
-     * @param c context
-     * @return command
-     */
-    static String getTerminalCmd(Context c) {
-        return SETTINGS.get(c, "terminalcmd");
-    }
-
     /**
      * Get PATH variable
      *

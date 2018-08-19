@@ -124,17 +124,19 @@ class EnvUtils {
      *
      * @param path path to directory
      */
-    private static void setPermissions(File path) {
+    private static void setPermissions(File path, Boolean executable) {
         if (path == null) return;
         if (path.exists()) {
             path.setReadable(true, false);
-            path.setExecutable(true, false);
-            File[] list = path.listFiles();
-            if (list == null) return;
-            for (File f : list) {
-                if (f.isDirectory()) setPermissions(f);
-                f.setReadable(true, false);
-                f.setExecutable(true, false);
+            if (path.isDirectory()) {
+                path.setExecutable(true, false);
+                File[] list = path.listFiles();
+                if (list == null) return;
+                for (File f : list) {
+                    setPermissions(f, executable);
+                }
+            } else {
+                path.setExecutable(executable, false);
             }
         }
     }
@@ -362,17 +364,34 @@ class EnvUtils {
         // make linuxdeploy script
         if (!makeScript(c)) return false;
 
-        // make etc directory
+        // bin directory
+        File binDir = new File(PrefStore.getBinDir(c));
+        setPermissions(binDir, true);
+
+        // env directory
+        File envDir = new File(PrefStore.getEnvDir(c));
+        setPermissions(envDir, false);
+
+        // web directory
+        File webDir = new File(PrefStore.getWebDir(c));
+        setPermissions(webDir, false);
+        File cgiDir = new File(PrefStore.getWebDir(c) + "/cgi-bin");
+        setPermissions(cgiDir, true);
+
+        // etc directory
         File etcDir = new File(PrefStore.getEtcDir(c));
         etcDir.mkdirs();
+        setPermissions(etcDir, false);
 
-        // make tmp directory
+        // tmp directory
         File tmpDir = new File(PrefStore.getTmpDir(c));
         tmpDir.mkdirs();
+        setPermissions(tmpDir, false);
 
-        // make config directory
+        // config directory
         File configDir = new File(PrefStore.getConfigDir(c));
         configDir.mkdirs();
+        setPermissions(configDir, false);
 
         // create .nomedia
         File noMedia = new File(PrefStore.getEnvDir(c) + "/.nomedia");
@@ -380,12 +399,6 @@ class EnvUtils {
             noMedia.createNewFile();
         } catch (IOException ignored) {
         }
-
-        // set permissions
-        File binDir = new File(PrefStore.getBinDir(c));
-        setPermissions(binDir);
-        File cgiDir = new File(PrefStore.getWebDir(c) + "/cgi-bin");
-        setPermissions(cgiDir);
 
         // install applets
         List<String> params = new ArrayList<>();
