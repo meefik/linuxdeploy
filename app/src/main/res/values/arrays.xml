@@ -330,14 +330,12 @@
     <!-- Fedora -->
 
     <string-array name="fedora_suite_values" translatable="false">
-        <item>25</item>
-        <item>26</item>
-        <item>27</item>
+        <item>28</item>
     </string-array>
     <string-array name="fedora_arch_values" translatable="false">
         <item>armhfp</item> <!-- f19 and later -->
         <item>aarch64</item> <!-- f21 and later -->
-        <item>i386</item>  <!-- up to f25 -->
+        <item>i386</item>
         <item>x86_64</item>
     </string-array>
 

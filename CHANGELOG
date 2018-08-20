@@ -1,6 +1,12 @@
 Changelog (English)
 ===================
 
+2.1.1
+Added support Fedora 28 (end of support for 27 and below)
+Fixed support Arch Linux i686 (http://mirror.archlinux32.org)
+Fixed problem with NSS and systemd (issue #971)
+Improved web terminal
+
 2.1.0
 Added support Ubuntu 18.04 LTS (bionic)
 Disabled auto changing SELinux mode
@@ -404,6 +410,12 @@ Updated list packages of base system installation
 
 История изменений (Русский)
 ===========================
+
+2.1.1
+Добавлена поддержка Fedora 28 (закончена поддержка 27 и более ранних)
+Исправлена поддержка Arch Linux i686 (http://mirror.archlinux32.org)
+Исправлена проблема с NSS и systemd (тикет #971)
+Улучшена работа веб-терминала
 
 2.1.0
 Добавлена поддержка Ubuntu 18.04 LTS (bionic)
