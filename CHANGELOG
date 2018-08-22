@@ -3,9 +3,12 @@ Changelog (English)
 
 2.1.1
 Added support Fedora 28 (end of support for 27 and below)
-Fixed support Arch Linux i686 (http://mirror.archlinux32.org)
-Fixed problem with NSS and systemd (issue #971)
 Improved web terminal
+Fixed support Arch Linux i686 (http://mirror.archlinux32.org)
+Fixed problem with initial installation of Arch Linux (issue #986)
+Fixed CentOS bootstrap (issues #972)
+Fixed problem with NSS and systemd (issue #971)
+Fixed problem with unchroot am
 
 2.1.0
 Added support Ubuntu 18.04 LTS (bionic)
@@ -414,7 +417,10 @@ Updated list packages of base system installation
 2.1.1
 Добавлена поддержка Fedora 28 (закончена поддержка 27 и более ранних)
 Исправлена поддержка Arch Linux i686 (http://mirror.archlinux32.org)
+Исправлена проблема с начальной установкой Arch Linux (тикет #986)
+Исправлена проблема с установкой CentOS (тикет #972)
 Исправлена проблема с NSS и systemd (тикет #971)
+Исправлена проблема с unchroot am
 Улучшена работа веб-терминала
 
 2.1.0
