@@ -200,7 +200,7 @@ class EnvUtils {
      */
     private static boolean setVersion(Context c) {
         boolean result = false;
-        String f = PrefStore.getDataDir(c) + "/version";
+        String f = PrefStore.getEnvDir(c) + "/version";
         BufferedWriter bw = null;
         try {
             bw = new BufferedWriter(new FileWriter(f));
@@ -221,7 +221,7 @@ class EnvUtils {
      * @return true if success
      */
     static boolean isLatestVersion(Context c) {
-        File f = new File(PrefStore.getDataDir(c) + "/version");
+        File f = new File(PrefStore.getEnvDir(c) + "/version");
         if (!f.exists()) return false;
         boolean result = false;
         BufferedReader br = null;
@@ -235,17 +235,6 @@ class EnvUtils {
             close(br);
         }
         return result;
-    }
-
-    /**
-     * Remove version file
-     *
-     * @param c context
-     * @return true if success
-     */
-    private static boolean resetVersion(Context c) {
-        File f = new File(PrefStore.getDataDir(c) + "/version");
-        return f.delete();
     }
 
     /**
@@ -263,7 +252,6 @@ class EnvUtils {
             bw.write("#!" + PrefStore.getShell(c) + "\n");
             bw.write("PATH=" + PrefStore.getPath(c) + ":$PATH\n");
             bw.write("ENV_DIR=\"" + PrefStore.getEnvDir(c) + "\"\n");
-            bw.write("TEMP_DIR=\"" + PrefStore.getTmpDir(c) + "\"\n");
             bw.write(". \"${ENV_DIR}/cli.sh\"\n");
             result = true;
         } catch (IOException e) {
@@ -351,12 +339,12 @@ class EnvUtils {
         // stop services
         execServices(c, new String[]{"telnetd", "httpd"}, "stop");
 
+        // extract env assets
+        if (!extractDir(c, PrefStore.getEnvDir(c), "env", "")) return false;
+
         // extract bin assets
         if (!extractDir(c, PrefStore.getBinDir(c), "bin/all", "")) return false;
         if (!extractDir(c, PrefStore.getBinDir(c), "bin/" + PrefStore.getArch(), "")) return false;
-
-        // extract env assets
-        if (!extractDir(c, PrefStore.getEnvDir(c), "env", "")) return false;
 
         // extract web assets
         if (!extractDir(c, PrefStore.getWebDir(c), "web", "")) return false;
@@ -364,34 +352,21 @@ class EnvUtils {
         // make linuxdeploy script
         if (!makeScript(c)) return false;
 
-        // bin directory
+        // set executable bin directory
         File binDir = new File(PrefStore.getBinDir(c));
         setPermissions(binDir, true);
 
-        // env directory
-        File envDir = new File(PrefStore.getEnvDir(c));
-        setPermissions(envDir, false);
-
-        // web directory
-        File webDir = new File(PrefStore.getWebDir(c));
-        setPermissions(webDir, false);
+        // set executable cgi-bin directory
         File cgiDir = new File(PrefStore.getWebDir(c) + "/cgi-bin");
         setPermissions(cgiDir, true);
 
-        // etc directory
-        File etcDir = new File(PrefStore.getEtcDir(c));
-        etcDir.mkdirs();
-        setPermissions(etcDir, false);
-
-        // tmp directory
-        File tmpDir = new File(PrefStore.getTmpDir(c));
-        tmpDir.mkdirs();
-        setPermissions(tmpDir, false);
-
-        // config directory
+        // make config directory
         File configDir = new File(PrefStore.getConfigDir(c));
         configDir.mkdirs();
-        setPermissions(configDir, false);
+
+        // make tmp directory
+        File tmpDir = new File(PrefStore.getTmpDir(c));
+        tmpDir.mkdirs();
 
         // create .nomedia
         File noMedia = new File(PrefStore.getEnvDir(c) + "/.nomedia");
@@ -463,9 +438,6 @@ class EnvUtils {
      * @return true if success
      */
     static boolean removeEnv(Context c) {
-        // remove version file
-        resetVersion(c);
-
         // stop services
         execServices(c, new String[]{"telnetd", "httpd"}, "stop");
 
@@ -473,25 +445,9 @@ class EnvUtils {
         File ldSymlink = new File("/system/bin/linuxdeploy");
         if (ldSymlink.exists()) removeSymlink(c);
 
-        // clean web directory
-        File webDir = new File(PrefStore.getWebDir(c));
-        cleanDirectory(webDir);
-
         // clean env directory
         File envDir = new File(PrefStore.getEnvDir(c));
         cleanDirectory(envDir);
-
-        // clean etc directory
-        File etcDir = new File(PrefStore.getEtcDir(c));
-        cleanDirectory(etcDir);
-
-        // clean bin directory
-        File binDir = new File(PrefStore.getBinDir(c));
-        cleanDirectory(binDir);
-
-        // clean tmp directory
-        File tmpDir = new File(PrefStore.getTmpDir(c));
-        cleanDirectory(tmpDir);
 
         return true;
     }
@@ -600,7 +556,7 @@ class EnvUtils {
                 params.add("export ENV_DIR=\"" + PrefStore.getEnvDir(c) + "\"");
                 params.add("export HOME=\"" + PrefStore.getEnvDir(c) + "\"");
                 params.add("cd " + PrefStore.getWebDir(c));
-                params.add("httpd " + " -p " + PrefStore.getHttpPort(c) + " -c " + PrefStore.getEtcDir(c) + "/httpd.conf");
+                params.add("httpd " + " -p " + PrefStore.getHttpPort(c) + " -c " + PrefStore.getEnvDir(c) + "/httpd.conf");
         }
         return params.size() > 0 && exec(c, "sh", params);
     }
@@ -615,7 +571,7 @@ class EnvUtils {
         boolean result = false;
         BufferedWriter bw = null;
         try {
-            String f = PrefStore.getEtcDir(c) + "/httpd.conf";
+            String f = PrefStore.getEnvDir(c) + "/httpd.conf";
             bw = new BufferedWriter(new FileWriter(f));
             for (String part : PrefStore.getHttpConf(c).split(" ")) {
                 bw.write(part + "\n");

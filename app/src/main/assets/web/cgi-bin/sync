@@ -1,4 +1,4 @@
-#!/data/data/ru.meefik.linuxdeploy/bin/sh
+#!/data/data/ru.meefik.linuxdeploy/env/bin/sh
 
 echo 'Content-Type: application/octet-stream'
 echo 'Content-Transfer-Encoding: binary'

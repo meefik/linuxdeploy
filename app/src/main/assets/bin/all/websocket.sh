@@ -1,4 +1,4 @@
-#!/data/data/ru.meefik.linuxdeploy/bin/sh
+#!/data/data/ru.meefik.linuxdeploy/env/bin/sh
 # websocket.sh
 # (C) 2016-2018 Anton Skshidlevsky <meefik@gmail.com>, MIT
 # The cross platform WebSocket implementation for SH.

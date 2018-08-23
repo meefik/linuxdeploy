@@ -64,7 +64,7 @@ public class PrefStore {
      * Get environment directory
      *
      * @param c context
-     * @return path, e.g. /data/data/package/files/env
+     * @return path, e.g. /data/data/package/env
      */
     static String getEnvDir(Context c) {
         String envDir = SETTINGS.get(c, "env_dir");
@@ -86,40 +86,30 @@ public class PrefStore {
      * Get bin directory
      *
      * @param c context
-     * @return path, e.g. /data/data/package/bin
+     * @return path, e.g. ${ENV_DIR}/bin
      */
     static String getBinDir(Context c) {
-        return getDataDir(c) + "/bin";
-    }
-
-    /**
-     * Get etc directory
-     *
-     * @param c context
-     * @return path, e.g. /data/data/package/etc
-     */
-    static String getEtcDir(Context c) {
-        return getDataDir(c) + "/etc";
+        return getEnvDir(c) + "/bin";
     }
 
     /**
      * Get tmp directory
      *
      * @param c context
-     * @return path, e.g. /data/data/package/tmp
+     * @return path, e.g. ${ENV_DIR}/tmp
      */
     static String getTmpDir(Context c) {
-        return getDataDir(c) + "/tmp";
+        return getEnvDir(c) + "/tmp";
     }
 
     /**
      * Get web directory
      *
      * @param c context
-     * @return path, e.g. /data/data/package/web
+     * @return path, e.g. ${ENV_DIR}/web
      */
     static String getWebDir(Context c) {
-        return getDataDir(c) + "/web";
+        return getEnvDir(c) + "/web";
     }
 
     /**
@@ -421,10 +411,10 @@ public class PrefStore {
      * Get PATH variable
      *
      * @param c context
-     * @return path, e.g. /data/data/package/files/bin
+     * @return path, e.g. ${ENV_DIR}/bin
      */
     static String getPath(Context c) {
-        String binDir = getDataDir(c) + "/bin";
+        String binDir = getBinDir(c);
         String path = SETTINGS.get(c, "path");
         if (path.isEmpty()) path = binDir;
         else path = path + ":" + binDir;
