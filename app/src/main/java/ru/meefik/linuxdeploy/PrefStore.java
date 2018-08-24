@@ -51,24 +51,16 @@ public class PrefStore {
     }
 
     /**
-     * Get data directory
-     *
-     * @param c context
-     * @return path, e.g. /data/data/package
-     */
-    static String getDataDir(Context c) {
-        return c.getApplicationInfo().dataDir;
-    }
-
-    /**
      * Get environment directory
      *
      * @param c context
-     * @return path, e.g. /data/data/package/env
+     * @return path, e.g. /data/data/package/files
      */
     static String getEnvDir(Context c) {
         String envDir = SETTINGS.get(c, "env_dir");
-        if (envDir.isEmpty()) envDir = getDataDir(c) + "/env";
+        if (envDir.isEmpty()) {
+            envDir = c.getFilesDir().getAbsolutePath();
+        }
         return envDir;
     }
 

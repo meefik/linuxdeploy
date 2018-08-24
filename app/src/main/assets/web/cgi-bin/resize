@@ -1,4 +1,4 @@
-#!/data/data/ru.meefik.linuxdeploy/env/bin/sh
+#!/system/bin/sh
 
 echo "Content-type: text/html"
 echo ""

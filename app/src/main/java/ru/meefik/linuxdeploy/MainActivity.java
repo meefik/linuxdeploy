@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, getPackageName());
 
         if (EnvUtils.isLatestVersion(this)) {
-            // start telnetd
+            // start services
             EnvUtils.execServices(getBaseContext(), new String[]{"telnetd", "httpd"}, "start");
         } else {
             // Update ENV
@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity implements
                 break;
             case R.id.nav_terminal:
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW,
-                        Uri.parse("http://localhost:" + PrefStore.getHttpPort(this) +
+                        Uri.parse("http://127.0.0.1:" + PrefStore.getHttpPort(this) +
                                 "/cgi-bin/terminal?size=" + PrefStore.getFontSize(this)));
                 startActivity(browserIntent);
                 break;

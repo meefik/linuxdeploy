@@ -8,7 +8,9 @@ public class BootReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(final Context context, Intent intent) {
-        switch (intent.getAction()) {
+        String action = intent.getAction();
+        if (action == null) return;
+        switch (action) {
             case Intent.ACTION_BOOT_COMPLETED:
                 try { // Autostart delay
                     Integer delay_s = PrefStore.getAutostartDelay(context);
@@ -16,10 +18,12 @@ public class BootReceiver extends BroadcastReceiver {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                EnvUtils.execServices(context, new String[]{"telnetd", "httpd"}, "start");
                 EnvUtils.execService(context, "start", "-m");
                 break;
             case Intent.ACTION_SHUTDOWN:
                 EnvUtils.execService(context, "stop", "-u");
+                EnvUtils.execServices(context, new String[]{"telnetd", "httpd"}, "stop");
                 try { // Shutdown delay
                     Integer delay_s = PrefStore.getAutostartDelay(context);
                     Thread.sleep(delay_s * 1000);

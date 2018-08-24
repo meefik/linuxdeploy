@@ -23,7 +23,7 @@
     <string name="is_http" translatable="false">false</string>
     <string name="http_port" translatable="false">5080</string>
     <!-- https://wiki.openwrt.org/doc/howto/http.httpd -->
-    <string name="http_conf" translatable="false">A:127.0.0.1</string>
+    <string name="http_conf" translatable="false">A:127.0.0.1 D:*</string>
     <string name="profile" translatable="false">linux</string>
     <string name="debug_mode" translatable="false">false</string>
     <string name="trace_mode" translatable="false">false</string>
@@ -141,10 +141,10 @@
     <!-- Gentoo -->
     <string name="gentoo_suite" translatable="false">latest</string>
     <!-- arm -->
-    <string name="arm_gentoo_source_path" translatable="false">http://mirror.yandex.ru/gentoo-distfiles/releases/</string>
+    <string name="arm_gentoo_source_path" translatable="false">http://distfiles.gentoo.org/releases/</string>
     <string name="arm_gentoo_arch" translatable="false">armv7a_hardfp</string>
     <!-- intel -->
-    <string name="intel_gentoo_source_path" translatable="false">http://mirror.yandex.ru/gentoo-distfiles/releases/</string>
+    <string name="intel_gentoo_source_path" translatable="false">http://distfiles.gentoo.org/releases/</string>
     <string name="intel_gentoo_arch" translatable="false">i686</string>
     
     <!-- Slackware -->
