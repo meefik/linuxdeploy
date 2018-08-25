@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
@@ -13,6 +14,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.support.annotation.NonNull;
+import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -162,10 +164,18 @@ public class MainActivity extends AppCompatActivity implements
                 openRepository();
                 break;
             case R.id.nav_terminal:
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW,
-                        Uri.parse("http://127.0.0.1:" + PrefStore.getHttpPort(this) +
-                                "/cgi-bin/terminal?size=" + PrefStore.getFontSize(this)));
-                startActivity(browserIntent);
+                String uri = "http://127.0.0.1:" + PrefStore.getHttpPort(this) +
+                        "/cgi-bin/terminal?size=" + PrefStore.getFontSize(this);
+                // Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                // startActivity(browserIntent);
+                CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+                if (PrefStore.getTheme(this) == R.style.LightTheme) {
+                    builder.setToolbarColor(Color.LTGRAY);
+                } else {
+                    builder.setToolbarColor(Color.DKGRAY);
+                }
+                CustomTabsIntent customTabsIntent = builder.build();
+                customTabsIntent.launchUrl(this, Uri.parse(uri));
                 break;
             case R.id.nav_settings:
                 Intent intent_settings = new Intent(this, SettingsActivity.class);

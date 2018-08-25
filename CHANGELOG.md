@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Automatically change an interpreter in scripts after changing the environment directory
 - Updated built-in busybox to v1.29.2
 - Improved Arch Linux bootstrap
+- The web terminal now opens in the Chrome custom tab (increases API to 15)
 
 ### Fixed
 - Fixed problem with UID and GID numeration

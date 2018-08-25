@@ -6,9 +6,9 @@ android {
 
     defaultConfig {
         applicationId 'ru.meefik.linuxdeploy'
-        minSdkVersion 14
+        minSdkVersion 15
         targetSdkVersion 27
-        versionCode 241
+        versionCode 242
         versionName "2.2.0"
     }
     buildTypes {
@@ -25,4 +25,5 @@ android {
 
 dependencies {
     implementation 'com.android.support:design:27.1.1'
+    implementation 'com.android.support:customtabs:27.1.1'
 }
