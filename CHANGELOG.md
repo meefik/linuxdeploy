@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.2.1] - 2018-10-29
+### Changed
+- Updated built-in busybox to v1.29.3
+
+### Fixed
+- Added package zstd for Arch Linux bootstrap
+
 ## [2.2.0] - 2018-08-25
 ### Changed
 - All CLI files are moved to the environment directory

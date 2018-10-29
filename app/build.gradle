@@ -2,14 +2,14 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 27
-    buildToolsVersion '28.0.2'
+    buildToolsVersion '28.0.3'
 
     defaultConfig {
         applicationId 'ru.meefik.linuxdeploy'
         minSdkVersion 15
         targetSdkVersion 27
-        versionCode 242
-        versionName "2.2.0"
+        versionCode 243
+        versionName "2.2.1"
     }
     buildTypes {
         release {
