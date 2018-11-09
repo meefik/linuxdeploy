@@ -25,17 +25,29 @@ public class MountsActivity extends AppCompatActivity {
     private ArrayAdapter adapter;
 
     private void addDialog() {
-        final EditText input = new EditText(this);
+        LayoutInflater layoutInflater = LayoutInflater.from(this);
+        View view = layoutInflater.inflate(R.layout.properties_mounts, null);
+        final EditText inputSrc = view.findViewById(R.id.editTextSrc);
+        final EditText inputTarget = view.findViewById(R.id.editTextTarget);
         new AlertDialog.Builder(this)
                 .setTitle(R.string.new_mount_title)
-                .setView(input, 16, 32, 16, 0)
+                .setView(view)
                 .setPositiveButton(android.R.string.ok,
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog,
                                                 int whichButton) {
-                                String text = input.getText().toString()
-                                        .replaceAll(" ", "_");
+                                String text = "";
+                                String src = inputSrc.getText().toString()
+                                        .replaceAll("[ :]", "_");
+                                String target = inputTarget.getText().toString()
+                                        .replaceAll("[ :]", "_");
+                                if (src.length() > 0) {
+                                    text = src;
+                                    if (target.length() > 0) {
+                                        text = text + ":" + target;
+                                    }
+                                }
                                 if (text.length() > 0) {
                                     listItems.add(text);
                                     adapter.notifyDataSetChanged();
@@ -52,21 +64,40 @@ public class MountsActivity extends AppCompatActivity {
     }
 
     private void editDialog(final int position) {
-        final EditText input = new EditText(this);
+        LayoutInflater layoutInflater = LayoutInflater.from(this);
+        View view = layoutInflater.inflate(R.layout.properties_mounts, null);
+        final EditText inputSrc = view.findViewById(R.id.editTextSrc);
+        final EditText inputTarget = view.findViewById(R.id.editTextTarget);
         if (position >= 0 && position < listItems.size()) {
-            input.setText(listItems.get(position));
-            input.setSelection(input.getText().length());
+            String text = listItems.get(position);
+            final String[] arr = text.split(":", 2);
+            try {
+                inputSrc.setText(arr[0]);
+                inputSrc.setSelection(arr[0].length());
+
+                inputTarget.setText(arr[1]);
+                inputTarget.setSelection(arr[1].length());
+            } catch (IndexOutOfBoundsException e) {}
+
             new AlertDialog.Builder(this)
                     .setTitle(R.string.edit_mount_title)
-                    .setView(input, 16, 32, 16, 0)
+                    .setView(view)
                     .setPositiveButton(android.R.string.ok,
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog,
                                                     int whichButton) {
-                                    String text = input.getText()
-                                            .toString()
-                                            .replaceAll(" ", "_");
+                                    String text = "";
+                                    String src = inputSrc.getText().toString()
+                                            .replaceAll("[ :]", "_");
+                                    String target = inputTarget.getText().toString()
+                                            .replaceAll("[ :]", "_");
+                                    if (src.length() > 0) {
+                                        text = src;
+                                        if (target.length() > 0) {
+                                            text = text + ":" + target;
+                                        }
+                                    }
                                     if (text.length() > 0) {
                                         listItems.set(position, text);
                                         adapter.notifyDataSetChanged();
