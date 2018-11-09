@@ -2,6 +2,7 @@ package ru.meefik.linuxdeploy;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -128,6 +129,9 @@ public class MountsActivity extends AppCompatActivity {
                 String item = getItem(position);
 
                 ((TextView) view.findViewById(R.id.mount_point)).setText(item);
+                if (PrefStore.getTheme(this.getContext()) == R.style.DarkTheme) {
+                    ((TextView) view.findViewById(R.id.mount_point)).setTextColor(Color.WHITE);
+                }
 
                 view.findViewById(R.id.mount_point).setOnClickListener(new View.OnClickListener() {
                     @Override
