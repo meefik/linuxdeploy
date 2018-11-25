@@ -241,6 +241,8 @@
     <string name="summary_is_mounts_preference">Allow to mount the Android resources</string>
     <string name="title_mounts_editor_preference">Mount points</string>
     <string name="summary_mounts_editor_preference">Edit the mount points list</string>
+    <string name="hint_mounts_source">Source</string>
+    <string name="hint_mounts_target">Target (optional)</string>
 
     <!-- SSH -->
     <string name="ssh_preferences">SSH</string>
