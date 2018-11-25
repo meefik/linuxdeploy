@@ -42,7 +42,6 @@
     <string name="toast_import_profile_error">프로파일을 불러오는 데 오류가 발생했습니다!</string>
     <string name="toast_export_profile_success">프로파일 내보내기 성공.</string>
     <string name="toast_export_profile_error">프로파일을 내보내기 하는데 오류가 발생했습니다!</string>
-    <string name="toast_terminal_error">터미널로 시작하는 데 오류가 발생했습니다.</string>
     <string name="toast_loading_error">데이터 불러오기 오류</string>
     <string name="confirm_profile_discard_title">프로파일 삭제</string>
     <string name="confirm_profile_discard_message">선택된 프로파일을 삭제하시겠습니까?</string>

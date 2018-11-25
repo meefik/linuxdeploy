@@ -256,15 +256,15 @@ public class RepositoryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_repository);
 
         // ListView Adapter
-        ListView listView = (ListView) findViewById(R.id.repositoryView);
+        ListView listView = findViewById(R.id.repositoryView);
         adapter = new ArrayAdapter<Map<String, String>>(this,
                 R.layout.repository_row, R.id.repo_entry_title, profiles) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
-                TextView title = (TextView) view.findViewById(R.id.repo_entry_title);
-                TextView subTitle = (TextView) view.findViewById(R.id.repo_entry_subtitle);
-                ImageView icon = (ImageView) view.findViewById(R.id.repo_entry_icon);
+                TextView title = view.findViewById(R.id.repo_entry_title);
+                TextView subTitle = view.findViewById(R.id.repo_entry_subtitle);
+                ImageView icon = view.findViewById(R.id.repo_entry_icon);
                 String name = profiles.get(position).get("PROFILE");
                 String desc = profiles.get(position).get("DESC");
                 String type = profiles.get(position).get("TYPE");

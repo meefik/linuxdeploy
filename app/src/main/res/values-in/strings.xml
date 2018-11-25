@@ -45,7 +45,6 @@
     <string name="toast_import_profile_error">"Kesalahan mengimpor profil!"</string>
     <string name="toast_export_profile_success">"Profil telah berhasil diekspor."</string>
     <string name="toast_export_profile_error">"Kesalahan mengekspor profil!"</string>
-    <string name="toast_terminal_error">"Kesalahan saat memulai terminal!"</string>
     <string name="toast_loading_error">"Terjadi kesalahan saat memuat data!"</string>
     <string name="toast_updating_env_error">"Kesalahan memperbarui lingkungan pengoperasian!"</string>
     <string name="confirm_profile_discard_title">"Hapus profil"</string>
@@ -88,8 +87,6 @@
     <string name="dialog_title_autostart_delay_preference">"Tunda (detik)"</string>
     <string name="title_nettrack_preference">"Pemicu jaringan"</string>
     <string name="summary_nettrack_preference">"Melacak perubahan jaringan dan memperbarui container"</string>
-    <string name="title_terminalcmd_preference">"Perintah terminal"</string>
-    <string name="dialog_title_terminalcmd_preference">"Perintah terminal"</string>
 
     <string name="env_preferences">"Environment"</string>
 

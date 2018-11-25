@@ -8,8 +8,8 @@ android {
         applicationId 'ru.meefik.linuxdeploy'
         minSdkVersion 15
         targetSdkVersion 27
-        versionCode 243
-        versionName "2.2.1"
+        versionCode 244
+        versionName "2.2.2"
     }
     buildTypes {
         release {
@@ -24,6 +24,7 @@ android {
 }
 
 dependencies {
+    implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support:design:27.1.1'
     implementation 'com.android.support:customtabs:27.1.1'
 }

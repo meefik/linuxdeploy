@@ -32,7 +32,6 @@
     <string name="toast_import_profile_error">Erro ao importar perfil!</string>
     <string name="toast_export_profile_success">Perfil exportado com sucesso.</string>
     <string name="toast_export_profile_error">Erro ao exportar perfil!</string>
-    <string name="toast_terminal_error">Error when starting the terminal!</string>
     <string name="confirm_profile_discard_title">Remover perfil</string>
     <string name="confirm_profile_discard_message">Remover o perfil selecionado?</string>
     <string name="new_mount_title">Ponto de montagem</string>
@@ -173,5 +172,6 @@
     <string name="title_configure_dialog">Configurar</string>
     <string name="gui_preferences">GUI</string>
     <string name="repository_purchase_button">Comprar</string>
+    <string name="nav_profiles">Perfis</string>
 
 </resources>

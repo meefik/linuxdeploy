@@ -97,7 +97,6 @@
     <string name="title_x11_display_preference">Номер дисплея</string>
     <string name="title_x11_host_preference">Адрес X-сервера</string>
     <string name="title_x11_sdl_preference">XServer XSDL</string>
-    <string name="toast_terminal_error">Ошибка при запуске терминала!</string>
     <string name="x11_preferences">X11</string>
     <string name="title_vnc_args_preference">Опции VNC-сервера</string>
     <string name="title_vnc_depth_preference">Глубина цвета (бит)</string>
@@ -244,5 +243,7 @@
     <string name="dialog_title_pulse_port_preference">PulseAudio: порт</string>
     <string name="title_pulse_host_preference">Адрес сервера</string>
     <string name="dialog_title_pulse_host_preference">PulseAudio: адрес сервера</string>
+    <string name="hint_mounts_source">Исходная</string>
+    <string name="hint_mounts_target">Целевая (опционально)</string>
 
 </resources>
