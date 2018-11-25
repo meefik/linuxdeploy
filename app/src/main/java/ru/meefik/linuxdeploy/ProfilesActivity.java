@@ -1,5 +1,6 @@
 package ru.meefik.linuxdeploy;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -91,6 +92,7 @@ public class ProfilesActivity extends AppCompatActivity implements OnTouchListen
         return profiles;
     }
 
+    @SuppressLint("RestrictedApi")
     private void addDialog() {
         final EditText input = new EditText(this);
         new AlertDialog.Builder(this)
@@ -116,6 +118,7 @@ public class ProfilesActivity extends AppCompatActivity implements OnTouchListen
                         }).show();
     }
 
+    @SuppressLint("RestrictedApi")
     private void editDialog() {
         final EditText input = new EditText(this);
         final int pos = listView.getCheckedItemPosition();
@@ -183,6 +186,7 @@ public class ProfilesActivity extends AppCompatActivity implements OnTouchListen
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -190,7 +194,7 @@ public class ProfilesActivity extends AppCompatActivity implements OnTouchListen
         setContentView(R.layout.activity_profiles);
 
         // ListView Adapter
-        listView = (ListView) findViewById(R.id.profilesView);
+        listView = findViewById(R.id.profilesView);
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_single_choice, listItems);
         listView.setAdapter(adapter);
 
@@ -257,6 +261,7 @@ public class ProfilesActivity extends AppCompatActivity implements OnTouchListen
         listView.setItemChecked(getPosition(profile), true);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         gd.onTouchEvent(event);

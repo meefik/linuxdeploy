@@ -32,7 +32,6 @@
     <string name="toast_import_profile_error">Błąd przy importowaniu profilu!</string>
     <string name="toast_export_profile_success">Profil został pomyślnie eksportowany.</string>
     <string name="toast_export_profile_error">Błąd przy eksportowaniu profilu!</string>
-    <string name="toast_terminal_error">Błąd podczas uruchamiania terminala!</string>
     <string name="confirm_profile_discard_title">Usuń profil</string>
     <string name="confirm_profile_discard_message">Usunąć wybrany profil?</string>
     <string name="new_mount_title">Punkt montowania</string>

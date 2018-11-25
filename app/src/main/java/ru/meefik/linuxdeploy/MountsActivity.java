@@ -1,6 +1,5 @@
 package ru.meefik.linuxdeploy;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -12,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -77,7 +77,7 @@ public class MountsActivity extends AppCompatActivity {
 
                 inputTarget.setText(arr[1]);
                 inputTarget.setSelection(arr[1].length());
-            } catch (IndexOutOfBoundsException e) {}
+            } catch (IndexOutOfBoundsException ignored) {}
 
             new AlertDialog.Builder(this)
                     .setTitle(R.string.edit_mount_title)
@@ -147,27 +147,25 @@ public class MountsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_mounts);
 
         // ListView Adapter
-        ListView listView = (ListView) findViewById(R.id.mountsView);
-        adapter = new ArrayAdapter<String>(this, R.layout.mounts_row, listItems) {
+        ListView listView = findViewById(R.id.mountsView);
+        adapter = new ArrayAdapter<String>(this, R.layout.mounts_row, R.id.mount_point, listItems) {
             @Override
-            public View getView(final int position, View view, final ViewGroup parent) {
-                if (view == null) {
-                    LayoutInflater inflater = (LayoutInflater) getApplicationContext().
-                            getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                    view = inflater.inflate(R.layout.mounts_row, null);
-                }
+            public View getView(final int position, View convertView, final ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                TextView tv = view.findViewById(R.id.mount_point);
+                Button btn = view.findViewById(R.id.delete_mount);
+
                 String item = getItem(position);
+                tv.setText(item);
 
-                ((TextView) view.findViewById(R.id.mount_point)).setText(item);
-
-                view.findViewById(R.id.mount_point).setOnClickListener(new View.OnClickListener() {
+                tv.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         ((ListView) parent).performItemClick(v, position, 0); // Let the event be handled in onItemClick()
                     }
                 });
 
-                view.findViewById(R.id.delete_mount).setOnClickListener(new View.OnClickListener() {
+                btn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         ((ListView) parent).performItemClick(v, position, 0); // Let the event be handled in onItemClick()

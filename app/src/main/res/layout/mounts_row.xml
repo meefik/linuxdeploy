@@ -14,9 +14,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:paddingRight="4dp"
         android:paddingLeft="4dp"
-        android:textAppearance="@android:style/TextAppearance.Medium" />
+        android:paddingRight="4dp"
+        android:textSize="18sp" />
 
     <Button
         android:id="@+id/delete_mount"

@@ -47,7 +47,6 @@
     <string name="toast_import_profile_error">Error importing profile!</string>
     <string name="toast_export_profile_success">Profile has been successfully exported.</string>
     <string name="toast_export_profile_error">Error exporting profile!</string>
-    <string name="toast_terminal_error">Error when starting the terminal!</string>
     <string name="toast_loading_error">Error loading data!</string>
     <string name="toast_updating_env_error">Error updating of operating environment!</string>
     <string name="confirm_profile_discard_title">Remove profile</string>
