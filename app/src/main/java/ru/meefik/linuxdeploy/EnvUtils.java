@@ -494,7 +494,7 @@ class EnvUtils {
         Intent service = new Intent(c, ExecService.class);
         service.putExtra("cmd", cmd);
         service.putExtra("args", args);
-        c.startService(service);
+        ExecService.enqueueWork(c, service);
     }
 
     /**

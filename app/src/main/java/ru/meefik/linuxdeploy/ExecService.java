@@ -4,24 +4,19 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
+import android.support.v4.app.JobIntentService;
 
-public class ExecService extends Service {
+public class ExecService extends JobIntentService {
 
-    Context mContext;
+    public static final int JOB_ID = 1;
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        mContext = getBaseContext();
+    public static void enqueueWork(Context context, Intent work) {
+        enqueueWork(context, ExecService.class, JOB_ID, work);
     }
 
     @Override
-    public IBinder onBind(Intent arg0) {
-        return null;
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
+    protected void onHandleWork(@NonNull Intent intent) {
         if (intent != null) {
             final String cmd = intent.getStringExtra("cmd");
             final String args = intent.getStringExtra("args");
@@ -30,20 +25,19 @@ public class ExecService extends Service {
                 public void run() {
                     switch (cmd) {
                         case "telnetd":
-                            EnvUtils.telnetd(mContext, args);
+                            EnvUtils.telnetd(getBaseContext(), args);
                             break;
                         case "httpd":
-                            EnvUtils.httpd(mContext, args);
+                            EnvUtils.httpd(getBaseContext(), args);
                             break;
                         default:
-                            PrefStore.showNotification(mContext, null);
-                            EnvUtils.cli(mContext, cmd, args);
+                            PrefStore.showNotification(getBaseContext(), null);
+                            EnvUtils.cli(getBaseContext(), cmd, args);
                     }
                 }
             });
             thread.start();
         }
-        return super.onStartCommand(intent, flags, startId);
     }
 
 }
