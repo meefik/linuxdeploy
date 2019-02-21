@@ -1,11 +1,10 @@
 package ru.meefik.linuxdeploy;
 
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.os.IBinder;
-import android.support.annotation.NonNull;
-import android.support.v4.app.JobIntentService;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.JobIntentService;
 
 public class ExecService extends JobIntentService {
 
