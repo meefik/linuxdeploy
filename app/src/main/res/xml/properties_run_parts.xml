@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="@string/init_preferences" >
+    <PreferenceCategory android:title="@string/init_preferences">
         <EditTextPreference
             android:defaultValue="@string/init_path"
             android:dialogTitle="@string/dialog_title_init_path_preference"

@@ -13,16 +13,6 @@ import android.net.wifi.WifiManager.WifiLock;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
-import androidx.annotation.NonNull;
-import androidx.browser.customtabs.CustomTabsIntent;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import android.text.method.LinkMovementMethod;
 import android.util.TypedValue;
 import android.view.Menu;
@@ -36,14 +26,49 @@ import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+
 public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener {
 
+    private static final int REQUEST_WRITE_STORAGE = 112;
     private static TextView output;
     private static ScrollView scroll;
     private static WifiLock wifiLock;
     private static PowerManager.WakeLock wakeLock;
-    private static final int REQUEST_WRITE_STORAGE = 112;
+
+    /**
+     * Show message in TextView, used from Logger
+     *
+     * @param log message
+     */
+    public static void showLog(final String log) {
+        if (output == null || scroll == null) return;
+        // show log in TextView
+        output.post(new Runnable() {
+            @Override
+            public void run() {
+                output.setText(log);
+                // scroll TextView to bottom
+                scroll.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        scroll.fullScroll(View.FOCUS_DOWN);
+                        scroll.clearFocus();
+                    }
+                });
+            }
+        });
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -54,17 +79,17 @@ public class MainActivity extends AppCompatActivity implements
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        output = (TextView) findViewById(R.id.outputView);
-        scroll = (ScrollView) findViewById(R.id.scrollView);
+        output = findViewById(R.id.outputView);
+        scroll = findViewById(R.id.scrollView);
 
         output.setMovementMethod(LinkMovementMethod.getInstance());
 
@@ -130,7 +155,7 @@ public class MainActivity extends AppCompatActivity implements
                 clearLog();
                 break;
             case android.R.id.home:
-                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                DrawerLayout drawer = findViewById(R.id.drawer_layout);
                 if (drawer.isDrawerOpen(GravityCompat.START)) {
                     drawer.closeDrawer(GravityCompat.START);
                 } else {
@@ -145,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -194,7 +219,7 @@ public class MainActivity extends AppCompatActivity implements
                 finish();
                 break;
         }
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -236,30 +261,6 @@ public class MainActivity extends AppCompatActivity implements
         } else {
             if (wakeLock.isHeld()) wakeLock.release();
         }
-    }
-
-    /**
-     * Show message in TextView, used from Logger
-     *
-     * @param log message
-     */
-    public static void showLog(final String log) {
-        if (output == null || scroll == null) return;
-        // show log in TextView
-        output.post(new Runnable() {
-            @Override
-            public void run() {
-                output.setText(log);
-                // scroll TextView to bottom
-                scroll.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        scroll.fullScroll(View.FOCUS_DOWN);
-                        scroll.clearFocus();
-                    }
-                });
-            }
-        });
     }
 
     /**

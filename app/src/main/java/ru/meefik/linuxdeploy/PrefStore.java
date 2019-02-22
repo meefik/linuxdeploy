@@ -9,9 +9,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Point;
-import android.os.Build;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.TaskStackBuilder;
 import android.text.TextUtils;
 import android.view.Display;
 import android.view.WindowManager;
@@ -26,6 +23,9 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
+
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.TaskStackBuilder;
 
 public class PrefStore {
 
@@ -709,16 +709,12 @@ public class PrefStore {
      */
     @SuppressLint("NewApi")
     static Integer getScreenWidth(Context c) {
-        int width = 0;
+        int width;
         WindowManager wm = (WindowManager) c.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
-        if (Build.VERSION.SDK_INT > 12) {
-            Point size = new Point();
-            display.getSize(size);
-            width = size.x;
-        } else {
-            width = display.getWidth(); // deprecated
-        }
+        Point size = new Point();
+        display.getSize(size);
+        width = size.x;
         return width;
     }
 
@@ -730,16 +726,12 @@ public class PrefStore {
      */
     @SuppressLint("NewApi")
     static Integer getScreenHeight(Context c) {
-        int height = 0;
+        int height;
         WindowManager wm = (WindowManager) c.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
-        if (Build.VERSION.SDK_INT > 12) {
-            Point size = new Point();
-            display.getSize(size);
-            height = size.y;
-        } else {
-            height = display.getHeight(); // deprecated
-        }
+        Point size = new Point();
+        display.getSize(size);
+        height = size.y;
         return height;
     }
 

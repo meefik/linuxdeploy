@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="@string/app_preferences" >
+    <PreferenceCategory android:title="@string/app_preferences">
         <CheckBoxPreference
             android:defaultValue="@string/screenlock"
             android:key="screenlock"
@@ -73,8 +73,8 @@
             android:summary="@string/summary_autostart_preference"
             android:title="@string/title_autostart_preference" />
         <EditTextPreference
-            android:dependency="autostart"
             android:defaultValue="@string/autostart_delay"
+            android:dependency="autostart"
             android:dialogTitle="@string/dialog_title_autostart_delay_preference"
             android:inputType="number"
             android:key="autostart_delay"
@@ -86,7 +86,7 @@
             android:summary="@string/summary_nettrack_preference"
             android:title="@string/title_nettrack_preference" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/env_preferences" >
+    <PreferenceCategory android:title="@string/env_preferences">
         <EditTextPreference
             android:defaultValue="@string/env_dir"
             android:dialogTitle="@string/dialog_title_env_dir_preference"
@@ -129,23 +129,23 @@
             android:summary="@string/summary_removeenv_preference"
             android:title="@string/title_removeenv_preference" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/services_preferences" >
+    <PreferenceCategory android:title="@string/services_preferences">
         <CheckBoxPreference
             android:defaultValue="@string/is_telnet"
             android:key="is_telnet"
             android:summary="@string/summary_is_telnet_preference"
             android:title="@string/title_is_telnet_preference" />
         <EditTextPreference
-            android:dependency="is_telnet"
             android:defaultValue="@string/telnet_port"
+            android:dependency="is_telnet"
             android:dialogTitle="@string/dialog_title_telnet_port_preference"
             android:inputType="numberDecimal"
             android:key="telnet_port"
             android:summary="@string/telnet_port"
             android:title="@string/title_telnet_port_preference" />
         <CheckBoxPreference
-            android:dependency="is_telnet"
             android:defaultValue="@string/telnet_localhost"
+            android:dependency="is_telnet"
             android:key="telnet_localhost"
             android:summary="@string/summary_telnet_localhost_preference"
             android:title="@string/title_telnet_localhost_preference" />
@@ -155,22 +155,22 @@
             android:summary="@string/summary_is_http_preference"
             android:title="@string/title_is_http_preference" />
         <EditTextPreference
-            android:dependency="is_http"
             android:defaultValue="@string/http_port"
+            android:dependency="is_http"
             android:dialogTitle="@string/dialog_title_http_port_preference"
             android:inputType="numberDecimal"
             android:key="http_port"
             android:summary="@string/http_port"
             android:title="@string/title_http_port_preference" />
         <EditTextPreference
-            android:dependency="is_http"
             android:defaultValue="@string/http_conf"
+            android:dependency="is_http"
             android:dialogTitle="@string/dialog_title_http_conf_preference"
             android:key="http_conf"
             android:summary="@string/http_conf"
             android:title="@string/title_http_conf_preference" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/debug_preferences" >
+    <PreferenceCategory android:title="@string/debug_preferences">
         <CheckBoxPreference
             android:defaultValue="@string/debug_mode"
             android:key="debug_mode"

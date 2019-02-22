@@ -2,8 +2,6 @@ package ru.meefik.linuxdeploy;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,6 +16,9 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class MountsActivity extends AppCompatActivity {
 
@@ -77,7 +78,8 @@ public class MountsActivity extends AppCompatActivity {
 
                 inputTarget.setText(arr[1]);
                 inputTarget.setSelection(arr[1].length());
-            } catch (IndexOutOfBoundsException ignored) {}
+            } catch (IndexOutOfBoundsException ignored) {
+            }
 
             new AlertDialog.Builder(this)
                     .setTitle(R.string.edit_mount_title)

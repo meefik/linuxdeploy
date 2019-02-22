@@ -4,6 +4,7 @@ import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+
 import androidx.core.app.NotificationCompat;
 
 public class ActionReceiver extends BroadcastReceiver {
@@ -72,7 +73,6 @@ public class ActionReceiver extends BroadcastReceiver {
                 mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(mainIntent);
             }
-            return;
         }
     }
 

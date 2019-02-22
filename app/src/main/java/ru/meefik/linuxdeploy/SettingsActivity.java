@@ -15,9 +15,10 @@ import android.preference.Preference;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
+
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.AlertDialog;
 
 public class SettingsActivity extends AppCompatPreferenceActivity implements
         OnSharedPreferenceChangeListener, Preference.OnPreferenceClickListener {

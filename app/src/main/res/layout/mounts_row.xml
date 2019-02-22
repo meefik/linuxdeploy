@@ -1,13 +1,12 @@
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
     android:paddingLeft="10dp"
-    android:paddingRight="4dp"
     android:paddingTop="4dp"
-    android:paddingBottom="4dp"
-    android:gravity="center_vertical">
+    android:paddingRight="4dp"
+    android:paddingBottom="4dp">
 
     <TextView
         android:id="@+id/mount_point"
@@ -20,13 +19,13 @@
 
     <Button
         android:id="@+id/delete_mount"
+        style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:focusable="false"
-        android:textSize="0sp"
-        android:minHeight="0dp"
-        android:minWidth="0dp"
         android:drawableLeft="@android:drawable/ic_menu_delete"
-        style="@style/Widget.AppCompat.Button.Borderless" />
+        android:focusable="false"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        android:textSize="0sp" />
 
 </LinearLayout>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="@string/vnc_preferences" >
+    <PreferenceCategory android:title="@string/vnc_preferences">
         <EditTextPreference
             android:defaultValue="@string/vnc_display"
             android:dialogTitle="@string/dialog_title_vnc_display_preference"

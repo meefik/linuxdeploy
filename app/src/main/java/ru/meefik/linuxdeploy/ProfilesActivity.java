@@ -4,8 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,27 +19,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
 public class ProfilesActivity extends AppCompatActivity implements OnTouchListener {
 
     private ListView listView;
     private List<String> listItems = new ArrayList<>();
     private ArrayAdapter<String> adapter;
     private GestureDetector gd;
-
-    /**
-     * Get position by key
-     *
-     * @param key
-     * @return position
-     */
-    private int getPosition(String key) {
-        int pos = 0;
-        for (String item : listItems) {
-            if (item.equals(key)) return pos;
-            pos++;
-        }
-        return -1;
-    }
 
     /**
      * Rename conf file associated with the profile
@@ -90,6 +76,21 @@ public class ProfilesActivity extends AppCompatActivity implements OnTouchListen
             }
         }
         return profiles;
+    }
+
+    /**
+     * Get position by key
+     *
+     * @param key
+     * @return position
+     */
+    private int getPosition(String key) {
+        int pos = 0;
+        for (String item : listItems) {
+            if (item.equals(key)) return pos;
+            pos++;
+        }
+        return -1;
     }
 
     @SuppressLint("RestrictedApi")

@@ -11,8 +11,6 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,133 +36,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
 public class RepositoryActivity extends AppCompatActivity {
-
-    class RetrieveIndexTask extends AsyncTask<String, Void, Boolean> {
-
-        private ProgressDialog dialog;
-        private Context context;
-
-        RetrieveIndexTask(Context context) {
-            this.context = context;
-            this.dialog = new ProgressDialog(context);
-        }
-
-        @Override
-        protected void onPreExecute() {
-            dialog.setMessage(context.getString(R.string.loading_message));
-            dialog.show();
-            profiles.clear();
-        }
-
-        @Override
-        protected Boolean doInBackground(String... params) {
-            // params comes from the execute() call: params[0] is the url.
-            try {
-                downloadUrl(params[0]);
-            } catch (Exception e) {
-                return false;
-            }
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean success) {
-            if (dialog.isShowing()) {
-                dialog.dismiss();
-            }
-            adapter.notifyDataSetChanged();
-            if (!success) {
-                Toast.makeText(context, R.string.toast_loading_error, Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        private void downloadUrl(String url) throws IOException {
-            BufferedReader reader = null;
-            try {
-                URL u = new URL(new URL(url), "index.gz");
-                reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(u.openStream())));
-                String line;
-                Map<String, String> map = new HashMap<>();
-                while ((line = reader.readLine()) != null) {
-                    if (line.isEmpty()) {
-                        if (!map.isEmpty()) profiles.add(map);
-                        map = new HashMap<>();
-                        continue;
-                    }
-                    if (!line.startsWith("#")) {
-                        String[] pair = line.split("=");
-                        String key = pair[0];
-                        String value = pair[1];
-                        map.put(key, value);
-                    }
-                }
-            } finally {
-                if (reader != null) reader.close();
-            }
-        }
-    }
-
-    class ImportProfileTask extends AsyncTask<String, Void, Boolean> {
-
-        private ProgressDialog dialog;
-        private Context context;
-        private String profile;
-
-        ImportProfileTask(Context context) {
-            this.context = context;
-            this.dialog = new ProgressDialog(context);
-        }
-
-        @Override
-        protected void onPreExecute() {
-            dialog.setMessage(context.getString(R.string.loading_message));
-            dialog.show();
-        }
-
-        @Override
-        protected Boolean doInBackground(String... params) {
-            profile = params[1];
-            try {
-                downloadUrlAndImport(params[0], params[1]);
-            } catch (Exception e) {
-                return false;
-            }
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean success) {
-            if (dialog.isShowing()) {
-                dialog.dismiss();
-            }
-            if (success) {
-                PrefStore.changeProfile(getApplicationContext(), profile);
-                finish();
-            } else {
-                Toast.makeText(context, R.string.toast_loading_error, Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        private void downloadUrlAndImport(String url, String profile) throws IOException {
-            String conf = PrefStore.getEnvDir(context) + "/config/" + profile + ".conf";
-            InputStream in = null;
-            OutputStream out = null;
-            try {
-                URL u = new URL(new URL(url), "config/" + profile + ".conf");
-                in = u.openStream();
-                out = new FileOutputStream(conf);
-                byte[] buffer = new byte[1024];
-                int read;
-                while ((read = in.read(buffer)) != -1) {
-                    out.write(buffer, 0, read);
-                }
-            } finally {
-                if (in != null) in.close();
-                if (out != null) out.close();
-            }
-        }
-    }
 
     private List<Map<String, String>> profiles = new ArrayList<>();
     private ArrayAdapter adapter;
@@ -350,6 +225,132 @@ public class RepositoryActivity extends AppCompatActivity {
                 break;
         }
         return false;
+    }
+
+    class RetrieveIndexTask extends AsyncTask<String, Void, Boolean> {
+
+        private ProgressDialog dialog;
+        private Context context;
+
+        RetrieveIndexTask(Context context) {
+            this.context = context;
+            this.dialog = new ProgressDialog(context);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            dialog.setMessage(context.getString(R.string.loading_message));
+            dialog.show();
+            profiles.clear();
+        }
+
+        @Override
+        protected Boolean doInBackground(String... params) {
+            // params comes from the execute() call: params[0] is the url.
+            try {
+                downloadUrl(params[0]);
+            } catch (Exception e) {
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            if (dialog.isShowing()) {
+                dialog.dismiss();
+            }
+            adapter.notifyDataSetChanged();
+            if (!success) {
+                Toast.makeText(context, R.string.toast_loading_error, Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        private void downloadUrl(String url) throws IOException {
+            BufferedReader reader = null;
+            try {
+                URL u = new URL(new URL(url), "index.gz");
+                reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(u.openStream())));
+                String line;
+                Map<String, String> map = new HashMap<>();
+                while ((line = reader.readLine()) != null) {
+                    if (line.isEmpty()) {
+                        if (!map.isEmpty()) profiles.add(map);
+                        map = new HashMap<>();
+                        continue;
+                    }
+                    if (!line.startsWith("#")) {
+                        String[] pair = line.split("=");
+                        String key = pair[0];
+                        String value = pair[1];
+                        map.put(key, value);
+                    }
+                }
+            } finally {
+                if (reader != null) reader.close();
+            }
+        }
+    }
+
+    class ImportProfileTask extends AsyncTask<String, Void, Boolean> {
+
+        private ProgressDialog dialog;
+        private Context context;
+        private String profile;
+
+        ImportProfileTask(Context context) {
+            this.context = context;
+            this.dialog = new ProgressDialog(context);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            dialog.setMessage(context.getString(R.string.loading_message));
+            dialog.show();
+        }
+
+        @Override
+        protected Boolean doInBackground(String... params) {
+            profile = params[1];
+            try {
+                downloadUrlAndImport(params[0], params[1]);
+            } catch (Exception e) {
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            if (dialog.isShowing()) {
+                dialog.dismiss();
+            }
+            if (success) {
+                PrefStore.changeProfile(getApplicationContext(), profile);
+                finish();
+            } else {
+                Toast.makeText(context, R.string.toast_loading_error, Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        private void downloadUrlAndImport(String url, String profile) throws IOException {
+            String conf = PrefStore.getEnvDir(context) + "/config/" + profile + ".conf";
+            InputStream in = null;
+            OutputStream out = null;
+            try {
+                URL u = new URL(new URL(url), "config/" + profile + ".conf");
+                in = u.openStream();
+                out = new FileOutputStream(conf);
+                byte[] buffer = new byte[1024];
+                int read;
+                while ((read = in.read(buffer)) != -1) {
+                    out.write(buffer, 0, read);
+                }
+            } finally {
+                if (in != null) in.close();
+                if (out != null) out.close();
+            }
+        }
     }
 
 }

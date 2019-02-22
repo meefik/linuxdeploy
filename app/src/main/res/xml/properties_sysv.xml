@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="@string/init_preferences" >
+    <PreferenceCategory android:title="@string/init_preferences">
         <EditTextPreference
             android:defaultValue="@string/init_level"
-            android:inputType="numberDecimal"
             android:dialogTitle="@string/dialog_title_init_level_preference"
+            android:inputType="numberDecimal"
             android:key="init_level"
             android:summary="@string/init_level"
             android:title="@string/title_init_level_preference" />

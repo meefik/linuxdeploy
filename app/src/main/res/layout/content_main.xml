@@ -50,10 +50,10 @@
                 android:layout_weight="0.4"
                 android:drawableLeft="?attr/ic_action_start"
                 android:onClick="containerStart"
-                android:paddingEnd="16dp"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
                 android:paddingStart="16dp"
+                android:paddingLeft="16dp"
+                android:paddingEnd="16dp"
+                android:paddingRight="16dp"
                 android:text="@string/menu_start" />
 
             <Button
@@ -64,10 +64,10 @@
                 android:layout_weight="0.4"
                 android:drawableLeft="?attr/ic_action_stop"
                 android:onClick="containerStop"
-                android:paddingEnd="16dp"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
                 android:paddingStart="16dp"
+                android:paddingLeft="16dp"
+                android:paddingEnd="16dp"
+                android:paddingRight="16dp"
                 android:text="@string/menu_stop" />
 
             <ImageButton

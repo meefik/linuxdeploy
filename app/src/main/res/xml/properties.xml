@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="@string/bootstrap_preferences" >
+    <PreferenceCategory android:title="@string/bootstrap_preferences">
         <ListPreference
             android:defaultValue="@string/method"
             android:dialogTitle="@string/dialog_title_method_preference"
@@ -88,8 +88,8 @@
         <EditTextPreference
             android:defaultValue="@string/user_password"
             android:dialogTitle="@string/dialog_title_user_password_preference"
-            android:maxLength="8"
             android:key="user_password"
+            android:maxLength="8"
             android:summary="@string/user_password"
             android:title="@string/title_user_password_preference" />
 
@@ -118,7 +118,7 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/init_preferences" >
+    <PreferenceCategory android:title="@string/init_preferences">
 
         <CheckBoxPreference
             android:defaultValue="@string/is_init"
@@ -127,8 +127,8 @@
             android:title="@string/title_is_init_preference" />
 
         <ListPreference
-            android:dependency="is_init"
             android:defaultValue="@string/init"
+            android:dependency="is_init"
             android:dialogTitle="@string/dialog_title_init_preference"
             android:entries="@array/init_values"
             android:entryValues="@array/init_values"
@@ -144,7 +144,7 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/mounts_preferences" >
+    <PreferenceCategory android:title="@string/mounts_preferences">
 
         <CheckBoxPreference
             android:defaultValue="@string/is_mounts"
@@ -160,7 +160,7 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/ssh_preferences" >
+    <PreferenceCategory android:title="@string/ssh_preferences">
 
         <CheckBoxPreference
             android:defaultValue="@string/is_ssh"
@@ -176,7 +176,7 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pulse_preferences" >
+    <PreferenceCategory android:title="@string/pulse_preferences">
 
         <CheckBoxPreference
             android:defaultValue="@string/is_pulse"
@@ -192,7 +192,7 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/gui_preferences" >
+    <PreferenceCategory android:title="@string/gui_preferences">
 
         <CheckBoxPreference
             android:defaultValue="@string/is_gui"
@@ -201,8 +201,8 @@
             android:title="@string/title_is_gui_preference" />
 
         <ListPreference
-            android:dependency="is_gui"
             android:defaultValue="@string/graphics"
+            android:dependency="is_gui"
             android:dialogTitle="@string/dialog_title_graphics_preference"
             android:entries="@array/graphics_entries"
             android:entryValues="@array/graphics_values"
@@ -217,8 +217,8 @@
             android:title="@string/title_gui_properties_preference" />
 
         <ListPreference
-            android:dependency="is_gui"
             android:defaultValue="@string/desktop"
+            android:dependency="is_gui"
             android:dialogTitle="@string/dialog_title_desktop_preference"
             android:entries="@array/desktop_entries"
             android:entryValues="@array/desktop_values"
