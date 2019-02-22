@@ -234,5 +234,4 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_STORAGE);
         }
     }
-
 }

@@ -29,5 +29,4 @@ public class AboutActivity extends AppCompatActivity {
         super.onResume();
         setTitle(R.string.title_activity_about);
     }
-
 }

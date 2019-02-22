@@ -75,5 +75,4 @@ public class ActionReceiver extends BroadcastReceiver {
             }
         }
     }
-
 }

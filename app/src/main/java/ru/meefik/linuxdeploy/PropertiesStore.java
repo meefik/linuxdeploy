@@ -89,5 +89,4 @@ class PropertiesStore extends ParamUtils {
         }
         return value;
     }
-
 }

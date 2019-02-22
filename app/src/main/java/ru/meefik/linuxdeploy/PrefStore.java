@@ -1,6 +1,5 @@
 package ru.meefik.linuxdeploy;
 
-import android.annotation.SuppressLint;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -223,7 +222,7 @@ public class PrefStore {
      * @return font size
      */
     static int getFontSize(Context c) {
-        Integer fontSizeInt;
+        int fontSizeInt;
         String fontSize = SETTINGS.get(c, "fontsize");
         try {
             fontSizeInt = Integer.parseInt(fontSize);
@@ -242,7 +241,7 @@ public class PrefStore {
      * @return number of lines
      */
     static int getMaxLines(Context c) {
-        Integer maxLinesInt;
+        int maxLinesInt;
         String maxLines = SETTINGS.get(c, "maxlines");
         try {
             maxLinesInt = Integer.parseInt(maxLines);
@@ -551,7 +550,7 @@ public class PrefStore {
      * @return delay in ms
      */
     static int getXsdlDelay(Context c) {
-        Integer deplayInt;
+        int deplayInt;
         String delay = PROPERTIES.get(c, "x11_sdl_delay");
         try {
             deplayInt = Integer.parseInt(delay);
@@ -621,7 +620,6 @@ public class PrefStore {
         config.locale = locale;
         c.getResources().updateConfiguration(config, c.getResources().getDisplayMetrics());
     }
-
 
     /**
      * Load list of mount points
@@ -698,7 +696,6 @@ public class PrefStore {
      * @param c context
      * @return screen width
      */
-    @SuppressLint("NewApi")
     static Integer getScreenWidth(Context c) {
         int width;
         WindowManager wm = (WindowManager) c.getSystemService(Context.WINDOW_SERVICE);
@@ -715,7 +712,6 @@ public class PrefStore {
      * @param c context
      * @return screen height
      */
-    @SuppressLint("NewApi")
     static Integer getScreenHeight(Context c) {
         int height;
         WindowManager wm = (WindowManager) c.getSystemService(Context.WINDOW_SERVICE);
@@ -831,5 +827,4 @@ public class PrefStore {
                 .getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.cancel(NOTIFY_ID);
     }
-
 }

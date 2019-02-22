@@ -1,6 +1,5 @@
 package ru.meefik.linuxdeploy;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -93,12 +92,11 @@ public class ProfilesActivity extends AppCompatActivity implements OnTouchListen
         return -1;
     }
 
-    @SuppressLint("RestrictedApi")
     private void addDialog() {
         final EditText input = new EditText(this);
         new AlertDialog.Builder(this)
                 .setTitle(R.string.new_profile_title)
-                .setView(input, 16, 32, 16, 0)
+                .setView(input)
                 .setPositiveButton(android.R.string.ok,
                         new DialogInterface.OnClickListener() {
                             @Override
@@ -119,7 +117,6 @@ public class ProfilesActivity extends AppCompatActivity implements OnTouchListen
                         }).show();
     }
 
-    @SuppressLint("RestrictedApi")
     private void editDialog() {
         final EditText input = new EditText(this);
         final int pos = listView.getCheckedItemPosition();
@@ -129,7 +126,7 @@ public class ProfilesActivity extends AppCompatActivity implements OnTouchListen
             input.setSelection(input.getText().length());
             new AlertDialog.Builder(this)
                     .setTitle(R.string.edit_profile_title)
-                    .setView(input, 16, 32, 16, 0)
+                    .setView(input)
                     .setPositiveButton(android.R.string.ok,
                             new DialogInterface.OnClickListener() {
                                 @Override
@@ -187,7 +184,6 @@ public class ProfilesActivity extends AppCompatActivity implements OnTouchListen
         }
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -262,11 +258,9 @@ public class ProfilesActivity extends AppCompatActivity implements OnTouchListen
         listView.setItemChecked(getPosition(profile), true);
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         gd.onTouchEvent(event);
         return false;
     }
-
 }

@@ -16,27 +16,24 @@ public class ExecService extends JobIntentService {
 
     @Override
     protected void onHandleWork(@NonNull Intent intent) {
-        if (intent != null) {
-            final String cmd = intent.getStringExtra("cmd");
-            final String args = intent.getStringExtra("args");
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    switch (cmd) {
-                        case "telnetd":
-                            EnvUtils.telnetd(getBaseContext(), args);
-                            break;
-                        case "httpd":
-                            EnvUtils.httpd(getBaseContext(), args);
-                            break;
-                        default:
-                            PrefStore.showNotification(getBaseContext(), null);
-                            EnvUtils.cli(getBaseContext(), cmd, args);
-                    }
+        final String cmd = intent.getStringExtra("cmd");
+        final String args = intent.getStringExtra("args");
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                switch (cmd) {
+                    case "telnetd":
+                        EnvUtils.telnetd(getBaseContext(), args);
+                        break;
+                    case "httpd":
+                        EnvUtils.httpd(getBaseContext(), args);
+                        break;
+                    default:
+                        PrefStore.showNotification(getBaseContext(), null);
+                        EnvUtils.cli(getBaseContext(), cmd, args);
                 }
-            });
-            thread.start();
-        }
+            }
+        });
+        thread.start();
     }
-
 }

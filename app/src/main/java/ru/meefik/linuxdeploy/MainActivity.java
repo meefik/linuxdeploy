@@ -1,7 +1,6 @@
 package ru.meefik.linuxdeploy;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -94,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements
         output.setMovementMethod(LinkMovementMethod.getInstance());
 
         // WiFi lock init
-        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(android.content.Context.WIFI_SERVICE);
         wifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL, getPackageName());
 
         // Wake lock
@@ -178,7 +177,6 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -473,5 +471,4 @@ public class MainActivity extends AppCompatActivity implements
             }
         }
     }
-
 }

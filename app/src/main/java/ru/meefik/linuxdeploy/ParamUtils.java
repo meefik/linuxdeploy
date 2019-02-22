@@ -179,5 +179,4 @@ class ParamUtils {
         }
         prefEditor.apply();
     }
-
 }

@@ -325,7 +325,5 @@ public class PropertiesActivity extends AppCompatPreferenceActivity implements
                 }
             }
         }
-
     }
-
 }

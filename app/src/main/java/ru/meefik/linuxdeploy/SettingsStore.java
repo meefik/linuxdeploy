@@ -20,5 +20,4 @@ class SettingsStore extends ParamUtils {
     public String fixInputParam(Context c, String key, String value) {
         return value;
     }
-
 }
