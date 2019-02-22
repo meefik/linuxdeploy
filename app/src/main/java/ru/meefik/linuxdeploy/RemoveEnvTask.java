@@ -4,32 +4,38 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import java.lang.ref.WeakReference;
+
 class RemoveEnvTask extends AsyncTask<String, Void, Boolean> {
 
     private ProgressDialog dialog;
-    private Context context;
+    private WeakReference<Context> contextWeakReference;
 
     RemoveEnvTask(Context c) {
-        context = c;
-        dialog = new ProgressDialog(context);
-        dialog.setMessage(context.getString(R.string.removing_env_message));
+        contextWeakReference = new WeakReference<>(c);
     }
 
     @Override
     protected void onPreExecute() {
-        dialog.show();
+        Context context = contextWeakReference.get();
+        if (context != null) {
+            dialog = new ProgressDialog(context);
+            dialog.setMessage(context.getString(R.string.removing_env_message));
+            dialog.show();
+        }
     }
 
     @Override
     protected Boolean doInBackground(String... params) {
-        return EnvUtils.removeEnv(context);
+        Context context = contextWeakReference.get();
+        return context != null ? EnvUtils.removeEnv(context) : null;
     }
 
     @Override
     protected void onPostExecute(Boolean success) {
-        try {
+        Context context = contextWeakReference.get();
+        if (context != null) {
             if (dialog.isShowing()) dialog.dismiss();
-        } catch (Exception ignored) {
         }
     }
 }

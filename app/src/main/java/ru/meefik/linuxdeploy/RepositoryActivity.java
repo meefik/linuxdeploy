@@ -1,8 +1,6 @@
 package ru.meefik.linuxdeploy;
 
-import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -29,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -86,14 +85,13 @@ public class RepositoryActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    @SuppressLint("RestrictedApi")
     private void changeUrlDialog() {
         final EditText input = new EditText(this);
         input.setText(PrefStore.getRepositoryUrl(this));
         input.setSelection(input.getText().length());
         new AlertDialog.Builder(this)
                 .setTitle(R.string.repository_change_url_title)
-                .setView(input, 16, 32, 16, 0)
+                .setView(input)
                 .setPositiveButton(android.R.string.ok,
                         new DialogInterface.OnClickListener() {
                             @Override
@@ -227,21 +225,25 @@ public class RepositoryActivity extends AppCompatActivity {
         return false;
     }
 
-    class RetrieveIndexTask extends AsyncTask<String, Void, Boolean> {
+    static class RetrieveIndexTask extends AsyncTask<String, Void, Boolean> {
 
         private ProgressDialog dialog;
-        private Context context;
+        private WeakReference<RepositoryActivity> contextWeakReference;
 
-        RetrieveIndexTask(Context context) {
-            this.context = context;
-            this.dialog = new ProgressDialog(context);
+        RetrieveIndexTask(RepositoryActivity context) {
+            this.contextWeakReference = new WeakReference<>(context);
         }
 
         @Override
         protected void onPreExecute() {
-            dialog.setMessage(context.getString(R.string.loading_message));
-            dialog.show();
-            profiles.clear();
+            RepositoryActivity context = contextWeakReference.get();
+
+            if (context != null) {
+                dialog = new ProgressDialog(context);
+                dialog.setMessage(context.getString(R.string.loading_message));
+                dialog.show();
+                context.profiles.clear();
+            }
         }
 
         @Override
@@ -257,12 +259,16 @@ public class RepositoryActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Boolean success) {
-            if (dialog.isShowing()) {
-                dialog.dismiss();
-            }
-            adapter.notifyDataSetChanged();
-            if (!success) {
-                Toast.makeText(context, R.string.toast_loading_error, Toast.LENGTH_SHORT).show();
+            RepositoryActivity context = contextWeakReference.get();
+
+            if (context != null) {
+                if (dialog.isShowing()) {
+                    dialog.dismiss();
+                }
+                context.adapter.notifyDataSetChanged();
+                if (!success) {
+                    Toast.makeText(context, R.string.toast_loading_error, Toast.LENGTH_SHORT).show();
+                }
             }
         }
 
@@ -275,7 +281,12 @@ public class RepositoryActivity extends AppCompatActivity {
                 Map<String, String> map = new HashMap<>();
                 while ((line = reader.readLine()) != null) {
                     if (line.isEmpty()) {
-                        if (!map.isEmpty()) profiles.add(map);
+                        if (!map.isEmpty()) {
+                            RepositoryActivity context = contextWeakReference.get();
+                            if (context != null) {
+                                context.profiles.add(map);
+                            }
+                        }
                         map = new HashMap<>();
                         continue;
                     }
@@ -292,21 +303,24 @@ public class RepositoryActivity extends AppCompatActivity {
         }
     }
 
-    class ImportProfileTask extends AsyncTask<String, Void, Boolean> {
+    static class ImportProfileTask extends AsyncTask<String, Void, Boolean> {
 
         private ProgressDialog dialog;
-        private Context context;
+        private WeakReference<RepositoryActivity> contextWeakReference;
         private String profile;
 
-        ImportProfileTask(Context context) {
-            this.context = context;
-            this.dialog = new ProgressDialog(context);
+        ImportProfileTask(RepositoryActivity context) {
+            this.contextWeakReference = new WeakReference<>(context);
         }
 
         @Override
         protected void onPreExecute() {
-            dialog.setMessage(context.getString(R.string.loading_message));
-            dialog.show();
+            RepositoryActivity context = contextWeakReference.get();
+            if (context != null) {
+                dialog = new ProgressDialog(context);
+                dialog.setMessage(context.getString(R.string.loading_message));
+                dialog.show();
+            }
         }
 
         @Override
@@ -322,35 +336,40 @@ public class RepositoryActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Boolean success) {
-            if (dialog.isShowing()) {
-                dialog.dismiss();
-            }
-            if (success) {
-                PrefStore.changeProfile(getApplicationContext(), profile);
-                finish();
-            } else {
-                Toast.makeText(context, R.string.toast_loading_error, Toast.LENGTH_SHORT).show();
+            RepositoryActivity context = contextWeakReference.get();
+            if (context != null) {
+                if (dialog.isShowing()) {
+                    dialog.dismiss();
+                }
+                if (success) {
+                    PrefStore.changeProfile(context, profile);
+                    context.finish();
+                } else {
+                    Toast.makeText(context, R.string.toast_loading_error, Toast.LENGTH_SHORT).show();
+                }
             }
         }
 
         private void downloadUrlAndImport(String url, String profile) throws IOException {
-            String conf = PrefStore.getEnvDir(context) + "/config/" + profile + ".conf";
-            InputStream in = null;
-            OutputStream out = null;
-            try {
-                URL u = new URL(new URL(url), "config/" + profile + ".conf");
-                in = u.openStream();
-                out = new FileOutputStream(conf);
-                byte[] buffer = new byte[1024];
-                int read;
-                while ((read = in.read(buffer)) != -1) {
-                    out.write(buffer, 0, read);
+            RepositoryActivity context = contextWeakReference.get();
+            if (context != null) {
+                String conf = PrefStore.getEnvDir(context) + "/config/" + profile + ".conf";
+                InputStream in = null;
+                OutputStream out = null;
+                try {
+                    URL u = new URL(new URL(url), "config/" + profile + ".conf");
+                    in = u.openStream();
+                    out = new FileOutputStream(conf);
+                    byte[] buffer = new byte[1024];
+                    int read;
+                    while ((read = in.read(buffer)) != -1) {
+                        out.write(buffer, 0, read);
+                    }
+                } finally {
+                    if (in != null) in.close();
+                    if (out != null) out.close();
                 }
-            } finally {
-                if (in != null) in.close();
-                if (out != null) out.close();
             }
         }
     }
-
 }
