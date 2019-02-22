@@ -184,19 +184,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setCancelable(false)
                 .setPositiveButton(android.R.string.yes,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                new UpdateEnvTask(context).execute();
-                            }
-                        })
+                        (dialog, id) -> new UpdateEnvTask(context).execute())
                 .setNegativeButton(android.R.string.no,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                            }
-                        }).show();
+                        (dialog, id) -> dialog.cancel()).show();
     }
 
     private void removeEnvDialog() {
@@ -207,19 +197,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setCancelable(false)
                 .setPositiveButton(android.R.string.yes,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                new RemoveEnvTask(context).execute();
-                            }
-                        })
+                        (dialog, id) -> new RemoveEnvTask(context).execute())
                 .setNegativeButton(android.R.string.no,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                            }
-                        }).show();
+                        (dialog, id) -> dialog.cancel()).show();
     }
 
     /**

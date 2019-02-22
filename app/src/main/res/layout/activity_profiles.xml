@@ -12,6 +12,6 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="false"
-        android:choiceMode="singleChoice"></ListView>
+        android:choiceMode="singleChoice" />
 
 </RelativeLayout>

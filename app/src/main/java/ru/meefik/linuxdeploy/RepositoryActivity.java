@@ -58,29 +58,14 @@ public class RepositoryActivity extends AppCompatActivity {
                 .setMessage(message)
                 .setCancelable(false)
                 .setNegativeButton(android.R.string.no,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                dialog.cancel();
-                            }
-                        });
+                        (dialog13, whichButton) -> dialog13.cancel());
         if (profile.get("PROTECTED") != null && !isDonated()) {
             dialog.setPositiveButton(R.string.repository_purchase_button,
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            startActivity(new Intent(Intent.ACTION_VIEW,
-                                    Uri.parse("https://play.google.com/store/apps/details?id=ru.meefik.donate")));
-                        }
-                    });
+                    (dialog12, whichButton) -> startActivity(new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("https://play.google.com/store/apps/details?id=ru.meefik.donate"))));
         } else {
             dialog.setPositiveButton(R.string.repository_import_button,
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            importProfile(name);
-                        }
-                    });
+                    (dialog1, whichButton) -> importProfile(name));
         }
         dialog.show();
     }
@@ -93,23 +78,13 @@ public class RepositoryActivity extends AppCompatActivity {
                 .setTitle(R.string.repository_change_url_title)
                 .setView(input)
                 .setPositiveButton(android.R.string.ok,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog,
-                                                int whichButton) {
-                                String text = input.getText().toString();
-                                if (text.isEmpty()) text = getString(R.string.repository_url);
-                                PrefStore.setRepositoryUrl(getApplicationContext(), text);
-                                retrieveIndex();
-                            }
+                        (dialog, whichButton) -> {
+                            String text = input.getText().toString();
+                            if (text.isEmpty()) text = getString(R.string.repository_url);
+                            PrefStore.setRepositoryUrl(getApplicationContext(), text);
+                            retrieveIndex();
                         }).setNegativeButton(android.R.string.cancel,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog,
-                                        int whichButton) {
-                        dialog.cancel();
-                    }
-                }).show();
+                (dialog, whichButton) -> dialog.cancel()).show();
     }
 
     private void retrieveIndex() {
@@ -180,11 +155,9 @@ public class RepositoryActivity extends AppCompatActivity {
         listView.setAdapter(adapter);
 
         // Click listener
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Map profile = (Map) parent.getItemAtPosition(position);
-                importDialog(profile);
-            }
+        listView.setOnItemClickListener((parent, view, position, id) -> {
+            Map profile = (Map) parent.getItemAtPosition(position);
+            importDialog(profile);
         });
     }
 

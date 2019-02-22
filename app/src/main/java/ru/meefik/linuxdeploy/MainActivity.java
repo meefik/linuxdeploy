@@ -1,7 +1,6 @@
 package ru.meefik.linuxdeploy;
 
 import android.Manifest;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -53,19 +52,13 @@ public class MainActivity extends AppCompatActivity implements
     public static void showLog(final String log) {
         if (output == null || scroll == null) return;
         // show log in TextView
-        output.post(new Runnable() {
-            @Override
-            public void run() {
-                output.setText(log);
-                // scroll TextView to bottom
-                scroll.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        scroll.fullScroll(View.FOCUS_DOWN);
-                        scroll.clearFocus();
-                    }
-                });
-            }
+        output.post(() -> {
+            output.setText(log);
+            // scroll TextView to bottom
+            scroll.post(() -> {
+                scroll.fullScroll(View.FOCUS_DOWN);
+                scroll.clearFocus();
+            });
         });
     }
 
@@ -280,42 +273,27 @@ public class MainActivity extends AppCompatActivity implements
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setCancelable(false)
                 .setPositiveButton(android.R.string.yes,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                // actions
-                                Handler h = new Handler();
-                                if (PrefStore.isXserver(getApplicationContext())
-                                        && PrefStore.isXsdl(getApplicationContext())) {
-                                    PackageManager pm = getPackageManager();
-                                    Intent intent = pm.getLaunchIntentForPackage("x.org.server");
-                                    if (intent != null) startActivity(intent);
-                                    h.postDelayed(new Runnable() {
-                                        public void run() {
-                                            EnvUtils.execService(getBaseContext(), "start", "-m");
-                                        }
-                                    }, PrefStore.getXsdlDelay(getApplicationContext()));
-                                } else if (PrefStore.isFramebuffer(getApplicationContext())) {
-                                    EnvUtils.execService(getBaseContext(), "start", "-m");
-                                    h.postDelayed(new Runnable() {
-                                        public void run() {
-                                            Intent intent = new Intent(getApplicationContext(),
-                                                    FullscreenActivity.class);
-                                            startActivity(intent);
-                                        }
-                                    }, 1500);
-                                } else {
-                                    EnvUtils.execService(getBaseContext(), "start", "-m");
-                                }
+                        (dialog, id) -> {
+                            // actions
+                            Handler h = new Handler();
+                            if (PrefStore.isXserver(getApplicationContext())
+                                    && PrefStore.isXsdl(getApplicationContext())) {
+                                PackageManager pm = getPackageManager();
+                                Intent intent = pm.getLaunchIntentForPackage("x.org.server");
+                                if (intent != null) startActivity(intent);
+                                h.postDelayed(() -> EnvUtils.execService(getBaseContext(), "start", "-m"), PrefStore.getXsdlDelay(getApplicationContext()));
+                            } else if (PrefStore.isFramebuffer(getApplicationContext())) {
+                                EnvUtils.execService(getBaseContext(), "start", "-m");
+                                h.postDelayed(() -> {
+                                    Intent intent = new Intent(getApplicationContext(),
+                                            FullscreenActivity.class);
+                                    startActivity(intent);
+                                }, 1500);
+                            } else {
+                                EnvUtils.execService(getBaseContext(), "start", "-m");
                             }
                         }).setNegativeButton(android.R.string.no,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog,
-                                        int id) {
-                        dialog.cancel();
-                    }
-                }).show();
+                (dialog, id) -> dialog.cancel()).show();
     }
 
     /**
@@ -329,18 +307,8 @@ public class MainActivity extends AppCompatActivity implements
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setCancelable(false)
                 .setPositiveButton(android.R.string.yes,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                EnvUtils.execService(getBaseContext(), "stop", "-u");
-                            }
-                        }).setNegativeButton(android.R.string.no,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                }).show();
+                        (dialog, id) -> EnvUtils.execService(getBaseContext(), "stop", "-u")).setNegativeButton(android.R.string.no,
+                (dialog, id) -> dialog.cancel()).show();
     }
 
     /**
@@ -363,19 +331,9 @@ public class MainActivity extends AppCompatActivity implements
                 .setMessage(R.string.message_install_dialog)
                 .setCancelable(false)
                 .setPositiveButton(android.R.string.yes,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                EnvUtils.execService(getBaseContext(), "deploy", null);
-                            }
-                        })
+                        (dialog, id) -> EnvUtils.execService(getApplicationContext(), "deploy", null))
                 .setNegativeButton(android.R.string.no,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                            }
-                        }).show();
+                        (dialog, id) -> dialog.cancel()).show();
     }
 
     /**
@@ -387,19 +345,9 @@ public class MainActivity extends AppCompatActivity implements
                 .setMessage(R.string.message_configure_dialog)
                 .setCancelable(false)
                 .setPositiveButton(android.R.string.yes,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                EnvUtils.execService(getBaseContext(), "deploy", "-m -n bootstrap");
-                            }
-                        })
+                        (dialog, id) -> EnvUtils.execService(getBaseContext(), "deploy", "-m -n bootstrap"))
                 .setNegativeButton(android.R.string.no,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                            }
-                        }).show();
+                        (dialog, id) -> dialog.cancel()).show();
     }
 
     /**
@@ -414,19 +362,9 @@ public class MainActivity extends AppCompatActivity implements
                 .setCancelable(false)
                 .setView(input)
                 .setPositiveButton(android.R.string.yes,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                EnvUtils.execService(getBaseContext(), "export", input.getText().toString());
-                            }
-                        })
+                        (dialog, id) -> EnvUtils.execService(getBaseContext(), "export", input.getText().toString()))
                 .setNegativeButton(android.R.string.no,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                            }
-                        }).show();
+                        (dialog, id) -> dialog.cancel()).show();
     }
 
     /**
