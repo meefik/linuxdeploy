@@ -5,8 +5,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Point;
 import android.text.TextUtils;
@@ -40,14 +38,7 @@ public class PrefStore {
      * @return version, format versionName-versionCode
      */
     static String getVersion(Context c) {
-        String version = "";
-        try {
-            PackageInfo pi = c.getPackageManager().getPackageInfo(c.getPackageName(), 0);
-            version = pi.versionName + "-" + pi.versionCode;
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        return version;
+        return BuildConfig.VERSION_NAME + "-" + BuildConfig.VERSION_CODE;
     }
 
     /**
