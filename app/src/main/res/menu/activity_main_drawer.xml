@@ -1,37 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group
-        android:id="@+id/menu_top"
-        android:checkableBehavior="none">
+    <group android:id="@+id/menu_top">
         <item
             android:id="@+id/nav_profiles"
-            android:icon="@android:drawable/ic_menu_slideshow"
+            android:icon="@drawable/ic_computer_black_24dp"
             android:title="@string/nav_profiles" />
         <item
             android:id="@+id/nav_repository"
-            android:icon="@android:drawable/ic_menu_search"
+            android:icon="@drawable/ic_search_black_24dp"
             android:title="@string/nav_repository" />
         <item
             android:id="@+id/nav_terminal"
-            android:icon="@android:drawable/ic_menu_set_as"
+            android:icon="@drawable/ic_exit_to_app_black_24dp"
             android:title="@string/nav_terminal" />
     </group>
 
-    <group
-        android:id="@+id/menu_bottom"
-        android:checkableBehavior="none">
+    <group android:id="@+id/menu_bottom">
         <item
             android:id="@+id/nav_settings"
-            android:icon="@android:drawable/ic_menu_manage"
+            android:icon="@drawable/ic_settings_black_24dp"
             android:title="@string/nav_settings" />
         <item
             android:id="@+id/nav_about"
-            android:icon="@android:drawable/ic_menu_help"
+            android:icon="@drawable/ic_help_black_24dp"
             android:title="@string/nav_about" />
         <item
             android:id="@+id/nav_exit"
-            android:icon="@android:drawable/ic_menu_close_clear_cancel"
+            android:icon="@drawable/ic_close_black_24dp"
             android:title="@string/nav_exit" />
     </group>
 

@@ -20,8 +20,4 @@
         <item name="ic_action_more">@drawable/ic_action_more_light</item>
         <item name="color_toolbar_border">@color/toolbarLight</item>
     </style>
-
-    <style name="NavigationViewTheme" parent="Widget.Design.NavigationView">
-        <item name="android:textSize">18sp</item>
-    </style>
 </resources>
