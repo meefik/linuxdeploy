@@ -15,9 +15,10 @@ import android.preference.Preference;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 public class SettingsActivity extends AppCompatPreferenceActivity implements
         OnSharedPreferenceChangeListener, Preference.OnPreferenceClickListener {
@@ -183,19 +184,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setCancelable(false)
                 .setPositiveButton(android.R.string.yes,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                new UpdateEnvTask(context).execute();
-                            }
-                        })
+                        (dialog, id) -> new UpdateEnvTask(context).execute())
                 .setNegativeButton(android.R.string.no,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                            }
-                        }).show();
+                        (dialog, id) -> dialog.cancel()).show();
     }
 
     private void removeEnvDialog() {
@@ -206,19 +197,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setCancelable(false)
                 .setPositiveButton(android.R.string.yes,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                new RemoveEnvTask(context).execute();
-                            }
-                        })
+                        (dialog, id) -> new RemoveEnvTask(context).execute())
                 .setNegativeButton(android.R.string.no,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                            }
-                        }).show();
+                        (dialog, id) -> dialog.cancel()).show();
     }
 
     /**
@@ -233,5 +214,4 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_STORAGE);
         }
     }
-
 }

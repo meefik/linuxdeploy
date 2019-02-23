@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="@string/x11_preferences" >
+    <PreferenceCategory android:title="@string/x11_preferences">
         <EditTextPreference
             android:defaultValue="@string/x11_display"
+            android:dialogTitle="@string/dialog_title_x11_display_preference"
             android:inputType="numberDecimal"
             android:key="x11_display"
             android:summary="@string/x11_display"
-            android:title="@string/title_x11_display_preference"
-            android:dialogTitle="@string/dialog_title_x11_display_preference" />
+            android:title="@string/title_x11_display_preference" />
         <EditTextPreference
             android:defaultValue="@string/x11_host"
+            android:dialogTitle="@string/dialog_title_x11_host_preference"
             android:key="x11_host"
             android:summary="@string/x11_host"
-            android:title="@string/title_x11_host_preference"
-            android:dialogTitle="@string/dialog_title_x11_host_preference" />
+            android:title="@string/title_x11_host_preference" />
         <CheckBoxPreference
             android:defaultValue="@string/x11_sdl"
             android:key="x11_sdl"
             android:summary="@string/summary_x11_sdl_preference"
             android:title="@string/title_x11_sdl_preference" />
         <EditTextPreference
-            android:dependency="x11_sdl"
             android:defaultValue="@string/x11_sdl_delay"
+            android:dependency="x11_sdl"
+            android:dialogTitle="@string/dialog_title_x11_sdl_delay_preference"
             android:inputType="numberDecimal"
             android:key="x11_sdl_delay"
             android:summary="@string/x11_sdl_delay"
-            android:title="@string/title_x11_sdl_delay_preference"
-            android:dialogTitle="@string/dialog_title_x11_sdl_delay_preference" />
+            android:title="@string/title_x11_sdl_delay_preference" />
     </PreferenceCategory>
 
 </PreferenceScreen>

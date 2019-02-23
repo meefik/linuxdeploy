@@ -1,11 +1,8 @@
 package ru.meefik.linuxdeploy;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,27 +18,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
 public class ProfilesActivity extends AppCompatActivity implements OnTouchListener {
 
     private ListView listView;
     private List<String> listItems = new ArrayList<>();
     private ArrayAdapter<String> adapter;
     private GestureDetector gd;
-
-    /**
-     * Get position by key
-     *
-     * @param key
-     * @return position
-     */
-    private int getPosition(String key) {
-        int pos = 0;
-        for (String item : listItems) {
-            if (item.equals(key)) return pos;
-            pos++;
-        }
-        return -1;
-    }
 
     /**
      * Rename conf file associated with the profile
@@ -92,33 +77,38 @@ public class ProfilesActivity extends AppCompatActivity implements OnTouchListen
         return profiles;
     }
 
-    @SuppressLint("RestrictedApi")
+    /**
+     * Get position by key
+     *
+     * @param key
+     * @return position
+     */
+    private int getPosition(String key) {
+        int pos = 0;
+        for (String item : listItems) {
+            if (item.equals(key)) return pos;
+            pos++;
+        }
+        return -1;
+    }
+
     private void addDialog() {
         final EditText input = new EditText(this);
         new AlertDialog.Builder(this)
                 .setTitle(R.string.new_profile_title)
-                .setView(input, 16, 32, 16, 0)
+                .setView(input)
                 .setPositiveButton(android.R.string.ok,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                String text = input.getText().toString();
-                                if (text.length() > 0) {
-                                    listItems.add(text.replaceAll("[^A-Za-z0-9_\\-]", "_"));
-                                    adapter.notifyDataSetChanged();
-                                }
+                        (dialog, whichButton) -> {
+                            String text = input.getText().toString();
+                            if (text.length() > 0) {
+                                listItems.add(text.replaceAll("[^A-Za-z0-9_\\-]", "_"));
+                                adapter.notifyDataSetChanged();
                             }
                         })
                 .setNegativeButton(android.R.string.cancel,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                dialog.cancel();
-                            }
-                        }).show();
+                        (dialog, whichButton) -> dialog.cancel()).show();
     }
 
-    @SuppressLint("RestrictedApi")
     private void editDialog() {
         final EditText input = new EditText(this);
         final int pos = listView.getCheckedItemPosition();
@@ -128,29 +118,21 @@ public class ProfilesActivity extends AppCompatActivity implements OnTouchListen
             input.setSelection(input.getText().length());
             new AlertDialog.Builder(this)
                     .setTitle(R.string.edit_profile_title)
-                    .setView(input, 16, 32, 16, 0)
+                    .setView(input)
                     .setPositiveButton(android.R.string.ok,
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    String text = input.getText().toString();
-                                    if (text.length() > 0) {
-                                        String profileNew = text.replaceAll("[^A-Za-z0-9_\\-]", "_");
-                                        if (!profileOld.equals(profileNew)) {
-                                            renameConf(getApplicationContext(), profileOld, profileNew);
-                                            listItems.set(pos, profileNew);
-                                            adapter.notifyDataSetChanged();
-                                        }
+                            (dialog, whichButton) -> {
+                                String text = input.getText().toString();
+                                if (text.length() > 0) {
+                                    String profileNew = text.replaceAll("[^A-Za-z0-9_\\-]", "_");
+                                    if (!profileOld.equals(profileNew)) {
+                                        renameConf(getApplicationContext(), profileOld, profileNew);
+                                        listItems.set(pos, profileNew);
+                                        adapter.notifyDataSetChanged();
                                     }
                                 }
                             })
                     .setNegativeButton(android.R.string.cancel,
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    dialog.cancel();
-                                }
-                            }).show();
+                            (dialog, whichButton) -> dialog.cancel()).show();
         }
     }
 
@@ -163,30 +145,21 @@ public class ProfilesActivity extends AppCompatActivity implements OnTouchListen
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .setCancelable(false)
                     .setPositiveButton(android.R.string.yes,
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    String key = listItems.get(pos);
-                                    listItems.remove(pos);
-                                    int last = listItems.size() - 1;
-                                    if (last < 0) listItems.add(getString(R.string.profile));
-                                    if (last >= 0 && pos > last)
-                                        listView.setItemChecked(last, true);
-                                    adapter.notifyDataSetChanged();
-                                    removeConf(getApplicationContext(), key);
-                                }
+                            (dialog, whichButton) -> {
+                                String key = listItems.get(pos);
+                                listItems.remove(pos);
+                                int last = listItems.size() - 1;
+                                if (last < 0) listItems.add(getString(R.string.profile));
+                                if (last >= 0 && pos > last)
+                                    listView.setItemChecked(last, true);
+                                adapter.notifyDataSetChanged();
+                                removeConf(getApplicationContext(), key);
                             })
                     .setNegativeButton(android.R.string.no,
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    dialog.cancel();
-                                }
-                            }).show();
+                            (dialog, whichButton) -> dialog.cancel()).show();
         }
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -261,11 +234,9 @@ public class ProfilesActivity extends AppCompatActivity implements OnTouchListen
         listView.setItemChecked(getPosition(profile), true);
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         gd.onTouchEvent(event);
         return false;
     }
-
 }

@@ -1,9 +1,10 @@
 <resources>
-    <attr name="ic_action_start" format="reference"/>
-    <attr name="ic_action_stop" format="reference"/>
-    <attr name="ic_action_properties" format="reference"/>
-    <attr name="ic_action_more" format="reference"/>
-    <attr name="color_toolbar_border" format="reference"/>
+    <attr name="ic_action_start" format="reference" />
+    <attr name="ic_action_stop" format="reference" />
+    <attr name="ic_action_properties" format="reference" />
+    <attr name="ic_action_more" format="reference" />
+    <attr name="color_toolbar_border" format="reference" />
+
     <style name="DarkTheme" parent="Theme.AppCompat">
         <item name="ic_action_start">@drawable/ic_action_start_dark</item>
         <item name="ic_action_stop">@drawable/ic_action_stop_dark</item>
@@ -11,14 +12,12 @@
         <item name="ic_action_more">@drawable/ic_action_more_dark</item>
         <item name="color_toolbar_border">@color/toolbarDark</item>
     </style>
+
     <style name="LightTheme" parent="Theme.AppCompat.Light">
         <item name="ic_action_start">@drawable/ic_action_start_light</item>
         <item name="ic_action_stop">@drawable/ic_action_stop_light</item>
         <item name="ic_action_properties">@drawable/ic_action_properties_light</item>
         <item name="ic_action_more">@drawable/ic_action_more_light</item>
         <item name="color_toolbar_border">@color/toolbarLight</item>
-    </style>
-    <style name="NavigationViewTheme" parent="Widget.Design.NavigationView">
-        <item name="android:textSize">18sp</item>
     </style>
 </resources>

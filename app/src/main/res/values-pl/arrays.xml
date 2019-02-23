@@ -1,5 +1,5 @@
 <resources>
-    
+
     <string-array name="theme_entries">
         <item>Ciemny</item>
         <item>Jasny</item>
@@ -23,5 +23,5 @@
         <item>Wstrzymaj</item>
         <item>Zatrzymaj</item>
     </string-array>
-    
+
 </resources>

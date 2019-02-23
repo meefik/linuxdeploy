@@ -1,5 +1,5 @@
 <resources>
-  
+
     <string-array name="theme_entries">
         <item>Gelap</item>
         <item>Terang</item>
@@ -23,5 +23,5 @@
         <item>Jeda</item>
         <item>Berhenti</item>
     </string-array>
-    
+
 </resources>

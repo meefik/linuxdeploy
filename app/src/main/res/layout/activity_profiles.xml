@@ -2,17 +2,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ProfilesActivity" >
+    tools:context=".ProfilesActivity">
 
     <ListView
         android:id="@+id/profilesView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="false"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:choiceMode="singleChoice" >
-    </ListView>
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="false"
+        android:choiceMode="singleChoice" />
 
 </RelativeLayout>

@@ -2,16 +2,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RepositoryActivity" >
+    tools:context=".RepositoryActivity">
 
     <ListView
         android:id="@+id/repositoryView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="false"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true" >
-    </ListView>
+        android:layout_alignParentBottom="false" />
 
 </RelativeLayout>

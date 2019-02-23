@@ -5,35 +5,41 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
+import java.lang.ref.WeakReference;
+
 class UpdateEnvTask extends AsyncTask<String, Void, Boolean> {
 
     private ProgressDialog dialog;
-    private Context context;
+    private WeakReference<Context> contextWeakReference;
 
     UpdateEnvTask(Context c) {
-        context = c;
-        dialog = new ProgressDialog(context);
-        dialog.setMessage(context.getString(R.string.updating_env_message));
+        contextWeakReference = new WeakReference<>(c);
     }
 
     @Override
     protected void onPreExecute() {
-        dialog.show();
+        Context context = contextWeakReference.get();
+        if (context != null) {
+            dialog = new ProgressDialog(context);
+            dialog.setMessage(context.getString(R.string.updating_env_message));
+            dialog.show();
+        }
     }
 
     @Override
     protected Boolean doInBackground(String... params) {
-        return EnvUtils.updateEnv(context);
+        Context context = contextWeakReference.get();
+        return context != null ? EnvUtils.updateEnv(context) : null;
     }
 
     @Override
     protected void onPostExecute(Boolean success) {
-        try {
+        Context context = contextWeakReference.get();
+        if (context != null) {
             if (dialog.isShowing()) dialog.dismiss();
             if (!success) {
                 Toast.makeText(context, R.string.toast_updating_env_error, Toast.LENGTH_SHORT).show();
             }
-        } catch (Exception ignored) {
         }
     }
 }

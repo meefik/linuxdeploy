@@ -22,5 +22,4 @@ public class NetworkReceiver extends BroadcastReceiver {
             }
         }
     }
-
 }

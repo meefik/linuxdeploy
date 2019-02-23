@@ -1,9 +1,10 @@
 package ru.meefik.linuxdeploy;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.text.method.LinkMovementMethod;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class AboutActivity extends AppCompatActivity {
 
@@ -12,9 +13,9 @@ public class AboutActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         PrefStore.setLocale(this);
         setContentView(R.layout.activity_about);
-        TextView atv = (TextView) findViewById(R.id.aboutTextView);
+        TextView atv = findViewById(R.id.aboutTextView);
         atv.setMovementMethod(LinkMovementMethod.getInstance());
-        TextView vtv = (TextView) findViewById(R.id.versionView);
+        TextView vtv = findViewById(R.id.versionView);
         vtv.setText(getString(R.string.app_version, PrefStore.getVersion(this)));
     }
 
@@ -28,5 +29,4 @@ public class AboutActivity extends AppCompatActivity {
         super.onResume();
         setTitle(R.string.title_activity_about);
     }
-
 }

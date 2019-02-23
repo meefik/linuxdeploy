@@ -1,17 +1,11 @@
 package ru.meefik.linuxdeploy;
 
-import android.annotation.SuppressLint;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Point;
-import android.os.Build;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
 import android.text.TextUtils;
 import android.view.Display;
 import android.view.WindowManager;
@@ -27,6 +21,9 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.TaskStackBuilder;
+
 public class PrefStore {
 
     private final static SettingsStore SETTINGS = new SettingsStore();
@@ -40,14 +37,7 @@ public class PrefStore {
      * @return version, format versionName-versionCode
      */
     static String getVersion(Context c) {
-        String version = "";
-        try {
-            PackageInfo pi = c.getPackageManager().getPackageInfo(c.getPackageName(), 0);
-            version = pi.versionName + "-" + pi.versionCode;
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        return version;
+        return BuildConfig.VERSION_NAME + "-" + BuildConfig.VERSION_CODE;
     }
 
     /**
@@ -232,7 +222,7 @@ public class PrefStore {
      * @return font size
      */
     static int getFontSize(Context c) {
-        Integer fontSizeInt;
+        int fontSizeInt;
         String fontSize = SETTINGS.get(c, "fontsize");
         try {
             fontSizeInt = Integer.parseInt(fontSize);
@@ -251,7 +241,7 @@ public class PrefStore {
      * @return number of lines
      */
     static int getMaxLines(Context c) {
-        Integer maxLinesInt;
+        int maxLinesInt;
         String maxLines = SETTINGS.get(c, "maxlines");
         try {
             maxLinesInt = Integer.parseInt(maxLines);
@@ -560,7 +550,7 @@ public class PrefStore {
      * @return delay in ms
      */
     static int getXsdlDelay(Context c) {
-        Integer deplayInt;
+        int deplayInt;
         String delay = PROPERTIES.get(c, "x11_sdl_delay");
         try {
             deplayInt = Integer.parseInt(delay);
@@ -630,7 +620,6 @@ public class PrefStore {
         config.locale = locale;
         c.getResources().updateConfiguration(config, c.getResources().getDisplayMetrics());
     }
-
 
     /**
      * Load list of mount points
@@ -707,18 +696,13 @@ public class PrefStore {
      * @param c context
      * @return screen width
      */
-    @SuppressLint("NewApi")
     static Integer getScreenWidth(Context c) {
-        int width = 0;
+        int width;
         WindowManager wm = (WindowManager) c.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
-        if (Build.VERSION.SDK_INT > 12) {
-            Point size = new Point();
-            display.getSize(size);
-            width = size.x;
-        } else {
-            width = display.getWidth(); // deprecated
-        }
+        Point size = new Point();
+        display.getSize(size);
+        width = size.x;
         return width;
     }
 
@@ -728,18 +712,13 @@ public class PrefStore {
      * @param c context
      * @return screen height
      */
-    @SuppressLint("NewApi")
     static Integer getScreenHeight(Context c) {
-        int height = 0;
+        int height;
         WindowManager wm = (WindowManager) c.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
-        if (Build.VERSION.SDK_INT > 12) {
-            Point size = new Point();
-            display.getSize(size);
-            height = size.y;
-        } else {
-            height = display.getHeight(); // deprecated
-        }
+        Point size = new Point();
+        display.getSize(size);
+        height = size.y;
         return height;
     }
 
@@ -848,5 +827,4 @@ public class PrefStore {
                 .getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.cancel(NOTIFY_ID);
     }
-
 }
