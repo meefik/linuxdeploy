@@ -8,12 +8,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [2.2.2] - 2018-11-25
 ### Changed
-- Have separate source/target inputs for mounts (#1019)
+- Have separate source/target inputs for mounts (issue #1019)
 - Replaced by dbus-run-session to dbus-launch
 
 ### Fixed
-- Problem with running "am" via unchroot (#987)
-- Problem with color in the list of mount points (#1018)
+- Problem with running "am" via unchroot (issue #987)
+- Problem with color in the list of mount points (issue #1018)
 
 ## [2.2.1] - 2018-10-29
 ### Changed

@@ -1,6 +1,6 @@
 # Linux Deploy
 
-Copyright (C) 2012-2018  Anton Skshidlevsky, [GPLv3](https://github.com/meefik/linuxdeploy/blob/master/LICENSE)
+Copyright (C) 2012-2019  Anton Skshidlevsky, [GPLv3](https://github.com/meefik/linuxdeploy/blob/master/LICENSE)
 
 This application is open source software for quick and easy installation of the operating system (OS) GNU/Linux on your Android device.
 
