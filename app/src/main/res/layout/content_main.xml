@@ -1,4 +1,4 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -9,18 +9,24 @@
 
     <ScrollView
         android:id="@+id/scrollView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/linearLayout"
-        android:layout_margin="@dimen/logger_view_border"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:clipToPadding="false"
         android:fillViewport="true"
-        android:focusable="false">
+        android:focusable="false"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/outputView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingLeft="8dp"
+            android:paddingTop="8dp"
+            android:paddingRight="8dp"
+            android:paddingBottom="8dp"
             android:textIsSelectable="true"
             android:typeface="monospace" />
 
@@ -30,58 +36,51 @@
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="?attr/color_toolbar_border"
+        android:background="?attr/colorPrimary"
         android:baselineAligned="false"
-        android:paddingTop="1dp">
+        android:weightSum="1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <Button
+            android:id="@+id/startButton"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary"
-            android:baselineAligned="false"
-            android:weightSum="1">
+            android:layout_weight="0.4"
+            android:drawableLeft="?attr/ic_action_start"
+            android:onClick="containerStart"
+            android:paddingStart="16dp"
+            android:paddingLeft="16dp"
+            android:paddingEnd="16dp"
+            android:paddingRight="16dp"
+            android:text="@string/menu_start" />
 
-            <Button
-                android:id="@+id/startButton"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.4"
-                android:drawableLeft="?attr/ic_action_start"
-                android:onClick="containerStart"
-                android:paddingStart="16dp"
-                android:paddingLeft="16dp"
-                android:paddingEnd="16dp"
-                android:paddingRight="16dp"
-                android:text="@string/menu_start" />
+        <Button
+            android:id="@+id/stopButton"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.4"
+            android:drawableLeft="?attr/ic_action_stop"
+            android:onClick="containerStop"
+            android:paddingStart="16dp"
+            android:paddingLeft="16dp"
+            android:paddingEnd="16dp"
+            android:paddingRight="16dp"
+            android:text="@string/menu_stop" />
 
-            <Button
-                android:id="@+id/stopButton"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.4"
-                android:drawableLeft="?attr/ic_action_stop"
-                android:onClick="containerStop"
-                android:paddingStart="16dp"
-                android:paddingLeft="16dp"
-                android:paddingEnd="16dp"
-                android:paddingRight="16dp"
-                android:text="@string/menu_stop" />
-
-            <ImageButton
-                android:id="@+id/propertiesButton"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.2"
-                android:contentDescription="@string/menu_properties"
-                android:onClick="containerProperties"
-                android:src="?attr/ic_action_properties" />
-
-        </LinearLayout>
+        <ImageButton
+            android:id="@+id/propertiesButton"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:contentDescription="@string/menu_properties"
+            android:onClick="containerProperties"
+            android:src="?attr/ic_action_properties" />
 
     </LinearLayout>
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,7 +1,6 @@
 package ru.meefik.linuxdeploy;
 
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -13,7 +12,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -225,6 +223,7 @@ public class RepositoryActivity extends AppCompatActivity {
             try {
                 downloadUrl(params[0]);
             } catch (Exception e) {
+                e.printStackTrace();
                 return false;
             }
             return true;
