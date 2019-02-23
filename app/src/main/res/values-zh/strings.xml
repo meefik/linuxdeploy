@@ -45,7 +45,7 @@
     <string name="toast_import_profile_error">导入配置文件出错！</string>
     <string name="toast_export_profile_success">配置文件已成功导出。</string>
     <string name="toast_export_profile_error">导出配置文件出错！</string>
-    <string name="toast_loading_error">加载数据出错！</string>
+    <string name="toast_loading_error">加载数据时出错！</string>
     <string name="toast_updating_env_error">操作环境更新错误！</string>
     <string name="confirm_profile_discard_title">删除配置文件</string>
     <string name="confirm_profile_discard_message">你确定删除这个配置文件？</string>
