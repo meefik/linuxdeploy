@@ -7,6 +7,8 @@ import android.content.Intent;
 
 import androidx.core.app.NotificationCompat;
 
+import static ru.meefik.linuxdeploy.App.SERVICE_CHANNEL_ID;
+
 public class ActionReceiver extends BroadcastReceiver {
 
     final static int NOTIFY_ID = 2;
@@ -16,7 +18,7 @@ public class ActionReceiver extends BroadcastReceiver {
     private void showNotification(Context c, int icon, String text) {
         NotificationManager mNotificationManager = (NotificationManager) c
                 .getSystemService(Context.NOTIFICATION_SERVICE);
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(c)
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(c, SERVICE_CHANNEL_ID)
                 .setSmallIcon(icon)
                 .setContentTitle(c.getString(R.string.app_name))
                 .setContentText(text);

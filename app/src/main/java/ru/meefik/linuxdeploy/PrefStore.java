@@ -24,6 +24,8 @@ import java.util.Locale;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.TaskStackBuilder;
 
+import static ru.meefik.linuxdeploy.App.SERVICE_CHANNEL_ID;
+
 public class PrefStore {
 
     private final static SettingsStore SETTINGS = new SettingsStore();
@@ -774,7 +776,7 @@ public class PrefStore {
                 .getSystemService(Context.NOTIFICATION_SERVICE);
         if (isNotification(context)) {
             setLocale(context);
-            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
+            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, SERVICE_CHANNEL_ID)
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setContentTitle(context.getString(R.string.app_name))
                     .setContentText(context.getString(R.string.notification_current_profile)
