@@ -39,7 +39,7 @@ import androidx.appcompat.app.AppCompatActivity;
 public class RepositoryActivity extends AppCompatActivity {
 
     private List<Map<String, String>> profiles = new ArrayList<>();
-    private ArrayAdapter adapter;
+    private ArrayAdapter<Map<String, String>> adapter;
 
     private boolean isDonated() {
         return getPackageManager().checkSignatures(getPackageName(), "ru.meefik.donate")
@@ -115,31 +115,33 @@ public class RepositoryActivity extends AppCompatActivity {
                 String desc = profiles.get(position).get("DESC");
                 String type = profiles.get(position).get("TYPE");
                 int iconRes = R.raw.linux;
-                switch (type) {
-                    case "archlinux":
-                        iconRes = R.raw.archlinux;
-                        break;
-                    case "centos":
-                        iconRes = R.raw.centos;
-                        break;
-                    case "debian":
-                        iconRes = R.raw.debian;
-                        break;
-                    case "fedora":
-                        iconRes = R.raw.fedora;
-                        break;
-                    case "gentoo":
-                        iconRes = R.raw.gentoo;
-                        break;
-                    case "kalilinux":
-                        iconRes = R.raw.kalilinux;
-                        break;
-                    case "slackware":
-                        iconRes = R.raw.slackware;
-                        break;
-                    case "ubuntu":
-                        iconRes = R.raw.ubuntu;
-                        break;
+                if (type != null) {
+                    switch (type) {
+                        case "archlinux":
+                            iconRes = R.raw.archlinux;
+                            break;
+                        case "centos":
+                            iconRes = R.raw.centos;
+                            break;
+                        case "debian":
+                            iconRes = R.raw.debian;
+                            break;
+                        case "fedora":
+                            iconRes = R.raw.fedora;
+                            break;
+                        case "gentoo":
+                            iconRes = R.raw.gentoo;
+                            break;
+                        case "kalilinux":
+                            iconRes = R.raw.kalilinux;
+                            break;
+                        case "slackware":
+                            iconRes = R.raw.slackware;
+                            break;
+                        case "ubuntu":
+                            iconRes = R.raw.ubuntu;
+                            break;
+                    }
                 }
                 InputStream imageStream = view.getResources().openRawResource(iconRes);
                 Bitmap bitmap = BitmapFactory.decodeStream(imageStream);

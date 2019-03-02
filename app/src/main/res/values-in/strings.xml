@@ -306,6 +306,6 @@
     <string name="summary_fb_refresh_preference">"Paksa refresh framebuffer"</string>
 
     <string name="help_text">"\n<b>Bantuan</b>\n\nAplikasi ini untuk menginstal distribusi GNU/Linux yang dipilih dan menjalankannya dalam container chroot.\n\nProsedur:\n1. Dapatkan hak istimewa superuser (root).\n2. Periksa koneksi Internet.\n3. Tentukan pilihan instalasi.\n4. Jalankan instalasi (\"Menu =&gt; Install\").\n5. Tunggu sampai penginstalan selesai.\n6. Ketuk tombol \"START\" untuk menjalankan container.\n7. Sambungkan melalui CLI, SSH, VNC, atau lainnya.\n\nUntuk informasi lebih lanjut, lihat \"Tentang\"."</string>
-    <string name="about_text">"Aplikasi ini untuk menginstal distribusi GNU/Linux yang dipilih dan menjalankannya dalam container chroot.\n\nUntuk informasi lebih lanjut, lihat <a href="https://github.com/meefik/linuxdeploy">halaman project</a>, <a href="http://4pda.ru/forum/index.php?showtopic=378043">forum</a> atau <a href="http://meefik.ru">situs pengembang</a>.\n\n© 2012-2018 Anton Skshidlevsky, GPLv3"</string>
+    <string name="about_text">"Aplikasi ini untuk menginstal distribusi GNU/Linux yang dipilih dan menjalankannya dalam container chroot.\n\nUntuk informasi lebih lanjut, lihat <a href="https://github.com/meefik/linuxdeploy">halaman project</a>, <a href="http://4pda.ru/forum/index.php?showtopic=378043">forum</a> atau <a href="http://meefik.ru">situs pengembang</a>.\n\n© 2012-2019 Anton Skshidlevsky, GPLv3"</string>
 
 </resources>

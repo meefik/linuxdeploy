@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.3.0] - 2019-03-02
+### Changed
+- Code refactoring and migrated to AndroidX (issue #1058)
+
+### Fixed
+- Fixed start on boot on Android 8.1 (issue #1041)
+- Fixed notification channels (issue #1059)
+- Fixed Arch Linux bootstrap (issue #1055)
+
 ## [2.2.2] - 2018-11-25
 ### Changed
 - Have separate source/target inputs for mounts (issue #1019)
