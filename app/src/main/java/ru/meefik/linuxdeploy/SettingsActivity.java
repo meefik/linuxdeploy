@@ -111,15 +111,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements
                 getPackageManager().setComponentEnabledSetting(bootComponent, autostartFlag,
                         PackageManager.DONT_KILL_APP);
                 break;
-            case "nettrack":
-                // set handler for network change action
-                int nettrackFlag = (PrefStore.isTrackNetwork(this) ?
-                        PackageManager.COMPONENT_ENABLED_STATE_ENABLED
-                        : PackageManager.COMPONENT_ENABLED_STATE_DISABLED);
-                ComponentName networkComponent = new ComponentName(this, NetworkReceiver.class);
-                getPackageManager().setComponentEnabledSetting(networkComponent, nettrackFlag,
-                        PackageManager.DONT_KILL_APP);
-                break;
             case "stealth":
                 // set stealth mode
                 // Run app without launcher: am start -n ru.meefik.linuxdeploy/.MainActivity

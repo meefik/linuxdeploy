@@ -8,8 +8,8 @@ android {
         applicationId 'ru.meefik.linuxdeploy'
         minSdkVersion 15
         targetSdkVersion 28
-        versionCode 245
-        versionName "2.3.0"
+        versionCode 246
+        versionName "2.3.1"
     }
     buildTypes {
         release {
@@ -28,8 +28,8 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.1.0-alpha02'
-    implementation 'com.google.android.material:material:1.1.0-alpha03'
+    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'androidx.browser:browser:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 }
