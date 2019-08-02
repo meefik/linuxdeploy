@@ -2,9 +2,11 @@ package ru.meefik.linuxdeploy;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
@@ -43,6 +45,15 @@ public class MainActivity extends AppCompatActivity implements
     private static ScrollView scroll;
     private static WifiLock wifiLock;
     private static PowerManager.WakeLock wakeLock;
+
+    private NetworkReceiver networkReceiver;
+
+    private NetworkReceiver getNetworkReceiver() {
+        if (networkReceiver == null)
+            networkReceiver = new NetworkReceiver();
+
+        return networkReceiver;
+    }
 
     /**
      * Show message in TextView, used from Logger
@@ -92,6 +103,15 @@ public class MainActivity extends AppCompatActivity implements
         // Wake lock
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, getPackageName());
+
+        // Network receiver
+        if (PrefStore.isNetTrack(this)) {
+           IntentFilter filter = new IntentFilter();
+           filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+           registerReceiver(getNetworkReceiver(), filter);
+        } else if (networkReceiver != null) {
+            unregisterReceiver(networkReceiver);
+        }
 
         if (EnvUtils.isLatestVersion(this)) {
             // start services

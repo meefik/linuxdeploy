@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.3.1] - 2019-07-29
+### Added
+- Added support Debian 10 (buster).
+
+### Fixed
+- Problem with network trigger on Android 7+.
+
 ## [2.3.0] - 2019-03-02
 ### Changed
 - Code refactoring and migrated to AndroidX (issue #1058)

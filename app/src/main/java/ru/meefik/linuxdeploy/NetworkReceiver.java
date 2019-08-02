@@ -19,6 +19,8 @@ public class NetworkReceiver extends BroadcastReceiver {
             if (activeNetwork != null) isConnected = activeNetwork.isConnected();
             if (isConnected) {
                 EnvUtils.execService(context, "start", "core/net");
+            } else {
+                EnvUtils.execService(context, "stop", "core/net");
             }
         }
     }

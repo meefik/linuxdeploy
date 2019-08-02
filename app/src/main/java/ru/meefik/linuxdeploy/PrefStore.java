@@ -367,7 +367,7 @@ public class PrefStore {
      * @param c context
      * @return true if enabled
      */
-    static Boolean isTrackNetwork(Context c) {
+    static Boolean isNetTrack(Context c) {
         return SETTINGS.get(c, "nettrack").equals("true");
     }
 
