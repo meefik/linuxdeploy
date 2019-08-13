@@ -100,13 +100,6 @@
             android:summary="@string/privileged_users"
             android:title="@string/title_privileged_users_preference" />
 
-        <EditTextPreference
-            android:defaultValue="@string/dns"
-            android:dialogTitle="@string/dialog_title_dns_preference"
-            android:key="dns"
-            android:summary="@string/dns"
-            android:title="@string/title_dns_preference" />
-
         <ListPreference
             android:defaultValue="@string/locale"
             android:dialogTitle="@string/dialog_title_locale_preference"
@@ -115,6 +108,20 @@
             android:key="locale"
             android:summary="@string/locale"
             android:title="@string/title_locale_preference" />
+
+        <EditTextPreference
+            android:defaultValue="@string/dns"
+            android:dialogTitle="@string/dialog_title_dns_preference"
+            android:key="dns"
+            android:summary="@string/dns"
+            android:title="@string/title_dns_preference" />
+
+        <EditTextPreference
+            android:defaultValue="@string/net_trigger"
+            android:dialogTitle="@string/dialog_title_net_trigger_preference"
+            android:key="net_trigger"
+            android:summary="@string/net_trigger"
+            android:title="@string/title_net_trigger_preference" />
 
     </PreferenceCategory>
 

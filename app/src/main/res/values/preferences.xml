@@ -14,7 +14,7 @@
     <string name="autostart_delay" translatable="false">30</string>
     <string name="nettrack" translatable="false">false</string>
     <string name="env_dir" translatable="false"></string>
-    <string name="repository_url" translatable="false">http://hub.meefik.ru</string>
+    <string name="repository_url" translatable="false">https://github.com/meefik/linuxdeploy-hub/raw/master/</string>
     <string name="path" translatable="false"></string>
     <string name="is_cli" translatable="false">false</string>
     <string name="is_telnet" translatable="false">false</string>
@@ -38,7 +38,7 @@
     <string name="target_type" translatable="false">file</string>
     <string name="target_path" translatable="false">@string/target_path_file</string>
     <string name="target_path_file" translatable="false">${EXTERNAL_STORAGE}/linux.img</string>
-    <string name="target_path_directory" translatable="false">${ENV_DIR}/rootfs/linux</string>
+    <string name="target_path_directory" translatable="false">${EXTERNAL_STORAGE}/linux</string>
     <string name="target_path_partition" translatable="false">/dev/block/mmcblkXpY</string>
     <string name="target_path_ram" translatable="false">/data/local/ram</string>
     <string name="target_path_custom" translatable="false"></string>
@@ -47,9 +47,10 @@
     <string name="fs_type" translatable="false">ext4</string>
     <string name="user_name" translatable="false">android</string>
     <string name="user_password" translatable="false"></string>
-    <string name="privileged_users" translatable="false">root</string>
+    <string name="privileged_users" translatable="false">android</string>
+    <string name="locale" translatable="false">C</string>
     <string name="dns" translatable="false"></string>
-    <string name="locale" translatable="false">POSIX</string>
+    <string name="net_trigger" translatable="false"></string>
     <string name="is_init" translatable="false">false</string>
     <string name="init" translatable="false">run-parts</string>
     <string name="init_path" translatable="false">/etc/rc.local</string>
@@ -89,80 +90,134 @@
     <!-- arm -->
     <string name="arm_debian_source_path" translatable="false">http://ftp.debian.org/debian/</string>
     <string name="arm_debian_arch" translatable="false">armhf</string>
-    <!-- intel -->
-    <string name="intel_debian_source_path" translatable="false">http://ftp.debian.org/debian/</string>
-    <string name="intel_debian_arch" translatable="false">i386</string>
+    <!-- arm_64 -->
+    <string name="arm_64_debian_source_path" translatable="false">http://ftp.debian.org/debian/</string>
+    <string name="arm_64_debian_arch" translatable="false">arm64</string>
+    <!-- x86 -->
+    <string name="x86_debian_source_path" translatable="false">http://ftp.debian.org/debian/</string>
+    <string name="x86_debian_arch" translatable="false">i386</string>
+    <!-- x86_64 -->
+    <string name="x86_64_debian_source_path" translatable="false">http://ftp.debian.org/debian/</string>
+    <string name="x86_64_debian_arch" translatable="false">amd64</string>
 
     <!-- Ubuntu -->
     <string name="ubuntu_suite" translatable="false">bionic</string>
     <!-- arm -->
     <string name="arm_ubuntu_source_path" translatable="false">http://ports.ubuntu.com/</string>
     <string name="arm_ubuntu_arch" translatable="false">armhf</string>
-    <!-- intel -->
-    <string name="intel_ubuntu_source_path" translatable="false">http://archive.ubuntu.com/ubuntu/</string>
-    <string name="intel_ubuntu_arch" translatable="false">i386</string>
+    <!-- arm_64 -->
+    <string name="arm_64_ubuntu_source_path" translatable="false">http://ports.ubuntu.com/</string>
+    <string name="arm_64_ubuntu_arch" translatable="false">arm64</string>
+    <!-- x86 -->
+    <string name="x86_ubuntu_source_path" translatable="false">http://archive.ubuntu.com/ubuntu/</string>
+    <string name="x86_ubuntu_arch" translatable="false">i386</string>
+    <!-- x86_64 -->
+    <string name="x86_64_ubuntu_source_path" translatable="false">http://archive.ubuntu.com/ubuntu/</string>
+    <string name="x86_64_ubuntu_arch" translatable="false">amd64</string>
 
     <!-- Kali Linux -->
-    <string name="kalilinux_suite" translatable="false">kali-rolling</string>
+    <string name="kali_suite" translatable="false">kali-rolling</string>
     <!-- arm -->
-    <string name="arm_kalilinux_source_path" translatable="false">http://http.kali.org/kali/</string>
-    <string name="arm_kalilinux_arch" translatable="false">armhf</string>
-    <!-- intel -->
-    <string name="intel_kalilinux_source_path" translatable="false">http://http.kali.org/kali/</string>
-    <string name="intel_kalilinux_arch" translatable="false">i386</string>
+    <string name="arm_kali_source_path" translatable="false">http://http.kali.org/kali/</string>
+    <string name="arm_kali_arch" translatable="false">armhf</string>
+    <!-- arm_64 -->
+    <string name="arm_64_kali_source_path" translatable="false">http://http.kali.org/kali/</string>
+    <string name="arm_64_kali_arch" translatable="false">arm64</string>
+    <!-- x86 -->
+    <string name="x86_kali_source_path" translatable="false">http://http.kali.org/kali/</string>
+    <string name="x86_kali_arch" translatable="false">i386</string>
+    <!-- x86_64 -->
+    <string name="x86_64_kali_source_path" translatable="false">http://http.kali.org/kali/</string>
+    <string name="x86_64_kali_arch" translatable="false">amd64</string>
 
     <!-- Fedora -->
     <string name="fedora_suite" translatable="false">28</string>
     <!-- arm -->
     <string name="arm_fedora_source_path" translatable="false">http://dl.fedoraproject.org/pub/</string>
     <string name="arm_fedora_arch" translatable="false">armhfp</string>
-    <!-- intel -->
-    <string name="intel_fedora_source_path" translatable="false">http://dl.fedoraproject.org/pub/</string>
-    <string name="intel_fedora_arch" translatable="false">i386</string>
+    <!-- arm_64 -->
+    <string name="arm_64_fedora_source_path" translatable="false">http://dl.fedoraproject.org/pub/</string>
+    <string name="arm_64_fedora_arch" translatable="false">aarch64</string>
+    <!-- x86 -->
+    <string name="x86_fedora_source_path" translatable="false">http://dl.fedoraproject.org/pub/</string>
+    <string name="x86_fedora_arch" translatable="false">i386</string>
+    <!-- x86_64 -->
+    <string name="x86_64_fedora_source_path" translatable="false">http://dl.fedoraproject.org/pub/</string>
+    <string name="x86_64_fedora_arch" translatable="false">x86_64</string>
 
     <!-- CentOS -->
     <string name="centos_suite" translatable="false">7</string>
     <!-- arm -->
     <string name="arm_centos_source_path" translatable="false">http://mirror.centos.org/altarch/</string>
     <string name="arm_centos_arch" translatable="false">armhfp</string>
-    <!-- intel -->
-    <string name="intel_centos_source_path" translatable="false">http://mirror.centos.org/altarch/</string>
-    <string name="intel_centos_arch" translatable="false">i386</string>
+    <!-- arm_64 -->
+    <string name="arm_64_centos_source_path" translatable="false">http://mirror.centos.org/altarch/</string>
+    <string name="arm_64_centos_arch" translatable="false">aarch64</string>
+    <!-- x86 -->
+    <string name="x86_centos_source_path" translatable="false">http://mirror.centos.org/altarch/</string>
+    <string name="x86_centos_arch" translatable="false">i386</string>
+    <!-- x86_64 -->
+    <string name="x86_64_centos_source_path" translatable="false">http://mirror.centos.org/altarch/</string>
+    <string name="x86_64_centos_arch" translatable="false">x86_64</string>
 
     <!-- Arch Linux -->
     <string name="archlinux_suite" translatable="false">latest</string>
     <!-- arm -->
     <string name="arm_archlinux_source_path" translatable="false">http://mirror.archlinuxarm.org/</string>
     <string name="arm_archlinux_arch" translatable="false">armv7h</string>
-    <!-- intel -->
-    <string name="intel_archlinux_source_path" translatable="false">http://mirrors.kernel.org/archlinux/</string>
-    <string name="intel_archlinux_arch" translatable="false">x86_64</string>
-
-    <!-- Gentoo -->
-    <string name="gentoo_suite" translatable="false">latest</string>
-    <!-- arm -->
-    <string name="arm_gentoo_source_path" translatable="false">http://distfiles.gentoo.org/releases/</string>
-    <string name="arm_gentoo_arch" translatable="false">armv7a_hardfp</string>
-    <!-- intel -->
-    <string name="intel_gentoo_source_path" translatable="false">http://distfiles.gentoo.org/releases/</string>
-    <string name="intel_gentoo_arch" translatable="false">i686</string>
+    <!-- arm_64 -->
+    <string name="arm_64_archlinux_source_path" translatable="false">http://mirror.archlinuxarm.org/</string>
+    <string name="arm_64_archlinux_arch" translatable="false">aarch64</string>
+    <!-- x86 -->
+    <string name="x86_archlinux_source_path" translatable="false">http://mirror.archlinux32.org/</string>
+    <string name="x86_archlinux_arch" translatable="false">i686</string>
+    <!-- x86_64 -->
+    <string name="x86_64_archlinux_source_path" translatable="false">http://mirrors.kernel.org/archlinux/</string>
+    <string name="x86_64_archlinux_arch" translatable="false">x86_64</string>
 
     <!-- Slackware -->
     <string name="slackware_suite" translatable="false">14.2</string>
     <!-- arm -->
     <string name="arm_slackware_source_path" translatable="false">http://ftp.arm.slackware.com/slackwarearm/</string>
     <string name="arm_slackware_arch" translatable="false">arm</string>
-    <!-- intel -->
-    <string name="intel_slackware_source_path" translatable="false">http://mirrors.slackware.com/slackware/</string>
-    <string name="intel_slackware_arch" translatable="false">x86</string>
+    <!-- arm_64 -->
+    <string name="arm_64_slackware_source_path" translatable="false">http://ftp.arm.slackware.com/slackwarearm/</string>
+    <string name="arm_64_slackware_arch" translatable="false">arm</string>
+    <!-- x86 -->
+    <string name="x86_slackware_source_path" translatable="false">http://mirrors.slackware.com/slackware/</string>
+    <string name="x86_slackware_arch" translatable="false">x86</string>
+    <!-- x86_64 -->
+    <string name="x86_64_slackware_source_path" translatable="false">http://mirrors.slackware.com/slackware/</string>
+    <string name="x86_64_slackware_arch" translatable="false">x86_64</string>
+
+    <!-- Alpine Linux -->
+    <string name="alpine_suite" translatable="false">latest-stable</string>
+    <!-- arm -->
+    <string name="arm_alpine_source_path" translatable="false">http://dl-cdn.alpinelinux.org/alpine/</string>
+    <string name="arm_alpine_arch" translatable="false">armhf</string>
+    <!-- arm_64 -->
+    <string name="arm_64_alpine_source_path" translatable="false">http://dl-cdn.alpinelinux.org/alpine/</string>
+    <string name="arm_64_alpine_arch" translatable="false">aarch64</string>
+    <!-- x86 -->
+    <string name="x86_alpine_source_path" translatable="false">http://dl-cdn.alpinelinux.org/alpine/</string>
+    <string name="x86_alpine_arch" translatable="false">x86</string>
+    <!-- x86_64 -->
+    <string name="x86_64_alpine_source_path" translatable="false">http://dl-cdn.alpinelinux.org/alpine/</string>
+    <string name="x86_64_alpine_arch" translatable="false">x86_64</string>
 
     <!-- RootFS -->
     <string name="rootfs_suite" translatable="false" />
     <!-- arm -->
     <string name="arm_rootfs_source_path" translatable="false" />
     <string name="arm_rootfs_arch" translatable="false" />
-    <!-- intel -->
-    <string name="intel_rootfs_source_path" translatable="false" />
-    <string name="intel_rootfs_arch" translatable="false" />
+    <!-- arm_64 -->
+    <string name="arm_64_rootfs_source_path" translatable="false" />
+    <string name="arm_64_rootfs_arch" translatable="false" />
+    <!-- x86 -->
+    <string name="x86_rootfs_source_path" translatable="false" />
+    <string name="x86_rootfs_arch" translatable="false" />
+    <!-- x86_64 -->
+    <string name="x86_64_rootfs_source_path" translatable="false" />
+    <string name="x86_64_rootfs_arch" translatable="false" />
 
 </resources>

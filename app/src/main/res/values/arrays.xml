@@ -58,7 +58,7 @@
         <item>ext4</item>
     </string-array>
     <string-array name="locale_values" translatable="false">
-        <item>POSIX</item>
+        <item>C</item>
         <item>aa_DJ.UTF-8</item>
         <item>af_ZA.UTF-8</item>
         <item>an_ES.UTF-8</item>
@@ -229,26 +229,26 @@
         <item>Other</item>
     </string-array>
     <string-array name="distrib_values" translatable="false">
-        <item>debian</item>
-        <item>ubuntu</item>
-        <item>kalilinux</item>
-        <item>fedora</item>
-        <item>centos</item>
+        <item>alpine</item>
         <item>archlinux</item>
-        <item>gentoo</item>
+        <item>centos</item>
+        <item>debian</item>
+        <item>fedora</item>
+        <item>kali</item>
         <item>slackware</item>
+        <item>ubuntu</item>
         <item>rootfs</item>
     </string-array>
     <string-array name="distrib_entries" translatable="false">
-        <item>Debian</item>
-        <item>Ubuntu</item>
-        <item>Kali Linux</item>
-        <item>Fedora</item>
+        <item>Alpine</item>
+        <item>Arch</item>
         <item>CentOS</item>
-        <item>Arch Linux</item>
-        <item>Gentoo</item>
+        <item>Debian</item>
+        <item>Fedora</item>
+        <item>Kali</item>
         <item>Slackware</item>
-        <item>RootFS</item>
+        <item>Ubuntu</item>
+        <item>rootfs.tar</item>
     </string-array>
     <string-array name="init_values" translatable="false">
         <item>run-parts</item>
@@ -317,10 +317,10 @@
 
     <!-- Kali Linux -->
 
-    <string-array name="kalilinux_suite_values" translatable="false">
+    <string-array name="kali_suite_values" translatable="false">
         <item>kali-rolling</item>
     </string-array>
-    <string-array name="kalilinux_arch_values" translatable="false">
+    <string-array name="kali_arch_values" translatable="false">
         <item>armel</item>
         <item>armhf</item>
         <item>arm64</item>
@@ -366,24 +366,6 @@
         <item>x86_64</item>
     </string-array>
 
-    <!-- Gentoo -->
-
-    <string-array name="gentoo_suite_values" translatable="false">
-        <item>latest</item>
-    </string-array>
-    <string-array name="gentoo_arch_values" translatable="false">
-        <item>armv4tl</item>
-        <item>armv5tel</item>
-        <item>armv6j</item>
-        <item>armv6j_hardfp</item>
-        <item>armv7a</item>
-        <item>armv7a_hardfp</item>
-        <item>arm64</item>
-        <item>i486</item>
-        <item>i686</item>
-        <item>amd64</item> <!-- need manually change the mirror url -->
-    </string-array>
-
     <!-- Slackware -->
 
     <string-array name="slackware_suite_values" translatable="false">
@@ -392,6 +374,21 @@
     <string-array name="slackware_arch_values" translatable="false">
         <item>arm</item>
         <item>x86</item>
+        <item>x86_64</item>
+    </string-array>
+
+    <!-- Alpine Linux -->
+
+    <string-array name="alpine_suite_values" translatable="false">
+        <item>latest-stable</item>
+        <item>edge</item>
+    </string-array>
+    <string-array name="alpine_arch_values" translatable="false">
+        <item>armv7</item>
+        <item>armhf</item>
+        <item>aarch64</item>
+        <item>x86</item>
+        <item>x86_64</item>
     </string-array>
 
     <!-- RootFS -->

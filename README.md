@@ -17,10 +17,10 @@ The app is available for download in Google Play and GitHub.
 
 ## Features
 
-- Supported distributions: Debian, Ubuntu, Kali Linux, Arch Linux, Fedora, CentOS, Gentoo, Slackware, RootFS (tgz, tbz2, txz)
+- Supported distributions: Debian, Ubuntu, Kali Linux, Arch Linux, Fedora, CentOS, Slackware, Alpine Linux, other (from rootfs.tar)
 - Installation type: image file, directory, disk partition, RAM
 - Supported file systems: ext2, ext3, ext4
-- Supported architectures: ARM, ARM64, x86, x86_64, emulation mode (ARM ~ x86)
+- Supported architectures: arm, arm64, x86, x86_64, emulation mode (ARM ~ x86)
 - Control interface: CLI, SSH, VNC, X11, Framebuffer
 - Desktop environment: XTerm, LXDE, Xfce, MATE, other (manual configuration)
 - Supported languages: multilingual interface

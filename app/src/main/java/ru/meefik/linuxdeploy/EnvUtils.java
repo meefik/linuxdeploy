@@ -319,7 +319,23 @@ class EnvUtils {
 
         // extract bin assets
         if (!extractDir(c, PrefStore.getBinDir(c), "bin/all", "")) return false;
-        if (!extractDir(c, PrefStore.getBinDir(c), "bin/" + PrefStore.getArch(), "")) return false;
+        String arch = PrefStore.getArch();
+        switch (arch) {
+            case "arm":
+                if (!extractDir(c, PrefStore.getBinDir(c), "bin/arm", "")) return false;
+                break;
+            case "arm_64":
+                if (!extractDir(c, PrefStore.getBinDir(c), "bin/arm", "")) return false;
+                if (!extractDir(c, PrefStore.getBinDir(c), "bin/arm_64", "")) return false;
+                break;
+            case "x86":
+                if (!extractDir(c, PrefStore.getBinDir(c), "bin/x86", "")) return false;
+                break;
+            case "x86_64":
+                if (!extractDir(c, PrefStore.getBinDir(c), "bin/x86", "")) return false;
+                if (!extractDir(c, PrefStore.getBinDir(c), "bin/x86_64", "")) return false;
+                break;
+        }
 
         // extract web assets
         if (!extractDir(c, PrefStore.getWebDir(c), "web", "")) return false;
@@ -327,13 +343,9 @@ class EnvUtils {
         // make linuxdeploy script
         if (!makeMainScript(c)) return false;
 
-        // set executable bin directory
-        File binDir = new File(PrefStore.getBinDir(c));
-        setPermissions(binDir, true);
-
-        // set executable cgi-bin directory
-        File cgiDir = new File(PrefStore.getWebDir(c) + "/cgi-bin");
-        setPermissions(cgiDir, true);
+        // set executable app directory
+        File appDir = new File(PrefStore.getEnvDir(c) + "/..");
+        appDir.setExecutable(true, false);
 
         // make config directory
         File configDir = new File(PrefStore.getConfigDir(c));
@@ -342,6 +354,10 @@ class EnvUtils {
         // make tmp directory
         File tmpDir = new File(PrefStore.getTmpDir(c));
         tmpDir.mkdirs();
+
+        // set executable env directory
+        File binDir = new File(PrefStore.getEnvDir(c));
+        setPermissions(binDir, true);
 
         // create .nomedia
         File noMedia = new File(PrefStore.getEnvDir(c) + "/.nomedia");
@@ -537,6 +553,7 @@ class EnvUtils {
                 params.add("export TERM=\"xterm\"");
                 params.add("export PS1=\"\\$ \"");
                 params.add("export HOME=\"" + PrefStore.getEnvDir(c) + "\"");
+                params.add("export TMPDIR=\"" + PrefStore.getTmpDir(c) + "\"");
                 params.add("cd \"$HOME\"");
                 params.add("telnetd" + args);
         }

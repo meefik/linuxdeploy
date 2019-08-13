@@ -101,7 +101,7 @@
     <string name="title_autostart_delay_preference">Autostart delay</string>
     <string name="dialog_title_autostart_delay_preference">Delay (seconds)</string>
     <!-- Network trigger -->
-    <string name="title_nettrack_preference">Network trigger</string>
+    <string name="title_nettrack_preference">Track network changes</string>
     <string name="summary_nettrack_preference">Track changes of the network and update the container</string>
 
     <!-- ENVIRONMENT -->
@@ -202,13 +202,16 @@
     <!-- PRIVILEGED_USERS -->
     <string name="title_privileged_users_preference">Privileged users</string>
     <string name="dialog_title_privileged_users_preference">Privileged users</string>
+    <!-- LOCALE -->
+    <string name="title_locale_preference">Localization</string>
+    <string name="dialog_title_locale_preference">Localization</string>
     <!-- DNS -->
     <string name="title_dns_preference">DNS</string>
     <string name="dialog_title_dns_preference">Address of DNS server</string>
     <string name="summary_dns_preference">Automatic detection</string>
-    <!-- LOCALE -->
-    <string name="title_locale_preference">Localization</string>
-    <string name="dialog_title_locale_preference">Localization</string>
+    <!-- NET_TRIGGER -->
+    <string name="title_net_trigger_preference">Network trigger</string>
+    <string name="dialog_title_net_trigger_preference">Path to trigger script</string>
 
     <!-- INIT -->
     <string name="init_preferences">INIT</string>
@@ -351,7 +354,7 @@
     <!-- HELP -->
     <string name="help_text">\n<b>Help</b>\n\nThis application installs the selected GNU/Linux distribution and executes it in a chroot-container.\n\nProcedure:\n1. Get superuser privileges (root).\n2. Check the connection to Internet.\n3. Specify the installation options.\n4. Start the installation (\"Menu => Install\").\n5. Wait until the installation is complete.\n6. Tap \"START\" button to run the container.\n7. Connect to the container through CLI, SSH, VNC, or others.\n\nFor more information, see \"About\".</string>
     <!-- ABOUT -->
-    <string name="about_text">This application installs the selected GNU/Linux distribution and executes it in a chroot-container.\n\nFor more information see <a href="https://github.com/meefik/linuxdeploy">project page</a>, <a href="http://4pda.ru/forum/index.php?showtopic=378043">forum</a> or <a href="http://meefik.ru">developer site</a>.\n\n&#169; 2012&#8211;2019 Anton Skshidlevsky, GPLv3</string>
+    <string name="about_text">This application installs the selected GNU/Linux distribution and executes it in a chroot-container.\n\nFor more information see <a href="https://github.com/meefik/linuxdeploy">project page</a>, <a href="http://4pda.ru/forum/index.php?showtopic=378043">forum</a> or <a href="https://meefik.github.io">developer site</a>.\n\n&#169; 2012&#8211;2019 Anton Skshidlevsky, GPLv3</string>
     <string name="service_notification_channel_name">Services</string>
     <string name="service_notification_channel_description">Channel to display service notifications</string>
 

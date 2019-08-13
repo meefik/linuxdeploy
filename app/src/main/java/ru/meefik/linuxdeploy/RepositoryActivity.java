@@ -57,7 +57,7 @@ public class RepositoryActivity extends AppCompatActivity {
                 .setCancelable(false)
                 .setNegativeButton(android.R.string.no,
                         (dialog13, whichButton) -> dialog13.cancel());
-        if (profile.get("PROTECTED") != null && !isDonated()) {
+        if (!isDonated()) {
             dialog.setPositiveButton(R.string.repository_purchase_button,
                     (dialog12, whichButton) -> startActivity(new Intent(Intent.ACTION_VIEW,
                             Uri.parse("https://play.google.com/store/apps/details?id=ru.meefik.donate"))));
@@ -117,6 +117,9 @@ public class RepositoryActivity extends AppCompatActivity {
                 int iconRes = R.raw.linux;
                 if (type != null) {
                     switch (type) {
+                        case "alpine":
+                            iconRes = R.raw.alpine;
+                            break;
                         case "archlinux":
                             iconRes = R.raw.archlinux;
                             break;
@@ -129,11 +132,8 @@ public class RepositoryActivity extends AppCompatActivity {
                         case "fedora":
                             iconRes = R.raw.fedora;
                             break;
-                        case "gentoo":
-                            iconRes = R.raw.gentoo;
-                            break;
-                        case "kalilinux":
-                            iconRes = R.raw.kalilinux;
+                        case "kali":
+                            iconRes = R.raw.kali;
                             break;
                         case "slackware":
                             iconRes = R.raw.slackware;
@@ -249,7 +249,7 @@ public class RepositoryActivity extends AppCompatActivity {
         private void downloadUrl(String url) throws IOException {
             BufferedReader reader = null;
             try {
-                URL u = new URL(new URL(url), "index.gz");
+                URL u = new URL(url + "/index.gz");
                 reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(u.openStream())));
                 String line;
                 Map<String, String> map = new HashMap<>();

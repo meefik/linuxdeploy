@@ -6,12 +6,26 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.4.0] - 2019-08-12
+### Added
+- Added support Alpine Linux
+- Added support for Slackware x86_64
+- Added built-in binaries for 64-bit architecture
+- Added NET_TRIGGER in the properties dialog
+
+### Changed
+- Added executable permission for application directory
+- Updated built-in busybox to v1.30.1
+
+### Removed
+- End of support for Gentoo
+
 ## [2.3.1] - 2019-07-29
 ### Added
-- Added support Debian 10 (buster).
+- Added support Debian 10 (buster)
 
 ### Fixed
-- Problem with network trigger on Android 7+.
+- Fixed problem with network trigger on Android 7+
 
 ## [2.3.0] - 2019-03-02
 ### Changed
@@ -28,8 +42,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Replaced by dbus-run-session to dbus-launch
 
 ### Fixed
-- Problem with running "am" via unchroot (issue #987)
-- Problem with color in the list of mount points (issue #1018)
+- Fixed problem with running "am" via unchroot (issue #987)
+- Fixed problem with color in the list of mount points (issue #1018)
 
 ## [2.2.1] - 2018-10-29
 ### Changed

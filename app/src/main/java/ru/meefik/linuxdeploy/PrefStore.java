@@ -398,10 +398,8 @@ public class PrefStore {
      * @return path, e.g. ${ENV_DIR}/bin
      */
     static String getPath(Context c) {
-        String binDir = getBinDir(c);
         String path = SETTINGS.get(c, "path");
-        if (path.isEmpty()) path = binDir;
-        else path = path + ":" + binDir;
+        if (path.isEmpty()) path = getBinDir(c);
         return path;
     }
 
@@ -659,7 +657,7 @@ public class PrefStore {
      * Get hardware architecture
      *
      * @param arch unformated architecture
-     * @return intel, arm or mips
+     * @return arm, arm_64, x86, x86_64
      */
     static String getArch(String arch) {
         String march = "unknown";
@@ -667,16 +665,14 @@ public class PrefStore {
             char a = arch.toLowerCase().charAt(0);
             switch (a) {
                 case 'a':
-                    if (arch.equals("amd64"))
-                        march = "intel";
+                    if (arch.equals("amd64")) march = "x86_64";
+                    else if (arch.contains("64")) march = "arm_64";
                     else march = "arm";
-                    break;
-                case 'm':
-                    march = "mips";
                     break;
                 case 'i':
                 case 'x':
-                    march = "intel";
+                    if (arch.contains("64")) march = "x86_64";
+                    else march = "x86";
                     break;
             }
         }
@@ -686,7 +682,7 @@ public class PrefStore {
     /**
      * Get current hardware architecture
      *
-     * @return intel, arm or mips
+     * @return arm, arm_64, x86, x86_64
      */
     static String getArch() {
         return getArch(System.getProperty("os.arch"));

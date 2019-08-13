@@ -13,8 +13,8 @@ class PropertiesStore extends ParamUtils {
     public static final String name = "properties_conf";
     private static final String[] params = {"method", "distrib", "arch", "suite", "source_path",
             "target_type", "target_path", "disk_size", "fs_type", "user_name", "user_password",
-            "privileged_users", "dns", "locale", "init", "init_path", "init_level", "init_user",
-            "init_async", "ssh_port", "ssh_args", "pulse_host", "pulse_port", "graphics",
+            "privileged_users", "locale", "dns", "net_trigger", "init", "init_path", "init_level",
+            "init_user", "init_async", "ssh_port", "ssh_args", "pulse_host", "pulse_port", "graphics",
             "vnc_display", "vnc_depth", "vnc_dpi", "vnc_width", "vnc_height", "vnc_args",
             "x11_display", "x11_host", "x11_sdl", "x11_sdl_delay", "fb_display", "fb_dev",
             "fb_input", "fb_args", "fb_refresh", "fb_freeze", "desktop", "mounts", "include"};
