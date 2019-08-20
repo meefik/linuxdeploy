@@ -26,7 +26,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.ref.WeakReference;
+import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -159,6 +161,9 @@ public class RepositoryActivity extends AppCompatActivity {
             Map profile = (Map) parent.getItemAtPosition(position);
             importDialog(profile);
         });
+
+        // Load list
+        retrieveIndex();
     }
 
     @Override
@@ -170,7 +175,6 @@ public class RepositoryActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         setTitle(R.string.title_activity_repository);
-        retrieveIndex();
     }
 
     @Override
@@ -249,8 +253,26 @@ public class RepositoryActivity extends AppCompatActivity {
         private void downloadUrl(String url) throws IOException {
             BufferedReader reader = null;
             try {
-                URL u = new URL(url + "/index.gz");
-                reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(u.openStream())));
+                url = url + "/index.gz";
+                HttpURLConnection conn;
+                boolean redirect;
+                do {
+                    redirect = false;
+                    conn = (HttpURLConnection) (new URL(url)).openConnection();
+                    // normally, 3xx is redirect
+                    int status = conn.getResponseCode();
+                    if (status != HttpURLConnection.HTTP_OK) {
+                        if (status == HttpURLConnection.HTTP_MOVED_TEMP
+                                || status == HttpURLConnection.HTTP_MOVED_PERM
+                                || status == HttpURLConnection.HTTP_SEE_OTHER)
+                            redirect = true;
+                    }
+                    if (redirect) {
+                        url = conn.getHeaderField("Location");
+                    }
+                } while (redirect);
+                conn.connect();
+                reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(conn.getInputStream())));
                 String line;
                 Map<String, String> map = new HashMap<>();
                 while ((line = reader.readLine()) != null) {
@@ -331,8 +353,26 @@ public class RepositoryActivity extends AppCompatActivity {
                 InputStream in = null;
                 OutputStream out = null;
                 try {
-                    URL u = new URL(new URL(url), "config/" + profile + ".conf");
-                    in = u.openStream();
+                    url = url + "/config/" + profile + ".conf";
+                    HttpURLConnection conn;
+                    boolean redirect;
+                    do {
+                        redirect = false;
+                        conn = (HttpURLConnection) (new URL(url)).openConnection();
+                        // normally, 3xx is redirect
+                        int status = conn.getResponseCode();
+                        if (status != HttpURLConnection.HTTP_OK) {
+                            if (status == HttpURLConnection.HTTP_MOVED_TEMP
+                                    || status == HttpURLConnection.HTTP_MOVED_PERM
+                                    || status == HttpURLConnection.HTTP_SEE_OTHER)
+                                redirect = true;
+                        }
+                        if (redirect) {
+                            url = conn.getHeaderField("Location");
+                        }
+                    } while (redirect);
+                    conn.connect();
+                    in = conn.getInputStream();
                     out = new FileOutputStream(conf);
                     byte[] buffer = new byte[1024];
                     int read;

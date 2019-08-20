@@ -118,7 +118,8 @@ public class MainActivity extends AppCompatActivity implements
             EnvUtils.execServices(getBaseContext(), new String[]{"telnetd", "httpd"}, "start");
         } else {
             // Update ENV
-            new UpdateEnvTask(this).execute();
+            PrefStore.setRepositoryUrl(this, getString(R.string.repository_url));
+            updateEnvWithRequestPermissions();
         }
     }
 
@@ -158,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements
                 containerConfigure();
                 break;
             case R.id.menu_export:
-                containerExportWithRequestPermissions();
+                containerExport();
                 break;
             case R.id.menu_status:
                 containerStatus();
@@ -405,14 +406,14 @@ public class MainActivity extends AppCompatActivity implements
     /**
      * Request permission for write to storage
      */
-    private void containerExportWithRequestPermissions() {
+    private void updateEnvWithRequestPermissions() {
         boolean hasPermission = (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
         if (!hasPermission) {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_STORAGE);
         } else {
-            containerExport();
+            new UpdateEnvTask(this).execute();
         }
     }
 
@@ -422,7 +423,7 @@ public class MainActivity extends AppCompatActivity implements
         switch (requestCode) {
             case REQUEST_WRITE_STORAGE: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    containerExport();
+                    new UpdateEnvTask(this).execute();
                 } else {
                     Toast.makeText(this, getString(R.string.write_permissions_disallow), Toast.LENGTH_LONG).show();
                 }

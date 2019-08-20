@@ -14,7 +14,7 @@
     <string name="autostart_delay" translatable="false">30</string>
     <string name="nettrack" translatable="false">false</string>
     <string name="env_dir" translatable="false"></string>
-    <string name="repository_url" translatable="false">https://github.com/meefik/linuxdeploy-hub/raw/master/</string>
+    <string name="repository_url" translatable="false">http://hub.meefik.ru</string>
     <string name="path" translatable="false"></string>
     <string name="is_cli" translatable="false">false</string>
     <string name="is_telnet" translatable="false">false</string>
