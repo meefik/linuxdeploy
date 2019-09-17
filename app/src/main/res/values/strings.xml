@@ -212,6 +212,9 @@
     <!-- NET_TRIGGER -->
     <string name="title_net_trigger_preference">Network trigger</string>
     <string name="dialog_title_net_trigger_preference">Path to trigger script</string>
+    <!-- POWER_TRIGGER -->
+    <string name="title_power_trigger_preference">Power trigger</string>
+    <string name="dialog_title_power_trigger_preference">Path to trigger script</string>
 
     <!-- INIT -->
     <string name="init_preferences">INIT</string>
