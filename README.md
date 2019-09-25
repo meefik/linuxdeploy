@@ -65,5 +65,5 @@ Source code:
 
 Donations:
 
-- E-Money: <https://meefik.github.io/donate/>
+- E-Money: <https://meefik.github.io/donate>
 - Google Play: <https://play.google.com/store/apps/details?id=ru.meefik.donate>
