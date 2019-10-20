@@ -372,6 +372,16 @@ public class PrefStore {
     }
 
     /**
+     * Track changes of the power status is enabled
+     *
+     * @param c context
+     * @return true if enabled
+     */
+    static Boolean isPowerTrack(Context c) {
+        return SETTINGS.get(c, "powertrack").equals("true");
+    }
+
+    /**
      * Show icon is enabled
      *
      * @param c context

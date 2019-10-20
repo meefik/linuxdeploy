@@ -47,12 +47,20 @@ public class MainActivity extends AppCompatActivity implements
     private static PowerManager.WakeLock wakeLock;
 
     private NetworkReceiver networkReceiver;
+    private PowerReceiver powerReceiver;
 
     private NetworkReceiver getNetworkReceiver() {
         if (networkReceiver == null)
             networkReceiver = new NetworkReceiver();
 
         return networkReceiver;
+    }
+
+    private PowerReceiver getPowerReceiver() {
+        if (powerReceiver == null)
+            powerReceiver = new PowerReceiver();
+
+        return powerReceiver;
     }
 
     /**
@@ -80,7 +88,9 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -111,6 +121,16 @@ public class MainActivity extends AppCompatActivity implements
            registerReceiver(getNetworkReceiver(), filter);
         } else if (networkReceiver != null) {
             unregisterReceiver(networkReceiver);
+        }
+
+        // Power receiver
+        if (PrefStore.isPowerTrack(this)) {
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(Intent.ACTION_SCREEN_ON);
+            filter.addAction(Intent.ACTION_SCREEN_OFF);
+            registerReceiver(getPowerReceiver(), filter);
+        } else if (powerReceiver != null) {
+            unregisterReceiver(powerReceiver);
         }
 
         if (EnvUtils.isLatestVersion(this)) {
@@ -269,7 +289,7 @@ public class MainActivity extends AppCompatActivity implements
 
         // Wake lock
         if (PrefStore.isWakeLock(this)) {
-            if (!wakeLock.isHeld()) wakeLock.acquire();
+            if (!wakeLock.isHeld()) wakeLock.acquire(60*60*1000L /*60 minutes*/);
         } else {
             if (wakeLock.isHeld()) wakeLock.release();
         }
@@ -420,13 +440,11 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case REQUEST_WRITE_STORAGE: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    new UpdateEnvTask(this).execute();
-                } else {
-                    Toast.makeText(this, getString(R.string.write_permissions_disallow), Toast.LENGTH_LONG).show();
-                }
+        if (requestCode == REQUEST_WRITE_STORAGE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                new UpdateEnvTask(this).execute();
+            } else {
+                Toast.makeText(this, getString(R.string.write_permissions_disallow), Toast.LENGTH_LONG).show();
             }
         }
     }

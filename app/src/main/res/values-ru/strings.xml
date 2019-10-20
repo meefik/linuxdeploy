@@ -247,5 +247,9 @@
     <string name="hint_mounts_target">Целевая (опционально)</string>
     <string name="dialog_title_net_trigger_preference">Путь к скрипту триггера</string>
     <string name="title_net_trigger_preference">Сетевой триггер</string>
+    <string name="dialog_title_power_trigger_preference">Путь к скрипту триггера</string>
+    <string name="title_power_trigger_preference">Триггер питания</string>
+    <string name="summary_powertrack_preference">Отслеживать изменения питания и обновлять контейнер</string>
+    <string name="title_powertrack_preference">Отслеживать изменения питания</string>
 
 </resources>

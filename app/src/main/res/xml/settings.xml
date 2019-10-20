@@ -85,6 +85,11 @@
             android:key="nettrack"
             android:summary="@string/summary_nettrack_preference"
             android:title="@string/title_nettrack_preference" />
+        <CheckBoxPreference
+            android:defaultValue="@string/powertrack"
+            android:key="powertrack"
+            android:summary="@string/summary_powertrack_preference"
+            android:title="@string/title_powertrack_preference" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/env_preferences">
         <EditTextPreference

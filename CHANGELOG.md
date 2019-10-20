@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.4.1] - 2019-10-20
+### Added
+- Added power trigger
+
 ## [2.4.0] - 2019-08-12
 ### Added
 - Added support Alpine Linux

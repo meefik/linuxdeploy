@@ -103,6 +103,9 @@
     <!-- Network trigger -->
     <string name="title_nettrack_preference">Track network changes</string>
     <string name="summary_nettrack_preference">Track changes of the network and update the container</string>
+    <!-- Power trigger -->
+    <string name="title_powertrack_preference">Track power changes</string>
+    <string name="summary_powertrack_preference">Track changes of the power and update the container</string>
 
     <!-- ENVIRONMENT -->
     <string name="env_preferences">Environment</string>

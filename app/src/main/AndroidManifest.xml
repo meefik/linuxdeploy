@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="ru.meefik.linuxdeploy"
     android:installLocation="internalOnly">
 
@@ -13,12 +14,12 @@
 
     <application
         android:name=".App"
-        android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/DarkTheme"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="true"
+        tools:ignore="GoogleAppIndexingWarning">
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
@@ -93,15 +94,6 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name="PowerReceiver"
-            android:enabled="false"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="android.intent.action.SCREEN_ON" />
-                <action android:name="android.intent.action.SCREEN_OFF" />
-            </intent-filter>
-        </receiver>
-        <receiver
             android:name=".ActionReceiver"
             android:enabled="true"
             android:exported="false">
@@ -110,8 +102,13 @@
             </intent-filter>
         </receiver>
         <receiver
+            android:name=".PowerReceiver"
+            android:enabled="false"
+            android:exported="false">
+        </receiver>
+        <receiver
             android:name=".NetworkReceiver"
-            android:enabled="true"
+            android:enabled="false"
             android:exported="false">
         </receiver>
 
