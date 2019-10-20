@@ -51,6 +51,7 @@
     <string name="locale" translatable="false">C</string>
     <string name="dns" translatable="false"></string>
     <string name="net_trigger" translatable="false"></string>
+    <string name="power_trigger" translatable="false"></string>
     <string name="is_init" translatable="false">false</string>
     <string name="init" translatable="false">run-parts</string>
     <string name="init_path" translatable="false">/etc/rc.local</string>

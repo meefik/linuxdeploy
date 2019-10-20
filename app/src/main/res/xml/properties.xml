@@ -123,6 +123,13 @@
             android:summary="@string/net_trigger"
             android:title="@string/title_net_trigger_preference" />
 
+        <EditTextPreference
+            android:defaultValue="@string/power_trigger"
+            android:dialogTitle="@string/dialog_title_power_trigger_preference"
+            android:key="power_trigger"
+            android:summary="@string/power_trigger"
+            android:title="@string/title_power_trigger_preference" />
+
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/init_preferences">

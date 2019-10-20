@@ -93,6 +93,15 @@
             </intent-filter>
         </receiver>
         <receiver
+            android:name="PowerReceiver"
+            android:enabled="false"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.SCREEN_ON" />
+                <action android:name="android.intent.action.SCREEN_OFF" />
+            </intent-filter>
+        </receiver>
+        <receiver
             android:name=".ActionReceiver"
             android:enabled="true"
             android:exported="false">
