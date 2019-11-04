@@ -17,7 +17,6 @@
     <string name="env_dir" translatable="false"></string>
     <string name="repository_url" translatable="false">http://hub.meefik.ru</string>
     <string name="path" translatable="false"></string>
-    <string name="is_cli" translatable="false">false</string>
     <string name="is_telnet" translatable="false">false</string>
     <string name="telnet_port" translatable="false">5023</string>
     <string name="telnet_localhost" translatable="false">true</string>
@@ -31,7 +30,6 @@
     <string name="logger" translatable="false">false</string>
     <string name="logfile" translatable="false">output.log</string>
     <string name="chroot_dir" translatable="false">/data/local/mnt</string>
-    <string name="method" translatable="false">chroot</string>
     <string name="distrib" translatable="false">debian</string>
     <string name="suite" translatable="false">@string/debian_suite</string>
     <string name="arch" translatable="false">@string/arm_debian_arch</string>
@@ -135,16 +133,16 @@
     <!-- Fedora -->
     <string name="fedora_suite" translatable="false">28</string>
     <!-- arm -->
-    <string name="arm_fedora_source_path" translatable="false">http://dl.fedoraproject.org/pub/archive</string>
+    <string name="arm_fedora_source_path" translatable="false">http://dl.fedoraproject.org/pub/archive/</string>
     <string name="arm_fedora_arch" translatable="false">armhfp</string>
     <!-- arm_64 -->
-    <string name="arm_64_fedora_source_path" translatable="false">http://dl.fedoraproject.org/pub/archive</string>
+    <string name="arm_64_fedora_source_path" translatable="false">http://dl.fedoraproject.org/pub/archive/</string>
     <string name="arm_64_fedora_arch" translatable="false">aarch64</string>
     <!-- x86 -->
-    <string name="x86_fedora_source_path" translatable="false">http://dl.fedoraproject.org/pub/archive</string>
+    <string name="x86_fedora_source_path" translatable="false">http://dl.fedoraproject.org/pub/archive/</string>
     <string name="x86_fedora_arch" translatable="false">i386</string>
     <!-- x86_64 -->
-    <string name="x86_64_fedora_source_path" translatable="false">http://dl.fedoraproject.org/pub/archive</string>
+    <string name="x86_64_fedora_source_path" translatable="false">http://dl.fedoraproject.org/pub/archive/</string>
     <string name="x86_64_fedora_arch" translatable="false">x86_64</string>
 
     <!-- CentOS -->
@@ -206,6 +204,21 @@
     <!-- x86_64 -->
     <string name="x86_64_alpine_source_path" translatable="false">http://dl-cdn.alpinelinux.org/alpine/</string>
     <string name="x86_64_alpine_arch" translatable="false">x86_64</string>
+
+    <!-- Docker -->
+    <string name="docker_suite" translatable="false">linux</string>
+    <!-- arm -->
+    <string name="arm_docker_source_path" translatable="false">library/ubuntu:18.04</string>
+    <string name="arm_docker_arch" translatable="false">arm</string>
+    <!-- arm_64 -->
+    <string name="arm_64_docker_source_path" translatable="false">library/ubuntu:18.04</string>
+    <string name="arm_64_docker_arch" translatable="false">arm64</string>
+    <!-- x86 -->
+    <string name="x86_docker_source_path" translatable="false">library/ubuntu:18.04</string>
+    <string name="x86_docker_arch" translatable="false">386</string>
+    <!-- x86_64 -->
+    <string name="x86_64_docker_source_path" translatable="false">library/ubuntu:18.04</string>
+    <string name="x86_64_docker_arch" translatable="false">amd64</string>
 
     <!-- RootFS -->
     <string name="rootfs_suite" translatable="false" />

@@ -102,9 +102,6 @@
     <string name="title_server_url_preference">服务器地址</string>
     <string name="dialog_title_server_url_preference">服务器地址</string>
 
-    <string name="title_is_cli_preference">启用 CLI</string>
-    <string name="summary_is_cli_preference">一个设置命令行界面</string>
-
     <string name="title_installenv_preference">更新环境</string>
     <string name="summary_installenv_preference">更新操作环境</string>
     <string name="message_installenv_confirm_dialog">是否要更新操作环境？</string>
@@ -144,9 +141,6 @@
     <string name="title_export_dialog">导出</string>
 
     <string name="bootstrap_preferences">引导设置</string>
-    <!-- METHOD -->
-    <string name="title_method_preference">容器类型</string>
-    <string name="dialog_title_method_preference">选择容器类型</string>
     <!-- DISTRIB -->
     <string name="title_distrib_preference">发行版 GNU/Linux </string>
     <string name="dialog_title_distrib_preference">选择发行版 GNU/Linux </string>

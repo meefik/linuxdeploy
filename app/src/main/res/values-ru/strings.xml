@@ -93,7 +93,6 @@
     <string name="summary_gui_properties_preference">Изменить параметры графической подсистемы</string>
     <string name="summary_init_properties_preference">Изменить параметры система инициализации</string>
     <string name="summary_init_async_preference">Запускать процессы параллельно </string>
-    <string name="summary_is_cli_preference">Настроить интерфейс командной строки</string>
     <string name="title_x11_display_preference">Номер дисплея</string>
     <string name="title_x11_host_preference">Адрес X-сервера</string>
     <string name="title_x11_sdl_preference">XServer XSDL</string>
@@ -131,7 +130,6 @@
     <string name="title_is_telnet_preference">TELNET</string>
     <string name="title_mounts_editor_preference">Точки монтирования</string>
     <string name="title_nettrack_preference">Отслеживать изменения сети</string>
-    <string name="title_is_cli_preference">Включить CLI</string>
     <string name="title_is_http_preference">Веб-интерфейс</string>
     <string name="title_path_preference">Переменная PATH</string>
     <string name="title_ssh_port_preference">Порт</string>
@@ -148,7 +146,6 @@
     <string name="title_dns_preference">DNS-сервер</string>
     <string name="title_source_path_preference">Источник установки</string>
     <string name="title_ssh_options_preference">Опции SSH</string>
-    <string name="title_method_preference">Метод контейнеризации</string>
     <string name="title_env_dir_preference">Директория окружения</string>
     <string name="summary_x11_sdl_preference">Автоматически открывать XServer XSDL</string>
     <string name="summary_trace_mode_preference">Перейти в режим трассировки</string>
@@ -202,7 +199,6 @@
     <string name="dialog_title_path_preference">Переменная PATH</string>
     <string name="dialog_title_privileged_users_preference">Привилегированные пользователи</string>
     <string name="dialog_title_server_url_preference">URL сервера</string>
-    <string name="dialog_title_method_preference">Метод контейнеризации</string>
     <string name="dialog_title_init_user_preference">INIT: пользователь</string>
     <string name="title_privileged_users_preference">Привилегированные пользователи</string>
     <string name="bootstrap_preferences">Развертывание</string>

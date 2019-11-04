@@ -101,9 +101,6 @@
     <string name="title_server_url_preference">"URL server"</string>
     <string name="dialog_title_server_url_preference">"URL server"</string>
 
-    <string name="title_is_cli_preference">"Aktifkan CLI"</string>
-    <string name="summary_is_cli_preference">"Siapkan antarmuka baris perintah"</string>
-
     <string name="title_installenv_preference">"Perbarui ENV"</string>
     <string name="summary_installenv_preference">"Perbarui lingkungan pengoperasian"</string>
     <string name="message_installenv_confirm_dialog">"Update lingkungan operasi?"</string>
@@ -143,9 +140,6 @@
     <string name="title_export_dialog">"Ekspor"</string>
 
     <string name="bootstrap_preferences">"BOOTSTRAP"</string>
-    <!-- METHOD -->
-    <string name="title_method_preference">"Metode kontainerisasi"</string>
-    <string name="dialog_title_method_preference">"Metode kontainerisasi"</string>
     <!-- DISTRIB -->
     <string name="title_distrib_preference">"Distribusi"</string>
     <string name="dialog_title_distrib_preference">"Distribusi"</string>

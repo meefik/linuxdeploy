@@ -8,7 +8,6 @@ import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceGroup;
-import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.view.MenuItem;
 
@@ -20,10 +19,7 @@ public class PropertiesActivity extends AppCompatPreferenceActivity implements
         super.onCreate(savedInstanceState);
         PrefStore.setLocale(this);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        PreferenceManager prefMgr = getPreferenceManager();
-        prefMgr.setSharedPreferencesName(PrefStore.getPropertiesSharedName());
+        getPreferenceManager().setSharedPreferencesName(PrefStore.getPropertiesSharedName());
 
         // Restore from conf file if open from main activity
         if (getIntent().getBooleanExtra("restore", false)) {

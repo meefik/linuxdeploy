@@ -117,13 +117,11 @@
     <string name="title_mounts_editor_preference">Các điểm gắn kết</string>
     <string name="title_ssh_port_preference">Cổng</string>
     <string name="title_ssh_properties_preference">Tuỳ chọn SSH</string>
-    <string name="title_is_cli_preference">Cho phép CLI</string>
     <string name="gui_preferences">GUI</string>
     <string name="title_arch_preference">Chuẩn nén</string>
     <string name="title_dns_preference">Máy chủ DNS</string>
     <string name="title_source_path_preference">Đường dẫn nguồn</string>
     <string name="summary_x11_sdl_preference">Tự động mở máy chủ X XSDL</string>
-    <string name="summary_is_cli_preference">Set up a command line interface</string>
     <string name="summary_trace_mode_preference">Bật chế độ dấu vết</string>
     <string name="summary_ssh_properties_preference">Thay đổi cài đặt cho máy chủ  SSH</string>
     <string name="summary_is_ssh_preference">Cho phép khởi động máy chủ SSH</string>

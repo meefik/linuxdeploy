@@ -118,9 +118,6 @@
     <!-- SERVER_URL -->
     <string name="title_server_url_preference">Server URL</string>
     <string name="dialog_title_server_url_preference">Server URL</string>
-    <!-- CLI -->
-    <string name="title_is_cli_preference">Enable CLI</string>
-    <string name="summary_is_cli_preference">Set up a command line interface</string>
     <!-- Update ENV -->
     <string name="title_installenv_preference">Update ENV</string>
     <string name="summary_installenv_preference">Update the operating environment</string>
@@ -168,9 +165,6 @@
 
     <!-- BOOTSTRAP -->
     <string name="bootstrap_preferences">BOOTSTRAP</string>
-    <!-- METHOD -->
-    <string name="title_method_preference">Containerization method</string>
-    <string name="dialog_title_method_preference">Containerization method</string>
     <!-- DISTRIB -->
     <string name="title_distrib_preference">Distribution</string>
     <string name="dialog_title_distrib_preference">Distribution</string>

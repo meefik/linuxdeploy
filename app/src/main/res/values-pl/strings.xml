@@ -60,8 +60,6 @@
     <string name="env_preferences">Środowisko operacyjne</string>
     <string name="title_path_preference">Katalog BusyBox</string>
     <string name="dialog_title_path_preference">PATH</string>
-    <string name="title_is_cli_preference">Włącz CLI</string>
-    <string name="summary_is_cli_preference">Ustaw interfejs wiersza poleceń</string>
     <string name="title_installenv_preference">Zaktualizuj ENV</string>
     <string name="summary_installenv_preference">Zaktualizuj środowisko operacyjne</string>
     <string name="message_installenv_confirm_dialog">Zaktualizować środowisko operacyjne?</string>

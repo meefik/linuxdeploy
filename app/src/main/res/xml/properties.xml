@@ -3,15 +3,6 @@
 
     <PreferenceCategory android:title="@string/bootstrap_preferences">
         <ListPreference
-            android:defaultValue="@string/method"
-            android:dialogTitle="@string/dialog_title_method_preference"
-            android:entries="@array/method_values"
-            android:entryValues="@array/method_values"
-            android:key="method"
-            android:summary="@string/method"
-            android:title="@string/title_method_preference" />
-
-        <ListPreference
             android:defaultValue="@string/distrib"
             android:dialogTitle="@string/dialog_title_distrib_preference"
             android:entries="@array/distrib_entries"

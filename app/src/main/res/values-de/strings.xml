@@ -82,7 +82,6 @@
     <string name="summary_debug_mode_preference">Sehe die Debugging Information</string>
     <string name="summary_disk_size_preference">Automatische Berechnung</string>
     <string name="summary_gui_properties_preference">Ändern der Einstellungen für das Grafik-Subsystem</string>
-    <string name="summary_is_cli_preference">Set up a command line interface</string>
     <string name="title_x11_display_preference">Bildschirm</string>
     <string name="title_x11_host_preference">X Server Addrese</string>
     <string name="title_x11_sdl_preference">XServer XSDL</string>
@@ -114,7 +113,6 @@
     <string name="title_mounts_editor_preference">Mount Punkte</string>
     <string name="title_ssh_port_preference">Port</string>
     <string name="title_ssh_properties_preference">SSH Einstellungen</string>
-    <string name="title_is_cli_preference">Aktivieren CLI</string>
     <string name="title_arch_preference">Architekture</string>
     <string name="title_dns_preference">DNS Server</string>
     <string name="title_source_path_preference">Quellpfad</string>
@@ -122,7 +120,6 @@
     <string name="summary_trace_mode_preference">Aktiviere Trance-Modus</string>
     <string name="summary_ssh_properties_preference">SSH Server Einstellungen ändern</string>
     <string name="summary_is_ssh_preference">Erlauben das der SSH Server hochfährt</string>
-    <string name="summary_nettrack_preference"></string>
     <string name="summary_mounts_editor_preference">Bearbeite die Mountliste</string>
     <string name="summary_dns_preference">Automatische Erkennung</string>
     <string name="summary_is_mounts_preference">Erlaube das mount der Android resources</string>
