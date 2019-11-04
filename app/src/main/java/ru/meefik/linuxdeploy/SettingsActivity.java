@@ -13,7 +13,6 @@ import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceGroup;
-import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 
 import androidx.appcompat.app.AlertDialog;
@@ -28,8 +27,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements
         super.onCreate(savedInstanceState);
         PrefStore.setLocale(this);
 
-        PreferenceManager prefMgr = getPreferenceManager();
-        prefMgr.setSharedPreferencesName(PrefStore.getSettingsSharedName());
+        getPreferenceManager().setSharedPreferencesName(PrefStore.getSettingsSharedName());
 
         // Restore from conf file
         PrefStore.restoreSettings(this);
@@ -149,6 +147,11 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements
             if (editPref.getKey().equals("http_conf") &&
                     editPref.getText().isEmpty()) {
                 editPref.setText(PrefStore.getHttpConf(this));
+                pref.setSummary(editPref.getText());
+            }
+
+            if (editPref.getKey().equals("logfile") && !init) {
+                editPref.setText(PrefStore.getLogFile(this));
                 pref.setSummary(editPref.getText());
             }
         }

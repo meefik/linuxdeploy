@@ -55,13 +55,11 @@
     <string name="summary_timestamp_preference">Mostrar timestamp</string>
     <string name="title_appicon_preference">Mostrar ícone</string>
     <string name="summary_appicon_preference">Mostrar ícone na barra de notificação</string>
-    <string name="title_autostart_preference">Inicio automático</string>
+    <string name="title_autostart_preference">Início automático</string>
     <string name="summary_autostart_preference">Executar automaticamente o GNU/Linux ao iniciar o Android</string>
     <string name="env_preferences">Ambiente de operação</string>
     <string name="title_path_preference">Diretório do BusyBox</string>
     <string name="dialog_title_path_preference">Diretório do BusyBox</string>
-    <string name="title_is_cli_preference">Usar CLI</string>
-    <string name="summary_is_cli_preference">Configurar a interface de linha de comando</string>
     <string name="title_installenv_preference">Atualizar ENV</string>
     <string name="summary_installenv_preference">Atualizar ambiente de operação</string>
     <string name="message_installenv_confirm_dialog">Atualizar ambiente de operação?</string>

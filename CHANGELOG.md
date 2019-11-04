@@ -6,6 +6,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.5.0] - 2019-11-04
+### Added
+- Added compatibility with Android 10
+- Added support for Docker containers
+
+### Fixed
+- Fixed URL of Ubuntu repository
+- Fixed Arch Linux deprecations
+
+### Changed
+- Updated built-in busybox to v1.31.1
+
+### Removed
+- Removed PRoot support
+- Removed installing symlink to /system/bin
+
 ## [2.4.1] - 2019-10-20
 ### Added
 - Added power trigger

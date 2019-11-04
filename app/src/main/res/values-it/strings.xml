@@ -117,12 +117,10 @@
     <string name="title_mounts_editor_preference">Punti di montaggio</string>
     <string name="title_ssh_port_preference">Porta</string>
     <string name="title_ssh_properties_preference">Impostazioni SSH</string>
-    <string name="title_is_cli_preference">Permettere CLI</string>
     <string name="title_arch_preference">Architettura</string>
     <string name="title_dns_preference">Server DNS</string>
     <string name="title_source_path_preference">Percorso di origine</string>
     <string name="summary_x11_sdl_preference">Aprire automaticamente XServer XSDL</string>
-    <string name="summary_is_cli_preference">Set up a command line interface</string>
     <string name="summary_trace_mode_preference">Abilità modalità di tracciamento</string>
     <string name="summary_ssh_properties_preference">Modifica impostazioni server SSH</string>
     <string name="summary_is_ssh_preference">Permetti l\'avvio del server SSH</string>

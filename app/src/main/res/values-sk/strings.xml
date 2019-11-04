@@ -86,7 +86,6 @@
     <string name="summary_debug_mode_preference">Zobrazí ladiace informácie</string>
     <string name="summary_disk_size_preference">Bude vypočítaná automaticky</string>
     <string name="summary_gui_properties_preference">Zmení nastavenia grafického podsystému</string>
-    <string name="summary_is_cli_preference">Nastaví rozhranie príkazového riadku</string>
     <string name="title_x11_display_preference">Displej</string>
     <string name="title_x11_host_preference">Adresa X servera</string>
     <string name="title_x11_sdl_preference">XServer XSDL</string>
@@ -119,7 +118,6 @@
     <string name="title_mounts_editor_preference">Body pripojení</string>
     <string name="title_ssh_port_preference">Port</string>
     <string name="title_ssh_properties_preference">Nastavenia SSH</string>
-    <string name="title_is_cli_preference">Aktivovať CLI</string>
     <string name="gui_preferences">Grafické používateľské rozhranie</string>
     <string name="title_arch_preference">Architektúra</string>
     <string name="title_dns_preference">Server DNS</string>

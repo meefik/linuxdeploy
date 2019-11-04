@@ -104,27 +104,6 @@
             android:key="path"
             android:summary="@string/path"
             android:title="@string/title_path_preference" />
-        <!--
-        <CheckBoxPreference
-            android:defaultValue="@string/is_sync"
-            android:key="is_sync"
-            android:summary="@string/summary_is_sync_preference"
-            android:title="@string/title_is_sync_preference" />
-
-        <EditTextPreference
-            android:dependency="is_sync"
-            android:defaultValue="@string/server_url"
-            android:dialogTitle="@string/dialog_title_server_url_preference"
-            android:key="server_url"
-            android:summary="@string/server_url"
-            android:title="@string/title_server_url_preference" />
-        -->
-        <CheckBoxPreference
-            android:defaultValue="@string/is_cli"
-            android:key="is_cli"
-            android:summary="@string/summary_is_cli_preference"
-            android:title="@string/title_is_cli_preference" />
-
         <PreferenceScreen
             android:key="installenv"
             android:summary="@string/summary_installenv_preference"

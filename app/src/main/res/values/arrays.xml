@@ -237,6 +237,7 @@
         <item>kali</item>
         <item>slackware</item>
         <item>ubuntu</item>
+        <item>docker</item>
         <item>rootfs</item>
     </string-array>
     <string-array name="distrib_entries" translatable="false">
@@ -248,15 +249,12 @@
         <item>Kali</item>
         <item>Slackware</item>
         <item>Ubuntu</item>
+        <item>Docker</item>
         <item>rootfs.tar</item>
     </string-array>
     <string-array name="init_values" translatable="false">
         <item>run-parts</item>
         <item>sysv</item>
-    </string-array>
-    <string-array name="method_values" translatable="false">
-        <item>chroot</item>
-        <item>proot</item>
     </string-array>
     <string-array name="graphics_values" translatable="false">
         <item>vnc</item>
@@ -389,6 +387,18 @@
         <item>aarch64</item>
         <item>x86</item>
         <item>x86_64</item>
+    </string-array>
+
+    <!-- Docker -->
+
+    <string-array name="docker_suite_values" translatable="false">
+        <item>linux</item>
+    </string-array>
+    <string-array name="docker_arch_values" translatable="false">
+        <item>arm</item>
+        <item>arm64</item>
+        <item>386</item>
+        <item>amd64</item>
     </string-array>
 
     <!-- RootFS -->

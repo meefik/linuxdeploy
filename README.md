@@ -17,7 +17,7 @@ The app is available for download in Google Play and GitHub.
 
 ## Features
 
-- Supported distributions: Debian, Ubuntu, Kali Linux, Arch Linux, Fedora, CentOS, Slackware, Alpine Linux, other (from rootfs.tar)
+- Bootstrap: Alpine, Arch, CentOS, Debian, Fedora, Kali, Slackware, Ubuntu, Docker or from rootfs.tar
 - Installation type: image file, directory, disk partition, RAM
 - Supported file systems: ext2, ext3, ext4
 - Supported architectures: arm, arm64, x86, x86_64, emulation mode (ARM ~ x86)

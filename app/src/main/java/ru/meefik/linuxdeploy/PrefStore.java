@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Point;
+import android.os.Environment;
 import android.text.TextUtils;
 import android.view.Display;
 import android.view.WindowManager;
@@ -156,15 +157,6 @@ public class PrefStore {
     }
 
     /**
-     * Check root is required for current profile
-     *
-     * @return true if required
-     */
-    static boolean isRootRequired(Context c) {
-        return PROPERTIES.get(c, "method").equals("chroot");
-    }
-
-    /**
      * Get language code
      *
      * @param c context
@@ -302,9 +294,12 @@ public class PrefStore {
      * @return path
      */
     static String getLogFile(Context c) {
-        String logfile = SETTINGS.get(c, "logfile");
-        if (!logfile.contains("/")) logfile = getEnvDir(c) + "/" + logfile;
-        return logfile;
+        String logFile = SETTINGS.get(c, "logfile");
+        if (!logFile.contains("/")) {
+            String storageDir = Environment.getExternalStorageDirectory().getAbsolutePath();
+            logFile = storageDir + "/" + logFile;
+        }
+        return logFile;
     }
 
     /**
@@ -447,16 +442,6 @@ public class PrefStore {
      */
     static void setRepositoryUrl(Context c, String url) {
         SETTINGS.set(c, "repository_url", url);
-    }
-
-    /**
-     * CLI symlink is enabled
-     *
-     * @param c context
-     * @return true if enabled
-     */
-    static Boolean isCliSymlink(Context c) {
-        return SETTINGS.get(c, "is_cli").equals("true");
     }
 
     /**

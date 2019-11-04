@@ -95,9 +95,6 @@
     <string name="title_server_url_preference">서버 URL</string>
     <string name="dialog_title_server_url_preference">서버 URL</string>
 
-    <string name="title_is_cli_preference">CLI 활성화</string>
-    <string name="summary_is_cli_preference">명령 줄 인터페이스를 설정합니다.</string>
-
     <string name="title_installenv_preference">ENV 업데이트</string>
     <string name="summary_installenv_preference">운영체제 환경 업데이트</string>
     <string name="message_installenv_confirm_dialog">운영체제 환경을 업데이트 하시겠습니까?</string>
@@ -137,9 +134,6 @@
     <string name="title_export_dialog">내보내기</string>
 
     <string name="bootstrap_preferences">부트스트랩</string>
-    <!-- METHOD -->
-    <string name="title_method_preference">컨테이너화 방식</string>
-    <string name="dialog_title_method_preference">컨테이너화 방식</string>
     <!-- DISTRIB -->
     <string name="title_distrib_preference">배포</string>
     <string name="dialog_title_distrib_preference">배포</string>

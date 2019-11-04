@@ -386,10 +386,6 @@ class EnvUtils {
         // update profile.conf
         if (!PrefStore.getPropertiesConfFile(c).exists()) PrefStore.dumpProperties(c);
 
-        if (PrefStore.isCliSymlink(c)) {
-            if (!EnvUtils.makeSymlink(c)) return false;
-        }
-
         // update version
         if (!setVersion(c)) return false;
 
@@ -425,38 +421,6 @@ class EnvUtils {
     }
 
     /**
-     * Make symlink on linuxdeploy script in /system/bin
-     *
-     * @param c context
-     * @return true if success
-     */
-    private static boolean makeSymlink(Context c) {
-        List<String> params = new ArrayList<>();
-        params.add("{ rm -f /system/bin/linuxdeploy; ln -s "
-                + PrefStore.getBinDir(c)
-                + "/linuxdeploy /system/bin/linuxdeploy; } 2>/dev/null || "
-                + "{ mount -o rw,remount /system; rm -f /system/bin/linuxdeploy; ln -s "
-                + PrefStore.getBinDir(c)
-                + "/linuxdeploy /system/bin/linuxdeploy; mount -o ro,remount /system; }");
-        return exec(c, "su", params);
-    }
-
-    /**
-     * Remove symlink on linuxdeploy script from /system/bin
-     *
-     * @param c context
-     * @return true if success
-     */
-    private static boolean removeSymlink(Context c) {
-        List<String> params = new ArrayList<>();
-        params.add("if [ -e /system/bin/linuxdeploy ]; then "
-                + "rm -f /system/bin/linuxdeploy 2>/dev/null || "
-                + "{ mount -o rw,remount /system; rm -f /system/bin/linuxdeploy; mount -o ro,remount /system; };"
-                + "fi");
-        return exec(c, "su", params);
-    }
-
-    /**
      * Remove operating environment
      *
      * @param c context
@@ -465,10 +429,6 @@ class EnvUtils {
     static boolean removeEnv(Context c) {
         // stop services
         execServices(c, new String[]{"telnetd", "httpd"}, "stop");
-
-        // remove symlink
-        File ldSymlink = new File("/system/bin/linuxdeploy");
-        if (ldSymlink.exists()) removeSymlink(c);
 
         // clean env directory
         File envDir = new File(PrefStore.getEnvDir(c));
@@ -495,8 +455,7 @@ class EnvUtils {
         params.add("printf '>>> " + cmd + "\n'");
         params.add(PrefStore.getBinDir(c) + "/linuxdeploy " + opts + cmd + args);
         params.add("printf '<<< " + cmd + "\n'");
-        String shell = PrefStore.isRootRequired(c) ? "su" : "sh";
-        return exec(c, shell, params);
+        return exec(c, "su", params);
     }
 
     /**
