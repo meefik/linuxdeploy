@@ -49,6 +49,7 @@ class EnvUtils {
         AssetManager assetManager = c.getAssets();
         InputStream in = null;
         OutputStream out = null;
+        boolean result = true;
         try {
             in = assetManager.open(rootAsset + path);
             File fname = new File(target + path);
@@ -62,12 +63,12 @@ class EnvUtils {
             out.flush();
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
+            result = false;
         } finally {
             close(in);
             close(out);
         }
-        return true;
+        return result;
     }
 
     /**
@@ -150,6 +151,7 @@ class EnvUtils {
         boolean result = false;
         OutputStream stdin = null;
         InputStream stdout = null;
+        int n = 0;
         try {
             Process process = Runtime.getRuntime().exec("su");
             stdin = process.getOutputStream();
@@ -167,7 +169,6 @@ class EnvUtils {
                 close(os);
             }
 
-            int n = 0;
             BufferedReader reader = null;
             try {
                 reader = new BufferedReader(new InputStreamReader(stdout));
@@ -179,17 +180,13 @@ class EnvUtils {
             } finally {
                 close(reader);
             }
-
-            if (n > 0) {
-                result = true;
-            }
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
             close(stdout);
             close(stdin);
         }
-        return result;
+        return n > 0;
     }
 
     /**
