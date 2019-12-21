@@ -6,10 +6,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.5.1] - 2019-11-04
+### Fixed
+- Fixed Arch Linux package management
+
+### Changed
+- Changed a format for privileged users to UID:GID
+
 ## [2.5.0] - 2019-11-04
 ### Added
 - Added compatibility with Android 10
-- Added support for Docker containers
+- Added support for Docker images
 
 ### Fixed
 - Fixed URL of Ubuntu repository

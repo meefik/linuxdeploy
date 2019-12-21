@@ -131,18 +131,18 @@
     <string name="x86_64_kali_arch" translatable="false">amd64</string>
 
     <!-- Fedora -->
-    <string name="fedora_suite" translatable="false">28</string>
+    <string name="fedora_suite" translatable="false">30</string>
     <!-- arm -->
-    <string name="arm_fedora_source_path" translatable="false">http://dl.fedoraproject.org/pub/archive/</string>
+    <string name="arm_fedora_source_path" translatable="false">http://dl.fedoraproject.org/pub/</string>
     <string name="arm_fedora_arch" translatable="false">armhfp</string>
     <!-- arm_64 -->
-    <string name="arm_64_fedora_source_path" translatable="false">http://dl.fedoraproject.org/pub/archive/</string>
+    <string name="arm_64_fedora_source_path" translatable="false">http://dl.fedoraproject.org/pub/</string>
     <string name="arm_64_fedora_arch" translatable="false">aarch64</string>
     <!-- x86 -->
-    <string name="x86_fedora_source_path" translatable="false">http://dl.fedoraproject.org/pub/archive/</string>
+    <string name="x86_fedora_source_path" translatable="false">http://dl.fedoraproject.org/pub/</string>
     <string name="x86_fedora_arch" translatable="false">i386</string>
     <!-- x86_64 -->
-    <string name="x86_64_fedora_source_path" translatable="false">http://dl.fedoraproject.org/pub/archive/</string>
+    <string name="x86_64_fedora_source_path" translatable="false">http://dl.fedoraproject.org/pub/</string>
     <string name="x86_64_fedora_arch" translatable="false">x86_64</string>
 
     <!-- CentOS -->
