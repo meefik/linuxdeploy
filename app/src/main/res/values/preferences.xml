@@ -46,7 +46,7 @@
     <string name="fs_type" translatable="false">ext4</string>
     <string name="user_name" translatable="false">android</string>
     <string name="user_password" translatable="false"></string>
-    <string name="privileged_users" translatable="false">android:aid_inet android:aid_sdcard_rw</string>
+    <string name="privileged_users" translatable="false">android:aid_inet android:aid_sdcard_rw android:aid_graphics</string>
     <string name="locale" translatable="false">C</string>
     <string name="dns" translatable="false"></string>
     <string name="net_trigger" translatable="false"></string>
