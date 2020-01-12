@@ -1,4 +1,4 @@
-package ru.meefik.linuxdeploy;
+package ru.meefik.linuxdeploy.activity;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -20,6 +20,9 @@ import java.util.List;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
+import ru.meefik.linuxdeploy.PrefStore;
+import ru.meefik.linuxdeploy.R;
 
 public class ProfilesActivity extends AppCompatActivity implements OnTouchListener {
 

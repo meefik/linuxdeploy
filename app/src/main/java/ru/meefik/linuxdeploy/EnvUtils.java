@@ -19,7 +19,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-class EnvUtils {
+public class EnvUtils {
 
     /**
      * Closeable helper
@@ -217,7 +217,7 @@ class EnvUtils {
      * @param c context
      * @return true if success
      */
-    static boolean isLatestVersion(Context c) {
+    public static boolean isLatestVersion(Context c) {
         File f = new File(PrefStore.getEnvDir(c) + "/version");
         if (!f.exists()) return false;
         boolean result = false;
@@ -462,7 +462,7 @@ class EnvUtils {
      * @param cmd  command
      * @param args arguments
      */
-    static void execService(Context c, String cmd, String args) {
+    public static void execService(Context c, String cmd, String args) {
         Intent service = new Intent(c, ExecService.class);
         service.putExtra("cmd", cmd);
         service.putExtra("args", args);
@@ -476,7 +476,7 @@ class EnvUtils {
      * @param commands commands
      * @param args     command and arguments
      */
-    static void execServices(Context c, String[] commands, String args) {
+    public static void execServices(Context c, String[] commands, String args) {
         for (String cmd : commands) {
             execService(c, cmd, args);
         }

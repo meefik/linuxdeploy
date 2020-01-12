@@ -1,4 +1,4 @@
-package ru.meefik.linuxdeploy;
+package ru.meefik.linuxdeploy.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -28,7 +28,6 @@ import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +36,9 @@ import java.util.zip.GZIPInputStream;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
+import ru.meefik.linuxdeploy.PrefStore;
+import ru.meefik.linuxdeploy.R;
 
 public class RepositoryActivity extends AppCompatActivity {
 

@@ -1,4 +1,4 @@
-package ru.meefik.linuxdeploy;
+package ru.meefik.linuxdeploy.activity;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -19,6 +19,9 @@ import java.util.List;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
+import ru.meefik.linuxdeploy.PrefStore;
+import ru.meefik.linuxdeploy.R;
 
 public class MountsActivity extends AppCompatActivity {
 

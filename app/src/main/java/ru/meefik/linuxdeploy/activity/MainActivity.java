@@ -1,4 +1,4 @@
-package ru.meefik.linuxdeploy;
+package ru.meefik.linuxdeploy.activity;
 
 import android.Manifest;
 import android.content.Intent;
@@ -36,6 +36,14 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+
+import ru.meefik.linuxdeploy.EnvUtils;
+import ru.meefik.linuxdeploy.Logger;
+import ru.meefik.linuxdeploy.receiver.NetworkReceiver;
+import ru.meefik.linuxdeploy.receiver.PowerReceiver;
+import ru.meefik.linuxdeploy.PrefStore;
+import ru.meefik.linuxdeploy.R;
+import ru.meefik.linuxdeploy.UpdateEnvTask;
 
 public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener {

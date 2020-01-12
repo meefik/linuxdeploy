@@ -7,12 +7,12 @@ import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
 
-class UpdateEnvTask extends AsyncTask<String, Void, Boolean> {
+public class UpdateEnvTask extends AsyncTask<String, Void, Boolean> {
 
     private ProgressDialog dialog;
     private WeakReference<Context> contextWeakReference;
 
-    UpdateEnvTask(Context c) {
+    public UpdateEnvTask(Context c) {
         contextWeakReference = new WeakReference<>(c);
     }
 

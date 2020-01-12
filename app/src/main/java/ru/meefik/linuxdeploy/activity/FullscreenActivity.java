@@ -1,4 +1,4 @@
-package ru.meefik.linuxdeploy;
+package ru.meefik.linuxdeploy.activity;
 
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
@@ -7,6 +7,9 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import ru.meefik.linuxdeploy.PrefStore;
+import ru.meefik.linuxdeploy.R;
 
 public class FullscreenActivity extends AppCompatActivity {
 

@@ -15,7 +15,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-class Logger {
+import ru.meefik.linuxdeploy.activity.MainActivity;
+
+public class Logger {
 
     private static volatile List<String> protocol = new ArrayList<>();
     private static char lastChar = '\n';
@@ -66,7 +68,7 @@ class Logger {
      * @param c context
      * @return true if success
      */
-    static boolean clear(Context c) {
+    public static boolean clear(Context c) {
         protocol.clear();
         File logFile = new File(PrefStore.getLogFile(c));
         return logFile.delete();
@@ -77,14 +79,14 @@ class Logger {
      *
      * @return size
      */
-    static int size() {
+    public static int size() {
         return protocol.size();
     }
 
     /**
      * Show log on main activity
      */
-    static void show() {
+    public static void show() {
         MainActivity.showLog(get());
     }
 

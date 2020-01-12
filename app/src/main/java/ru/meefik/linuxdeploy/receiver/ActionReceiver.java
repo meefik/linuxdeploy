@@ -1,4 +1,4 @@
-package ru.meefik.linuxdeploy;
+package ru.meefik.linuxdeploy.receiver;
 
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
@@ -6,6 +6,10 @@ import android.content.Context;
 import android.content.Intent;
 
 import androidx.core.app.NotificationCompat;
+
+import ru.meefik.linuxdeploy.EnvUtils;
+import ru.meefik.linuxdeploy.R;
+import ru.meefik.linuxdeploy.activity.MainActivity;
 
 import static ru.meefik.linuxdeploy.App.SERVICE_CHANNEL_ID;
 

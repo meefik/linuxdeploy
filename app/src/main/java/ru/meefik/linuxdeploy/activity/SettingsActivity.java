@@ -1,9 +1,8 @@
-package ru.meefik.linuxdeploy;
+package ru.meefik.linuxdeploy.activity;
 
 import android.Manifest;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.PackageManager;
@@ -18,6 +17,13 @@ import android.preference.PreferenceScreen;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+import ru.meefik.linuxdeploy.receiver.BootReceiver;
+import ru.meefik.linuxdeploy.EnvUtils;
+import ru.meefik.linuxdeploy.PrefStore;
+import ru.meefik.linuxdeploy.R;
+import ru.meefik.linuxdeploy.RemoveEnvTask;
+import ru.meefik.linuxdeploy.UpdateEnvTask;
 
 public class SettingsActivity extends AppCompatPreferenceActivity implements
         OnSharedPreferenceChangeListener, Preference.OnPreferenceClickListener {
