@@ -10,6 +10,7 @@ import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
@@ -39,6 +40,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import ru.meefik.linuxdeploy.EnvUtils;
 import ru.meefik.linuxdeploy.Logger;
+import ru.meefik.linuxdeploy.fragment.PropertiesFragment;
 import ru.meefik.linuxdeploy.receiver.NetworkReceiver;
 import ru.meefik.linuxdeploy.receiver.PowerReceiver;
 import ru.meefik.linuxdeploy.PrefStore;
@@ -116,7 +118,12 @@ public class MainActivity extends AppCompatActivity implements
 
         // WiFi lock init
         WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(android.content.Context.WIFI_SERVICE);
-        wifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL, getPackageName());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            // WIFI_MODE_FULL has been deprecated since API level 29 and will have no impact!
+            wifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, getPackageName());
+        } else {
+            wifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL, getPackageName());
+        }
 
         // Wake lock
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);

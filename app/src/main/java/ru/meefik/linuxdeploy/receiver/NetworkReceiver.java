@@ -4,6 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
 
 import ru.meefik.linuxdeploy.EnvUtils;
@@ -16,9 +18,21 @@ public class NetworkReceiver extends BroadcastReceiver {
             ConnectivityManager cm =
                     (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
-            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-            boolean isConnected = false;
-            if (activeNetwork != null) isConnected = activeNetwork.isConnected();
+            boolean isConnected;
+
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                Network activeNetwork = cm.getActiveNetwork();
+                NetworkCapabilities networkCapabilities = cm.getNetworkCapabilities(activeNetwork);
+
+                isConnected = networkCapabilities != null
+                        && (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+                        || networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
+                        || networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET));
+            } else {
+                NetworkInfo activeNetworkInfo = cm.getActiveNetworkInfo();
+                isConnected = activeNetworkInfo != null && activeNetworkInfo.isConnected();
+            }
+
             if (isConnected) {
                 EnvUtils.execService(context, "start", "core/net");
             } else {
