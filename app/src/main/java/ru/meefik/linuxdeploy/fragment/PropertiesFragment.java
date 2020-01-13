@@ -14,6 +14,7 @@ import androidx.preference.PreferenceScreen;
 
 import ru.meefik.linuxdeploy.PrefStore;
 import ru.meefik.linuxdeploy.R;
+import ru.meefik.linuxdeploy.activity.MountsActivity;
 import ru.meefik.linuxdeploy.activity.PropertiesActivity;
 
 public class PropertiesFragment extends PreferenceFragmentCompat implements
@@ -118,7 +119,7 @@ public class PropertiesFragment extends PreferenceFragmentCompat implements
                 break;
             }
             case "mounts_editor": {
-                Intent intent = new Intent(getContext(), PropertiesActivity.class);
+                Intent intent = new Intent(getContext(), MountsActivity.class);
                 startActivity(intent);
                 break;
             }
