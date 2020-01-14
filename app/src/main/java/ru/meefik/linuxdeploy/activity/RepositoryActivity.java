@@ -5,8 +5,10 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -71,12 +73,14 @@ public class RepositoryActivity extends AppCompatActivity {
     }
 
     private void changeUrlDialog() {
-        final EditText input = new EditText(this);
+        View view = LayoutInflater.from(this).inflate(R.layout.edit_text_dialog, null);
+        EditText input = view.findViewById(R.id.edit_text);
         input.setText(PrefStore.getRepositoryUrl(this));
         input.setSelection(input.getText().length());
+
         new AlertDialog.Builder(this)
                 .setTitle(R.string.repository_change_url_title)
-                .setView(input)
+                .setView(view)
                 .setPositiveButton(android.R.string.ok,
                         (dialog, whichButton) -> {
                             String text = input.getText().toString();
@@ -242,12 +246,14 @@ public class RepositoryActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.menu_refresh:
                 retrieveIndex();
-                return true;
+                break;
             case R.id.menu_change_url:
                 changeUrlDialog();
-                return true;
+                break;
             default:
                 return super.onOptionsItemSelected(item);
         }
+
+        return true;
     }
 }

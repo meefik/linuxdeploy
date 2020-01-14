@@ -49,7 +49,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.4"
-            android:drawableLeft="?attr/ic_action_start"
+            android:drawableLeft="@drawable/ic_play_arrow_24dp"
             android:onClick="containerStart"
             android:paddingStart="16dp"
             android:paddingLeft="16dp"
@@ -63,7 +63,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.4"
-            android:drawableLeft="?attr/ic_action_stop"
+            android:drawableLeft="@drawable/ic_stop_24dp"
             android:onClick="containerStop"
             android:paddingStart="16dp"
             android:paddingLeft="16dp"
@@ -79,7 +79,7 @@
             android:layout_weight="0.2"
             android:contentDescription="@string/menu_properties"
             android:onClick="containerProperties"
-            android:src="?attr/ic_action_properties" />
+            android:src="@drawable/ic_tune_24dp" />
 
     </LinearLayout>
 

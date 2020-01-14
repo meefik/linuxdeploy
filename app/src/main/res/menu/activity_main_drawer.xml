@@ -4,30 +4,30 @@
     <group android:id="@+id/menu_top">
         <item
             android:id="@+id/nav_profiles"
-            android:icon="@drawable/ic_computer_black_24dp"
+            android:icon="@drawable/ic_computer_24dp"
             android:title="@string/nav_profiles" />
         <item
             android:id="@+id/nav_repository"
-            android:icon="@drawable/ic_search_black_24dp"
+            android:icon="@drawable/ic_search_24dp"
             android:title="@string/nav_repository" />
         <item
             android:id="@+id/nav_terminal"
-            android:icon="@drawable/ic_exit_to_app_black_24dp"
+            android:icon="@drawable/ic_exit_to_app_24dp"
             android:title="@string/nav_terminal" />
     </group>
 
     <group android:id="@+id/menu_bottom">
         <item
             android:id="@+id/nav_settings"
-            android:icon="@drawable/ic_settings_black_24dp"
+            android:icon="@drawable/ic_settings_24dp"
             android:title="@string/nav_settings" />
         <item
             android:id="@+id/nav_about"
-            android:icon="@drawable/ic_help_black_24dp"
+            android:icon="@drawable/ic_help_24dp"
             android:title="@string/nav_about" />
         <item
             android:id="@+id/nav_exit"
-            android:icon="@drawable/ic_close_black_24dp"
+            android:icon="@drawable/ic_close_24dp"
             android:title="@string/nav_exit" />
     </group>
 

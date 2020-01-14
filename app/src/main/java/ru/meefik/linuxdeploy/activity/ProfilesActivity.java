@@ -1,9 +1,9 @@
 package ru.meefik.linuxdeploy.activity;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.GestureDetector;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -66,17 +66,19 @@ public class ProfilesActivity extends AppCompatActivity implements OnTouchListen
     public static List<String> getProfiles(Context c) {
         List<String> profiles = new ArrayList<>();
         File confDir = new File(PrefStore.getEnvDir(c) + "/config");
-        File[] listOfFiles = confDir.listFiles();
-        if (listOfFiles != null) {
-            for (File listOfFile : listOfFiles) {
-                if (listOfFile.isFile()) {
-                    String filename = listOfFile.getName();
+        File[] profileFiles = confDir.listFiles();
+
+        if (profileFiles != null) {
+            for (File profileFile : profileFiles) {
+                if (profileFile.isFile()) {
+                    String filename = profileFile.getName();
                     int index = filename.lastIndexOf('.');
                     if (index != -1) filename = filename.substring(0, index);
                     profiles.add(filename);
                 }
             }
         }
+
         return profiles;
     }
 
@@ -87,45 +89,51 @@ public class ProfilesActivity extends AppCompatActivity implements OnTouchListen
      * @return position
      */
     private int getPosition(String key) {
-        int pos = 0;
-        for (String item : listItems) {
-            if (item.equals(key)) return pos;
-            pos++;
+        for (int i = 0; i < listItems.size(); i++) {
+            if (listItems.get(i).equals(key))
+                return i;
         }
+
         return -1;
     }
 
     private void addDialog() {
-        final EditText input = new EditText(this);
+        View view = LayoutInflater.from(this).inflate(R.layout.edit_text_dialog, null);
+        EditText input = view.findViewById(R.id.edit_text);
+
         new AlertDialog.Builder(this)
                 .setTitle(R.string.new_profile_title)
-                .setView(input)
+                .setView(view)
                 .setPositiveButton(android.R.string.ok,
                         (dialog, whichButton) -> {
                             String text = input.getText().toString();
-                            if (text.length() > 0) {
+                            if (!text.isEmpty()) {
                                 listItems.add(text.replaceAll("[^A-Za-z0-9_\\-]", "_"));
                                 adapter.notifyDataSetChanged();
                             }
                         })
                 .setNegativeButton(android.R.string.cancel,
-                        (dialog, whichButton) -> dialog.cancel()).show();
+                        (dialog, whichButton) -> dialog.cancel())
+                .show();
     }
 
     private void editDialog() {
-        final EditText input = new EditText(this);
-        final int pos = listView.getCheckedItemPosition();
+        int pos = listView.getCheckedItemPosition();
         if (pos >= 0 && pos < listItems.size()) {
-            final String profileOld = listItems.get(pos);
+            String profileOld = listItems.get(pos);
+
+            View view = LayoutInflater.from(this).inflate(R.layout.edit_text_dialog, null);
+            EditText input = view.findViewById(R.id.edit_text);
             input.setText(profileOld);
             input.setSelection(input.getText().length());
+
             new AlertDialog.Builder(this)
                     .setTitle(R.string.edit_profile_title)
-                    .setView(input)
+                    .setView(view)
                     .setPositiveButton(android.R.string.ok,
                             (dialog, whichButton) -> {
                                 String text = input.getText().toString();
-                                if (text.length() > 0) {
+                                if (!text.isEmpty()) {
                                     String profileNew = text.replaceAll("[^A-Za-z0-9_\\-]", "_");
                                     if (!profileOld.equals(profileNew)) {
                                         renameConf(getApplicationContext(), profileOld, profileNew);
@@ -135,7 +143,8 @@ public class ProfilesActivity extends AppCompatActivity implements OnTouchListen
                                 }
                             })
                     .setNegativeButton(android.R.string.cancel,
-                            (dialog, whichButton) -> dialog.cancel()).show();
+                            (dialog, whichButton) -> dialog.cancel())
+                    .show();
         }
     }
 
@@ -145,12 +154,10 @@ public class ProfilesActivity extends AppCompatActivity implements OnTouchListen
             new AlertDialog.Builder(this)
                     .setTitle(R.string.confirm_profile_discard_title)
                     .setMessage(R.string.confirm_profile_discard_message)
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .setCancelable(false)
+                    .setIcon(R.drawable.ic_warning_24dp)
                     .setPositiveButton(android.R.string.yes,
                             (dialog, whichButton) -> {
-                                String key = listItems.get(pos);
-                                listItems.remove(pos);
+                                String key = listItems.remove(pos);
                                 int last = listItems.size() - 1;
                                 if (last < 0) listItems.add(getString(R.string.profile));
                                 if (last >= 0 && pos > last)
@@ -159,7 +166,8 @@ public class ProfilesActivity extends AppCompatActivity implements OnTouchListen
                                 removeConf(getApplicationContext(), key);
                             })
                     .setNegativeButton(android.R.string.no,
-                            (dialog, whichButton) -> dialog.cancel()).show();
+                            (dialog, whichButton) -> dialog.cancel())
+                    .show();
         }
     }
 
@@ -210,13 +218,17 @@ public class ProfilesActivity extends AppCompatActivity implements OnTouchListen
             case R.id.menu_delete:
                 deleteDialog();
                 break;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return false;
+
+        return true;
     }
 
     @Override
     public void onPause() {
         super.onPause();
+
         int pos = listView.getCheckedItemPosition();
         if (pos >= 0 && pos < listItems.size()) {
             String profile = listItems.get(pos);

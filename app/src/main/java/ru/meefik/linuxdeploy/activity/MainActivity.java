@@ -56,6 +56,8 @@ public class MainActivity extends AppCompatActivity implements
     private static WifiLock wifiLock;
     private static PowerManager.WakeLock wakeLock;
 
+    private DrawerLayout drawer;
+
     private NetworkReceiver networkReceiver;
     private PowerReceiver powerReceiver;
 
@@ -102,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -203,7 +205,6 @@ public class MainActivity extends AppCompatActivity implements
                 clearLog();
                 break;
             case android.R.id.home:
-                DrawerLayout drawer = findViewById(R.id.drawer_layout);
                 if (drawer.isDrawerOpen(GravityCompat.START)) {
                     drawer.closeDrawer(GravityCompat.START);
                 } else {
@@ -219,7 +220,6 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer != null && drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -268,7 +268,6 @@ public class MainActivity extends AppCompatActivity implements
                 break;
         }
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -350,8 +349,10 @@ public class MainActivity extends AppCompatActivity implements
                             } else {
                                 EnvUtils.execService(getBaseContext(), "start", "-m");
                             }
-                        }).setNegativeButton(android.R.string.no,
-                (dialog, id) -> dialog.cancel()).show();
+                        })
+                .setNegativeButton(android.R.string.no,
+                        (dialog, id) -> dialog.cancel())
+                .show();
     }
 
     /**
@@ -365,8 +366,10 @@ public class MainActivity extends AppCompatActivity implements
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setCancelable(false)
                 .setPositiveButton(android.R.string.yes,
-                        (dialog, id) -> EnvUtils.execService(getBaseContext(), "stop", "-u")).setNegativeButton(android.R.string.no,
-                (dialog, id) -> dialog.cancel()).show();
+                        (dialog, id) -> EnvUtils.execService(getBaseContext(), "stop", "-u"))
+                .setNegativeButton(android.R.string.no,
+                        (dialog, id) -> dialog.cancel())
+                .show();
     }
 
     /**
@@ -391,7 +394,8 @@ public class MainActivity extends AppCompatActivity implements
                 .setPositiveButton(android.R.string.yes,
                         (dialog, id) -> EnvUtils.execService(getApplicationContext(), "deploy", null))
                 .setNegativeButton(android.R.string.no,
-                        (dialog, id) -> dialog.cancel()).show();
+                        (dialog, id) -> dialog.cancel())
+                .show();
     }
 
     /**
@@ -405,7 +409,8 @@ public class MainActivity extends AppCompatActivity implements
                 .setPositiveButton(android.R.string.yes,
                         (dialog, id) -> EnvUtils.execService(getBaseContext(), "deploy", "-m -n bootstrap"))
                 .setNegativeButton(android.R.string.no,
-                        (dialog, id) -> dialog.cancel()).show();
+                        (dialog, id) -> dialog.cancel())
+                .show();
     }
 
     /**
@@ -422,7 +427,8 @@ public class MainActivity extends AppCompatActivity implements
                 .setPositiveButton(android.R.string.yes,
                         (dialog, id) -> EnvUtils.execService(getBaseContext(), "export", input.getText().toString()))
                 .setNegativeButton(android.R.string.no,
-                        (dialog, id) -> dialog.cancel()).show();
+                        (dialog, id) -> dialog.cancel())
+                .show();
     }
 
     /**

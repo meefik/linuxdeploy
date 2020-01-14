@@ -79,7 +79,7 @@ public class MountsActivity extends AppCompatActivity {
         new AlertDialog.Builder(this)
                 .setTitle(R.string.confirm_mount_discard_title)
                 .setMessage(R.string.confirm_mount_discard_message)
-                .setIcon(R.drawable.ic_warning_white_24dp)
+                .setIcon(R.drawable.ic_warning_24dp)
                 .setPositiveButton(android.R.string.yes,
                         (dialog, whichButton) -> adapter.removeMount(mount))
                 .setNegativeButton(android.R.string.no,

@@ -3,13 +3,13 @@
 
     <item
         android:id="@+id/menu_refresh"
-        android:icon="@android:drawable/ic_menu_rotate"
+        android:icon="@drawable/ic_refresh_24dp"
         android:orderInCategory="100"
         android:title="@string/menu_refresh"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/menu_change_url"
-        android:icon="@android:drawable/ic_menu_manage"
+        android:icon="@drawable/ic_tune_24dp"
         android:orderInCategory="100"
         android:title="@string/menu_change_url"
         app:showAsAction="ifRoom" />
