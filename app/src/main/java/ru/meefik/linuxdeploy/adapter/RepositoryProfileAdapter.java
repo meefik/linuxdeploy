@@ -52,7 +52,7 @@ public class RepositoryProfileAdapter extends RecyclerView.Adapter<RepositoryPro
         private TextView subTitle;
         private ImageView icon;
 
-        public ViewHolder(@NonNull View itemView) {
+        ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             view = itemView;

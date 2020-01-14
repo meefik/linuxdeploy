@@ -131,10 +131,8 @@ public class Logger {
      * @param stream stream
      */
     static void log(Context c, InputStream stream) {
-        BufferedReader reader = null;
         FileWriter writer = null;
-        try {
-            reader = new BufferedReader(new InputStreamReader(stream));
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream))){
             if (PrefStore.isLogger(c)) {
                 writer = new FileWriter(PrefStore.getLogFile(c));
             }
@@ -149,7 +147,6 @@ public class Logger {
             e.printStackTrace();
         } finally {
             close(writer);
-            close(reader);
             close(stream);
         }
     }

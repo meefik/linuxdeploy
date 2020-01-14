@@ -25,8 +25,6 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.material.navigation.NavigationView;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -38,14 +36,15 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.google.android.material.navigation.NavigationView;
+
 import ru.meefik.linuxdeploy.EnvUtils;
 import ru.meefik.linuxdeploy.Logger;
-import ru.meefik.linuxdeploy.fragment.PropertiesFragment;
-import ru.meefik.linuxdeploy.receiver.NetworkReceiver;
-import ru.meefik.linuxdeploy.receiver.PowerReceiver;
 import ru.meefik.linuxdeploy.PrefStore;
 import ru.meefik.linuxdeploy.R;
 import ru.meefik.linuxdeploy.UpdateEnvTask;
+import ru.meefik.linuxdeploy.receiver.NetworkReceiver;
+import ru.meefik.linuxdeploy.receiver.PowerReceiver;
 
 public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener {
@@ -133,9 +132,9 @@ public class MainActivity extends AppCompatActivity implements
 
         // Network receiver
         if (PrefStore.isNetTrack(this)) {
-           IntentFilter filter = new IntentFilter();
-           filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-           registerReceiver(getNetworkReceiver(), filter);
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+            registerReceiver(getNetworkReceiver(), filter);
         } else if (networkReceiver != null) {
             unregisterReceiver(networkReceiver);
         }
@@ -305,7 +304,7 @@ public class MainActivity extends AppCompatActivity implements
 
         // Wake lock
         if (PrefStore.isWakeLock(this)) {
-            if (!wakeLock.isHeld()) wakeLock.acquire(60*60*1000L /*60 minutes*/);
+            if (!wakeLock.isHeld()) wakeLock.acquire(60 * 60 * 1000L /*60 minutes*/);
         } else {
             if (wakeLock.isHeld()) wakeLock.release();
         }

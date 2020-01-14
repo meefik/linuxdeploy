@@ -11,6 +11,9 @@ import android.text.TextUtils;
 import android.view.Display;
 import android.view.WindowManager;
 
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.TaskStackBuilder;
+
 import java.io.File;
 import java.net.Inet4Address;
 import java.net.InetAddress;
@@ -21,9 +24,6 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
-
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.TaskStackBuilder;
 
 import ru.meefik.linuxdeploy.activity.MainActivity;
 

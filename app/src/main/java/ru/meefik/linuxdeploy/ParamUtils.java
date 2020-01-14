@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.Closeable;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -25,27 +24,11 @@ class ParamUtils {
         this.params = Arrays.asList(params);
     }
 
-    /**
-     * Closeable helper
-     *
-     * @param c closable object
-     */
-    private static void close(Closeable c) {
-        if (c != null) {
-            try {
-                c.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     private static Map<String, String> readConf(File confFile) {
         TreeMap<String, String> map = new TreeMap<>();
-        BufferedReader br = null;
-        String line;
-        try {
-            br = new BufferedReader(new FileReader(confFile));
+
+        try (BufferedReader br = new BufferedReader(new FileReader(confFile))) {
+            String line;
             while ((line = br.readLine()) != null) {
                 if (!line.startsWith("#") && !line.isEmpty()) {
                     String[] pair = line.split("=");
@@ -54,32 +37,25 @@ class ParamUtils {
                     map.put(key, value.replaceAll("\"", ""));
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            close(br);
+        } catch (IOException e) {
+            // Error!
         }
+
         return map;
     }
 
     private static boolean writeConf(Map<String, String> map, File confFile) {
-        Boolean result = false;
-        BufferedWriter bw = null;
-        try {
-            bw = new BufferedWriter(new FileWriter(confFile));
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(confFile))) {
             for (Map.Entry<String, String> entry : map.entrySet()) {
                 String key = entry.getKey();
                 String value = entry.getValue();
                 bw.write(key + "=\"" + value + "\"");
                 bw.newLine();
             }
-            result = true;
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            close(bw);
+            return true;
+        } catch (IOException e) {
+            return false;
         }
-        return result;
     }
 
     public String fixOutputParam(Context c, String key, String value) {
@@ -169,7 +145,8 @@ class ParamUtils {
     void clear(Context c, boolean all) {
         SharedPreferences pref = c.getSharedPreferences(this.name, Context.MODE_PRIVATE);
         SharedPreferences.Editor prefEditor = pref.edit();
-        if (all) prefEditor.clear();
+        if (all)
+            prefEditor.clear();
         else {
             for (Map.Entry<String, ?> entry : pref.getAll().entrySet()) {
                 String key = entry.getKey();
