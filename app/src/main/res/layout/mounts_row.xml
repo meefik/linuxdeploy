@@ -30,6 +30,6 @@
         android:layout_marginRight="4dp"
         android:layout_marginBottom="4dp"
         android:background="?android:attr/selectableItemBackground"
-        app:srcCompat="@android:drawable/ic_menu_delete" />
+        app:srcCompat="@drawable/ic_delete_24dp" />
 
 </LinearLayout>

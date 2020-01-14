@@ -3,7 +3,7 @@
 
     <item
         android:id="@+id/menu_add"
-        android:icon="@android:drawable/ic_menu_add"
+        android:icon="@drawable/ic_add_24dp"
         android:title="@string/menu_add"
         app:showAsAction="always" />
 
