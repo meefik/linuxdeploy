@@ -1,10 +1,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="?android:attr/selectableItemBackground"
     android:gravity="center_vertical"
     android:orientation="horizontal"
+    android:paddingStart="10dp"
     android:paddingLeft="10dp"
     android:paddingTop="4dp"
+    android:paddingEnd="4dp"
     android:paddingRight="4dp"
     android:paddingBottom="4dp">
 
@@ -17,15 +21,15 @@
         android:paddingRight="4dp"
         android:textSize="18sp" />
 
-    <Button
+    <ImageView
         android:id="@+id/delete_mount"
-        style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:drawableLeft="@android:drawable/ic_menu_delete"
-        android:focusable="false"
-        android:minWidth="0dp"
-        android:minHeight="0dp"
-        android:textSize="0sp" />
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginBottom="4dp"
+        android:background="?android:attr/selectableItemBackground"
+        app:srcCompat="@android:drawable/ic_menu_delete" />
 
 </LinearLayout>

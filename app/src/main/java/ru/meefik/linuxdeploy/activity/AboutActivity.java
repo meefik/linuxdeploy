@@ -19,7 +19,7 @@ public class AboutActivity extends AppCompatActivity {
         TextView atv = findViewById(R.id.aboutTextView);
         atv.setMovementMethod(LinkMovementMethod.getInstance());
         TextView vtv = findViewById(R.id.versionView);
-        vtv.setText(getString(R.string.app_version, PrefStore.getVersion(this)));
+        vtv.setText(getString(R.string.app_version, PrefStore.getVersion()));
     }
 
     @Override

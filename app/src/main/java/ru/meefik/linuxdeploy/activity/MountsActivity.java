@@ -1,118 +1,90 @@
 package ru.meefik.linuxdeploy.activity;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.TextView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import ru.meefik.linuxdeploy.PrefStore;
 import ru.meefik.linuxdeploy.R;
+import ru.meefik.linuxdeploy.adapter.MountAdapter;
+import ru.meefik.linuxdeploy.model.Mount;
 
 public class MountsActivity extends AppCompatActivity {
 
-    private List<String> listItems = new ArrayList<>();
-    private ArrayAdapter adapter;
+    private MountAdapter adapter;
 
     private void addDialog() {
-        LayoutInflater layoutInflater = LayoutInflater.from(this);
-        View view = layoutInflater.inflate(R.layout.properties_mounts, null);
-        final EditText inputSrc = view.findViewById(R.id.editTextSrc);
-        final EditText inputTarget = view.findViewById(R.id.editTextTarget);
+        View view = LayoutInflater.from(this).inflate(R.layout.properties_mounts, null);
+        EditText inputSrc = view.findViewById(R.id.editTextSrc);
+        EditText inputTarget = view.findViewById(R.id.editTextTarget);
+
         new AlertDialog.Builder(this)
                 .setTitle(R.string.new_mount_title)
                 .setView(view)
                 .setPositiveButton(android.R.string.ok,
                         (dialog, whichButton) -> {
-                            String text = "";
                             String src = inputSrc.getText().toString()
                                     .replaceAll("[ :]", "_");
                             String target = inputTarget.getText().toString()
                                     .replaceAll("[ :]", "_");
-                            if (src.length() > 0) {
-                                text = src;
-                                if (target.length() > 0) {
-                                    text = text + ":" + target;
-                                }
+                            if (!src.isEmpty()) {
+                                adapter.addMount(new Mount(src, target));
                             }
-                            if (text.length() > 0) {
-                                listItems.add(text);
-                                adapter.notifyDataSetChanged();
-                            }
-                        }).setNegativeButton(android.R.string.cancel,
-                (dialog, whichButton) -> dialog.cancel()).show();
+                        })
+                .setNegativeButton(android.R.string.cancel,
+                        (dialog, whichButton) -> dialog.cancel()).show();
     }
 
-    private void editDialog(final int position) {
-        LayoutInflater layoutInflater = LayoutInflater.from(this);
-        View view = layoutInflater.inflate(R.layout.properties_mounts, null);
-        final EditText inputSrc = view.findViewById(R.id.editTextSrc);
-        final EditText inputTarget = view.findViewById(R.id.editTextTarget);
-        if (position >= 0 && position < listItems.size()) {
-            String text = listItems.get(position);
-            final String[] arr = text.split(":", 2);
-            try {
-                inputSrc.setText(arr[0]);
-                inputSrc.setSelection(arr[0].length());
+    private void editDialog(Mount mount) {
+        View view = LayoutInflater.from(this).inflate(R.layout.properties_mounts, null);
+        EditText inputSrc = view.findViewById(R.id.editTextSrc);
+        EditText inputTarget = view.findViewById(R.id.editTextTarget);
 
-                inputTarget.setText(arr[1]);
-                inputTarget.setSelection(arr[1].length());
-            } catch (IndexOutOfBoundsException ignored) {
-            }
+        inputSrc.setText(mount.getSource());
+        inputSrc.setSelection(mount.getSource().length());
 
-            new AlertDialog.Builder(this)
-                    .setTitle(R.string.edit_mount_title)
-                    .setView(view)
-                    .setPositiveButton(android.R.string.ok,
-                            (dialog, whichButton) -> {
-                                String text1 = "";
-                                String src = inputSrc.getText().toString()
-                                        .replaceAll("[ :]", "_");
-                                String target = inputTarget.getText().toString()
-                                        .replaceAll("[ :]", "_");
-                                if (src.length() > 0) {
-                                    text1 = src;
-                                    if (target.length() > 0) {
-                                        text1 = text1 + ":" + target;
-                                    }
-                                }
-                                if (text1.length() > 0) {
-                                    listItems.set(position, text1);
-                                    adapter.notifyDataSetChanged();
-                                }
-                            }).setNegativeButton(android.R.string.cancel,
-                    (dialog, whichButton) -> dialog.cancel()).show();
-        }
+        inputTarget.setText(mount.getTarget());
+        inputTarget.setSelection(mount.getTarget().length());
+
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.edit_mount_title)
+                .setView(view)
+                .setPositiveButton(android.R.string.ok,
+                        (dialog, whichButton) -> {
+                            String src = inputSrc.getText().toString()
+                                    .replaceAll("[ :]", "_");
+                            String target = inputTarget.getText().toString()
+                                    .replaceAll("[ :]", "_");
+                            if (!src.isEmpty()) {
+                                mount.setSource(src);
+                                mount.setTarget(target);
+                                adapter.notifyDataSetChanged();
+                            }
+                        })
+                .setNegativeButton(android.R.string.cancel,
+                        (dialog, whichButton) -> dialog.cancel())
+                .show();
     }
 
-    private void deleteDialog(final int position) {
-        if (position >= 0 && position < listItems.size()) {
-            new AlertDialog.Builder(this)
-                    .setTitle(R.string.confirm_mount_discard_title)
-                    .setMessage(R.string.confirm_mount_discard_message)
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .setCancelable(false)
-                    .setPositiveButton(android.R.string.yes,
-                            (dialog, whichButton) -> {
-                                listItems.remove(position);
-                                adapter.notifyDataSetChanged();
-                            }).setNegativeButton(android.R.string.no,
-                    (dialog, whichButton) -> dialog.cancel()).show();
-        }
+    private void deleteDialog(Mount mount) {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.confirm_mount_discard_title)
+                .setMessage(R.string.confirm_mount_discard_message)
+                .setIcon(R.drawable.ic_warning_white_24dp)
+                .setPositiveButton(android.R.string.yes,
+                        (dialog, whichButton) -> adapter.removeMount(mount))
+                .setNegativeButton(android.R.string.no,
+                        (dialog, whichButton) -> dialog.cancel())
+                .show();
     }
 
     @Override
@@ -121,37 +93,15 @@ public class MountsActivity extends AppCompatActivity {
         PrefStore.setLocale(this);
         setContentView(R.layout.activity_mounts);
 
-        // ListView Adapter
-        ListView listView = findViewById(R.id.mountsView);
-        adapter = new ArrayAdapter<String>(this, R.layout.mounts_row, R.id.mount_point, listItems) {
-            @Override
-            public View getView(final int position, View convertView, final ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                TextView tv = view.findViewById(R.id.mount_point);
-                Button btn = view.findViewById(R.id.delete_mount);
+        // RecyclerView Adapter
+        RecyclerView recyclerView = findViewById(R.id.recycler_view);
+        adapter = new MountAdapter();
+        adapter.setOnItemClickListener(this::editDialog);
+        adapter.setOnItemDeleteListener(this::deleteDialog);
 
-                String item = getItem(position);
-                tv.setText(item);
-
-                tv.setOnClickListener(v -> {
-                    ((ListView) parent).performItemClick(v, position, 0); // Let the event be handled in onItemClick()
-                });
-
-                btn.setOnClickListener(v -> {
-                    ((ListView) parent).performItemClick(v, position, 0); // Let the event be handled in onItemClick()
-                });
-
-                return view;
-            }
-        };
-        listView.setAdapter(adapter);
-
-        // Click listener
-        listView.setOnItemClickListener((parent, view, position, id) -> {
-            long viewId = view.getId();
-            if (viewId == R.id.delete_mount) deleteDialog(position);
-            else editDialog(position);
-        });
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
     }
 
     @Override
@@ -168,11 +118,11 @@ public class MountsActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_add:
-                addDialog();
-                break;
+        if (item.getItemId() == R.id.menu_add) {
+            addDialog();
+            return true;
         }
+
         return false;
     }
 
@@ -184,13 +134,13 @@ public class MountsActivity extends AppCompatActivity {
                 + PrefStore.getProfileName(this);
         setTitle(titleMsg);
 
-        listItems.addAll(PrefStore.getMountsList(this));
+        adapter.setMounts(PrefStore.getMountsList(this));
     }
 
     @Override
     public void onPause() {
         super.onPause();
 
-        PrefStore.setMountsList(this, listItems);
+        PrefStore.setMountsList(this, adapter.getMounts());
     }
 }

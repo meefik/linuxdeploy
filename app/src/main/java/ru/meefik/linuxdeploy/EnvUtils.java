@@ -201,7 +201,7 @@ public class EnvUtils {
         BufferedWriter bw = null;
         try {
             bw = new BufferedWriter(new FileWriter(f));
-            bw.write(PrefStore.getVersion(c));
+            bw.write(PrefStore.getVersion());
             result = true;
         } catch (IOException e) {
             e.printStackTrace();
@@ -225,7 +225,7 @@ public class EnvUtils {
         try {
             br = new BufferedReader(new FileReader(f));
             String line = br.readLine();
-            if (PrefStore.getVersion(c).equals(line)) result = true;
+            if (PrefStore.getVersion().equals(line)) result = true;
         } catch (IOException e) {
             e.printStackTrace();
         } finally {

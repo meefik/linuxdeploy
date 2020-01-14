@@ -213,7 +213,8 @@ public class MainActivity extends AppCompatActivity implements
             default:
                 return super.onOptionsItemSelected(item);
         }
-        return false;
+
+        return true;
     }
 
     @Override
@@ -266,6 +267,7 @@ public class MainActivity extends AppCompatActivity implements
                 finish();
                 break;
         }
+
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;

@@ -38,10 +38,9 @@ public class PrefStore {
     /**
      * Get application version
      *
-     * @param c context
      * @return version, format versionName-versionCode
      */
-    public static String getVersion(Context c) {
+    public static String getVersion() {
         return BuildConfig.VERSION_NAME + "-" + BuildConfig.VERSION_CODE;
     }
 
@@ -691,14 +690,12 @@ public class PrefStore {
      * @param c context
      * @return screen width
      */
-    static Integer getScreenWidth(Context c) {
-        int width;
+    static int getScreenWidth(Context c) {
         WindowManager wm = (WindowManager) c.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
-        width = size.x;
-        return width;
+        return size.x;
     }
 
     /**
@@ -707,14 +704,12 @@ public class PrefStore {
      * @param c context
      * @return screen height
      */
-    static Integer getScreenHeight(Context c) {
-        int height;
+    static int getScreenHeight(Context c) {
         WindowManager wm = (WindowManager) c.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
-        height = size.y;
-        return height;
+        return size.y;
     }
 
     /**
@@ -765,11 +760,11 @@ public class PrefStore {
      * @param intent  intent
      */
     public static void showNotification(Context context, Intent intent) {
-        NotificationManager mNotificationManager = (NotificationManager) context
+        NotificationManager notificationManager = (NotificationManager) context
                 .getSystemService(Context.NOTIFICATION_SERVICE);
         if (isNotification(context)) {
             setLocale(context);
-            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, SERVICE_CHANNEL_ID)
+            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, SERVICE_CHANNEL_ID)
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setContentTitle(context.getString(R.string.app_name))
                     .setContentText(context.getString(R.string.notification_current_profile)
@@ -780,7 +775,7 @@ public class PrefStore {
                 stealthReceive.setAction("ru.meefik.linuxdeploy.BROADCAST_ACTION");
                 stealthReceive.putExtra("show", true);
                 PendingIntent pendingIntentStealth = PendingIntent.getBroadcast(context, 2, stealthReceive, PendingIntent.FLAG_UPDATE_CURRENT);
-                mBuilder.setContentIntent(pendingIntentStealth);
+                notificationBuilder.setContentIntent(pendingIntentStealth);
             } else {
                 Intent resultIntent = intent;
                 if (resultIntent == null) resultIntent = new Intent(context, MainActivity.class);
@@ -788,27 +783,27 @@ public class PrefStore {
                 stackBuilder.addParentStack(MainActivity.class);
                 stackBuilder.addNextIntent(resultIntent);
                 PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(1, PendingIntent.FLAG_UPDATE_CURRENT);
-                mBuilder.setContentIntent(resultPendingIntent);
+                notificationBuilder.setContentIntent(resultPendingIntent);
 
                 Intent startReceive = new Intent();
                 startReceive.setAction("ru.meefik.linuxdeploy.BROADCAST_ACTION");
                 startReceive.putExtra("start", true);
                 PendingIntent pendingIntentStart = PendingIntent.getBroadcast(context, 3, startReceive, PendingIntent.FLAG_UPDATE_CURRENT);
                 int startIcon = SETTINGS.get(context, "theme").equals("dark") ? R.drawable.ic_action_start_dark : R.drawable.ic_action_start_light;
-                mBuilder.addAction(startIcon, context.getString(R.string.menu_start), pendingIntentStart);
+                notificationBuilder.addAction(startIcon, context.getString(R.string.menu_start), pendingIntentStart);
 
                 Intent stopReceive = new Intent();
                 stopReceive.setAction("ru.meefik.linuxdeploy.BROADCAST_ACTION");
                 stopReceive.putExtra("stop", true);
                 PendingIntent pendingIntentStop = PendingIntent.getBroadcast(context, 4, stopReceive, PendingIntent.FLAG_UPDATE_CURRENT);
                 int stopIcon = SETTINGS.get(context, "theme").equals("dark") ? R.drawable.ic_action_stop_dark : R.drawable.ic_action_stop_light;
-                mBuilder.addAction(stopIcon, context.getString(R.string.menu_stop), pendingIntentStop);
+                notificationBuilder.addAction(stopIcon, context.getString(R.string.menu_stop), pendingIntentStop);
             }
-            mBuilder.setOngoing(true);
-            mBuilder.setWhen(0);
-            mNotificationManager.notify(NOTIFY_ID, mBuilder.build());
+            notificationBuilder.setOngoing(true);
+            notificationBuilder.setWhen(0);
+            notificationManager.notify(NOTIFY_ID, notificationBuilder.build());
         } else {
-            mNotificationManager.cancel(NOTIFY_ID);
+            notificationManager.cancel(NOTIFY_ID);
         }
     }
 
@@ -818,8 +813,8 @@ public class PrefStore {
      * @param context context
      */
     public static void hideNotification(Context context) {
-        NotificationManager mNotificationManager = (NotificationManager) context
+        NotificationManager notificationManager = (NotificationManager) context
                 .getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.cancel(NOTIFY_ID);
+        notificationManager.cancel(NOTIFY_ID);
     }
 }
