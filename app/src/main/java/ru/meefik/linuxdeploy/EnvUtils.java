@@ -202,8 +202,8 @@ public class EnvUtils {
             if (PrefStore.isDebugMode(c)) pb.redirectErrorStream(true);
             Process process = pb.start();
 
-            try (DataOutputStream os = new DataOutputStream(process.getOutputStream());
-                 InputStream stdout = process.getInputStream()) {
+            try (DataOutputStream os = new DataOutputStream(process.getOutputStream())) {
+                InputStream stdout = process.getInputStream(); // Gets closed by the logger
 //                final InputStream stderr = process.getErrorStream();
 
 //                params.add(0, "LD_LIBRARY_PATH=" + PrefStore.getLibsDir(c) + ":$LD_LIBRARY_PATH");
@@ -212,14 +212,10 @@ public class EnvUtils {
                     params.add(0, "set -x");
                 params.add("exit $?");
 
-                try {
-                    for (String cmd : params) {
-                        os.writeBytes(cmd + "\n");
-                    }
-                    os.flush();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                for (String cmd : params) {
+                    os.writeBytes(cmd + "\n");
                 }
+                os.flush();
 
                 (new Thread() {
                     @Override
