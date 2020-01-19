@@ -6,7 +6,6 @@ import android.content.res.AssetManager;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.Closeable;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -19,22 +18,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-class EnvUtils {
-
-    /**
-     * Closeable helper
-     *
-     * @param c closable object
-     */
-    private static void close(Closeable c) {
-        if (c != null) {
-            try {
-                c.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+public class EnvUtils {
 
     /**
      * Extract file to env directory
@@ -47,28 +31,22 @@ class EnvUtils {
      */
     private static boolean extractFile(Context c, String target, String rootAsset, String path) {
         AssetManager assetManager = c.getAssets();
-        InputStream in = null;
-        OutputStream out = null;
-        boolean result = true;
-        try {
-            in = assetManager.open(rootAsset + path);
+
+        try (InputStream in = assetManager.open(rootAsset + path)) {
             File fname = new File(target + path);
             fname.delete();
-            out = new FileOutputStream(fname);
-            byte[] buffer = new byte[1024];
-            int read;
-            while ((read = in.read(buffer)) != -1) {
-                out.write(buffer, 0, read);
+            try (OutputStream out = new FileOutputStream(fname)) {
+                byte[] buffer = new byte[1024];
+                int read;
+                while ((read = in.read(buffer)) != -1) {
+                    out.write(buffer, 0, read);
+                }
+                out.flush();
             }
-            out.flush();
+            return true;
         } catch (IOException e) {
-            e.printStackTrace();
-            result = false;
-        } finally {
-            close(in);
-            close(out);
+            return false;
         }
-        return result;
     }
 
     /**
@@ -148,45 +126,20 @@ class EnvUtils {
      * @return true if success
      */
     private static boolean isRooted() {
-        boolean result = false;
-        OutputStream stdin = null;
-        InputStream stdout = null;
-        int n = 0;
         try {
             Process process = Runtime.getRuntime().exec("su");
-            stdin = process.getOutputStream();
-            stdout = process.getInputStream();
+            try (DataOutputStream stdin = new DataOutputStream(process.getOutputStream());
+                 BufferedReader stdout = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
 
-            DataOutputStream os = null;
-            try {
-                os = new DataOutputStream(stdin);
-                os.writeBytes("ls /data\n");
-                os.writeBytes("exit\n");
-                os.flush();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                close(os);
-            }
+                stdin.writeBytes("ls /data\n");
+                stdin.writeBytes("exit\n");
+                stdin.flush();
 
-            BufferedReader reader = null;
-            try {
-                reader = new BufferedReader(new InputStreamReader(stdout));
-                while (reader.readLine() != null) {
-                    n++;
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                close(reader);
+                return stdout.readLine() != null;
             }
         } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            close(stdout);
-            close(stdin);
+            return false;
         }
-        return n > 0;
     }
 
     /**
@@ -196,19 +149,13 @@ class EnvUtils {
      * @return true if success
      */
     private static boolean setVersion(Context c) {
-        boolean result = false;
         String f = PrefStore.getEnvDir(c) + "/version";
-        BufferedWriter bw = null;
-        try {
-            bw = new BufferedWriter(new FileWriter(f));
-            bw.write(PrefStore.getVersion(c));
-            result = true;
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(f))) {
+            bw.write(PrefStore.getVersion());
+            return true;
         } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            close(bw);
+            return false;
         }
-        return result;
     }
 
     /**
@@ -217,21 +164,16 @@ class EnvUtils {
      * @param c context
      * @return true if success
      */
-    static boolean isLatestVersion(Context c) {
+    public static boolean isLatestVersion(Context c) {
         File f = new File(PrefStore.getEnvDir(c) + "/version");
         if (!f.exists()) return false;
-        boolean result = false;
-        BufferedReader br = null;
-        try {
-            br = new BufferedReader(new FileReader(f));
+
+        try (BufferedReader br = new BufferedReader(new FileReader(f))) {
             String line = br.readLine();
-            if (PrefStore.getVersion(c).equals(line)) result = true;
+            return PrefStore.getVersion().equals(line);
         } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            close(br);
+            return false;
         }
-        return result;
     }
 
     /**
@@ -246,14 +188,12 @@ class EnvUtils {
             Logger.log(c, "No scripts for processing.\n");
             return false;
         }
-        if ("su".equals(shell)) {
-            if (!isRooted()) {
-                Logger.log(c, "Requires superuser privileges (root).\n");
-                return false;
-            }
+
+        if ("su".equals(shell) && !isRooted()) {
+            Logger.log(c, "Requires superuser privileges (root).\n");
+            return false;
         }
-        boolean result = false;
-        OutputStream stdin = null;
+
         try {
             ProcessBuilder pb = new ProcessBuilder(shell);
             pb.directory(new File(PrefStore.getEnvDir(c)));
@@ -262,43 +202,33 @@ class EnvUtils {
             if (PrefStore.isDebugMode(c)) pb.redirectErrorStream(true);
             Process process = pb.start();
 
-            stdin = process.getOutputStream();
-            final InputStream stdout = process.getInputStream();
-//            final InputStream stderr = process.getErrorStream();
+            try (DataOutputStream os = new DataOutputStream(process.getOutputStream())) {
+                InputStream stdout = process.getInputStream(); // Gets closed by the logger
+//                final InputStream stderr = process.getErrorStream();
 
-//            params.add(0, "LD_LIBRARY_PATH=" + PrefStore.getLibsDir(c) + ":$LD_LIBRARY_PATH");
-            params.add(0, "PATH=" + PrefStore.getBinDir(c) + ":$PATH");
-            if (PrefStore.isTraceMode(c)) params.add(0, "set -x");
-            params.add("exit $?");
+//                params.add(0, "LD_LIBRARY_PATH=" + PrefStore.getLibsDir(c) + ":$LD_LIBRARY_PATH");
+                params.add(0, "PATH=" + PrefStore.getBinDir(c) + ":$PATH");
+                if (PrefStore.isTraceMode(c))
+                    params.add(0, "set -x");
+                params.add("exit $?");
 
-            DataOutputStream os = null;
-            try {
-                os = new DataOutputStream(stdin);
                 for (String cmd : params) {
                     os.writeBytes(cmd + "\n");
                 }
                 os.flush();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                close(os);
+
+                (new Thread() {
+                    @Override
+                    public void run() {
+                        Logger.log(c, stdout);
+                    }
+                }).start();
             }
 
-            (new Thread() {
-                @Override
-                public void run() {
-                    Logger.log(c, stdout);
-                }
-            }).start();
-
-            if (process.waitFor() == 0) result = true;
-        } catch (Exception e) {
-            result = false;
-            e.printStackTrace();
-        } finally {
-            close(stdin);
+            return process.waitFor() == 0;
+        } catch (IOException | InterruptedException e) {
+            return false;
         }
-        return result;
     }
 
     /**
@@ -399,22 +329,17 @@ class EnvUtils {
      * @return true if success
      */
     private static boolean makeMainScript(Context c) {
-        boolean result = false;
         String scriptFile = PrefStore.getBinDir(c) + "/linuxdeploy";
-        BufferedWriter bw = null;
-        try {
-            bw = new BufferedWriter(new FileWriter(scriptFile));
+
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(scriptFile))) {
             bw.write("#!" + PrefStore.getShell(c) + "\n");
             bw.write("PATH=" + PrefStore.getPath(c) + ":$PATH\n");
             bw.write("ENV_DIR=\"" + PrefStore.getEnvDir(c) + "\"\n");
             bw.write(". \"${ENV_DIR}/cli.sh\"\n");
-            result = true;
+            return true;
         } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            close(bw);
+            return false;
         }
-        return result;
     }
 
     /**
@@ -462,7 +387,7 @@ class EnvUtils {
      * @param cmd  command
      * @param args arguments
      */
-    static void execService(Context c, String cmd, String args) {
+    public static void execService(Context c, String cmd, String args) {
         Intent service = new Intent(c, ExecService.class);
         service.putExtra("cmd", cmd);
         service.putExtra("args", args);
@@ -476,7 +401,7 @@ class EnvUtils {
      * @param commands commands
      * @param args     command and arguments
      */
-    static void execServices(Context c, String[] commands, String args) {
+    public static void execServices(Context c, String[] commands, String args) {
         for (String cmd : commands) {
             execService(c, cmd, args);
         }
@@ -499,7 +424,7 @@ class EnvUtils {
                 if (cmd.equals("stop")) break;
             case "start":
                 if (!PrefStore.isTelnet(c)) break;
-                makeIssueFile(c, PrefStore.getEnvDir(c) + "/issue");
+                makeIssueFile(PrefStore.getEnvDir(c) + "/issue");
                 String args = "";
                 args += " -l " + PrefStore.getShell(c);
                 args += " -p " + PrefStore.getTelnetPort(c);
@@ -551,40 +476,27 @@ class EnvUtils {
      * @return true if success
      */
     private static boolean makeHttpdConf(Context c, String f) {
-        boolean result = false;
-        BufferedWriter bw = null;
-        try {
-            bw = new BufferedWriter(new FileWriter(f));
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(f))) {
             for (String part : PrefStore.getHttpConf(c).split(" ")) {
                 bw.write(part + "\n");
             }
-            result = true;
+            return true;
         } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            close(bw);
+            return false;
         }
-        return result;
     }
 
     /**
      * Make issue file
      *
-     * @param c context
      * @return true if success
      */
-    private static boolean makeIssueFile(Context c, String f) {
-        boolean result = false;
-        BufferedWriter bw = null;
-        try {
-            bw = new BufferedWriter(new FileWriter(f));
+    private static boolean makeIssueFile(String f) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(f))) {
             bw.write("Linux Deploy \\m \\l\n");
-            result = true;
+            return true;
         } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            close(bw);
+            return false;
         }
-        return result;
     }
 }

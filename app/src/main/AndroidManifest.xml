@@ -22,13 +22,13 @@
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.MainActivity"
             android:label="@string/title_activity_main"
             android:launchMode="singleTop" />
 
         <activity-alias
             android:name=".Launcher"
-            android:targetActivity=".MainActivity">
+            android:targetActivity=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -37,56 +37,56 @@
         </activity-alias>
 
         <activity
-            android:name=".SettingsActivity"
+            android:name=".activity.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".activity.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".activity.MainActivity" />
         </activity>
         <activity
-            android:name=".PropertiesActivity"
+            android:name=".activity.PropertiesActivity"
             android:label="@string/title_activity_properties">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".activity.MainActivity" />
         </activity>
         <activity
-            android:name=".AboutActivity"
+            android:name=".activity.AboutActivity"
             android:label="@string/title_activity_about"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".activity.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".activity.MainActivity" />
         </activity>
         <activity
-            android:name=".ProfilesActivity"
+            android:name=".activity.ProfilesActivity"
             android:label="@string/title_activity_profiles"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".activity.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".activity.MainActivity" />
         </activity>
         <activity
-            android:name=".MountsActivity"
+            android:name=".activity.MountsActivity"
             android:label="@string/title_activity_mounts"
-            android:parentActivityName=".PropertiesActivity">
+            android:parentActivityName=".activity.PropertiesActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".PropertiesActivity" />
+                android:value=".activity.PropertiesActivity" />
         </activity>
         <activity
-            android:name=".RepositoryActivity"
+            android:name=".activity.RepositoryActivity"
             android:label="@string/title_activity_repository"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".activity.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".activity.MainActivity" />
         </activity>
-        <activity android:name=".FullscreenActivity" />
+        <activity android:name=".activity.FullscreenActivity" />
 
         <receiver
-            android:name=".BootReceiver"
+            android:name=".receiver.BootReceiver"
             android:enabled="false"
             android:exported="false">
             <intent-filter>
@@ -95,7 +95,7 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".ActionReceiver"
+            android:name=".receiver.ActionReceiver"
             android:enabled="true"
             android:exported="false">
             <intent-filter>
@@ -103,12 +103,12 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".PowerReceiver"
+            android:name=".receiver.PowerReceiver"
             android:enabled="false"
             android:exported="false">
         </receiver>
         <receiver
-            android:name=".NetworkReceiver"
+            android:name=".receiver.NetworkReceiver"
             android:enabled="false"
             android:exported="false">
         </receiver>

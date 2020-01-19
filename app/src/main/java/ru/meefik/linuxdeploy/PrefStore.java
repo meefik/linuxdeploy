@@ -11,6 +11,9 @@ import android.text.TextUtils;
 import android.view.Display;
 import android.view.WindowManager;
 
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.TaskStackBuilder;
+
 import java.io.File;
 import java.net.Inet4Address;
 import java.net.InetAddress;
@@ -22,8 +25,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.TaskStackBuilder;
+import ru.meefik.linuxdeploy.activity.MainActivity;
 
 import static ru.meefik.linuxdeploy.App.SERVICE_CHANNEL_ID;
 
@@ -36,10 +38,9 @@ public class PrefStore {
     /**
      * Get application version
      *
-     * @param c context
      * @return version, format versionName-versionCode
      */
-    static String getVersion(Context c) {
+    public static String getVersion() {
         return BuildConfig.VERSION_NAME + "-" + BuildConfig.VERSION_CODE;
     }
 
@@ -49,7 +50,7 @@ public class PrefStore {
      * @param c context
      * @return path, e.g. /data/data/package/files
      */
-    static String getEnvDir(Context c) {
+    public static String getEnvDir(Context c) {
         String envDir = SETTINGS.get(c, "env_dir");
         if (envDir.isEmpty()) {
             envDir = c.getFilesDir().getAbsolutePath();
@@ -103,7 +104,7 @@ public class PrefStore {
      * @param c context
      * @return true if success
      */
-    static boolean dumpSettings(Context c) {
+    public static boolean dumpSettings(Context c) {
         return SETTINGS.dump(c, getSettingsConfFile(c));
     }
 
@@ -113,7 +114,7 @@ public class PrefStore {
      * @param c context
      * @return true if success
      */
-    static boolean restoreSettings(Context c) {
+    public static boolean restoreSettings(Context c) {
         return SETTINGS.restore(c, getSettingsConfFile(c));
     }
 
@@ -123,7 +124,7 @@ public class PrefStore {
      * @param c context
      * @return true if success
      */
-    static boolean dumpProperties(Context c) {
+    public static boolean dumpProperties(Context c) {
         return PROPERTIES.dump(c, getPropertiesConfFile(c));
     }
 
@@ -133,7 +134,7 @@ public class PrefStore {
      * @param c context
      * @return true if success
      */
-    static boolean restoreProperties(Context c) {
+    public static boolean restoreProperties(Context c) {
         PROPERTIES.clear(c, true);
         return PROPERTIES.restore(c, getPropertiesConfFile(c));
     }
@@ -143,7 +144,7 @@ public class PrefStore {
      *
      * @return name
      */
-    static String getSettingsSharedName() {
+    public static String getSettingsSharedName() {
         return SettingsStore.name;
     }
 
@@ -152,7 +153,7 @@ public class PrefStore {
      *
      * @return name
      */
-    static String getPropertiesSharedName() {
+    public static String getPropertiesSharedName() {
         return PropertiesStore.name;
     }
 
@@ -195,7 +196,7 @@ public class PrefStore {
      * @param c context
      * @return resource id
      */
-    static int getTheme(Context c) {
+    public static int getTheme(Context c) {
         String theme = SETTINGS.get(c, "theme");
         int themeId = R.style.DarkTheme;
         switch (theme) {
@@ -215,7 +216,7 @@ public class PrefStore {
      * @param c context
      * @return font size
      */
-    static int getFontSize(Context c) {
+    public static int getFontSize(Context c) {
         int fontSizeInt;
         String fontSize = SETTINGS.get(c, "fontsize");
         try {
@@ -293,7 +294,7 @@ public class PrefStore {
      * @param c context
      * @return path
      */
-    static String getLogFile(Context c) {
+    public static String getLogFile(Context c) {
         String logFile = SETTINGS.get(c, "logfile");
         if (!logFile.contains("/")) {
             String storageDir = Environment.getExternalStorageDirectory().getAbsolutePath();
@@ -308,7 +309,7 @@ public class PrefStore {
      * @param c context
      * @return true if enabled
      */
-    static Boolean isScreenLock(Context c) {
+    public static Boolean isScreenLock(Context c) {
         return SETTINGS.get(c, "screenlock").equals("true");
     }
 
@@ -318,7 +319,7 @@ public class PrefStore {
      * @param c context
      * @return true if enabled
      */
-    static Boolean isWifiLock(Context c) {
+    public static Boolean isWifiLock(Context c) {
         return SETTINGS.get(c, "wifilock").equals("true");
     }
 
@@ -328,7 +329,7 @@ public class PrefStore {
      * @param c context
      * @return true if enabled
      */
-    static Boolean isWakeLock(Context c) {
+    public static Boolean isWakeLock(Context c) {
         return SETTINGS.get(c, "wakelock").equals("true");
     }
 
@@ -338,7 +339,7 @@ public class PrefStore {
      * @param c context
      * @return true if enabled
      */
-    static Boolean isAutostart(Context c) {
+    public static Boolean isAutostart(Context c) {
         return SETTINGS.get(c, "autostart").equals("true");
     }
 
@@ -348,7 +349,7 @@ public class PrefStore {
      * @param c context
      * @return Auto start delay in seconds
      */
-    static Integer getAutostartDelay(Context c) {
+    public static Integer getAutostartDelay(Context c) {
         try {
             return Integer.parseInt(SETTINGS.get(c, "autostart_delay"));
         } catch (Exception e) {
@@ -362,7 +363,7 @@ public class PrefStore {
      * @param c context
      * @return true if enabled
      */
-    static Boolean isNetTrack(Context c) {
+    public static Boolean isNetTrack(Context c) {
         return SETTINGS.get(c, "nettrack").equals("true");
     }
 
@@ -372,7 +373,7 @@ public class PrefStore {
      * @param c context
      * @return true if enabled
      */
-    static Boolean isPowerTrack(Context c) {
+    public static Boolean isPowerTrack(Context c) {
         return SETTINGS.get(c, "powertrack").equals("true");
     }
 
@@ -392,7 +393,7 @@ public class PrefStore {
      * @param c context
      * @return true if enabled
      */
-    static Boolean isStealth(Context c) {
+    public static Boolean isStealth(Context c) {
         return SETTINGS.get(c, "stealth").equals("true");
     }
 
@@ -431,7 +432,7 @@ public class PrefStore {
      * @param c context
      * @return url
      */
-    static String getRepositoryUrl(Context c) {
+    public static String getRepositoryUrl(Context c) {
         return SETTINGS.get(c, "repository_url");
     }
 
@@ -440,7 +441,7 @@ public class PrefStore {
      *
      * @param c context
      */
-    static void setRepositoryUrl(Context c, String url) {
+    public static void setRepositoryUrl(Context c, String url) {
         SETTINGS.set(c, "repository_url", url);
     }
 
@@ -490,7 +491,7 @@ public class PrefStore {
      * @param c context
      * @return port
      */
-    static String getHttpPort(Context c) {
+    public static String getHttpPort(Context c) {
         return SETTINGS.get(c, "http_port");
     }
 
@@ -500,7 +501,7 @@ public class PrefStore {
      * @param c context
      * @return authentication string, e.g. /:user:password (for crypt password use httpd -m password)
      */
-    static String getHttpConf(Context c) {
+    public static String getHttpConf(Context c) {
         String auth = SETTINGS.get(c, "http_conf");
         if (auth.isEmpty()) auth = "/:android:" + generatePassword();
         return auth;
@@ -512,7 +513,7 @@ public class PrefStore {
      * @param c context
      * @return true if enabled
      */
-    static boolean isXserver(Context c) {
+    public static boolean isXserver(Context c) {
         return PROPERTIES.get(c, "is_gui").equals("true") &&
                 PROPERTIES.get(c, "graphics").equals("x11");
     }
@@ -523,7 +524,7 @@ public class PrefStore {
      * @param c context
      * @return true if enabled
      */
-    static boolean isFramebuffer(Context c) {
+    public static boolean isFramebuffer(Context c) {
         return PROPERTIES.get(c, "is_gui").equals("true") &&
                 PROPERTIES.get(c, "graphics").equals("fb");
     }
@@ -534,7 +535,7 @@ public class PrefStore {
      * @param c context
      * @return true if enabled
      */
-    static boolean isXsdl(Context c) {
+    public static boolean isXsdl(Context c) {
         return PROPERTIES.get(c, "x11_sdl").equals("true");
     }
 
@@ -544,7 +545,7 @@ public class PrefStore {
      * @param c context
      * @return delay in ms
      */
-    static int getXsdlDelay(Context c) {
+    public static int getXsdlDelay(Context c) {
         int deplayInt;
         String delay = PROPERTIES.get(c, "x11_sdl_delay");
         try {
@@ -583,7 +584,7 @@ public class PrefStore {
      * @param c context
      * @return profile
      */
-    static String getProfileName(Context c) {
+    public static String getProfileName(Context c) {
         return SETTINGS.get(c, "profile");
     }
 
@@ -592,7 +593,7 @@ public class PrefStore {
      *
      * @param c context
      */
-    static void changeProfile(Context c, String profile) {
+    public static void changeProfile(Context c, String profile) {
         SETTINGS.set(c, "profile", profile);
         dumpSettings(c);
         File confFile = getPropertiesConfFile(c);
@@ -607,7 +608,7 @@ public class PrefStore {
      *
      * @param c context
      */
-    static void setLocale(Context c) {
+    public static void setLocale(Context c) {
         String language = getLanguage(c);
         Locale locale = new Locale(language);
         Locale.setDefault(locale);
@@ -622,7 +623,7 @@ public class PrefStore {
      * @param c context
      * @return list of mount points
      */
-    static List<String> getMountsList(Context c) {
+    public static List<String> getMountsList(Context c) {
         String str = PROPERTIES.get(c, "mounts");
         List<String> list = new ArrayList<>();
         if (!str.isEmpty()) Collections.addAll(list, str.split(" "));
@@ -635,7 +636,7 @@ public class PrefStore {
      * @param c    context
      * @param list list of mount points
      */
-    static void setMountsList(Context c, List<String> list) {
+    public static void setMountsList(Context c, List<String> list) {
         PROPERTIES.set(c, "mounts", TextUtils.join(" ", list));
     }
 
@@ -644,7 +645,7 @@ public class PrefStore {
      *
      * @return plain password
      */
-    static String generatePassword() {
+    public static String generatePassword() {
         return Long.toHexString(Double.doubleToLongBits(Math.random())).substring(8);
     }
 
@@ -654,7 +655,7 @@ public class PrefStore {
      * @param arch unformated architecture
      * @return arm, arm_64, x86, x86_64
      */
-    static String getArch(String arch) {
+    public static String getArch(String arch) {
         String march = "unknown";
         if (arch.length() > 0) {
             char a = arch.toLowerCase().charAt(0);
@@ -679,7 +680,7 @@ public class PrefStore {
      *
      * @return arm, arm_64, x86, x86_64
      */
-    static String getArch() {
+    public static String getArch() {
         return getArch(System.getProperty("os.arch"));
     }
 
@@ -689,14 +690,12 @@ public class PrefStore {
      * @param c context
      * @return screen width
      */
-    static Integer getScreenWidth(Context c) {
-        int width;
+    static int getScreenWidth(Context c) {
         WindowManager wm = (WindowManager) c.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
-        width = size.x;
-        return width;
+        return size.x;
     }
 
     /**
@@ -705,14 +704,12 @@ public class PrefStore {
      * @param c context
      * @return screen height
      */
-    static Integer getScreenHeight(Context c) {
-        int height;
+    static int getScreenHeight(Context c) {
         WindowManager wm = (WindowManager) c.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
-        height = size.y;
-        return height;
+        return size.y;
     }
 
     /**
@@ -720,7 +717,7 @@ public class PrefStore {
      *
      * @return ip address
      */
-    static String getLocalIpAddress() {
+    public static String getLocalIpAddress() {
         String ip = "127.0.0.1";
         try {
             for (Enumeration<NetworkInterface> en = NetworkInterface
@@ -748,7 +745,7 @@ public class PrefStore {
      * @param resourceType resource type
      * @return resource id
      */
-    static int getResourceId(Context c, String resourceName, String resourceType) {
+    public static int getResourceId(Context c, String resourceName, String resourceType) {
         try {
             return c.getResources().getIdentifier(resourceName, resourceType, c.getPackageName());
         } catch (Exception e) {
@@ -762,12 +759,12 @@ public class PrefStore {
      * @param context context
      * @param intent  intent
      */
-    static void showNotification(Context context, Intent intent) {
-        NotificationManager mNotificationManager = (NotificationManager) context
+    public static void showNotification(Context context, Intent intent) {
+        NotificationManager notificationManager = (NotificationManager) context
                 .getSystemService(Context.NOTIFICATION_SERVICE);
         if (isNotification(context)) {
             setLocale(context);
-            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, SERVICE_CHANNEL_ID)
+            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, SERVICE_CHANNEL_ID)
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setContentTitle(context.getString(R.string.app_name))
                     .setContentText(context.getString(R.string.notification_current_profile)
@@ -778,7 +775,7 @@ public class PrefStore {
                 stealthReceive.setAction("ru.meefik.linuxdeploy.BROADCAST_ACTION");
                 stealthReceive.putExtra("show", true);
                 PendingIntent pendingIntentStealth = PendingIntent.getBroadcast(context, 2, stealthReceive, PendingIntent.FLAG_UPDATE_CURRENT);
-                mBuilder.setContentIntent(pendingIntentStealth);
+                notificationBuilder.setContentIntent(pendingIntentStealth);
             } else {
                 Intent resultIntent = intent;
                 if (resultIntent == null) resultIntent = new Intent(context, MainActivity.class);
@@ -786,27 +783,25 @@ public class PrefStore {
                 stackBuilder.addParentStack(MainActivity.class);
                 stackBuilder.addNextIntent(resultIntent);
                 PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(1, PendingIntent.FLAG_UPDATE_CURRENT);
-                mBuilder.setContentIntent(resultPendingIntent);
+                notificationBuilder.setContentIntent(resultPendingIntent);
 
                 Intent startReceive = new Intent();
                 startReceive.setAction("ru.meefik.linuxdeploy.BROADCAST_ACTION");
                 startReceive.putExtra("start", true);
                 PendingIntent pendingIntentStart = PendingIntent.getBroadcast(context, 3, startReceive, PendingIntent.FLAG_UPDATE_CURRENT);
-                int startIcon = SETTINGS.get(context, "theme").equals("dark") ? R.drawable.ic_action_start_dark : R.drawable.ic_action_start_light;
-                mBuilder.addAction(startIcon, context.getString(R.string.menu_start), pendingIntentStart);
+                notificationBuilder.addAction(R.drawable.ic_play_arrow_24dp, context.getString(R.string.menu_start), pendingIntentStart);
 
                 Intent stopReceive = new Intent();
                 stopReceive.setAction("ru.meefik.linuxdeploy.BROADCAST_ACTION");
                 stopReceive.putExtra("stop", true);
                 PendingIntent pendingIntentStop = PendingIntent.getBroadcast(context, 4, stopReceive, PendingIntent.FLAG_UPDATE_CURRENT);
-                int stopIcon = SETTINGS.get(context, "theme").equals("dark") ? R.drawable.ic_action_stop_dark : R.drawable.ic_action_stop_light;
-                mBuilder.addAction(stopIcon, context.getString(R.string.menu_stop), pendingIntentStop);
+                notificationBuilder.addAction(R.drawable.ic_stop_24dp, context.getString(R.string.menu_stop), pendingIntentStop);
             }
-            mBuilder.setOngoing(true);
-            mBuilder.setWhen(0);
-            mNotificationManager.notify(NOTIFY_ID, mBuilder.build());
+            notificationBuilder.setOngoing(true);
+            notificationBuilder.setWhen(0);
+            notificationManager.notify(NOTIFY_ID, notificationBuilder.build());
         } else {
-            mNotificationManager.cancel(NOTIFY_ID);
+            notificationManager.cancel(NOTIFY_ID);
         }
     }
 
@@ -815,9 +810,9 @@ public class PrefStore {
      *
      * @param context context
      */
-    static void hideNotification(Context context) {
-        NotificationManager mNotificationManager = (NotificationManager) context
+    public static void hideNotification(Context context) {
+        NotificationManager notificationManager = (NotificationManager) context
                 .getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.cancel(NOTIFY_ID);
+        notificationManager.cancel(NOTIFY_ID);
     }
 }

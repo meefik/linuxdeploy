@@ -51,9 +51,9 @@
     <string name="toast_updating_env_error">Error updating of operating environment!</string>
     <string name="confirm_profile_discard_title">Remove profile</string>
     <string name="confirm_profile_discard_message">Remove selected profile?</string>
-    <string name="new_mount_title">Mount point</string>
-    <string name="edit_mount_title">Mount point</string>
-    <string name="confirm_mount_discard_title">Remove point</string>
+    <string name="new_mount_title">New mount point</string>
+    <string name="edit_mount_title">Edit mount point</string>
+    <string name="confirm_mount_discard_title">Remove mount point</string>
     <string name="confirm_mount_discard_message">Remove selected mount point from the list?</string>
     <string name="repository_import_message">%1$s\n\nSize: %2$s MB</string>
     <string name="repository_import_button">Import</string>
