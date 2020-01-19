@@ -288,6 +288,7 @@
         <item>jessie</item>
         <item>stretch</item>
         <item>buster</item>
+        <item>rolling</item>
     </string-array>
     <string-array name="debian_arch_values" translatable="false">
         <item>armel</item>
