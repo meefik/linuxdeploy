@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.6.0] - 2020-02-01
+### Changed
+- Set target version of SDK to 28 for binary execution in Android Q
+- UI refactoring (@Iscle)
+- Minimum Android API set to 21
+
 ## [2.5.1] - 2019-11-04
 ### Fixed
 - Fixed Arch Linux package management
