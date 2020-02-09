@@ -56,7 +56,11 @@ public class MountAdapter extends RecyclerView.Adapter<MountAdapter.ViewHolder> 
         this.mounts.clear();
         for (String mount : mounts) {
             String[] tmp = mount.split(":", 2);
-            this.mounts.add(new Mount(tmp[0], tmp[1]));
+            if (tmp.length > 1) {
+                this.mounts.add(new Mount(tmp[0], tmp[1]));
+            } else {
+                this.mounts.add(new Mount(tmp[0], ""));
+            }
         }
         notifyDataSetChanged();
     }
@@ -64,7 +68,11 @@ public class MountAdapter extends RecyclerView.Adapter<MountAdapter.ViewHolder> 
     public List<String> getMounts() {
         List<String> mounts = new ArrayList<>();
         for (Mount mount : this.mounts) {
-            mounts.add(mount.getSource() + ":" + mount.getTarget());
+            if (mount.getTarget().isEmpty()) {
+                mounts.add(mount.getSource());
+            } else {
+                mounts.add(mount.getSource() + ":" + mount.getTarget());
+            }
         }
         return mounts;
     }
