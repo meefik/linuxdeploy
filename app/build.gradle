@@ -9,7 +9,7 @@ android {
         minSdkVersion 21
         // API 28 must be frozen for binary execution
         targetSdkVersion 28
-        versionCode 258
+        versionCode 259
         versionName "2.6.0"
         vectorDrawables.useSupportLibrary true
     }
@@ -31,7 +31,7 @@ android {
 }
 
 dependencies {
-    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'com.google.android.material:material:1.1.0'
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.browser:browser:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
