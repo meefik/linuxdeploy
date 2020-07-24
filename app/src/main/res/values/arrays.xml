@@ -304,6 +304,9 @@
         <item>trusty</item>
         <item>xenial</item>
         <item>bionic</item>
+        <item>eoan</item>
+        <item>focal</item>
+        <item>groovy</item>
     </string-array>
     <string-array name="ubuntu_arch_values" translatable="false">
         <item>armel</item> <!-- precise only -->
