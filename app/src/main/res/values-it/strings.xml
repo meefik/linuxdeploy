@@ -3,7 +3,7 @@
     <string name="app_version">versione %1$s</string>
     <string name="menu_start">AVVIA</string>
     <string name="menu_stop">FERMA</string>
-    <string name="menu_properties">Propertietà</string>
+    <string name="menu_properties">Proprietà</string>
     <string name="nav_settings">Impostazioni</string>
     <string name="nav_about">Circa</string>
     <string name="nav_exit">Esci</string>
@@ -15,7 +15,7 @@
     <string name="notification_current_profile">Profilo corrente</string>
     <string name="title_activity_about">Info su</string>
     <string name="title_activity_settings">Impostazioni</string>
-    <string name="title_activity_properties">Propertietà</string>
+    <string name="title_activity_properties">Proprietà</string>
     <string name="title_activity_profiles">Profili</string>
     <string name="title_activity_mounts">Supporti</string>
     <string name="confirm_start_title">Avvia</string>
@@ -50,7 +50,7 @@
     <string name="title_theme_preference">Tema</string>
     <string name="dialog_title_theme_preference">Scegli tema</string>
     <string name="title_timestamp_preference">Timestamp</string>
-    <string name="summary_timestamp_preference">Show timestamp</string>
+    <string name="summary_timestamp_preference">Mostra timestamp</string>
     <string name="title_appicon_preference">Mostra icona</string>
     <string name="summary_appicon_preference">Mostra icona nella barra delle notifiche</string>
     <string name="title_autostart_preference">Avvio automatico</string>
@@ -74,8 +74,8 @@
     <string name="title_export_dialog">Esportazione</string>
     <string name="title_suite_preference">Versione Distribuzione</string>
     <string name="dialog_title_suite_preference">Versione Distribuzione</string>
-    <string name="title_locale_preference">Localizazione</string>
-    <string name="dialog_title_locale_preference">Localizazione</string>
+    <string name="title_locale_preference">Localizzazione</string>
+    <string name="dialog_title_locale_preference">Localizzazione</string>
     <string name="ssh_preferences">SSH</string>
     <string name="vnc_preferences">VNC</string>
     <string name="fb_preferences">Framebuffer</string>
@@ -156,8 +156,8 @@
     <string name="dialog_title_vnc_display_preference">VNC: Numero schermo</string>
     <string name="dialog_title_vnc_height_preference">VNC: Altezza schermo</string>
     <string name="dialog_title_vnc_width_preference">VNC: Larghezza schermo</string>
-    <string name="summary_fb_refresh_preference">Force refresh framebuffer</string>
-    <string name="title_fb_refresh_preference">Force refresh</string>
+    <string name="summary_fb_refresh_preference">Forza il refresh del framebuffer</string>
+    <string name="title_fb_refresh_preference">Forza il refresh</string>
     <string name="title_env_dir_preference">Cartella ENV</string>
     <string name="menu_export">Esporta</string>
     <string name="nav_profiles">Profili</string>
@@ -165,6 +165,6 @@
     <string name="summary_is_init_preference">Abilita l\'esecuzione di script personalizzati</string>
     <string name="dialog_title_path_preference">PATH</string>
     <string name="gui_preferences">GUI</string>
-    <string name="repository_purchase_button">Acquistare</string>
+    <string name="repository_purchase_button">Acquista</string>
 
 </resources>
