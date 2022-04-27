@@ -101,7 +101,7 @@
     <string name="x86_64_debian_arch" translatable="false">amd64</string>
 
     <!-- Ubuntu -->
-    <string name="ubuntu_suite" translatable="false">bionic</string>
+    <string name="ubuntu_suite" translatable="false">jammy</string>
     <!-- arm -->
     <string name="arm_ubuntu_source_path" translatable="false">http://ports.ubuntu.com/</string>
     <string name="arm_ubuntu_arch" translatable="false">armhf</string>
