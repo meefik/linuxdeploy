@@ -13,3 +13,4 @@ QEMU: https://packages.debian.org/stretch/qemu-user-static
 
 mke2fs (e2fsprogs): http://packages.debian.org/wheezy/e2fsprogs
 
+zstdcat (zstd): https://github.com/facebook/zstd
